@@ -1,0 +1,176 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b8114751-b889-4a16-8985-e1411928b955",
+      "name": "Start",
+      "type": "n8n-node-trigger-webhook",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://loki:3100/api/v1/query_range",
+        "options": {
+          "raw": true
+        },
+        "query": "query={job=\\"varlogs\\"} |= `` | json | line_format ``",
+        "method": "POST"
+      },
+      "id": "52992b77-a94f-45fa-a957-a447754d9e55",
+      "name": "Loki Query",
+      "type": "n8n-node-request",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "items": "={{$json.data.result[0].values}}",
+        "include": []
+      },
+      "id": "c6856f89-9745-421d-8874-c9184c679456",
+      "name": "Item Lists",
+      "type": "n8n-node-item-lists",
+      "typeVersion": 1,
+      "position": [
+        640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "text": "Phân tích log sau để tìm các bất thường:\\n\\n{{$json[1]}}\\n\\nTrả về JSON có các trường sau:\\n- anomaly: true hoặc false\\n- reason: giải thích ngắn gọn\\n",
+        "model": "gpt-3.5-turbo",
+        "additionalParameters": {}
+      },
+      "id": "74955195-1789-4499-a915-d4a947e99172",
+      "name": "AI Agent",
+      "type": "n8n-node-openai",
+      "typeVersion": 1,
+      "position": [
+        840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.anomaly}}",
+              "operation": "==",
+              "value2": "true"
+            }
+          ]
+        }
+      },
+      "id": "5b9e4499-2998-4909-b489-497457895799",
+      "name": "IF",
+      "type": "n8n-node-if",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "title": "Phát hiện bất thường trong log",
+        "text": "Đã phát hiện bất thường trong log:\\n\\nLý do: {{$json.reason}}",
+        "bot": "Bất thường Loki",
+        "tags": "[\"loki\", \"anomaly\", \"logs\"]"
+      },
+      "id": "97c69974-c815-4a7f-9294-129e51f2d979",
+      "name": "Telegram",
+      "type": "n8n-node-telegram",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        200
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "8ad75514-1189-4467-8192-387c147a7b4e",
+      "name": "End",
+      "type": "n8n-node-manual-input",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "b8114751-b889-4a16-8985-e1411928b955": {
+      "main": [
+        [
+          {
+            "node": "52992b77-a94f-45fa-a957-a447754d9e55",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "52992b77-a94f-45fa-a957-a447754d9e55": {
+      "main": [
+        [
+          {
+            "node": "c6856f89-9745-421d-8874-c9184c679456",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "c6856f89-9745-421d-8874-c9184c679456": {
+      "main": [
+        [
+          {
+            "node": "74955195-1789-4499-a915-d4a947e99172",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "74955195-1789-4499-a915-d4a947e99172": {
+      "main": [
+        [
+          {
+            "node": "5b9e4499-2998-4909-b489-497457895799",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5b9e4499-2998-4909-b489-497457895799": {
+      "main": [
+        [
+          {
+            "node": "97c69974-c815-4a7f-9294-129e51f2d979",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ],
+      "branch": [
+        [
+          {
+            "node": "8ad75514-1189-4467-8192-387c147a7b4e",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  ]
+}
