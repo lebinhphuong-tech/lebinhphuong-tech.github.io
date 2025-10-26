@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical Documents | Lê Bình Phương</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap CSS -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      color: var(--text-color);
+      background: var(--bg-light);
+      line-height: 1.6;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      padding: 1rem 0;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .nav-link {
+      color: var(--text-color);
+      font-weight: 500;
+      margin: 0 0.5rem;
+      transition: color 0.3s;
+    }
+    
+    .nav-link:hover {
+      color: var(--primary-color);
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+    
+    .hero-section h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    .hero-section p {
+      font-size: 1.2rem;
+      opacity: 0.95;
+    }
+    
+    .docs-grid {
+      padding: 60px 0;
+    }
+    
+    .doc-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+      height: 100%;
+    }
+    
+    .doc-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .doc-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--bg-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+    }
+    
+    .doc-card h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--secondary-color);
+    }
+    
+    .doc-card p {
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+    
+    .doc-list {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .doc-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .doc-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .doc-list a {
+      color: var(--text-color);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: color 0.3s;
+    }
+    
+    .doc-list a:hover {
+      color: var(--primary-color);
+    }
+    
+    .doc-list i {
+      margin-right: 0.5rem;
+    }
+    
+    .footer {
+      background: var(--secondary-color);
+      color: white;
+      padding: 2rem 0;
+      text-align: center;
+    }
+    
+    @media (max-width: 768px) {
+      .hero-section h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">
+        <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Portfolio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="index.html">Documents</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <h1><i class="bi bi-book me-3"></i>Technical Documents</h1>
+      <p>Comprehensive guides and documentation for DevOps, Kubernetes, Docker, Terraform, and more</p>
+    </div>
+  </section>
+
+  <!-- Documents Grid -->
+  <section class="docs-grid">
+    <div class="container">
+      <div class="row">
+        
+        <!-- Kubernetes -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-cloud-fill"></i>
+            </div>
+            <h3>Kubernetes</h3>
+            <p>Complete guides on Kubernetes deployment, management, and best practices.</p>
+            <ul class="doc-list">
+              <li><a href="kubernetes/"><i class="bi bi-arrow-right-circle"></i>Getting Started</a></li>
+              <li><a href="kubernetes/deployment.html"><i class="bi bi-arrow-right-circle"></i>Deployment Guide</a></li>
+              <li><a href="kubernetes/scaling.html"><i class="bi bi-arrow-right-circle"></i>Scaling & Monitoring</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Docker -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-box-seam"></i>
+            </div>
+            <h3>Docker</h3>
+            <p>Containerization fundamentals, Dockerfile best practices, and orchestration.</p>
+            <ul class="doc-list">
+              <li><a href="docker/"><i class="bi bi-arrow-right-circle"></i>Basics</a></li>
+              <li><a href="docker/dockerfile.html"><i class="bi bi-arrow-right-circle"></i>Dockerfile Guide</a></li>
+              <li><a href="docker/compose.html"><i class="bi bi-arrow-right-circle"></i>Docker Compose</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Terraform -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-diagram-3"></i>
+            </div>
+            <h3>Terraform</h3>
+            <p>Infrastructure as Code with Terraform for AWS, GCP, and Azure.</p>
+            <ul class="doc-list">
+              <li><a href="terraform/"><i class="bi bi-arrow-right-circle"></i>Getting Started</a></li>
+              <li><a href="terraform/aws.html"><i class="bi bi-arrow-right-circle"></i>AWS Setup</a></li>
+              <li><a href="terraform/gcp.html"><i class="bi bi-arrow-right-circle"></i>GCP Setup</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Ansible -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-gear"></i>
+            </div>
+            <h3>Ansible</h3>
+            <p>Configuration management and automation with Ansible playbooks.</p>
+            <ul class="doc-list">
+              <li><a href="ansible/"><i class="bi bi-arrow-right-circle"></i>Introduction</a></li>
+              <li><a href="ansible/playbooks.html"><i class="bi bi-arrow-right-circle"></i>Playbooks</a></li>
+              <li><a href="ansible/roles.html"><i class="bi bi-arrow-right-circle"></i>Roles & Modules</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- DevOps -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-code-slash"></i>
+            </div>
+            <h3>DevOps</h3>
+            <p>CI/CD pipelines, monitoring, logging, and DevOps best practices.</p>
+            <ul class="doc-list">
+              <li><a href="devops/"><i class="bi bi-arrow-right-circle"></i>Overview</a></li>
+              <li><a href="devops/cicd.html"><i class="bi bi-arrow-right-circle"></i>CI/CD Pipelines</a></li>
+              <li><a href="devops/monitoring.html"><i class="bi bi-arrow-right-circle"></i>Monitoring & Logging</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Quick References -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-lightning-fill"></i>
+            </div>
+            <h3>Quick Reference</h3>
+            <p>Cheat sheets and quick commands for daily DevOps tasks.</p>
+            <ul class="doc-list">
+              <li><a href="refs/docker-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>Docker Cheatsheet</a></li>
+              <li><a href="refs/kubectl-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>kubectl Cheatsheet</a></li>
+              <li><a href="refs/git-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>Git Cheatsheet</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 Lê Bình Phương. All rights reserved.</p>
+      <p class="mt-2">
+        <a href="../index.html" class="text-white me-3">Portfolio</a>
+        <a href="../index.html#contact" class="text-white">Contact</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  
+</body>
+</html>

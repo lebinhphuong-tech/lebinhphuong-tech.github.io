@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Compose Guide | Docker Docs</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .command-box {
+      background: #f8f9fa;
+      border-left: 4px solid var(--primary-color);
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      border-radius: 6px;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .success-box {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Docker</a></li>
+        <li class="breadcrumb-item active">Docker Compose</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-box-seam me-2"></i>Docker</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link" href="dockerfile.html">Dockerfile</a>
+            <a class="nav-link active" href="compose.html">Docker Compose</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-layers me-2"></i>Docker Compose Guide</h1>
+          
+          <p>
+            Docker Compose is a tool for defining and running multi-container Docker applications. 
+            With Compose, you use a YAML file to configure your application's services, networks, and volumes.
+          </p>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Docker Compose simplifies managing complex applications with multiple containers that need to work together.
+          </div>
+
+          <h2>Why Use Docker Compose?</h2>
+          <ul>
+            <li>📝 Define all services in a single file</li>
+            <li>🔄 Start/stop all services with one command</li>
+            <li>🌐 Automatic networking between containers</li>
+            <li>💾 Manage volumes and persistent data</li>
+            <li>🔧 Easy environment variable configuration</li>
+          </ul>
+
+          <h2>Installation</h2>
+          
+          <h3>Standalone Compose V2</h3>
+          <pre><code># Linux
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Verify installation
+docker-compose --version</code></pre>
+
+          <h3>Docker Desktop</h3>
+          <p>Docker Compose is included in Docker Desktop for Windows and macOS.</p>
+
+          <h2>Basic docker-compose.yml</h2>
+          
+          <pre><code>version: '3.8'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+    environment:
+      - NGINX_HOST=localhost
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge</code></pre>
+
+          <h2>Common Service Configuration</h2>
+
+          <h3>Image</h3>
+          <pre><code>services:
+  web:
+    image: nginx:latest  # Use existing image
+    # OR
+    build: .             # Build from Dockerfile
+    # OR
+    build:
+      context: ./app
+      dockerfile: Dockerfile.dev</code></pre>
+
+          <h3>Ports</h3>
+          <pre><code>services:
+  web:
+    ports:
+      - "8080:80"           # host:container
+      - "443:443"
+      - "3000:3000"
+    expose:
+      - "8080"              # Expose internally only</code></pre>
+
+          <h3>Volumes</h3>
+          <pre><code>services:
+  web:
+    volumes:
+      # Bind mount
+      - ./data:/var/lib/data
+      # Named volume
+      - db-data:/var/lib/db
+      # Anonymous volume
+      - /cache
+
+volumes:
+  db-data:
+    driver: local</code></pre>
+
+          <h3>Environment Variables</h3>
+          <pre><code>services:
+  web:
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://localhost/db
+      - DEBUG=false
+    # OR from file
+    env_file:
+      - .env
+      - .env.production</code></pre>
+
+          <h3>Networks</h3>
+          <pre><code>services:
+  web:
+    networks:
+      - frontend
+      - backend
+
+  db:
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true  # No external access</code></pre>
+
+          <h3>Dependencies</h3>
+          <pre><code>services:
+  web:
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15
+    # web will wait for db to start</code></pre>
+
+          <h2>Complete Example</h2>
+          <p>Full-stack application with frontend, backend, and database:</p>
+
+          <pre><code>version: '3.8'
+
+services:
+  # Frontend
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://backend:5000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  # Backend API
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://user:password@db:5432/mydb
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app-network
+
+  # Database
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:</code></pre>
+
+          <h2>Health Checks</h2>
+          <p>Define health checks to ensure services are running properly:</p>
+
+          <pre><code>services:
+  web:
+    image: nginx:latest
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s</code></pre>
+
+          <h2>Common Commands</h2>
+
+          <h3>Starting Services</h3>
+          <pre><code># Start all services
+docker-compose up
+
+# Start in detached mode
+docker-compose up -d
+
+# Start specific services
+docker-compose up web db
+
+# Build images before starting
+docker-compose up --build
+
+# Recreate containers
+docker-compose up --force-recreate</code></pre>
+
+          <h3>Stopping Services</h3>
+          <pre><code># Stop all services
+docker-compose stop
+
+# Stop and remove containers
+docker-compose down
+
+# Stop and remove containers, volumes, networks
+docker-compose down -v
+
+# Stop and remove all resources
+docker-compose down --remove-orphans</code></pre>
+
+          <h3>Viewing Logs</h3>
+          <pre><code># View all logs
+docker-compose logs
+
+# Follow logs in real-time
+docker-compose logs -f
+
+# View logs for specific service
+docker-compose logs web
+
+# Last 100 lines
+docker-compose logs --tail=100</code></pre>
+
+          <h3>Managing Services</h3>
+          <pre><code># List running services
+docker-compose ps
+
+# Execute command in running container
+docker-compose exec web sh
+
+# Run one-off command
+docker-compose run web npm test
+
+# Restart service
+docker-compose restart web
+
+# Scale service to multiple instances
+docker-compose up --scale web=3</code></pre>
+
+          <h2>Environment Variables</h2>
+          <p>Create a <code>.env</code> file in the same directory as <code>docker-compose.yml</code>:</p>
+
+          <pre><code># .env
+POSTGRES_DB=mydb
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=secret123
+DATABASE_URL=postgresql://admin:secret123@db:5432/mydb</code></pre>
+
+          <p>Reference in docker-compose.yml:</p>
+          <pre><code>services:
+  db:
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}</code></pre>
+
+          <h2>Profiles</h2>
+          <p>Use profiles to define service variants:</p>
+
+          <pre><code>version: '3.8'
+
+services:
+  web:
+    image: nginx:latest
+    profiles:
+      - production
+
+  web-dev:
+    image: nginx:latest
+    profiles:
+      - development
+
+  db:
+    image: postgres:15</code></pre>
+
+          <div class="command-box">
+            <strong>Usage:</strong>
+            <pre><code># Start with specific profile
+docker-compose --profile production up
+
+# Start all services
+docker-compose up</code></pre>
+          </div>
+
+          <h2>Useful Patterns</h2>
+
+          <h3>Development with Hot Reload</h3>
+          <pre><code>services:
+  web:
+    build: .
+    volumes:
+      - ./src:/app/src  # Mount source code
+      - /app/node_modules  # Exclude node_modules
+    command: npm run dev  # Development server</code></pre>
+
+          <h3>Override Configuration</h3>
+          <p>Create <code>docker-compose.override.yml</code> (automatically loaded):</p>
+          <pre><code># docker-compose.override.yml
+version: '3.8'
+
+services:
+  web:
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src</code></pre>
+
+          <h3>Multiple Compose Files</h3>
+          <pre><code># Base configuration
+docker-compose.yml
+
+# Production configuration
+docker-compose.prod.yml
+
+# Use multiple files
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up</code></pre>
+
+          <h2>Troubleshooting</h2>
+
+          <h3>Issue: Port Already in Use</h3>
+          <div class="warning-box">
+            <strong>Error:</strong> <code>bind: address already in use</code>
+            <br><strong>Solution:</strong> Change port mapping or stop conflicting service
+          </div>
+
+          <h3>Issue: Container Keeps Restarting</h3>
+          <pre><code># Check logs
+docker-compose logs service-name
+
+# Check container status
+docker-compose ps
+
+# Inspect container
+docker inspect $(docker-compose ps -q service-name)</code></pre>
+
+          <h3>Issue: Cannot Connect to Database</h3>
+          <div class="tip-box">
+            <strong>💡 Solutions:</strong>
+            <ul>
+              <li>Ensure <code>depends_on</code> is configured</li>
+              <li>Use service name as hostname (not localhost)</li>
+              <li>Check network configuration</li>
+              <li>Verify environment variables</li>
+            </ul>
+          </div>
+
+          <h2>Best Practices</h2>
+
+          <div class="success-box">
+            <strong>✅ Do:</strong>
+            <ul>
+              <li>Use version 3.8 or higher</li>
+              <li>Define networks explicitly</li>
+              <li>Use named volumes for persistence</li>
+              <li>Set up health checks</li>
+              <li>Use environment variables</li>
+              <li>Keep services stateless when possible</li>
+              <li>Document with comments</li>
+            </ul>
+          </div>
+
+          <div class="warning-box">
+            <strong>⚠️ Don't:</strong>
+            <ul>
+              <li>Store secrets in plain text</li>
+              <li>Use <code>:latest</code> tag in production</li>
+              <li>Expose unnecessary ports</li>
+              <li>Mount entire project directory in production</li>
+              <li>Share credentials via environment files in Git</li>
+            </ul>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Production-ready Docker practices</li>
+            <li><strong><a href="dockerfile.html">Dockerfile Guide</a></strong> - Learn to create efficient Dockerfiles</li>
+            <li><strong><a href="../kubernetes/index.html">Kubernetes</a></strong> - Container orchestration</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+</body>
+</html>

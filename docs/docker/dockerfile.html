@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dockerfile Guide | Docker Docs</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .command-box {
+      background: #f8f9fa;
+      border-left: 4px solid var(--primary-color);
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      border-radius: 6px;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Docker</a></li>
+        <li class="breadcrumb-item active">Dockerfile</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-box-seam me-2"></i>Docker</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link active" href="dockerfile.html">Dockerfile</a>
+            <a class="nav-link" href="compose.html">Docker Compose</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-file-earmark-code me-2"></i>Dockerfile Guide</h1>
+          
+          <p>
+            A Dockerfile is a text document that contains all the commands a user could call on the command line to assemble an image. 
+            Using <code>docker build</code>, users can create an automated build that executes several command-line instructions in succession.
+          </p>
+
+          <h2>Basic Dockerfile Structure</h2>
+          
+          <pre><code># Specify base image
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependency files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --production
+
+# Copy application files
+COPY . .
+
+# Expose port
+EXPOSE 3000
+
+# Define command to run
+CMD ["node", "index.js"]</code></pre>
+
+          <h2>Dockerfile Instructions</h2>
+
+          <h3>FROM</h3>
+          <p>Sets the base image for subsequent instructions.</p>
+          <pre><code>FROM ubuntu:22.04
+FROM node:18-alpine
+FROM python:3.11-slim</code></pre>
+
+          <h3>WORKDIR</h3>
+          <p>Sets the working directory for any RUN, CMD, ENTRYPOINT, COPY, and ADD instructions.</p>
+          <pre><code>WORKDIR /app
+WORKDIR /usr/src/app</code></pre>
+
+          <h3>COPY vs ADD</h3>
+          <p><strong>COPY</strong> - Copies files from host to container</p>
+          <pre><code>COPY package.json .
+COPY src/ ./src/
+COPY . .</code></pre>
+          
+          <p><strong>ADD</strong> - Similar to COPY but also supports URLs and tar extraction</p>
+          <div class="warning-box">
+            <strong>⚠️ Warning:</strong> Prefer COPY over ADD for better clarity and predictability.
+          </div>
+
+          <h3>RUN</h3>
+          <p>Executes commands in a new layer and creates a new image. Used for installing packages and running shell commands.</p>
+          <pre><code># Single line
+RUN apt-get update && apt-get install -y nginx
+
+# Multi-line (more readable)
+RUN apt-get update && \
+    apt-get install -y \
+    nginx \
+    curl \
+    wget</code></pre>
+
+          <h3>CMD</h3>
+          <p>Specifies the default command to run when a container starts. Only one CMD is allowed.</p>
+          <pre><code># Shell form
+CMD npm start
+
+# Exec form (preferred)
+CMD ["node", "index.js"]
+
+# With parameters
+CMD ["node", "index.js", "--env", "production"]</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Use exec form (JSON array) for better signal handling and proper handling of process termination.
+          </div>
+
+          <h3>ENTRYPOINT</h3>
+          <p>Similar to CMD but cannot be overridden. Arguments passed to docker run are appended to ENTRYPOINT.</p>
+          <pre><code>ENTRYPOINT ["npm"]
+CMD ["start"]</code></pre>
+
+          <h3>ENV</h3>
+          <p>Sets environment variables that persist during the build and in the running container.</p>
+          <pre><code>ENV NODE_ENV=production
+ENV APP_PORT=3000
+ENV APP_USER=node</code></pre>
+
+          <h3>ARG</h3>
+          <p>Defines variables available only during build time (not at runtime).</p>
+          <pre><code>ARG NODE_VERSION=18
+FROM node:${NODE_VERSION}-alpine</code></pre>
+
+          <h3>EXPOSE</h3>
+          <p>Documents which ports the container listens on (doesn't actually publish ports).</p>
+          <pre><code>EXPOSE 80
+EXPOSE 443
+EXPOSE 3000 8080</code></pre>
+
+          <h3>LABEL</h3>
+          <p>Adds metadata to the image.</p>
+          <pre><code>LABEL maintainer="binhphuong@example.com"
+LABEL version="1.0"
+LABEL description="My application"</code></pre>
+
+          <h2>Multi-stage Builds</h2>
+          <p>Optimize image size by using multiple FROM instructions in a single Dockerfile.</p>
+
+          <pre><code># Build stage
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM node:18-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+EXPOSE 3000
+CMD ["node", "dist/index.js"]</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Multi-stage builds help reduce final image size significantly by excluding build tools and dependencies.
+          </div>
+
+          <h2>Layer Caching</h2>
+          <p>Optimize build times by ordering instructions from least to most frequently changed.</p>
+
+          <div class="command-box">
+            <strong>❌ Bad Order:</strong>
+            <pre><code>COPY . .
+RUN npm install  # This runs on every code change
+COPY package.json .
+RUN npm install</code></pre>
+
+            <strong>✅ Good Order:</strong>
+            <pre><code>COPY package*.json .
+RUN npm install    # Cached if package.json unchanged
+COPY . .           # Only runs when source changes
+CMD ["npm", "start"]</code></pre>
+          </div>
+
+          <h2>Complete Example</h2>
+          <p>Here's a production-ready Dockerfile for a Node.js application:</p>
+
+          <pre><code># Multi-stage build
+FROM node:18-alpine AS builder
+
+# Create app directory
+WORKDIR /app
+
+# Install dependencies only when needed
+COPY package*.json ./
+RUN npm ci --only=production && \
+    npm cache clean --force
+
+# Copy application code
+COPY . .
+
+# Production image
+FROM node:18-alpine
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+WORKDIR /app
+
+# Copy from builder
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /app .
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD node healthcheck.js
+
+# Start application
+CMD ["node", "index.js"]</code></pre>
+
+          <h2>.dockerignore File</h2>
+          <p>Create a <code>.dockerignore</code> file to exclude unnecessary files from the build context:</p>
+
+          <pre><code>node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+README.md
+dist
+*.md
+.coverage
+.vscode</code></pre>
+
+          <h2>Building and Running</h2>
+
+          <h3>Build an image</h3>
+          <pre><code>docker build -t myapp:latest .
+docker build -t myapp:v1.0.0 -t myapp:latest .
+docker build -f Dockerfile.prod -t myapp:prod .</code></pre>
+
+          <h3>Run the container</h3>
+          <pre><code>docker run -d -p 3000:3000 --name myapp myapp:latest
+docker run -d -p 3000:3000 -e NODE_ENV=production --name myapp myapp:latest</code></pre>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="compose.html">Docker Compose</a></strong> - Learn to orchestrate multiple containers</li>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Production-ready Docker practices</li>
+            <li><strong><a href="../refs/docker-cheatsheet.html">Docker Cheatsheet</a></strong> - Quick reference guide</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
