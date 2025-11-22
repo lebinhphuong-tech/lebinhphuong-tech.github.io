@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terraform Providers & Resources | Terraform Docs</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .info-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .info-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Terraform</a></li>
+        <li class="breadcrumb-item active">Providers & Resources</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-diagram-3 me-2"></i>Terraform</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link active" href="providers.html">Providers & Resources</a>
+            <a class="nav-link" href="state.html">State Management</a>
+            <a class="nav-link" href="modules.html">Modules</a>
+            <a class="nav-link" href="aws.html">AWS Setup</a>
+            <a class="nav-link" href="gcp.html">GCP Setup</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-plug me-2"></i>Terraform Providers & Resources</h1>
+          
+          <p>
+            Providers are plugins that Terraform uses to interact with cloud providers and services. 
+            Resources are the building blocks that represent infrastructure objects.
+          </p>
+
+          <h2>What are Providers?</h2>
+          
+          <div class="info-card">
+            <h4>Provider Purpose</h4>
+            <p>
+              Providers are plugins that Terraform uses to interact with cloud providers, SaaS providers, and other APIs. 
+              Each provider adds a set of resource types and data sources that Terraform can manage.
+            </p>
+          </div>
+
+          <h2>Common Providers</h2>
+
+          <h3>Cloud Providers</h3>
+          <ul>
+            <li><strong>AWS</strong> - <code>hashicorp/aws</code></li>
+            <li><strong>Azure</strong> - <code>hashicorp/azurerm</code></li>
+            <li><strong>GCP</strong> - <code>hashicorp/google</code></li>
+            <li><strong>Alibaba Cloud</strong> - <code>aliyun/alicloud</code></li>
+            <li><strong>Oracle Cloud</strong> - <code>oracle/oci</code></li>
+          </ul>
+
+          <h3>Infrastructure Providers</h3>
+          <ul>
+            <li><strong>Docker</strong> - <code>kreuzwerker/docker</code></li>
+            <li><strong>Kubernetes</strong> - <code>hashicorp/kubernetes</code></li>
+            <li><strong>VMware vSphere</strong> - <code>hashicorp/vsphere</code></li>
+          </ul>
+
+          <h2>Configuring Providers</h2>
+
+          <h3>Required Providers Block</h3>
+          <pre><code>terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 3.0"
+    }
+  }
+}</code></pre>
+
+          <h3>Provider Configuration</h3>
+          <pre><code># AWS Provider
+provider "aws" {
+  region = "us-east-1"
+  
+  # Authentication methods:
+  # 1. Environment variables
+  #    AWS_ACCESS_KEY_ID
+  #    AWS_SECRET_ACCESS_KEY
+  #    AWS_REGION
+  
+  # 2. AWS credentials file (~/.aws/credentials)
+  # shared_credentials_files = ["~/.aws/credentials"]
+  # profile                  = "production"
+  
+  # 3. Direct configuration (not recommended)
+  # access_key = var.aws_access_key
+  # secret_key = var.aws_secret_key
+}
+
+# Multiple provider instances
+provider "aws" {
+  alias  = "us-east"
+  region = "us-east-1"
+}
+
+provider "aws" {
+  alias  = "us-west"
+  region = "us-west-2"
+}</code></pre>
+
+          <h2>Resources</h2>
+
+          <h3>Resource Block Syntax</h3>
+          <pre><code>resource "resource_type" "resource_name" {
+  argument1 = value1
+  argument2 = value2
+  
+  # Nested blocks
+  nested_block {
+    nested_argument = value
+  }
+  
+  # Multiple instances with count
+  count = 3
+  
+  # Multiple instances with for_each
+  for_each = var.instances
+}</code></pre>
+
+          <h3>AWS Resource Examples</h3>
+          
+          <h4>EC2 Instance</h4>
+          <pre><code>resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  
+  tags = {
+    Name = "WebServer"
+  }
+}</code></pre>
+
+          <h4>S3 Bucket</h4>
+          <pre><code>resource "aws_s3_bucket" "website" {
+  bucket = "my-website-bucket"
+  
+  tags = {
+    Name = "Website Bucket"
+  }
+}
+
+resource "aws_s3_bucket_versioning" "website" {
+  bucket = aws_s3_bucket.website.id
+  
+  versioning_configuration {
+    status = "Enabled"
+  }
+}</code></pre>
+
+          <h4>VPC</h4>
+          <pre><code>resource "aws_vpc" "main" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+  
+  tags = {
+    Name = "main-vpc"
+  }
+}</code></pre>
+
+          <h2>Data Sources</h2>
+
+          <h3>What are Data Sources?</h3>
+          <p>Data sources allow Terraform to fetch information from outside Terraform:</p>
+
+          <h4>AWS Data Source Examples</h4>
+          <pre><code># Get AMI
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+# Get VPC
+data "aws_vpc" "existing" {
+  id = "vpc-12345678"
+}
+
+# Get availability zones
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+# Use data sources
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = "t2.micro"
+  subnet_id     = data.aws_subnet.main.id
+}</code></pre>
+
+          <h2>Resource Dependencies</h2>
+
+          <h3>Implicit Dependencies</h3>
+          <pre><code>resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "web" {
+  vpc_id     = aws_vpc.main.id  # Implicit dependency
+  cidr_block = "10.0.0.0/24"
+}</code></pre>
+
+          <h3>Explicit Dependencies</h3>
+          <pre><code>resource "aws_instance" "web" {
+  # ...
+  
+  depends_on = [
+    aws_iam_role.example,
+    aws_security_group.example
+  ]
+}</code></pre>
+
+          <h2>Multiple Resource Instances</h2>
+
+          <h3>Using count</h3>
+          <pre><code>resource "aws_instance" "web" {
+  count = 3
+  
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  
+  tags = {
+    Name = "WebServer-${count.index + 1}"
+  }
+}
+
+# Access
+aws_instance.web[0].id
+aws_instance.web[1].id</code></pre>
+
+          <h3>Using for_each</h3>
+          <pre><code>variable "instances" {
+  type = map(string)
+  default = {
+    web1 = "t2.micro"
+    web2 = "t2.small"
+    web3 = "t3.medium"
+  }
+}
+
+resource "aws_instance" "web" {
+  for_each = var.instances
+  
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = each.value
+  
+  tags = {
+    Name = each.key
+  }
+}
+
+# Access
+aws_instance.web["web1"].id</code></pre>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="aws.html">AWS Setup</a></strong> - Complete AWS setup guide</li>
+            <li><strong><a href="modules.html">Modules</a></strong> - Creating reusable modules</li>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Deep dive into fundamentals</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kubernetes Core Concepts | K8s Docs</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .concept-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .concept-card h3 {
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Kubernetes</a></li>
+        <li class="breadcrumb-item active">Core Concepts</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-cloud-fill me-2"></i>Kubernetes</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link active" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="deployment.html">Deployment Guide</a>
+            <a class="nav-link" href="scaling.html">Scaling & Monitoring</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-diagram-3 me-2"></i>Kubernetes Core Concepts</h1>
+          
+          <p>
+            Understanding Kubernetes core concepts is essential for working with the platform. 
+            This guide covers the fundamental building blocks of Kubernetes.
+          </p>
+
+          <h2>Pods</h2>
+          <div class="concept-card">
+            <h3>What is a Pod?</h3>
+            <p>
+              A Pod is the smallest and simplest unit in Kubernetes. It represents a single instance of a running process 
+              in your cluster. A Pod can contain one or more containers that share storage, network, and specifications.
+            </p>
+            
+            <h4>Pod Example:</h4>
+            <pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.21
+    ports:
+    - containerPort: 80
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"</code></pre>
+
+            <h4>Common Commands:</h4>
+            <pre><code># Create pod from YAML
+kubectl apply -f pod.yaml
+
+# Get pods
+kubectl get pods
+
+# Describe pod
+kubectl describe pod nginx-pod
+
+# Get pod logs
+kubectl logs nginx-pod
+
+# Delete pod
+kubectl delete pod nginx-pod</code></pre>
+          </div>
+
+          <h2>Deployments</h2>
+          <div class="concept-card">
+            <h3>What is a Deployment?</h3>
+            <p>
+              A Deployment provides declarative updates for Pods and ReplicaSets. It manages the lifecycle of your application, 
+              allowing you to scale, update, and rollback easily.
+            </p>
+            
+            <h4>Deployment Example:</h4>
+            <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5</code></pre>
+
+            <h4>Deployment Operations:</h4>
+            <pre><code># Scale deployment
+kubectl scale deployment nginx-deployment --replicas=5
+
+# Update image
+kubectl set image deployment/nginx-deployment nginx=nginx:1.22
+
+# Rollout status
+kubectl rollout status deployment/nginx-deployment
+
+# Rollback
+kubectl rollout undo deployment/nginx-deployment
+
+# View rollout history
+kubectl rollout history deployment/nginx-deployment</code></pre>
+          </div>
+
+          <h2>Services</h2>
+          <div class="concept-card">
+            <h3>What is a Service?</h3>
+            <p>
+              A Service is an abstraction that defines a logical set of Pods and a policy to access them. 
+              Services enable loose coupling between Pods and provide stable networking.
+            </p>
+            
+            <h4>Service Types:</h4>
+            <ul>
+              <li><strong>ClusterIP</strong> - Default, internal cluster access only</li>
+              <li><strong>NodePort</strong> - Exposes service on each node's IP at a static port</li>
+              <li><strong>LoadBalancer</strong> - Exposes service externally using cloud provider's load balancer</li>
+              <li><strong>ExternalName</strong> - Maps service to external DNS name</li>
+            </ul>
+
+            <h4>Service Example:</h4>
+            <pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer</code></pre>
+
+            <div class="tip-box">
+              <strong>💡 Tip:</strong> Services use labels and selectors to match Pods. Ensure Pod labels match Service selectors.
+            </div>
+          </div>
+
+          <h2>ConfigMaps</h2>
+          <div class="concept-card">
+            <h3>What is a ConfigMap?</h3>
+            <p>
+              A ConfigMap stores configuration data in key-value pairs. It allows you to decouple configuration from 
+              container images, making your application more portable.
+            </p>
+            
+            <h4>Creating ConfigMap:</h4>
+            <pre><code># From command line
+kubectl create configmap app-config \
+  --from-literal=key1=value1 \
+  --from-literal=key2=value2
+
+# From file
+kubectl create configmap app-config --from-file=config.properties
+
+# From YAML
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  database_url: "postgresql://localhost:5432/mydb"
+  log_level: "INFO"</code></pre>
+
+            <h4>Using ConfigMap in Pod:</h4>
+            <pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+spec:
+  containers:
+  - name: app
+    image: myapp:latest
+    envFrom:
+    - configMapRef:
+        name: app-config
+    # OR as volume
+    volumeMounts:
+    - name: config
+      mountPath: /etc/config
+  volumes:
+  - name: config
+    configMap:
+      name: app-config</code></pre>
+          </div>
+
+          <h2>Secrets</h2>
+          <div class="concept-card">
+            <h3>What is a Secret?</h3>
+            <p>
+              Secrets store sensitive data like passwords, OAuth tokens, and SSH keys. They are similar to ConfigMaps 
+              but specifically designed for sensitive information.
+            </p>
+            
+            <h4>Creating Secrets:</h4>
+            <pre><code># From command line
+kubectl create secret generic db-secret \
+  --from-literal=username=admin \
+  --from-literal=password=secret123
+
+# From file
+kubectl create secret generic db-secret \
+  --from-file=username.txt \
+  --from-file=password.txt
+
+# From YAML (base64 encoded)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+type: Opaque
+data:
+  username: YWRtaW4=  # base64 encoded
+  password: c2VjcmV0MTIz</code></pre>
+
+            <h4>Using Secrets:</h4>
+            <pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+spec:
+  containers:
+  - name: app
+    image: myapp:latest
+    env:
+    - name: DB_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: db-secret
+          key: username
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: db-secret
+          key: password</code></pre>
+
+            <div class="tip-box">
+              <strong>💡 Tip:</strong> Use external secret management systems (Vault, AWS Secrets Manager) in production for enhanced security.
+            </div>
+          </div>
+
+          <h2>Volumes</h2>
+          <div class="concept-card">
+            <h3>What is a Volume?</h3>
+            <p>
+              Volumes provide persistent storage for Pods. Data survives container restarts and can be shared between containers in a Pod.
+            </p>
+            
+            <h4>Volume Types:</h4>
+            <ul>
+              <li><strong>emptyDir</strong> - Temporary storage, deleted when Pod terminates</li>
+              <li><strong>hostPath</strong> - Mount directory from host node</li>
+              <li><strong>PersistentVolume (PV)</strong> - Cluster-level storage resource</li>
+              <li><strong>PersistentVolumeClaim (PVC)</strong> - User request for storage</li>
+            </ul>
+
+            <h4>PersistentVolumeClaim Example:</h4>
+            <pre><code>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard</code></pre>
+
+            <h4>Using PVC in Pod:</h4>
+            <pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: db-pod
+spec:
+  containers:
+  - name: db
+    image: postgres:15
+    volumeMounts:
+    - name: db-storage
+      mountPath: /var/lib/postgresql/data
+  volumes:
+  - name: db-storage
+    persistentVolumeClaim:
+      claimName: db-pvc</code></pre>
+          </div>
+
+          <h2>Namespaces</h2>
+          <div class="concept-card">
+            <h3>What is a Namespace?</h3>
+            <p>
+              Namespaces provide a way to divide cluster resources between multiple users, teams, or projects. 
+              They are like virtual clusters within a physical cluster.
+            </p>
+            
+            <h4>Default Namespaces:</h4>
+            <ul>
+              <li><code>default</code> - Default namespace for objects</li>
+              <li><code>kube-system</code> - System components</li>
+              <li><code>kube-public</code> - Publicly accessible resources</li>
+              <li><code>kube-node-lease</code> - Node heartbeat objects</li>
+            </ul>
+
+            <h4>Working with Namespaces:</h4>
+            <pre><code># Create namespace
+kubectl create namespace production
+
+# List namespaces
+kubectl get namespaces
+
+# Get resources in namespace
+kubectl get pods -n production
+
+# Set default namespace
+kubectl config set-context --current --namespace=production
+
+# Create resource in specific namespace
+kubectl apply -f deployment.yaml -n production</code></pre>
+
+            <h4>Namespace Resource Quota Example:</h4>
+            <pre><code>apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: compute-quota
+  namespace: production
+spec:
+  hard:
+    requests.cpu: "4"
+    requests.memory: 8Gi
+    limits.cpu: "8"
+    limits.memory: 16Gi</code></pre>
+          </div>
+
+          <h2>Labels and Selectors</h2>
+          <div class="concept-card">
+            <h3>What are Labels?</h3>
+            <p>
+              Labels are key-value pairs attached to Kubernetes objects. They are used to organize and select subsets of objects.
+            </p>
+            
+            <h4>Label Example:</h4>
+            <pre><code>metadata:
+  labels:
+    app: nginx
+    environment: production
+    version: "1.21"
+    tier: frontend</code></pre>
+
+            <h4>Using Selectors:</h4>
+            <pre><code># Get pods by label
+kubectl get pods -l app=nginx
+
+# Get pods with multiple labels
+kubectl get pods -l app=nginx,environment=production
+
+# Get pods with label selector
+kubectl get pods --selector='environment in (production,staging)'</code></pre>
+          </div>
+
+          <h2>Annotations</h2>
+          <div class="concept-card">
+            <h3>What are Annotations?</h3>
+            <p>
+              Annotations are key-value pairs used to store metadata about objects. Unlike labels, annotations 
+              are not used for selection but for storing additional information.
+            </p>
+            
+            <h4>Annotation Example:</h4>
+            <pre><code>metadata:
+  annotations:
+    description: "Nginx web server"
+    contact: "admin@example.com"
+    last-modified: "2024-01-15T10:00:00Z"</code></pre>
+          </div>
+
+          <h2>Resource Management</h2>
+          <div class="concept-card">
+            <h3>Requests and Limits</h3>
+            <p>
+              Resource requests and limits help Kubernetes schedule Pods efficiently and prevent resource starvation.
+            </p>
+            
+            <h4>Resource Example:</h4>
+            <pre><code>spec:
+  containers:
+  - name: app
+    image: myapp:latest
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"      # 0.25 CPU
+      limits:
+        memory: "512Mi"
+        cpu: "500m"      # 0.5 CPU</code></pre>
+
+            <ul>
+              <li><strong>requests</strong> - Minimum resources guaranteed</li>
+              <li><strong>limits</strong> - Maximum resources allowed</li>
+            </ul>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="deployment.html">Deployment Guide</a></strong> - Production deployment strategies</li>
+            <li><strong><a href="scaling.html">Scaling & Monitoring</a></strong> - Auto-scaling and monitoring</li>
+            <li><strong><a href="index.html">Getting Started</a></strong> - Back to basics</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

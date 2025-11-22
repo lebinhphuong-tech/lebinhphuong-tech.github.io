@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terraform State Management | Terraform Docs</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .info-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .info-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Terraform</a></li>
+        <li class="breadcrumb-item active">State Management</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-diagram-3 me-2"></i>Terraform</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="providers.html">Providers & Resources</a>
+            <a class="nav-link active" href="state.html">State Management</a>
+            <a class="nav-link" href="modules.html">Modules</a>
+            <a class="nav-link" href="aws.html">AWS Setup</a>
+            <a class="nav-link" href="gcp.html">GCP Setup</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-database me-2"></i>Terraform State Management</h1>
+          
+          <p>
+            Terraform state is a crucial component that tracks the mapping between your configuration and the real-world 
+            infrastructure. Understanding state management is essential for working effectively with Terraform.
+          </p>
+
+          <h2>What is State?</h2>
+          
+          <div class="info-card">
+            <h4>Purpose of State</h4>
+            <p>
+              Terraform stores state about your managed infrastructure and configuration. This state is used to:
+            </p>
+            <ul>
+              <li>Map real-world resources to your configuration</li>
+              <li>Track metadata about resources</li>
+              <li>Improve performance by caching resource information</li>
+              <li>Enable Terraform to determine what needs to be created, updated, or destroyed</li>
+            </ul>
+          </div>
+
+          <h2>Local State (Default)</h2>
+
+          <h3>Local State File</h3>
+          <p>By default, Terraform stores state locally in a file named <code>terraform.tfstate</code>:</p>
+
+          <pre><code># Default local state
+# Stored in terraform.tfstate
+
+# View state
+terraform show
+
+# List resources in state
+terraform state list
+
+# Show specific resource
+terraform state show aws_instance.web
+
+# State file structure (JSON)
+{
+  "version": 4,
+  "terraform_version": "1.6.0",
+  "resources": [
+    {
+      "type": "aws_instance",
+      "name": "web",
+      "instances": [
+        {
+          "attributes": {
+            "id": "i-1234567890abcdef0",
+            "ami": "ami-0c55b159cbfafe1f0",
+            "instance_type": "t2.micro",
+            ...
+          }
+        }
+      ]
+    }
+  ]
+}</code></pre>
+
+          <div class="warning-box">
+            <strong>⚠️ Warning:</strong> Local state files should NOT be committed to version control as they may contain 
+            sensitive information. Always use <code>.gitignore</code> to exclude state files.
+          </div>
+
+          <h2>Remote State Backends</h2>
+
+          <h3>Why Use Remote State?</h3>
+          <ul>
+            <li>✅ <strong>Team Collaboration</strong> - Multiple team members can work together</li>
+            <li>✅ <strong>State Locking</strong> - Prevents concurrent modifications</li>
+            <li>✅ <strong>Centralized Storage</strong> - Single source of truth</li>
+            <li>✅ <strong>Security</strong> - State stored securely with encryption</li>
+            <li>✅ <strong>Versioning</strong> - Keep history of state changes</li>
+          </ul>
+
+          <h3>AWS S3 Backend</h3>
+          
+          <pre><code>terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state-bucket"
+    key            = "terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "terraform-state-lock"
+    
+    # Optional: Versioning
+    versioning = true
+    
+    # Optional: Server-side encryption
+    server_side_encryption_configuration {
+      rule {
+        apply_server_side_encryption_by_default {
+          sse_algorithm = "AES256"
+        }
+      }
+    }
+  }
+}</code></pre>
+
+          <h3>Azure Storage Backend</h3>
+          
+          <pre><code>terraform {
+  backend "azurerm" {
+    resource_group_name  = "terraform-state-rg"
+    storage_account_name = "terraformstate"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
+}</code></pre>
+
+          <h3>GCP Cloud Storage Backend</h3>
+          
+          <pre><code>terraform {
+  backend "gcs" {
+    bucket  = "terraform-state-bucket"
+    prefix  = "terraform/state"
+    project = "my-gcp-project"
+  }
+}</code></pre>
+
+          <h3>Terraform Cloud Backend</h3>
+          
+          <pre><code>terraform {
+  cloud {
+    organization = "my-org"
+    workspaces {
+      name = "production"
+    }
+  }
+}</code></pre>
+
+          <h3>Initializing Remote Backend</h3>
+          
+          <pre><code># Migrate existing state to remote backend
+terraform init -migrate-state
+
+# You'll be prompted to confirm migration
+# Type 'yes' to migrate state to the new backend</code></pre>
+
+          <h2>State Locking</h2>
+          
+          <div class="info-card">
+            <h4>What is State Locking?</h4>
+            <p>
+              State locking prevents concurrent operations from modifying the same state file simultaneously. 
+              This ensures consistency and prevents corruption.
+            </p>
+          </div>
+
+          <h3>S3 + DynamoDB State Locking</h3>
+          
+          <pre><code># Create DynamoDB table for state locking
+resource "aws_dynamodb_table" "terraform_state_lock" {
+  name           = "terraform-state-lock"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "LockID"
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+
+  tags = {
+    Name = "Terraform State Lock Table"
+  }
+}
+
+# Configure backend with DynamoDB
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state-bucket"
+    key            = "terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-state-lock"
+    encrypt        = true
+  }
+}</code></pre>
+
+          <h2>State Commands</h2>
+
+          <h3>Viewing State</h3>
+          <pre><code># Show current state in human-readable format
+terraform show
+
+# Show state as JSON
+terraform show -json
+
+# List all resources in state
+terraform state list
+
+# Show specific resource
+terraform state show aws_instance.web
+
+# Show resource at path
+terraform state show 'module.vpc.aws_vpc.main'</code></pre>
+
+          <h3>Modifying State</h3>
+          <pre><code># Move resource in state
+terraform state mv aws_instance.old aws_instance.new
+
+# Move resource to different module
+terraform state mv aws_instance.web 'module.vpc.aws_instance.web'
+
+# Remove resource from state (doesn't destroy)
+terraform state rm aws_instance.web
+
+# Pull current state
+terraform state pull > terraform.tfstate.backup
+
+# Push state (use with caution)
+terraform state push terraform.tfstate</code></pre>
+
+          <h3>Importing Resources</h3>
+          
+          <pre><code># Import existing resource into state
+terraform import aws_instance.web i-1234567890abcdef0
+
+# Import with resource address
+terraform import 'module.vpc.aws_instance.web' i-1234567890abcdef0
+
+# Import with multiple instances
+terraform import 'aws_instance.web[0]' i-1234567890abcdef0
+terraform import 'aws_instance.web[1]' i-1234567890abcdef1
+
+# Prepare import block (Terraform 1.5+)
+import {
+  to = aws_instance.web
+  id = "i-1234567890abcdef0"
+}
+
+# Then run
+terraform plan -generate-config-out=generated.tf</code></pre>
+
+          <h2>State File Structure</h2>
+
+          <h3>Understanding State Format</h3>
+          
+          <pre><code>{
+  "version": 4,
+  "terraform_version": "1.6.0",
+  "serial": 1,
+  "lineage": "abc123-def456-...",
+  "outputs": {
+    "instance_id": {
+      "value": "i-1234567890abcdef0",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "web",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "ami": "ami-0c55b159cbfafe1f0",
+            "id": "i-1234567890abcdef0",
+            "instance_type": "t2.micro",
+            ...
+          },
+          "sensitive_attributes": [],
+          "private": "..."
+        }
+      ]
+    }
+  ]
+}</code></pre>
+
+          <h2>State Backups</h2>
+
+          <h3>Automatic Backups</h3>
+          <p>Terraform automatically creates backup files:</p>
+          
+          <pre><code># Local backend creates
+terraform.tfstate.backup  # Automatic backup before modifications
+
+# Remote backends (S3, etc.) support versioning
+# Enable versioning on S3 bucket for state history</code></pre>
+
+          <h3>Manual Backups</h3>
+          
+          <pre><code># Backup current state
+terraform state pull > terraform.tfstate.backup
+
+# Restore from backup
+terraform state push terraform.tfstate.backup</code></pre>
+
+          <h2>State Troubleshooting</h2>
+
+          <h3>State Lock Issues</h3>
+          
+          <div class="warning-box">
+            <strong>⚠️ Issue: State is locked</strong>
+            <pre><code>Error: Error acquiring the state lock
+Lock Info:
+  ID:        abc123...
+  Path:      my-terraform-state-bucket/terraform.tfstate
+  Operation: OperationTypePlan
+  Who:       user@example.com
+  Version:   1.6.0
+  Created:   2024-01-15 10:00:00 +0000 UTC
+
+Terraform acquires a state lock to protect the state from being written
+by multiple users at the same time. Please resolve the issue above and try
+again. For most commands, you can disable locking with the "-lock=false"
+flag, but this is not recommended.</code></pre>
+
+            <strong>Solutions:</strong>
+            <ul>
+              <li>Wait for the other operation to complete</li>
+              <li>If process crashed, manually unlock: <code>terraform force-unlock &lt;LOCK_ID&gt;</code></li>
+              <li>Check DynamoDB table (for S3 backend) for stale locks</li>
+            </ul>
+          </div>
+
+          <h3>Force Unlock</h3>
+          
+          <pre><code># Force unlock state (use with caution)
+terraform force-unlock &lt;LOCK_ID&gt;
+
+# Get lock ID from error message</code></pre>
+
+          <h3>State Drift</h3>
+          
+          <div class="tip-box">
+            <strong>💡 State Drift Detection:</strong>
+            <p>
+              If resources are modified outside of Terraform, use <code>terraform refresh</code> 
+              to update state with real-world infrastructure.
+            </p>
+            <pre><code># Refresh state
+terraform refresh
+
+# Refresh specific resource
+terraform refresh -target=aws_instance.web
+
+# Plan with refresh
+terraform plan -refresh=true</code></pre>
+          </div>
+
+          <h3>State Corruption</h3>
+          
+          <div class="warning-box">
+            <strong>⚠️ If State is Corrupted:</strong>
+            <ol>
+              <li>Restore from backup: <code>terraform state push terraform.tfstate.backup</code></li>
+              <li>Re-import resources: <code>terraform import &lt;resource&gt; &lt;id&gt;</code></li>
+              <li>Recreate state from scratch (last resort)</li>
+            </ol>
+          </div>
+
+          <h2>State Best Practices</h2>
+
+          <div class="tip-box">
+            <strong>✅ Best Practices:</strong>
+            <ul>
+              <li>✅ Always use remote state backends in production</li>
+              <li>✅ Enable state locking to prevent concurrent modifications</li>
+              <li>✅ Enable encryption for state files (at rest and in transit)</li>
+              <li>✅ Enable versioning on state storage (S3, GCS)</li>
+              <li>✅ Use separate state files per environment</li>
+              <li>✅ Never commit state files to version control</li>
+              <li>✅ Use <code>.gitignore</code> to exclude state files</li>
+              <li>✅ Regularly backup state files</li>
+              <li>✅ Use workspaces or separate directories for environments</li>
+              <li>✅ Monitor state file size (keep it reasonable)</li>
+            </ul>
+          </div>
+
+          <h2>State File Size Management</h2>
+
+          <h3>Large State Files</h3>
+          
+          <pre><code># Check state file size
+ls -lh terraform.tfstate
+
+# If state file is too large:
+# 1. Split into multiple workspaces
+# 2. Use modules to organize resources
+# 3. Remove unused resources from state</code></pre>
+
+          <h3>Cleaning Up State</h3>
+          
+          <pre><code># Remove resources that no longer exist
+terraform state list
+terraform state rm aws_instance.deleted
+
+# Compact state file (removes unused data)
+terraform state rm -dry-run # Test first
+terraform state rm &lt;unused_resource&gt;</code></pre>
+
+          <h2>Workspaces</h2>
+
+          <h3>Using Workspaces for Environments</h3>
+          
+          <pre><code># Create workspace
+terraform workspace new development
+terraform workspace new staging
+terraform workspace new production
+
+# List workspaces
+terraform workspace list
+
+# Select workspace
+terraform workspace select production
+
+# Show current workspace
+terraform workspace show
+
+# Delete workspace
+terraform workspace delete development</code></pre>
+
+          <h3>Workspace-Specific State</h3>
+          
+          <pre><code># State files per workspace
+terraform.tfstate.d/
+  ├── development/
+  │   └── terraform.tfstate
+  ├── staging/
+  │   └── terraform.tfstate
+  └── production/
+      └── terraform.tfstate</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Use workspaces for managing multiple environments with the same configuration, 
+            but different variable values.
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="modules.html">Modules</a></strong> - Creating reusable modules</li>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Production-ready practices</li>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Deep dive into fundamentals</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

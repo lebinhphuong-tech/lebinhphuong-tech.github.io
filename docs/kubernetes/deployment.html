@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kubernetes Deployment Guide | K8s Docs</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .success-box {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .strategy-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .strategy-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Kubernetes</a></li>
+        <li class="breadcrumb-item active">Deployment Guide</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-cloud-fill me-2"></i>Kubernetes</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link active" href="deployment.html">Deployment Guide</a>
+            <a class="nav-link" href="scaling.html">Scaling & Monitoring</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-rocket-takeoff me-2"></i>Kubernetes Deployment Guide</h1>
+          
+          <p>
+            This guide covers production-ready deployment strategies, best practices, and patterns for deploying 
+            applications on Kubernetes clusters.
+          </p>
+
+          <h2>Deployment Strategies</h2>
+
+          <div class="strategy-card">
+            <h4>1. Rolling Update (Default)</h4>
+            <p>
+              Gradually replaces old Pods with new ones. Zero downtime but no easy rollback during deployment.
+            </p>
+            <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1          # Can have 1 extra pod during update
+      maxUnavailable: 0    # Must have all pods available
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21</code></pre>
+          </div>
+
+          <div class="strategy-card">
+            <h4>2. Recreate Strategy</h4>
+            <p>
+              Kills all old Pods before creating new ones. Causes downtime but ensures consistency.
+            </p>
+            <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21</code></pre>
+          </div>
+
+          <div class="strategy-card">
+            <h4>3. Blue/Green Deployment</h4>
+            <p>
+              Maintains two identical environments (blue and green). Switch traffic instantly between them.
+            </p>
+            <pre><code># Blue deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-blue
+  labels:
+    version: blue
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: blue
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+
+---
+# Green deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-green
+  labels:
+    version: green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      version: green
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: green
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.22
+
+---
+# Service switching between blue/green
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+    version: blue  # Change to 'green' to switch
+  ports:
+    - port: 80
+      targetPort: 80</code></pre>
+
+            <div class="tip-box">
+              <strong>💡 Tip:</strong> Use this strategy for critical applications that cannot tolerate mixed versions.
+            </div>
+          </div>
+
+          <div class="strategy-card">
+            <h4>4. Canary Deployment</h4>
+            <p>
+              Releases new version to a small subset of users first, then gradually increases traffic.
+            </p>
+            <pre><code># Main deployment (90% traffic)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-main
+spec:
+  replicas: 9
+  selector:
+    matchLabels:
+      app: nginx
+      track: stable
+  template:
+    metadata:
+      labels:
+        app: nginx
+        track: stable
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+
+---
+# Canary deployment (10% traffic)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      track: canary
+  template:
+    metadata:
+      labels:
+        app: nginx
+        track: canary
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.22
+
+---
+# Service with traffic splitting (requires Istio or similar)
+# Using simple approach with replicas ratio</code></pre>
+          </div>
+
+          <h2>Production-Ready Deployment</h2>
+
+          <h3>Complete Deployment YAML</h3>
+          <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  namespace: production
+  labels:
+    app: myapp
+    version: v1.0.0
+    environment: production
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+        version: v1.0.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      # Security context
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 2000
+      
+      # Service account
+      serviceAccountName: myapp-sa
+      
+      # Init containers
+      initContainers:
+      - name: init-migrations
+        image: myapp:migrations
+        command: ['sh', '-c', 'python manage.py migrate']
+        envFrom:
+        - configMapRef:
+            name: myapp-config
+        - secretRef:
+            name: myapp-secrets
+      
+      # Main containers
+      containers:
+      - name: myapp
+        image: myapp:v1.0.0
+        imagePullPolicy: Always
+        
+        # Ports
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        
+        # Environment variables
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: myapp-config
+              key: log_level
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: myapp-secrets
+              key: db_password
+        
+        # Resource limits
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        
+        # Startup probe (for slow-starting apps)
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          failureThreshold: 30
+        
+        # Volume mounts
+        volumeMounts:
+        - name: config
+          mountPath: /etc/config
+          readOnly: true
+        - name: tmp
+          mountPath: /tmp
+      
+      # Volumes
+      volumes:
+      - name: config
+        configMap:
+          name: myapp-config
+      - name: tmp
+        emptyDir: {}
+      
+      # Affinity rules
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - myapp
+              topologyKey: kubernetes.io/hostname
+      
+      # Tolerations
+      tolerations:
+      - key: "critical"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      
+      # Node selector
+      nodeSelector:
+        kubernetes.io/os: linux
+        node-type: compute-optimized
+
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+  namespace: production
+spec:
+  selector:
+    app: myapp
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  type: ClusterIP
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800</code></pre>
+
+          <h2>Deployment Best Practices</h2>
+
+          <h3>1. Resource Management</h3>
+          <div class="success-box">
+            <strong>✅ Always set:</strong>
+            <ul>
+              <li>Resource requests for guaranteed allocation</li>
+              <li>Resource limits to prevent resource starvation</li>
+              <li>Appropriate CPU/memory based on workload</li>
+            </ul>
+          </div>
+
+          <h3>2. Health Checks</h3>
+          <div class="tip-box">
+            <strong>💡 Health Check Tips:</strong>
+            <ul>
+              <li>Use <code>livenessProbe</code> to restart unhealthy containers</li>
+              <li>Use <code>readinessProbe</code> to remove Pods from service load balancer</li>
+              <li>Use <code>startupProbe</code> for slow-starting applications</li>
+              <li>Set appropriate delays and timeouts</li>
+            </ul>
+          </div>
+
+          <h3>3. Security</h3>
+          <pre><code># Security Context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  seccompProfile:
+    type: RuntimeDefault</code></pre>
+
+          <h3>4. Image Management</h3>
+          <ul>
+            <li>✅ Use specific image tags (avoid <code>:latest</code>)</li>
+            <li>✅ Use image pull policies appropriately</li>
+            <li>✅ Scan images for vulnerabilities</li>
+            <li>✅ Use private registries for production</li>
+          </ul>
+
+          <h3>5. Rolling Updates Configuration</h3>
+          <pre><code>strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 25%           # Allow extra pods during update
+    maxUnavailable: 25%     # Allow some pods to be unavailable</code></pre>
+
+          <h2>Deployment Commands</h2>
+
+          <h3>Deploy and Update</h3>
+          <pre><code># Create deployment from YAML
+kubectl apply -f deployment.yaml
+
+# Create deployment with namespace
+kubectl apply -f deployment.yaml -n production
+
+# Update deployment
+kubectl apply -f deployment.yaml
+
+# Update image directly
+kubectl set image deployment/myapp-deployment myapp=myapp:v2.0.0
+
+# Update environment variable
+kubectl set env deployment/myapp-deployment NODE_ENV=production</code></pre>
+
+          <h3>Rollout Management</h3>
+          <pre><code># Check rollout status
+kubectl rollout status deployment/myapp-deployment
+
+# View rollout history
+kubectl rollout history deployment/myapp-deployment
+
+# View details of specific revision
+kubectl rollout history deployment/myapp-deployment --revision=2
+
+# Rollback to previous version
+kubectl rollout undo deployment/myapp-deployment
+
+# Rollback to specific revision
+kubectl rollout undo deployment/myapp-deployment --to-revision=2
+
+# Pause rollout
+kubectl rollout pause deployment/myapp-deployment
+
+# Resume rollout
+kubectl rollout resume deployment/myapp-deployment</code></pre>
+
+          <h3>Scale Deployment</h3>
+          <pre><code># Scale deployment
+kubectl scale deployment/myapp-deployment --replicas=5
+
+# Scale with resource limits check
+kubectl scale deployment/myapp-deployment --replicas=5 --current-replicas=3
+
+# Auto-scale (requires metrics server)
+kubectl autoscale deployment/myapp-deployment --min=2 --max=10 --cpu-percent=80</code></pre>
+
+          <h2>Multi-Environment Deployment</h2>
+
+          <h3>Using Namespaces</h3>
+          <pre><code># Create namespaces
+kubectl create namespace development
+kubectl create namespace staging
+kubectl create namespace production
+
+# Deploy to different environments
+kubectl apply -f deployment.yaml -n development
+kubectl apply -f deployment.yaml -n staging
+kubectl apply -f deployment.yaml -n production
+
+# Label namespaces
+kubectl label namespace development environment=dev
+kubectl label namespace staging environment=staging
+kubectl label namespace production environment=prod</code></pre>
+
+          <h3>Using Kustomize</h3>
+          <pre><code># base/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+      - name: myapp
+        image: myapp:latest
+
+---
+# overlays/development/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base
+replicas:
+- name: myapp
+  count: 2
+images:
+- name: myapp
+  newTag: dev
+
+---
+# overlays/production/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base
+replicas:
+- name: myapp
+  count: 5
+images:
+- name: myapp
+  newTag: v1.0.0</code></pre>
+
+          <h2>Troubleshooting Deployments</h2>
+
+          <h3>Check Deployment Status</h3>
+          <pre><code># Get deployment status
+kubectl get deployment myapp-deployment
+
+# Describe deployment
+kubectl describe deployment myapp-deployment
+
+# Get rollout status
+kubectl rollout status deployment/myapp-deployment
+
+# View deployment events
+kubectl get events --sort-by='.lastTimestamp'</code></pre>
+
+          <h3>Check Pod Status</h3>
+          <pre><code># Get pods
+kubectl get pods -l app=myapp
+
+# Describe pod
+kubectl describe pod &lt;pod-name&gt;
+
+# Check pod logs
+kubectl logs &lt;pod-name&gt;
+
+# Check previous container logs (if crashed)
+kubectl logs &lt;pod-name&gt; --previous
+
+# Execute into pod
+kubectl exec -it &lt;pod-name&gt; -- sh</code></pre>
+
+          <h3>Common Issues</h3>
+          
+          <div class="warning-box">
+            <strong>⚠️ Issue: Pods stuck in Pending</strong>
+            <br><strong>Possible causes:</strong>
+            <ul>
+              <li>Insufficient resources</li>
+              <li>No matching nodes (node selectors/affinity)</li>
+              <li>No available PVC</li>
+            </ul>
+            <br><strong>Solution:</strong>
+            <pre><code>kubectl describe pod &lt;pod-name&gt;</code></pre>
+          </div>
+
+          <div class="warning-box">
+            <strong>⚠️ Issue: Pods crashing</strong>
+            <br><strong>Possible causes:</strong>
+            <ul>
+              <li>Application errors</li>
+              <li>Resource limits exceeded</li>
+              <li>Missing configuration/secrets</li>
+            </ul>
+            <br><strong>Solution:</strong>
+            <pre><code>kubectl logs &lt;pod-name&gt;
+kubectl describe pod &lt;pod-name&gt;</code></pre>
+          </div>
+
+          <div class="warning-box">
+            <strong>⚠️ Issue: Deployment not updating</strong>
+            <br><strong>Possible causes:</strong>
+            <ul>
+              <li>Image pull errors</li>
+              <li>Readiness probe failing</li>
+              <li>Rollout paused</li>
+            </ul>
+            <br><strong>Solution:</strong>
+            <pre><code>kubectl rollout status deployment/myapp-deployment
+kubectl rollout resume deployment/myapp-deployment</code></pre>
+          </div>
+
+          <h2>CI/CD Integration</h2>
+
+          <h3>GitHub Actions Example</h3>
+          <pre><code>name: Deploy to Kubernetes
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Build Docker image
+      run: |
+        docker build -t myapp:${{ github.sha }} .
+        docker tag myapp:${{ github.sha }} myapp:latest
+    
+    - name: Push to registry
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker push myapp:${{ github.sha }}
+        docker push myapp:latest
+    
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v1
+    
+    - name: Configure kubectl
+      run: |
+        echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
+        export KUBECONFIG=./kubeconfig
+    
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl set image deployment/myapp-deployment myapp=myapp:${{ github.sha }}
+        kubectl rollout status deployment/myapp-deployment</code></pre>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="scaling.html">Scaling & Monitoring</a></strong> - Auto-scaling and monitoring strategies</li>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Deep dive into Kubernetes objects</li>
+            <li><strong><a href="index.html">Getting Started</a></strong> - Back to basics</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

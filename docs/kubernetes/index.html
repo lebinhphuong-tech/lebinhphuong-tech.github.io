@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kubernetes Documentation | Lê Bình Phương</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .alert-info {
+      background: #e7f3ff;
+      border-left: 4px solid var(--primary-color);
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .concept-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .concept-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item active">Kubernetes</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-cloud-fill me-2"></i>Kubernetes</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Getting Started</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="deployment.html">Deployment Guide</a>
+            <a class="nav-link" href="scaling.html">Scaling & Monitoring</a>
+            <a class="nav-link" href="#commands">kubectl Commands</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-cloud-fill me-2"></i>Kubernetes Documentation</h1>
+          
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Container Orchestration</strong> - Kubernetes automates deployment, scaling, and management of containerized applications.
+          </div>
+
+          <h2>What is Kubernetes?</h2>
+          <p>
+            Kubernetes (often abbreviated as K8s) is an open-source container orchestration platform that automates the deployment, 
+            scaling, and management of containerized applications. It was originally designed by Google and is now maintained by 
+            the Cloud Native Computing Foundation (CNCF).
+          </p>
+
+          <h2>Key Features</h2>
+          <ul>
+            <li>🚀 <strong>Automated Deployment</strong> - Roll out changes with zero downtime</li>
+            <li>📈 <strong>Auto-scaling</strong> - Scale applications based on demand</li>
+            <li>💪 <strong>Self-healing</strong> - Automatically restart failed containers</li>
+            <li>🔧 <strong>Load Balancing</strong> - Distribute traffic across containers</li>
+            <li>💾 <strong>Storage Management</strong> - Persistent storage for containers</li>
+            <li>🔐 <strong>Secret Management</strong> - Secure configuration and credentials</li>
+          </ul>
+
+          <h2>Architecture Overview</h2>
+          
+          <h3>Control Plane (Master Node)</h3>
+          <div class="concept-card">
+            <h4>API Server</h4>
+            <p>The front-end for Kubernetes control plane. Handles all REST operations.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>etcd</h4>
+            <p>Consistent and highly-available key-value store for cluster state and configuration.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Scheduler</h4>
+            <p>Assigns Pods to Nodes based on resource availability and constraints.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Controller Manager</h4>
+            <p>Runs controller processes that regulate cluster state (replication, endpoints, etc.)</p>
+          </div>
+
+          <h3>Worker Nodes</h3>
+          <div class="concept-card">
+            <h4>kubelet</h4>
+            <p>Agent that runs on each node and ensures containers are running in Pods.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>kube-proxy</h4>
+            <p>Network proxy that maintains network rules on nodes and enables communication.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Container Runtime</h4>
+            <p>Software responsible for running containers (Docker, containerd, CRI-O).</p>
+          </div>
+
+          <h2>Installation</h2>
+
+          <h3>Using Minikube (Local Development)</h3>
+          <pre><code># Install Minikube
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+# Start Minikube
+minikube start
+
+# Verify installation
+kubectl get nodes</code></pre>
+
+          <h3>Install kubectl</h3>
+          <pre><code># Linux
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# macOS
+brew install kubectl
+
+# Verify installation
+kubectl version --client</code></pre>
+
+          <h3>Using Docker Desktop</h3>
+          <p>Docker Desktop includes Kubernetes. Enable it in Settings → Kubernetes.</p>
+
+          <h2 id="commands">Essential kubectl Commands</h2>
+
+          <h3>Cluster Information</h3>
+          <pre><code># Get cluster info
+kubectl cluster-info
+
+# Get nodes
+kubectl get nodes
+
+# Get all resources
+kubectl get all
+
+# Describe a node
+kubectl describe node &lt;node-name&gt;</code></pre>
+
+          <h3>Pods</h3>
+          <pre><code># List pods
+kubectl get pods
+
+# List pods in all namespaces
+kubectl get pods -A
+
+# Get pods with more details
+kubectl get pods -o wide
+
+# Describe a pod
+kubectl describe pod &lt;pod-name&gt;
+
+# Get pod logs
+kubectl logs &lt;pod-name&gt;
+
+# Follow logs
+kubectl logs -f &lt;pod-name&gt;
+
+# Execute command in pod
+kubectl exec -it &lt;pod-name&gt; -- sh
+
+# Delete pod
+kubectl delete pod &lt;pod-name&gt;</code></pre>
+
+          <h3>Deployments</h3>
+          <pre><code># List deployments
+kubectl get deployments
+
+# Create deployment
+kubectl create deployment nginx --image=nginx:latest
+
+# Scale deployment
+kubectl scale deployment nginx --replicas=3
+
+# Update deployment image
+kubectl set image deployment/nginx nginx=nginx:1.21
+
+# Rollout status
+kubectl rollout status deployment/nginx
+
+# Rollback deployment
+kubectl rollout undo deployment/nginx
+
+# Delete deployment
+kubectl delete deployment nginx</code></pre>
+
+          <h3>Services</h3>
+          <pre><code># List services
+kubectl get services
+
+# Create service
+kubectl expose deployment nginx --port=80 --type=LoadBalancer
+
+# Get service details
+kubectl describe service &lt;service-name&gt;
+
+# Port forward to local machine
+kubectl port-forward service/nginx 8080:80</code></pre>
+
+          <h3>Namespaces</h3>
+          <pre><code># List namespaces
+kubectl get namespaces
+
+# Create namespace
+kubectl create namespace production
+
+# Get resources in namespace
+kubectl get pods -n production
+
+# Set default namespace
+kubectl config set-context --current --namespace=production</code></pre>
+
+          <h2>Quick Start Example</h2>
+          <p>Deploy a simple Nginx application:</p>
+
+          <h3>1. Create a Deployment</h3>
+          <pre><code>kubectl create deployment nginx-app --image=nginx:latest</code></pre>
+
+          <h3>2. Expose as Service</h3>
+          <pre><code>kubectl expose deployment nginx-app --port=80 --type=LoadBalancer</code></pre>
+
+          <h3>3. Check Status</h3>
+          <pre><code># Get pods
+kubectl get pods
+
+# Get services
+kubectl get services
+
+# Access the service (Minikube)
+minikube service nginx-app</code></pre>
+
+          <h2>YAML Configuration</h2>
+          <p>Deploy using YAML files (declarative approach):</p>
+
+          <h3>Deployment Example</h3>
+          <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80</code></pre>
+
+          <h3>Service Example</h3>
+          <pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Use <code>kubectl apply -f filename.yaml</code> to create/update resources from YAML files.
+          </div>
+
+          <h2>Core Concepts</h2>
+          <p>Understanding key Kubernetes objects:</p>
+          <ul>
+            <li><strong>Pods</strong> - Smallest deployable units containing one or more containers</li>
+            <li><strong>Deployments</strong> - Manages ReplicaSets and provides declarative updates</li>
+            <li><strong>Services</strong> - Exposes Pods to network traffic</li>
+            <li><strong>ConfigMaps</strong> - Stores configuration data</li>
+            <li><strong>Secrets</strong> - Stores sensitive data (passwords, tokens)</li>
+            <li><strong>Volumes</strong> - Persistent storage for containers</li>
+            <li><strong>Namespaces</strong> - Virtual clusters within a physical cluster</li>
+          </ul>
+
+          <h2>Next Steps</h2>
+          <p>Continue learning with our detailed guides:</p>
+          <ul>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Deep dive into Kubernetes objects</li>
+            <li><strong><a href="deployment.html">Deployment Guide</a></strong> - Production deployment strategies</li>
+            <li><strong><a href="scaling.html">Scaling & Monitoring</a></strong> - Auto-scaling and monitoring</li>
+            <li><strong><a href="../refs/kubectl-cheatsheet.html">kubectl Cheatsheet</a></strong> - Quick reference guide</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

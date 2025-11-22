@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terraform Best Practices | Terraform Docs</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .success-box {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Terraform</a></li>
+        <li class="breadcrumb-item active">Best Practices</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-diagram-3 me-2"></i>Terraform</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="providers.html">Providers & Resources</a>
+            <a class="nav-link" href="state.html">State Management</a>
+            <a class="nav-link" href="modules.html">Modules</a>
+            <a class="nav-link" href="aws.html">AWS Setup</a>
+            <a class="nav-link" href="gcp.html">GCP Setup</a>
+            <a class="nav-link active" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-star-fill me-2"></i>Terraform Best Practices</h1>
+          
+          <p>
+            Following Terraform best practices ensures your infrastructure is secure, maintainable, and scalable. 
+            This guide covers production-ready practices for Terraform.
+          </p>
+
+          <h2>File Organization</h2>
+
+          <h3>Standard Project Structure</h3>
+          <pre><code>terraform-project/
+├── main.tf              # Main configuration
+├── variables.tf         # Input variables
+├── outputs.tf           # Output values
+├── terraform.tfvars     # Variable values
+├── versions.tf          # Provider requirements
+├── README.md            # Documentation
+├── .gitignore           # Git ignore rules
+└── modules/             # Reusable modules
+    ├── vpc/
+    ├── ec2/
+    └── rds/</code></pre>
+
+          <h3>Separate Environments</h3>
+          <pre><code>environments/
+├── dev/
+│   ├── main.tf
+│   └── terraform.tfvars
+├── staging/
+│   ├── main.tf
+│   └── terraform.tfvars
+└── production/
+    ├── main.tf
+    └── terraform.tfvars</code></pre>
+
+          <h2>Version Management</h2>
+
+          <h3>Pin Terraform Version</h3>
+          <pre><code># versions.tf
+terraform {
+  required_version = ">= 1.0"
+  
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Pin to specific versions in production: <code>version = "5.0.0"</code>
+          </div>
+
+          <h2>State Management</h2>
+
+          <h3>Use Remote State</h3>
+          <pre><code>terraform {
+  backend "s3" {
+    bucket         = "terraform-state-bucket"
+    key            = "terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "terraform-state-lock"
+  }
+}</code></pre>
+
+          <div class="success-box">
+            <strong>✅ Best Practices:</strong>
+            <ul>
+              <li>✅ Always use remote state in production</li>
+              <li>✅ Enable state locking (DynamoDB, etc.)</li>
+              <li>✅ Enable encryption for state files</li>
+              <li>✅ Enable versioning on state storage</li>
+              <li>✅ Never commit state files to Git</li>
+            </ul>
+          </div>
+
+          <h2>Security</h2>
+
+          <h3>Never Commit Secrets</h3>
+          <pre><code># .gitignore
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+*.tfvars
+!terraform.tfvars.example
+*.tfplan</code></pre>
+
+          <h3>Use Environment Variables</h3>
+          <pre><code># For AWS credentials
+export AWS_ACCESS_KEY_ID="..."
+export AWS_SECRET_ACCESS_KEY="..."
+
+# Or use AWS profiles
+export AWS_PROFILE="production"</code></pre>
+
+          <h3>Use Secret Management</h3>
+          <pre><code># Use AWS Secrets Manager
+data "aws_secretsmanager_secret" "db_password" {
+  name = "prod/db/password"
+}
+
+data "aws_secretsmanager_secret_version" "db_password" {
+  secret_id = data.aws_secretsmanager_secret.db_password.id
+}</code></pre>
+
+          <h2>Variables Best Practices</h2>
+
+          <h3>Always Provide Descriptions</h3>
+          <pre><code>variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+  
+  validation {
+    condition     = can(regex("^t[23]\\.", var.instance_type))
+    error_message = "Instance type must be t2 or t3 family."
+  }
+}</code></pre>
+
+          <h3>Use Sensitive Variables</h3>
+          <pre><code>variable "db_password" {
+  description = "Database password"
+  type        = string
+  sensitive   = true
+}</code></pre>
+
+          <h2>Resource Management</h2>
+
+          <h3>Use Tags Consistently</h3>
+          <pre><code>locals {
+  common_tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+    Owner       = var.team_name
+  }
+}
+
+resource "aws_instance" "web" {
+  tags = merge(local.common_tags, {
+    Name = "${var.environment}-web-server"
+  })
+}</code></pre>
+
+          <h3>Use Data Sources</h3>
+          <pre><code># Instead of hardcoding AMI IDs
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+resource "aws_instance" "web" {
+  ami = data.aws_ami.amazon_linux.id
+}</code></pre>
+
+          <h2>Module Best Practices</h2>
+
+          <div class="success-box">
+            <strong>✅ Module Guidelines:</strong>
+            <ul>
+              <li>✅ One module per logical component</li>
+              <li>✅ Use descriptive module names</li>
+              <li>✅ Document modules with README.md</li>
+              <li>✅ Pin module versions in production</li>
+              <li>✅ Expose all important outputs</li>
+              <li>✅ Use variables for all configurable values</li>
+            </ul>
+          </div>
+
+          <h2>CI/CD Integration</h2>
+
+          <h3>Terraform Cloud/Enterprise</h3>
+          <pre><code># terraform.yml (GitHub Actions)
+name: Terraform
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+    
+    - name: Terraform Init
+      run: terraform init
+    
+    - name: Terraform Validate
+      run: terraform validate
+    
+    - name: Terraform Plan
+      run: terraform plan
+      continue-on-error: true
+    
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main'
+      run: terraform apply -auto-approve</code></pre>
+
+          <h2>Common Mistakes to Avoid</h2>
+
+          <div class="warning-box">
+            <strong>⚠️ Common Mistakes:</strong>
+            <ul>
+              <li>❌ Committing state files to Git</li>
+              <li>❌ Hardcoding credentials</li>
+              <li>❌ Not using remote state</li>
+              <li>❌ Not pinning versions</li>
+              <li>❌ Not using modules for reusable code</li>
+              <li>❌ Not documenting variables</li>
+              <li>❌ Ignoring terraform plan output</li>
+              <li>❌ Not testing changes in dev/staging first</li>
+            </ul>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="modules.html">Modules</a></strong> - Creating reusable modules</li>
+            <li><strong><a href="state.html">State Management</a></strong> - Managing Terraform state</li>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Deep dive into fundamentals</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terraform GCP Setup | Terraform Docs</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .info-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .info-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Terraform</a></li>
+        <li class="breadcrumb-item active">GCP Setup</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-diagram-3 me-2"></i>Terraform</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="providers.html">Providers & Resources</a>
+            <a class="nav-link" href="state.html">State Management</a>
+            <a class="nav-link" href="modules.html">Modules</a>
+            <a class="nav-link" href="aws.html">AWS Setup</a>
+            <a class="nav-link active" href="gcp.html">GCP Setup</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-cloud me-2"></i>Terraform GCP Setup</h1>
+          
+          <p>
+            Complete guide to setting up Terraform with Google Cloud Platform (GCP). 
+            Learn how to configure authentication, create your first GCP resources, and manage infrastructure.
+          </p>
+
+          <h2>Prerequisites</h2>
+          
+          <ul>
+            <li>✅ GCP Account</li>
+            <li>✅ gcloud CLI installed and configured</li>
+            <li>✅ Terraform installed</li>
+            <li>✅ GCP Project created</li>
+            <li>✅ Service Account with appropriate permissions</li>
+          </ul>
+
+          <h2>Installation</h2>
+
+          <h3>Install gcloud CLI</h3>
+          <pre><code># macOS
+brew install --cask google-cloud-sdk
+
+# Linux
+curl https://sdk.cloud.google.com | bash
+exec -l $SHELL
+
+# Windows
+# Download from: https://cloud.google.com/sdk/docs/install</code></pre>
+
+          <h3>Initialize gcloud</h3>
+          <pre><code>gcloud init
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID</code></pre>
+
+          <h2>Authentication</h2>
+
+          <h3>Method 1: Application Default Credentials (ADC)</h3>
+          <pre><code># Authenticate with ADC
+gcloud auth application-default login
+
+# Terraform will automatically use ADC
+provider "google" {
+  project = var.project_id
+  region  = var.region
+}</code></pre>
+
+          <h3>Method 2: Service Account Key</h3>
+          <pre><code># Create service account
+gcloud iam service-accounts create terraform \
+  --display-name="Terraform Service Account"
+
+# Grant permissions
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+  --member="serviceAccount:terraform@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/owner"
+
+# Create key
+gcloud iam service-accounts keys create credentials.json \
+  --iam-account=terraform@YOUR_PROJECT_ID.iam.gserviceaccount.com
+
+# Use in Terraform
+provider "google" {
+  project     = var.project_id
+  region      = var.region
+  credentials = file("credentials.json")
+}</code></pre>
+
+          <h3>Method 3: Environment Variable</h3>
+          <pre><code>export GOOGLE_APPLICATION_CREDENTIALS="path/to/credentials.json"
+
+# Or export service account key content
+export GOOGLE_CREDENTIALS='{"type":"service_account",...}'
+
+# In Terraform
+provider "google" {
+  project = var.project_id
+  region  = var.region
+}</code></pre>
+
+          <h2>Basic GCP Provider Configuration</h2>
+
+          <h3>versions.tf</h3>
+          <pre><code>terraform {
+  required_version = ">= 1.0"
+  
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 5.0"
+    }
+  }
+}</code></pre>
+
+          <h3>provider.tf</h3>
+          <pre><code>provider "google" {
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
+}</code></pre>
+
+          <h2>IAM Permissions</h2>
+
+          <h3>Required Roles</h3>
+          <pre><code># Grant necessary roles to service account
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member="serviceAccount:terraform@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/compute.admin"
+
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member="serviceAccount:terraform@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/iam.serviceAccountAdmin"
+
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member="serviceAccount:terraform@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/storage.admin"</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Best Practice:</strong> Use minimum required permissions. 
+            Grant only the roles needed for your infrastructure.
+          </div>
+
+          <h2>Complete Example: VPC with Compute Engine</h2>
+
+          <h3>variables.tf</h3>
+          <pre><code>variable "project_id" {
+  description = "GCP Project ID"
+  type        = string
+}
+
+variable "region" {
+  description = "GCP region"
+  type        = string
+  default     = "us-central1"
+}
+
+variable "zone" {
+  description = "GCP zone"
+  type        = string
+  default     = "us-central1-a"
+}
+
+variable "environment" {
+  description = "Environment name"
+  type        = string
+}
+
+variable "instance_type" {
+  description = "GCE instance type"
+  type        = string
+  default     = "e2-micro"
+}</code></pre>
+
+          <h3>main.tf</h3>
+          <pre><code># VPC Network
+resource "google_compute_network" "vpc" {
+  name                    = "${var.environment}-vpc"
+  auto_create_subnetworks = false
+
+  project = var.project_id
+}
+
+# Public Subnet
+resource "google_compute_subnetwork" "public" {
+  name          = "${var.environment}-public-subnet"
+  ip_cidr_range = "10.0.1.0/24"
+  region        = var.region
+  network       = google_compute_network.vpc.id
+
+  project = var.project_id
+}
+
+# Firewall Rule - Allow HTTP
+resource "google_compute_firewall" "allow_http" {
+  name    = "${var.environment}-allow-http"
+  network = google_compute_network.vpc.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["http-server"]
+
+  project = var.project_id
+}
+
+# Firewall Rule - Allow SSH
+resource "google_compute_firewall" "allow_ssh" {
+  name    = "${var.environment}-allow-ssh"
+  network = google_compute_network.vpc.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["ssh-server"]
+
+  project = var.project_id
+}
+
+# Compute Engine Instance
+resource "google_compute_instance" "web" {
+  name         = "${var.environment}-web-server"
+  machine_type = var.instance_type
+  zone         = var.zone
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+      size  = 10
+    }
+  }
+
+  network_interface {
+    network    = google_compute_network.vpc.name
+    subnetwork = google_compute_subnetwork.public.name
+
+    access_config {
+      // Ephemeral public IP
+    }
+  }
+
+  metadata_startup_script = &lt;&lt;-EOF
+    #!/bin/bash
+    apt-get update
+    apt-get install -y nginx
+    systemctl start nginx
+    systemctl enable nginx
+    echo "&lt;h1&gt;Hello from Terraform on GCP!&lt;/h1&gt;" > /var/www/html/index.html
+  EOF
+
+  tags = ["http-server", "ssh-server"]
+
+  project = var.project_id
+}</code></pre>
+
+          <h3>outputs.tf</h3>
+          <pre><code>output "vpc_id" {
+  description = "ID of the VPC network"
+  value       = google_compute_network.vpc.id
+}
+
+output "instance_id" {
+  description = "ID of the compute instance"
+  value       = google_compute_instance.web.id
+}
+
+output "instance_public_ip" {
+  description = "Public IP of the compute instance"
+  value       = google_compute_instance.web.network_interface[0].access_config[0].nat_ip
+}
+
+output "instance_name" {
+  description = "Name of the compute instance"
+  value       = google_compute_instance.web.name
+}</code></pre>
+
+          <h3>terraform.tfvars</h3>
+          <pre><code>project_id   = "my-gcp-project-id"
+region       = "us-central1"
+zone         = "us-central1-a"
+environment  = "production"
+instance_type = "e2-micro"</code></pre>
+
+          <h2>Remote State with GCS</h2>
+
+          <h3>GCS Backend Configuration</h3>
+          <pre><code>terraform {
+  backend "gcs" {
+    bucket  = "terraform-state-bucket"
+    prefix  = "terraform/state"
+    project = "my-gcp-project"
+  }
+}</code></pre>
+
+          <h3>Create GCS Bucket for State</h3>
+          <pre><code># Create GCS bucket
+gsutil mb -p PROJECT_ID -l us-central1 gs://terraform-state-bucket
+
+# Enable versioning
+gsutil versioning set on gs://terraform-state-bucket
+
+# Enable encryption
+gsutil encryption set -k projects/PROJECT_ID/locations/global/keyRings/KEY_RING/cryptoKeys/KEY_NAME \
+  gs://terraform-state-bucket</code></pre>
+
+          <h2>Common GCP Resources</h2>
+
+          <h3>Cloud Storage Bucket</h3>
+          <pre><code>resource "google_storage_bucket" "website" {
+  name          = "${var.environment}-website-bucket"
+  location      = var.region
+  force_destroy = false
+
+  versioning {
+    enabled = true
+  }
+
+  uniform_bucket_level_access {
+    enabled = true
+  }
+
+  project = var.project_id
+}</code></pre>
+
+          <h3>Cloud SQL Database</h3>
+          <pre><code>resource "google_sql_database_instance" "main" {
+  name             = "${var.environment}-db"
+  database_version = "POSTGRES_15"
+  region           = var.region
+
+  settings {
+    tier = "db-f1-micro"
+    
+    backup_configuration {
+      enabled    = true
+      start_time = "03:00"
+    }
+    
+    ip_configuration {
+      ipv4_enabled = true
+      authorized_networks {
+        value = "0.0.0.0/0"
+      }
+    }
+  }
+
+  project = var.project_id
+}
+
+resource "google_sql_database" "main" {
+  name     = "mydb"
+  instance = google_sql_database_instance.main.name
+  project  = var.project_id
+}
+
+resource "google_sql_user" "main" {
+  name     = "admin"
+  instance = google_sql_database_instance.main.name
+  password = var.db_password
+  project  = var.project_id
+}</code></pre>
+
+          <h3>Load Balancer</h3>
+          <pre><code>resource "google_compute_backend_service" "web" {
+  name      = "${var.environment}-backend-service"
+  protocol  = "HTTP"
+  port_name = "http"
+  timeout_sec = 10
+
+  backend {
+    group = google_compute_instance_group.web.id
+  }
+
+  health_checks = [google_compute_health_check.web.id]
+
+  project = var.project_id
+}
+
+resource "google_compute_health_check" "web" {
+  name = "${var.environment}-health-check"
+
+  http_health_check {
+    port = 80
+    path = "/"
+  }
+
+  project = var.project_id
+}
+
+resource "google_compute_url_map" "web" {
+  name            = "${var.environment}-url-map"
+  default_service = google_compute_backend_service.web.id
+
+  project = var.project_id
+}
+
+resource "google_compute_target_http_proxy" "web" {
+  name    = "${var.environment}-http-proxy"
+  url_map = google_compute_url_map.web.id
+
+  project = var.project_id
+}
+
+resource "google_compute_global_forwarding_rule" "web" {
+  name       = "${var.environment}-forwarding-rule"
+  target     = google_compute_target_http_proxy.web.id
+  port_range = "80"
+
+  project = var.project_id
+}</code></pre>
+
+          <h2>Deployment Steps</h2>
+
+          <h3>1. Initialize Terraform</h3>
+          <pre><code>terraform init</code></pre>
+
+          <h3>2. Validate Configuration</h3>
+          <pre><code>terraform validate</code></pre>
+
+          <h3>3. Format Files</h3>
+          <pre><code>terraform fmt</code></pre>
+
+          <h3>4. Plan Changes</h3>
+          <pre><code>terraform plan</code></pre>
+
+          <h3>5. Apply Changes</h3>
+          <pre><code>terraform apply</code></pre>
+
+          <h2>Troubleshooting</h2>
+
+          <h3>Common Issues</h3>
+          
+          <div class="warning-box">
+            <strong>⚠️ Issue: Authentication Error</strong>
+            <p><strong>Error:</strong> <code>Error: google: could not find default credentials</code></p>
+            <p><strong>Solution:</strong> Run <code>gcloud auth application-default login</code> or set credentials.</p>
+          </div>
+
+          <div class="warning-box">
+            <strong>⚠️ Issue: Permission Denied</strong>
+            <p><strong>Error:</strong> <code>Error: Error 403: Permission denied</code></p>
+            <p><strong>Solution:</strong> Ensure service account has required IAM roles.</p>
+          </div>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Enable required APIs for your project:
+            <pre><code>gcloud services enable compute.googleapis.com
+gcloud services enable sqladmin.googleapis.com
+gcloud services enable storage-api.googleapis.com</code></pre>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="modules.html">Modules</a></strong> - Create reusable modules</li>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Production-ready practices</li>
+            <li><strong><a href="state.html">State Management</a></strong> - Manage Terraform state</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

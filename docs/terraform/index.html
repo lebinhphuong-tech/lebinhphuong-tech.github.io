@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terraform Documentation | Lê Bình Phương</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .alert-info {
+      background: #e7f3ff;
+      border-left: 4px solid var(--primary-color);
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .concept-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .concept-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item active">Terraform</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-diagram-3 me-2"></i>Terraform</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Getting Started</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="providers.html">Providers & Resources</a>
+            <a class="nav-link" href="state.html">State Management</a>
+            <a class="nav-link" href="modules.html">Modules</a>
+            <a class="nav-link" href="aws.html">AWS Setup</a>
+            <a class="nav-link" href="gcp.html">GCP Setup</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-diagram-3 me-2"></i>Terraform Documentation</h1>
+          
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Infrastructure as Code</strong> - Terraform is an open-source infrastructure as code tool that enables you to safely and predictably create, change, and improve infrastructure.
+          </div>
+
+          <h2>What is Terraform?</h2>
+          <p>
+            Terraform is a tool for building, changing, and versioning infrastructure safely and efficiently. 
+            Terraform can manage existing and popular service providers as well as custom in-house solutions.
+          </p>
+
+          <h2>Key Features</h2>
+          <ul>
+            <li>🏗️ <strong>Infrastructure as Code</strong> - Define infrastructure using declarative configuration files</li>
+            <li>🔄 <strong>Execution Plans</strong> - Preview changes before applying them</li>
+            <li>📦 <strong>Resource Graph</strong> - Build resources in parallel for maximum efficiency</li>
+            <li>🔧 <strong>Change Automation</strong> - Apply complex changesets with minimal human interaction</li>
+            <li>🌍 <strong>Multi-Cloud</strong> - Support for AWS, Azure, GCP, and 100+ providers</li>
+            <li>📝 <strong>Version Control</strong> - Track infrastructure changes in Git</li>
+          </ul>
+
+          <h2>Core Concepts</h2>
+          
+          <div class="concept-card">
+            <h4>Configuration Files (.tf)</h4>
+            <p>
+              Terraform uses text files to describe infrastructure. These files use HCL (HashiCorp Configuration Language) 
+              syntax and have a <code>.tf</code> extension.
+            </p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Providers</h4>
+            <p>
+              Providers are plugins that Terraform uses to interact with cloud providers, SaaS providers, and other APIs. 
+              Examples: AWS, Azure, GCP, Docker, Kubernetes.
+            </p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Resources</h4>
+            <p>
+              Resources are the most important element in Terraform. Each resource block describes one or more infrastructure objects 
+              such as virtual networks, compute instances, or higher-level components.
+            </p>
+          </div>
+
+          <div class="concept-card">
+            <h4>State</h4>
+            <p>
+              Terraform must store state about your managed infrastructure and configuration. This state is used to map real world 
+              resources to your configuration and keep track of metadata.
+            </p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Modules</h4>
+            <p>
+              Modules are containers for multiple resources that are used together. They allow you to organize your code, 
+              reuse infrastructure, and create abstractions.
+            </p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Variables</h4>
+            <p>
+              Variables allow you to customize aspects of Terraform modules without altering the module's source code. 
+              They make your configuration more flexible and reusable.
+            </p>
+          </div>
+
+          <h2>Installation</h2>
+
+          <h3>Linux</h3>
+          <pre><code># Install using package manager
+# Ubuntu/Debian
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt-get update && sudo apt-get install terraform
+
+# Using wget
+wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
+unzip terraform_1.6.0_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+
+# Verify installation
+terraform version</code></pre>
+
+          <h3>macOS</h3>
+          <pre><code># Using Homebrew
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+
+# Or using tfenv (Terraform version manager)
+brew install tfenv
+tfenv install latest
+tfenv use latest
+
+# Verify installation
+terraform version</code></pre>
+
+          <h3>Windows</h3>
+          <pre><code># Using Chocolatey
+choco install terraform
+
+# Or download from: https://www.terraform.io/downloads
+# Extract and add to PATH
+
+# Verify installation
+terraform version</code></pre>
+
+          <h2>Quick Start Example</h2>
+          
+          <p>Let's create a simple AWS EC2 instance using Terraform:</p>
+
+          <h3>1. Create main.tf</h3>
+          <pre><code># Configure AWS Provider
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+# Create EC2 instance
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "HelloWorld"
+  }
+}</code></pre>
+
+          <h3>2. Initialize Terraform</h3>
+          <pre><code># Initialize Terraform and download providers
+terraform init</code></pre>
+
+          <h3>3. Plan Changes</h3>
+          <pre><code># Preview changes before applying
+terraform plan</code></pre>
+
+          <h3>4. Apply Changes</h3>
+          <pre><code># Create the infrastructure
+terraform apply
+
+# Type 'yes' to confirm</code></pre>
+
+          <h3>5. Verify Resources</h3>
+          <pre><code># List all resources
+terraform show
+
+# Get resource state
+terraform state list
+
+# View specific resource
+terraform state show aws_instance.web</code></pre>
+
+          <h3>6. Destroy Infrastructure</h3>
+          <pre><code># Remove all resources
+terraform destroy
+
+# Type 'yes' to confirm</code></pre>
+
+          <h2>Common Terraform Commands</h2>
+
+          <h3>Basic Commands</h3>
+          <pre><code># Initialize Terraform
+terraform init
+
+# Validate configuration
+terraform validate
+
+# Format configuration files
+terraform fmt
+
+# Show plan
+terraform plan
+
+# Apply changes
+terraform apply
+
+# Apply without prompt
+terraform apply -auto-approve
+
+# Destroy infrastructure
+terraform destroy
+
+# Show current state
+terraform show
+
+# List resources in state
+terraform state list</code></pre>
+
+          <h3>State Management</h3>
+          <pre><code># Show specific resource
+terraform state show aws_instance.web
+
+# Move resource
+terraform state mv aws_instance.old aws_instance.new
+
+# Remove resource from state
+terraform state rm aws_instance.web
+
+# Import existing resource
+terraform import aws_instance.web i-1234567890abcdef0</code></pre>
+
+          <h3>Output Commands</h3>
+          <pre><code># Show outputs
+terraform output
+
+# Show specific output
+terraform output instance_id
+
+# Show outputs in JSON
+terraform output -json</code></pre>
+
+          <h2>Project Structure</h2>
+          
+          <p>A typical Terraform project structure:</p>
+          
+          <pre><code>terraform-project/
+├── main.tf              # Main configuration
+├── variables.tf         # Input variables
+├── outputs.tf           # Output values
+├── terraform.tfvars     # Variable values
+├── terraform.tfstate    # State file (don't commit)
+├── terraform.tfstate.backup  # State backup
+└── .terraform/          # Provider plugins (don't commit)</code></pre>
+
+          <h2>Basic Configuration Example</h2>
+
+          <h3>variables.tf</h3>
+          <pre><code>variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default = {
+    Environment = "dev"
+    Project     = "example"
+  }
+}</code></pre>
+
+          <h3>main.tf</h3>
+          <pre><code>terraform {
+  required_version = ">= 1.0"
+  
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+  
+  backend "s3" {
+    bucket = "my-terraform-state"
+    key    = "terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
+provider "aws" {
+  region = var.region
+}
+
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = var.instance_type
+
+  tags = var.tags
+}</code></pre>
+
+          <h3>outputs.tf</h3>
+          <pre><code>output "instance_id" {
+  description = "ID of the EC2 instance"
+  value       = aws_instance.web.id
+}
+
+output "instance_public_ip" {
+  description = "Public IP address of the EC2 instance"
+  value       = aws_instance.web.public_ip
+}
+
+output "instance_public_dns" {
+  description = "Public DNS name of the EC2 instance"
+  value       = aws_instance.web.public_dns
+}</code></pre>
+
+          <h3>terraform.tfvars</h3>
+          <pre><code>region        = "us-east-1"
+instance_type = "t2.micro"
+
+tags = {
+  Environment = "production"
+  Project     = "web-app"
+  ManagedBy   = "Terraform"
+}</code></pre>
+
+          <h2>Workflow</h2>
+
+          <div class="tip-box">
+            <strong>💡 Typical Terraform Workflow:</strong>
+            <ol>
+              <li><strong>Write</strong> - Create Terraform configuration files</li>
+              <li><strong>Initialize</strong> - Run <code>terraform init</code> to download providers</li>
+              <li><strong>Plan</strong> - Run <code>terraform plan</code> to preview changes</li>
+              <li><strong>Apply</strong> - Run <code>terraform apply</code> to create/update infrastructure</li>
+              <li><strong>Verify</strong> - Check the created resources</li>
+              <li><strong>Modify</strong> - Update configuration files as needed</li>
+              <li><strong>Destroy</strong> - Run <code>terraform destroy</code> when done</li>
+            </ol>
+          </div>
+
+          <h2>Why Use Terraform?</h2>
+          
+          <h3>Infrastructure as Code Benefits</h3>
+          <ul>
+            <li>✅ <strong>Version Control</strong> - Track infrastructure changes in Git</li>
+            <li>✅ <strong>Reproducibility</strong> - Create identical environments easily</li>
+            <li>✅ <strong>Collaboration</strong> - Multiple team members can work together</li>
+            <li>✅ <strong>Documentation</strong> - Code serves as documentation</li>
+            <li>✅ <strong>Disaster Recovery</strong> - Recreate infrastructure from code</li>
+            <li>✅ <strong>Cost Optimization</strong> - Easily test and destroy resources</li>
+          </ul>
+
+          <h2>Common Use Cases</h2>
+          
+          <ul>
+            <li>🏢 <strong>Cloud Infrastructure</strong> - Provision resources on AWS, Azure, GCP</li>
+            <li>🐳 <strong>Container Orchestration</strong> - Manage Kubernetes, Docker Swarm</li>
+            <li>🗄️ <strong>Database Setup</strong> - Configure RDS, Cloud SQL, Azure Database</li>
+            <li>🌐 <strong>Networking</strong> - Set up VPCs, subnets, load balancers</li>
+            <li>🔐 <strong>Security</strong> - Configure IAM roles, security groups, policies</li>
+            <li>📊 <strong>Monitoring</strong> - Set up CloudWatch, Stackdriver, Azure Monitor</li>
+          </ul>
+
+          <h2>Next Steps</h2>
+          <p>Continue learning with our detailed guides:</p>
+          <ul>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Deep dive into Terraform fundamentals</li>
+            <li><strong><a href="providers.html">Providers & Resources</a></strong> - Working with providers and resources</li>
+            <li><strong><a href="state.html">State Management</a></strong> - Understanding and managing Terraform state</li>
+            <li><strong><a href="modules.html">Modules</a></strong> - Creating reusable modules</li>
+            <li><strong><a href="aws.html">AWS Setup</a></strong> - Complete AWS setup guide</li>
+            <li><strong><a href="gcp.html">GCP Setup</a></strong> - Complete GCP setup guide</li>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Production-ready practices</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

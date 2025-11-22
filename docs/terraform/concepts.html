@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terraform Core Concepts | Terraform Docs</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .concept-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .concept-card h3 {
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Terraform</a></li>
+        <li class="breadcrumb-item active">Core Concepts</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-diagram-3 me-2"></i>Terraform</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link active" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="providers.html">Providers & Resources</a>
+            <a class="nav-link" href="state.html">State Management</a>
+            <a class="nav-link" href="modules.html">Modules</a>
+            <a class="nav-link" href="aws.html">AWS Setup</a>
+            <a class="nav-link" href="gcp.html">GCP Setup</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-book me-2"></i>Terraform Core Concepts</h1>
+          
+          <p>
+            Understanding Terraform's core concepts is essential for working effectively with Infrastructure as Code. 
+            This guide covers the fundamental building blocks of Terraform.
+          </p>
+
+          <h2>Configuration Files</h2>
+          
+          <div class="concept-card">
+            <h3>What are Configuration Files?</h3>
+            <p>
+              Terraform uses text files with the <code>.tf</code> extension to describe infrastructure. 
+              These files use HCL (HashiCorp Configuration Language) syntax.
+            </p>
+            
+            <h4>File Types:</h4>
+            <ul>
+              <li><code>*.tf</code> - Configuration files (main.tf, variables.tf, outputs.tf)</li>
+              <li><code>*.tfvars</code> - Variable values (terraform.tfvars, prod.tfvars)</li>
+              <li><code>*.tfstate</code> - State files (terraform.tfstate)</li>
+              <li><code>.terraform.lock.hcl</code> - Dependency lock file</li>
+            </ul>
+          </div>
+
+          <h2>Providers</h2>
+          
+          <div class="concept-card">
+            <h3>What are Providers?</h3>
+            <p>
+              Providers are plugins that Terraform uses to interact with cloud providers, SaaS providers, and other APIs. 
+              Each provider adds a set of resource types and data sources that Terraform can manage.
+            </p>
+            
+            <h4>Common Providers:</h4>
+            <ul>
+              <li><strong>AWS</strong> - <code>hashicorp/aws</code></li>
+              <li><strong>Azure</strong> - <code>hashicorp/azurerm</code></li>
+              <li><strong>GCP</strong> - <code>hashicorp/google</code></li>
+              <li><strong>Docker</strong> - <code>kreuzwerker/docker</code></li>
+              <li><strong>Kubernetes</strong> - <code>hashicorp/kubernetes</code></li>
+            </ul>
+
+            <h4>Provider Block Example:</h4>
+            <pre><code>terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+  
+  # Optional: Configure via environment variables
+  # AWS_ACCESS_KEY_ID
+  # AWS_SECRET_ACCESS_KEY
+  # AWS_REGION
+}</code></pre>
+          </div>
+
+          <h2>Resources</h2>
+          
+          <div class="concept-card">
+            <h3>What are Resources?</h3>
+            <p>
+              Resources are the most important element in Terraform. Each resource block describes one or more infrastructure objects, 
+              such as virtual networks, compute instances, or higher-level components.
+            </p>
+            
+            <h4>Resource Block Syntax:</h4>
+            <pre><code>resource "resource_type" "resource_name" {
+  # Resource configuration
+  argument1 = value1
+  argument2 = value2
+  
+  # Nested blocks
+  nested_block {
+    nested_argument = value
+  }
+}</code></pre>
+
+            <h4>Example: AWS EC2 Instance</h4>
+            <pre><code>resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  
+  tags = {
+    Name = "WebServer"
+    Environment = "Production"
+  }
+}</code></pre>
+
+            <h4>Accessing Resource Attributes:</h4>
+            <pre><code># Reference resource
+resource "aws_instance" "web" {
+  # ...
+}
+
+# Use resource attributes in other resources
+resource "aws_eip" "web_ip" {
+  instance = aws_instance.web.id
+  vpc      = true
+}
+
+# Output resource attributes
+output "instance_id" {
+  value = aws_instance.web.id
+}
+
+output "public_ip" {
+  value = aws_instance.web.public_ip
+}</code></pre>
+          </div>
+
+          <h2>Data Sources</h2>
+          
+          <div class="concept-card">
+            <h3>What are Data Sources?</h3>
+            <p>
+              Data sources allow Terraform to use information defined outside of Terraform, or defined by another separate 
+              Terraform configuration. Data sources fetch data that can be used elsewhere in your configuration.
+            </p>
+            
+            <h4>Data Source Example:</h4>
+            <pre><code># Fetch latest AMI
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+# Use data source in resource
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = "t2.micro"
+}</code></pre>
+
+            <h4>Common Data Sources:</h4>
+            <ul>
+              <li><code>aws_ami</code> - Get AMI information</li>
+              <li><code>aws_vpc</code> - Get VPC information</li>
+              <li><code>aws_subnet</code> - Get subnet information</li>
+              <li><code>aws_availability_zones</code> - Get availability zones</li>
+            </ul>
+          </div>
+
+          <h2>Variables</h2>
+          
+          <div class="concept-card">
+            <h3>Input Variables</h3>
+            <p>
+              Variables allow you to customize aspects of Terraform modules without altering the module's source code. 
+              They make your configuration more flexible and reusable.
+            </p>
+            
+            <h4>Variable Declaration (variables.tf):</h4>
+            <pre><code>variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+  
+  validation {
+    condition = can(regex("^t[23]\\.", var.instance_type))
+    error_message = "Instance type must be t2 or t3 family."
+  }
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
+}
+
+variable "enabled" {
+  description = "Enable or disable resources"
+  type        = bool
+  default     = true
+}
+
+variable "subnet_ids" {
+  description = "List of subnet IDs"
+  type        = list(string)
+}</code></pre>
+
+            <h4>Variable Types:</h4>
+            <ul>
+              <li><code>string</code> - Text values</li>
+              <li><code>number</code> - Numeric values</li>
+              <li><code>bool</code> - True/false values</li>
+              <li><code>list(type)</code> - Ordered list</li>
+              <li><code>map(type)</code> - Key-value pairs</li>
+              <li><code>set(type)</code> - Unordered collection</li>
+              <li><code>object({...})</code> - Structured objects</li>
+              <li><code>tuple([...])</code> - Fixed-length list</li>
+            </ul>
+
+            <h4>Using Variables:</h4>
+            <pre><code>resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = var.instance_type  # Reference variable
+  
+  tags = var.tags
+}</code></pre>
+
+            <h4>Providing Variable Values:</h4>
+            <pre><code># terraform.tfvars
+instance_type = "t3.medium"
+tags = {
+  Environment = "production"
+  Project     = "web-app"
+}
+
+# Command line
+terraform apply -var="instance_type=t3.large"
+
+# Environment variables
+export TF_VAR_instance_type="t3.large"
+terraform apply</code></pre>
+          </div>
+
+          <h2>Outputs</h2>
+          
+          <div class="concept-card">
+            <h3>Output Values</h3>
+            <p>
+              Output values make information about your infrastructure available on the command line, and can expose information 
+              for other Terraform configurations to use.
+            </p>
+            
+            <h4>Output Declaration (outputs.tf):</h4>
+            <pre><code>output "instance_id" {
+  description = "ID of the EC2 instance"
+  value       = aws_instance.web.id
+  sensitive   = false
+}
+
+output "public_ip" {
+  description = "Public IP address of the instance"
+  value       = aws_instance.web.public_ip
+}
+
+output "private_key" {
+  description = "Private key (sensitive)"
+  value       = tls_private_key.example.private_key_pem
+  sensitive   = true
+}
+
+output "all_tags" {
+  description = "All tags from the instance"
+  value       = aws_instance.web.tags
+}</code></pre>
+
+            <h4>Using Outputs:</h4>
+            <pre><code># View all outputs
+terraform output
+
+# View specific output
+terraform output instance_id
+
+# View outputs as JSON
+terraform output -json
+
+# Use output in other configurations
+instance_id = module.ec2.instance_id</code></pre>
+          </div>
+
+          <h2>Local Values</h2>
+          
+          <div class="concept-card">
+            <h3>What are Local Values?</h3>
+            <p>
+              Local values assign a name to an expression so you can use it multiple times within a module without repeating it. 
+              They help reduce duplication and make your code more readable.
+            </p>
+            
+            <h4>Local Values Example:</h4>
+            <pre><code>locals {
+  common_tags = {
+    Environment = var.environment
+    Project     = "web-app"
+    ManagedBy   = "Terraform"
+  }
+  
+  instance_name = "${var.environment}-${var.project}-instance"
+  
+  # Computed values
+  availability_zones = data.aws_availability_zones.available.names
+}
+
+# Use local values
+resource "aws_instance" "web" {
+  tags = local.common_tags
+  
+  tags = merge(local.common_tags, {
+    Name = local.instance_name
+  })
+}</code></pre>
+          </div>
+
+          <h2>Expressions</h2>
+          
+          <div class="concept-card">
+            <h3>Types of Expressions</h3>
+            
+            <h4>Interpolation:</h4>
+            <pre><code>resource "aws_instance" "web" {
+  ami = "ami-${var.ami_id}"
+  
+  user_data = &lt;&lt;-EOF
+    echo "Instance ID: ${aws_instance.web.id}"
+  EOF
+}</code></pre>
+
+            <h4>Functions:</h4>
+            <pre><code># String functions
+resource "aws_s3_bucket" "example" {
+  bucket = "${var.project_name}-${random_id.bucket_suffix.hex}"
+}
+
+# Numeric functions
+resource "aws_instance" "web" {
+  count = length(var.subnet_ids)
+  # ...
+}
+
+# Collection functions
+locals {
+  merged_tags = merge(var.common_tags, var.additional_tags)
+  
+  subnet_cidrs = [for s in var.subnets : s.cidr]
+  
+  # Conditional
+  instance_type = var.environment == "prod" ? "t3.large" : "t3.micro"
+}</code></pre>
+
+            <h4>Built-in Functions:</h4>
+            <ul>
+              <li><code>upper()</code>, <code>lower()</code> - String manipulation</li>
+              <li><code>length()</code> - Get length of collections</li>
+              <li><code>merge()</code> - Merge maps</li>
+              <li><code>split()</code>, <code>join()</code> - String operations</li>
+              <li><code>file()</code> - Read file contents</li>
+              <li><code>jsonencode()</code>, <code>jsondecode()</code> - JSON operations</li>
+            </ul>
+          </div>
+
+          <h2>Modules</h2>
+          
+          <div class="concept-card">
+            <h3>What are Modules?</h3>
+            <p>
+              Modules are containers for multiple resources that are used together. They allow you to organize your code, 
+              reuse infrastructure, and create abstractions.
+            </p>
+            
+            <h4>Using Modules:</h4>
+            <pre><code>module "vpc" {
+  source = "./modules/vpc"
+  
+  vpc_cidr = "10.0.0.0/16"
+  environment = var.environment
+  
+  tags = var.tags
+}
+
+# Access module outputs
+resource "aws_instance" "web" {
+  subnet_id = module.vpc.private_subnet_id
+  # ...
+}</code></pre>
+
+            <div class="tip-box">
+              <strong>💡 Tip:</strong> Modules can be local directories, Git repositories, or Terraform Registry modules.
+            </div>
+          </div>
+
+          <h2>State</h2>
+          
+          <div class="concept-card">
+            <h3>What is State?</h3>
+            <p>
+              Terraform must store state about your managed infrastructure and configuration. This state is used to map 
+              real world resources to your configuration, keep track of metadata, and improve performance.
+            </p>
+            
+            <h4>State File Location:</h4>
+            <ul>
+              <li><strong>Local</strong> - <code>terraform.tfstate</code> (default)</li>
+              <li><strong>Remote</strong> - S3, Azure Storage, GCS, Terraform Cloud</li>
+            </ul>
+
+            <div class="tip-box">
+              <strong>💡 Best Practice:</strong> Use remote state backends in production for team collaboration and state locking.
+            </div>
+          </div>
+
+          <h2>Dependencies</h2>
+          
+          <div class="concept-card">
+            <h3>Resource Dependencies</h3>
+            <p>
+              Terraform automatically tracks dependencies between resources. When you reference one resource from another, 
+              Terraform understands the dependency relationship.
+            </p>
+            
+            <h4>Implicit Dependencies:</h4>
+            <pre><code>resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "web" {
+  vpc_id     = aws_vpc.main.id  # Implicit dependency
+  cidr_block = "10.0.0.0/24"
+}</code></pre>
+
+            <h4>Explicit Dependencies:</h4>
+            <pre><code>resource "aws_instance" "web" {
+  # ...
+  
+  depends_on = [
+    aws_iam_role.example,
+    aws_security_group.example
+  ]
+}</code></pre>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="providers.html">Providers & Resources</a></strong> - Working with providers and resources</li>
+            <li><strong><a href="state.html">State Management</a></strong> - Understanding and managing Terraform state</li>
+            <li><strong><a href="modules.html">Modules</a></strong> - Creating reusable modules</li>
+            <li><strong><a href="index.html">Getting Started</a></strong> - Back to basics</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

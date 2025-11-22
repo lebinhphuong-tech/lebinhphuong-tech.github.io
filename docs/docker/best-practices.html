@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Best Practices | Docker Docs</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .success-box {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .bad-practice {
+      background: #f8d7da;
+      border-left: 4px solid #dc3545;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .good-practice {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    @media (max-width: 768px) {
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Docker</a></li>
+        <li class="breadcrumb-item active">Best Practices</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-box-seam me-2"></i>Docker</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link" href="dockerfile.html">Dockerfile</a>
+            <a class="nav-link" href="compose.html">Docker Compose</a>
+            <a class="nav-link active" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-star-fill me-2"></i>Docker Best Practices</h1>
+          
+          <p>
+            This guide covers best practices for building, running, and managing Docker containers in production. 
+            Following these practices will help you create secure, efficient, and maintainable Docker applications.
+          </p>
+
+          <h2>Dockerfile Best Practices</h2>
+
+          <h3>1. Use Specific Image Tags</h3>
+          
+          <div class="comparison">
+            <div class="bad-practice">
+              <strong>❌ Bad:</strong>
+              <pre><code>FROM node:latest
+FROM ubuntu:latest</code></pre>
+              <p>Using <code>:latest</code> can lead to unpredictable builds</p>
+            </div>
+            
+            <div class="good-practice">
+              <strong>✅ Good:</strong>
+              <pre><code>FROM node:18-alpine
+FROM ubuntu:22.04</code></pre>
+              <p>Use specific version tags for reproducibility</p>
+            </div>
+          </div>
+
+          <h3>2. Use Multi-stage Builds</h3>
+          
+          <div class="success-box">
+            <strong>✅ Benefit:</strong> Reduces final image size significantly by excluding build tools and dependencies.
+          </div>
+
+          <pre><code># Build stage
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM node:18-alpine
+WORKDIR /app
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
+USER nodejs
+EXPOSE 3000
+CMD ["node", "dist/index.js"]</code></pre>
+
+          <h3>3. Optimize Layer Caching</h3>
+          
+          <div class="comparison">
+            <div class="bad-practice">
+              <strong>❌ Bad Order:</strong>
+              <pre><code>FROM node:18-alpine
+WORKDIR /app
+COPY . .
+RUN npm install
+CMD ["node", "index.js"]</code></pre>
+              <p>npm install runs on every code change</p>
+            </div>
+            
+            <div class="good-practice">
+              <strong>✅ Good Order:</strong>
+              <pre><code>FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+CMD ["node", "index.js"]</code></pre>
+              <p>Dependencies cached if package.json unchanged</p>
+            </div>
+          </div>
+
+          <h3>4. Use .dockerignore</h3>
+          
+          <p>Create a <code>.dockerignore</code> file to exclude unnecessary files:</p>
+          
+          <pre><code># .dockerignore
+node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+.nyc_output
+coverage
+*.md
+.DS_Store
+.vscode
+.idea
+*.log
+dist
+build
+.cache
+tmp
+temp</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Similar to <code>.gitignore</code>, this reduces build context size and build time.
+          </div>
+
+          <h3>5. Minimize Image Layers</h3>
+          
+          <div class="comparison">
+            <div class="bad-practice">
+              <strong>❌ Too Many Layers:</strong>
+              <pre><code>RUN apt-get update
+RUN apt-get install -y curl
+RUN apt-get install -y wget
+RUN apt-get install -y git
+RUN apt-get clean</code></pre>
+            </div>
+            
+            <div class="good-practice">
+              <strong>✅ Combined Layers:</strong>
+              <pre><code>RUN apt-get update && \
+    apt-get install -y curl wget git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*</code></pre>
+            </div>
+          </div>
+
+          <h3>6. Use COPY Instead of ADD</h3>
+          
+          <div class="tip-box">
+            <strong>💡 Rule:</strong> Use <code>COPY</code> for copying files from host. Only use <code>ADD</code> 
+            when you need automatic URL downloading or tar extraction.
+          </div>
+
+          <pre><code># Good: Use COPY
+COPY package.json .
+COPY src/ ./src/
+
+# Only if needed: Use ADD for URLs
+ADD https://example.com/file.tar.gz /tmp/</code></pre>
+
+          <h3>7. Use Non-root User</h3>
+          
+          <pre><code># Create non-root user
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup
+
+# Set ownership
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Or use numeric user ID
+USER 1001</code></pre>
+
+          <div class="success-box">
+            <strong>✅ Security Benefit:</strong> Running as non-root reduces security risks if container is compromised.
+          </div>
+
+          <h3>8. Set Resource Limits</h3>
+          
+          <p>While not in Dockerfile, set limits when running containers:</p>
+          
+          <pre><code># Memory limit
+docker run -m 512m myapp
+
+# CPU limit
+docker run --cpus="1.5" myapp
+
+# Both limits
+docker run -m 512m --cpus="1.5" myapp
+
+# In docker-compose.yml
+services:
+  web:
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M</code></pre>
+
+          <h3>9. Use Health Checks</h3>
+          
+          <pre><code># In Dockerfile
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+# Or in docker-compose.yml
+services:
+  web:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s</code></pre>
+
+          <h3>10. Use Explicit Ports</h3>
+          
+          <div class="comparison">
+            <div class="bad-practice">
+              <strong>❌ Vague:</strong>
+              <pre><code>EXPOSE 80</code></pre>
+            </div>
+            
+            <div class="good-practice">
+              <strong>✅ Explicit:</strong>
+              <pre><code>EXPOSE 8080/tcp
+EXPOSE 8080/udp</code></pre>
+            </div>
+          </div>
+
+          <h2>Image Security Best Practices</h2>
+
+          <h3>1. Scan Images for Vulnerabilities</h3>
+          
+          <pre><code># Using Docker Scout
+docker scout cves myapp:latest
+
+# Using Trivy
+trivy image myapp:latest
+
+# Using Snyk
+snyk container test myapp:latest</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Integrate image scanning into your CI/CD pipeline before deployment.
+          </div>
+
+          <h3>2. Keep Base Images Updated</h3>
+          
+          <pre><code># Regularly update base images
+FROM node:18-alpine  # Check for updates regularly
+FROM ubuntu:22.04    # Use latest LTS versions</code></pre>
+
+          <h3>3. Minimize Attack Surface</h3>
+          
+          <div class="success-box">
+            <strong>✅ Use Minimal Base Images:</strong>
+            <ul>
+              <li>Alpine Linux (5MB) - for most applications</li>
+              <li>Distroless images - for compiled applications</li>
+              <li>Scratch - for statically compiled binaries</li>
+            </ul>
+          </div>
+
+          <h3>4. Don't Store Secrets in Images</h3>
+          
+          <div class="warning-box">
+            <strong>⚠️ Never:</strong>
+            <pre><code># ❌ BAD: Never do this
+ENV DB_PASSWORD=secret123
+RUN echo "password=secret123" > /app/config</code></pre>
+          </div>
+
+          <div class="good-practice">
+            <strong>✅ Good: Use Secrets Management</strong>
+            <pre><code># Use Docker secrets or environment variables
+docker run -e DB_PASSWORD=${DB_PASSWORD} myapp
+
+# Or use docker-compose secrets
+services:
+  web:
+    secrets:
+      - db_password
+secrets:
+  db_password:
+    external: true</code></pre>
+          </div>
+
+          <h2>Container Runtime Best Practices</h2>
+
+          <h3>1. Use Read-only Root Filesystem</h3>
+          
+          <pre><code>docker run --read-only myapp
+
+# Or in docker-compose.yml
+services:
+  web:
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache</code></pre>
+
+          <h3>2. Set Security Options</h3>
+          
+          <pre><code># Disable new privileges
+docker run --security-opt no-new-privileges:true myapp
+
+# Use seccomp profile
+docker run --security-opt seccomp=default.json myapp
+
+# Drop capabilities
+docker run --cap-drop ALL --cap-add NET_BIND_SERVICE myapp</code></pre>
+
+          <h3>3. Limit Container Access</h3>
+          
+          <pre><code># Don't run privileged
+docker run --privileged myapp  # ❌ Bad
+
+# Use user namespaces
+docker run --userns=host myapp  # ✅ Better
+
+# Disable network access if not needed
+docker run --network=none myapp</code></pre>
+
+          <h3>4. Use Resource Constraints</h3>
+          
+          <pre><code># Always set limits
+docker run \
+  --memory="512m" \
+  --cpus="1.0" \
+  --pids-limit=100 \
+  myapp</code></pre>
+
+          <h2>Docker Compose Best Practices</h2>
+
+          <h3>1. Use Version Control</h3>
+          
+          <div class="success-box">
+            <strong>✅ Best Practices:</strong>
+            <ul>
+              <li>Pin image versions (avoid <code>:latest</code>)</li>
+              <li>Use environment variables for configuration</li>
+              <li>Separate development and production configs</li>
+            </ul>
+          </div>
+
+          <h3>2. Use Named Volumes</h3>
+          
+          <pre><code>version: '3.8'
+
+services:
+  db:
+    volumes:
+      - db-data:/var/lib/postgresql/data  # ✅ Named volume
+
+volumes:
+  db-data:
+    driver: local</code></pre>
+
+          <h3>3. Set Restart Policies</h3>
+          
+          <pre><code>services:
+  web:
+    restart: unless-stopped  # ✅ Good for production
+    # restart: always         # Restarts even on failure
+    # restart: on-failure     # Only on failure
+    # restart: no             # Never restart</code></pre>
+
+          <h3>4. Use Health Checks</h3>
+          
+          <pre><code>services:
+  web:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    depends_on:
+      web:
+        condition: service_healthy</code></pre>
+
+          <h3>5. Network Isolation</h3>
+          
+          <pre><code>version: '3.8'
+
+services:
+  web:
+    networks:
+      - frontend
+  
+  api:
+    networks:
+      - frontend
+      - backend
+  
+  db:
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true  # No external access</code></pre>
+
+          <h2>Performance Optimization</h2>
+
+          <h3>1. Use Build Cache</h3>
+          
+          <pre><code># Build with cache
+docker build -t myapp .
+
+# Build without cache (if needed)
+docker build --no-cache -t myapp .
+
+# Use BuildKit for better caching
+DOCKER_BUILDKIT=1 docker build -t myapp .</code></pre>
+
+          <h3>2. Parallel Builds</h3>
+          
+          <pre><code># Use BuildKit for parallel builds
+DOCKER_BUILDKIT=1 docker build .
+
+# Build multiple stages in parallel
+docker buildx build --platform linux/amd64,linux/arm64 .</code></pre>
+
+          <h3>3. Optimize Image Size</h3>
+          
+          <div class="tip-box">
+            <strong>💡 Tips:</strong>
+            <ul>
+              <li>Use multi-stage builds</li>
+              <li>Remove unnecessary packages</li>
+              <li>Clean package cache after installs</li>
+              <li>Use <code>.dockerignore</code></li>
+              <li>Combine RUN commands</li>
+            </ul>
+          </div>
+
+          <h3>4. Use Specific Base Images</h3>
+          
+          <pre><code># Smaller images
+FROM node:18-alpine        # ~40MB vs ~900MB for node:18
+FROM python:3.11-slim      # ~125MB vs ~900MB for python:3.11
+FROM golang:1.21-alpine    # ~300MB vs ~800MB for golang:1.21</code></pre>
+
+          <h2>Development Best Practices</h2>
+
+          <h3>1. Use Volume Mounts for Development</h3>
+          
+          <pre><code># Mount source code for hot reload
+docker run -v $(pwd):/app myapp
+
+# In docker-compose.yml
+services:
+  web:
+    volumes:
+      - ./src:/app/src        # Source code
+      - /app/node_modules     # Exclude node_modules</code></pre>
+
+          <h3>2. Use Different Configs for Dev/Prod</h3>
+          
+          <pre><code># docker-compose.yml (base)
+version: '3.8'
+services:
+  web:
+    build: .
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+
+# docker-compose.prod.yml (production)
+version: '3.8'
+services:
+  web:
+    environment:
+      - NODE_ENV=production
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M</code></pre>
+
+          <h3>3. Keep Development Containers Lightweight</h3>
+          
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Use <code>docker-compose.override.yml</code> for local development overrides.
+          </div>
+
+          <h2>Production Best Practices</h2>
+
+          <h3>1. Use Orchestration</h3>
+          
+          <div class="success-box">
+            <strong>✅ For Production:</strong>
+            <ul>
+              <li>Kubernetes - for large-scale deployments</li>
+              <li>Docker Swarm - for simple orchestration</li>
+              <li>Nomad - for multi-cloud deployments</li>
+            </ul>
+          </div>
+
+          <h3>2. Implement Logging Strategy</h3>
+          
+          <pre><code># Use log driver
+docker run --log-driver=json-file \
+  --log-opt max-size=10m \
+  --log-opt max-file=3 \
+  myapp
+
+# Or centralized logging
+docker run --log-driver=syslog \
+  --log-opt syslog-address=tcp://logserver:514 \
+  myapp</code></pre>
+
+          <h3>3. Monitor Containers</h3>
+          
+          <div class="tip-box">
+            <strong>💡 Monitoring Tools:</strong>
+            <ul>
+              <li>Prometheus + Grafana</li>
+              <li>Datadog</li>
+              <li>New Relic</li>
+              <li>ELK Stack (for logs)</li>
+            </ul>
+          </div>
+
+          <h3>4. Implement Backup Strategy</h3>
+          
+          <pre><code># Backup volumes
+docker run --rm \
+  -v myapp-data:/data \
+  -v $(pwd):/backup \
+  alpine tar czf /backup/backup.tar.gz /data
+
+# Restore volumes
+docker run --rm \
+  -v myapp-data:/data \
+  -v $(pwd):/backup \
+  alpine tar xzf /backup/backup.tar.gz -C /</code></pre>
+
+          <h3>5. Use Image Signing</h3>
+          
+          <pre><code># Enable Docker Content Trust
+export DOCKER_CONTENT_TRUST=1
+
+# Sign image
+docker build -t myregistry/myapp:1.0.0 .
+docker push myregistry/myapp:1.0.0</code></pre>
+
+          <h2>Common Mistakes to Avoid</h2>
+
+          <div class="warning-box">
+            <strong>⚠️ Common Mistakes:</strong>
+            <ul>
+              <li>❌ Using <code>:latest</code> tag in production</li>
+              <li>❌ Running containers as root</li>
+              <li>❌ Storing secrets in images or environment files</li>
+              <li>❌ Not setting resource limits</li>
+              <li>❌ Using large base images unnecessarily</li>
+              <li>❌ Not cleaning up unused images/containers</li>
+              <li>❌ Not using health checks</li>
+              <li>❌ Exposing unnecessary ports</li>
+              <li>❌ Not updating base images regularly</li>
+              <li>❌ Not scanning images for vulnerabilities</li>
+            </ul>
+          </div>
+
+          <h2>Cleanup Best Practices</h2>
+
+          <h3>Regular Cleanup Commands</h3>
+          
+          <pre><code># Remove stopped containers
+docker container prune
+
+# Remove unused images
+docker image prune
+
+# Remove unused volumes
+docker volume prune
+
+# Remove unused networks
+docker network prune
+
+# Remove everything unused
+docker system prune
+
+# Remove everything including volumes
+docker system prune -a --volumes
+
+# Remove images older than 24 hours
+docker image prune -a --filter "until=24h"</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Schedule regular cleanup jobs to prevent disk space issues.
+          </div>
+
+          <h2>Checklist for Production</h2>
+
+          <div class="success-box">
+            <strong>✅ Production Readiness Checklist:</strong>
+            <ul>
+              <li>✅ Use specific image tags (no <code>:latest</code>)</li>
+              <li>✅ Run containers as non-root user</li>
+              <li>✅ Set resource limits (CPU, memory)</li>
+              <li>✅ Implement health checks</li>
+              <li>✅ Use secrets management (not in images)</li>
+              <li>✅ Scan images for vulnerabilities</li>
+              <li>✅ Use read-only filesystem where possible</li>
+              <li>✅ Set appropriate security options</li>
+              <li>✅ Implement logging strategy</li>
+              <li>✅ Set up monitoring and alerting</li>
+              <li>✅ Use orchestration for high availability</li>
+              <li>✅ Implement backup strategy</li>
+              <li>✅ Use network isolation</li>
+              <li>✅ Document all configurations</li>
+              <li>✅ Test disaster recovery procedures</li>
+            </ul>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="dockerfile.html">Dockerfile Guide</a></strong> - Learn to create efficient Dockerfiles</li>
+            <li><strong><a href="compose.html">Docker Compose</a></strong> - Manage multi-container applications</li>
+            <li><strong><a href="index.html">Getting Started</a></strong> - Back to basics</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kubectl Commands Cheatsheet | Kubernetes</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+    
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .command-group {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .command-group h3 {
+      margin-top: 0;
+      color: var(--primary-color);
+    }
+    
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    
+    table th, table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    table th {
+      background: var(--bg-light);
+      color: var(--secondary-color);
+      font-weight: 600;
+    }
+    
+    table code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.4rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item active">kubectl Cheatsheet</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="content">
+          <h1><i class="bi bi-terminal me-2"></i>kubectl Commands Cheatsheet</h1>
+          
+          <p>
+            A comprehensive reference guide for kubectl commands. Bookmark this page for quick access to 
+            the most commonly used Kubernetes commands.
+          </p>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Use <code>kubectl --help</code> or <code>kubectl &lt;command&gt; --help</code> 
+            for detailed help on any command.
+          </div>
+
+          <h2>Cluster Information</h2>
+
+          <div class="command-group">
+            <h3>Basic Cluster Commands</h3>
+            <table>
+              <tr>
+                <th>Command</th>
+                <th>Description</th>
+              </tr>
+              <tr>
+                <td><code>kubectl cluster-info</code></td>
+                <td>Display cluster information</td>
+              </tr>
+              <tr>
+                <td><code>kubectl cluster-info dump</code></td>
+                <td>Dump cluster state to stdout</td>
+              </tr>
+              <tr>
+                <td><code>kubectl version</code></td>
+                <td>Show client and server version</td>
+              </tr>
+              <tr>
+                <td><code>kubectl version --client</code></td>
+                <td>Show only client version</td>
+              </tr>
+              <tr>
+                <td><code>kubectl api-versions</code></td>
+                <td>List all API versions supported</td>
+              </tr>
+              <tr>
+                <td><code>kubectl api-resources</code></td>
+                <td>List all API resources</td>
+              </tr>
+            </table>
+          </div>
+
+          <h2>Nodes</h2>
+
+          <div class="command-group">
+            <h3>Node Commands</h3>
+            <pre><code># List all nodes
+kubectl get nodes
+
+# List nodes with more details
+kubectl get nodes -o wide
+
+# Describe a specific node
+kubectl describe node &lt;node-name&gt;
+
+# Get node metrics
+kubectl top node &lt;node-name&gt;
+
+# Get all node metrics
+kubectl top nodes
+
+# Cordon a node (mark as unschedulable)
+kubectl cordon &lt;node-name&gt;
+
+# Uncordon a node
+kubectl uncordon &lt;node-name&gt;
+
+# Drain a node (evict all pods)
+kubectl drain &lt;node-name&gt;
+
+# Drain with ignore daemonsets
+kubectl drain &lt;node-name&gt; --ignore-daemonsets
+
+# Label a node
+kubectl label nodes &lt;node-name&gt; disktype=ssd
+
+# Annotate a node
+kubectl annotate nodes &lt;node-name&gt; description="Production node"</code></pre>
+          </div>
+
+          <h2>Pods</h2>
+
+          <div class="command-group">
+            <h3>Pod Management</h3>
+            <pre><code># List pods in current namespace
+kubectl get pods
+
+# List pods in all namespaces
+kubectl get pods -A
+
+# List pods with more details
+kubectl get pods -o wide
+
+# List pods in specific namespace
+kubectl get pods -n &lt;namespace&gt;
+
+# List pods with labels
+kubectl get pods -l app=nginx
+
+# List pods with custom output format
+kubectl get pods -o yaml
+kubectl get pods -o json
+kubectl get pods -o name
+
+# Describe a pod
+kubectl describe pod &lt;pod-name&gt;
+
+# Describe pods with label selector
+kubectl describe pods -l app=nginx
+
+# Get pod logs
+kubectl logs &lt;pod-name&gt;
+
+# Follow logs
+kubectl logs -f &lt;pod-name&gt;
+
+# Get logs from specific container
+kubectl logs &lt;pod-name&gt; -c &lt;container-name&gt;
+
+# Get logs from previous container
+kubectl logs &lt;pod-name&gt; --previous
+
+# Get logs with timestamp
+kubectl logs &lt;pod-name&gt; --timestamps
+
+# Get logs since specific time
+kubectl logs &lt;pod-name&gt; --since=1h
+kubectl logs &lt;pod-name&gt; --since=30m
+
+# Get last N lines of logs
+kubectl logs &lt;pod-name&gt; --tail=100
+
+# Get logs from all pods with label
+kubectl logs -l app=nginx --tail=100
+
+# Execute command in pod
+kubectl exec -it &lt;pod-name&gt; -- sh
+kubectl exec &lt;pod-name&gt; -- ls /app
+
+# Execute command in specific container
+kubectl exec -it &lt;pod-name&gt; -c &lt;container-name&gt; -- sh
+
+# Copy file from pod
+kubectl cp &lt;pod-name&gt;:/path/to/file ./local-file
+
+# Copy file to pod
+kubectl cp ./local-file &lt;pod-name&gt;:/path/to/file
+
+# Port forward to pod
+kubectl port-forward &lt;pod-name&gt; 8080:80
+
+# Delete pod
+kubectl delete pod &lt;pod-name&gt;
+
+# Delete pods with label
+kubectl delete pods -l app=nginx
+
+# Force delete pod
+kubectl delete pod &lt;pod-name&gt; --grace-period=0 --force</code></pre>
+          </div>
+
+          <h2>Deployments</h2>
+
+          <div class="command-group">
+            <h3>Deployment Operations</h3>
+            <pre><code># List deployments
+kubectl get deployments
+kubectl get deploy
+
+# Get deployment details
+kubectl describe deployment &lt;deployment-name&gt;
+
+# Create deployment
+kubectl create deployment nginx --image=nginx:latest
+
+# Create deployment with replicas
+kubectl create deployment nginx --image=nginx:latest --replicas=3
+
+# Apply deployment from YAML
+kubectl apply -f deployment.yaml
+
+# Update deployment
+kubectl apply -f deployment.yaml
+
+# Replace deployment
+kubectl replace -f deployment.yaml
+
+# Update deployment image
+kubectl set image deployment/&lt;deployment-name&gt; nginx=nginx:1.21
+
+# Scale deployment
+kubectl scale deployment/&lt;deployment-name&gt; --replicas=5
+
+# Get rollout status
+kubectl rollout status deployment/&lt;deployment-name&gt;
+
+# View rollout history
+kubectl rollout history deployment/&lt;deployment-name&gt;
+
+# View specific revision
+kubectl rollout history deployment/&lt;deployment-name&gt; --revision=2
+
+# Rollback to previous version
+kubectl rollout undo deployment/&lt;deployment-name&gt;
+
+# Rollback to specific revision
+kubectl rollout undo deployment/&lt;deployment-name&gt; --to-revision=2
+
+# Pause rollout
+kubectl rollout pause deployment/&lt;deployment-name&gt;
+
+# Resume rollout
+kubectl rollout resume deployment/&lt;deployment-name&gt;
+
+# Restart deployment
+kubectl rollout restart deployment/&lt;deployment-name&gt;
+
+# Delete deployment
+kubectl delete deployment &lt;deployment-name&gt;
+
+# Delete deployment but keep pods
+kubectl delete deployment &lt;deployment-name&gt; --cascade=orphan</code></pre>
+          </div>
+
+          <h2>Services</h2>
+
+          <div class="command-group">
+            <h3>Service Management</h3>
+            <pre><code># List services
+kubectl get services
+kubectl get svc
+
+# Get service details
+kubectl describe service &lt;service-name&gt;
+
+# Create service from YAML
+kubectl apply -f service.yaml
+
+# Expose deployment as service
+kubectl expose deployment nginx --port=80 --type=LoadBalancer
+
+# Expose with NodePort
+kubectl expose deployment nginx --port=80 --type=NodePort
+
+# Port forward to service
+kubectl port-forward service/&lt;service-name&gt; 8080:80
+
+# Get service endpoints
+kubectl get endpoints &lt;service-name&gt;
+
+# Delete service
+kubectl delete service &lt;service-name&gt;</code></pre>
+          </div>
+
+          <h2>ConfigMaps & Secrets</h2>
+
+          <div class="command-group">
+            <h3>ConfigMap Commands</h3>
+            <pre><code># List ConfigMaps
+kubectl get configmaps
+kubectl get cm
+
+# Describe ConfigMap
+kubectl describe configmap &lt;cm-name&gt;
+
+# Get ConfigMap YAML
+kubectl get configmap &lt;cm-name&gt; -o yaml
+
+# Create ConfigMap from literal
+kubectl create configmap &lt;cm-name&gt; --from-literal=key1=value1 --from-literal=key2=value2
+
+# Create ConfigMap from file
+kubectl create configmap &lt;cm-name&gt; --from-file=config.properties
+
+# Create ConfigMap from directory
+kubectl create configmap &lt;cm-name&gt; --from-file=&lt;directory&gt;
+
+# Create ConfigMap from YAML
+kubectl apply -f configmap.yaml
+
+# Edit ConfigMap
+kubectl edit configmap &lt;cm-name&gt;
+
+# Delete ConfigMap
+kubectl delete configmap &lt;cm-name&gt;</code></pre>
+          </div>
+
+          <div class="command-group">
+            <h3>Secret Commands</h3>
+            <pre><code># List secrets
+kubectl get secrets
+
+# Describe secret
+kubectl describe secret &lt;secret-name&gt;
+
+# Get secret YAML
+kubectl get secret &lt;secret-name&gt; -o yaml
+
+# Create secret from literal
+kubectl create secret generic &lt;secret-name&gt; --from-literal=username=admin --from-literal=password=secret
+
+# Create secret from file
+kubectl create secret generic &lt;secret-name&gt; --from-file=username.txt --from-file=password.txt
+
+# Create secret for docker registry
+kubectl create secret docker-registry &lt;secret-name&gt; --docker-server=&lt;registry&gt; --docker-username=&lt;user&gt; --docker-password=&lt;pass&gt;
+
+# Create TLS secret
+kubectl create secret tls &lt;secret-name&gt; --cert=tls.crt --key=tls.key
+
+# Edit secret
+kubectl edit secret &lt;secret-name&gt;
+
+# Delete secret
+kubectl delete secret &lt;secret-name&gt;</code></pre>
+          </div>
+
+          <h2>Namespaces</h2>
+
+          <div class="command-group">
+            <h3>Namespace Operations</h3>
+            <pre><code># List namespaces
+kubectl get namespaces
+kubectl get ns
+
+# Create namespace
+kubectl create namespace &lt;namespace-name&gt;
+
+# Describe namespace
+kubectl describe namespace &lt;namespace-name&gt;
+
+# Get all resources in namespace
+kubectl get all -n &lt;namespace&gt;
+
+# Set default namespace for current context
+kubectl config set-context --current --namespace=&lt;namespace-name&gt;
+
+# View current namespace
+kubectl config view --minify | grep namespace
+
+# Delete namespace (deletes all resources)
+kubectl delete namespace &lt;namespace-name&gt;
+
+# Label namespace
+kubectl label namespace &lt;namespace-name&gt; environment=production</code></pre>
+          </div>
+
+          <h2>Resource Management</h2>
+
+          <div class="command-group">
+            <h3>Common Resource Commands</h3>
+            <pre><code># Get all resources
+kubectl get all
+
+# Get all resources in namespace
+kubectl get all -n &lt;namespace&gt;
+
+# Get specific resource type
+kubectl get &lt;resource-type&gt;
+
+# Get with labels
+kubectl get pods -l app=nginx
+
+# Get with multiple labels
+kubectl get pods -l app=nginx,environment=production
+
+# Watch resources
+kubectl get pods -w
+
+# Get resources sorted
+kubectl get pods --sort-by=.metadata.creationTimestamp
+
+# Get resources with custom columns
+kubectl get pods -o custom-columns=NAME:.metadata.name,STATUS:.status.phase,NODE:.spec.nodeName
+
+# Edit resource
+kubectl edit deployment &lt;deployment-name&gt;
+
+# Delete resource
+kubectl delete deployment &lt;deployment-name&gt;
+
+# Delete multiple resources
+kubectl delete deployment nginx redis postgres
+
+# Delete by label
+kubectl delete pods -l app=nginx
+
+# Delete all resources in namespace
+kubectl delete all --all -n &lt;namespace&gt;</code></pre>
+          </div>
+
+          <h2>Scaling & Autoscaling</h2>
+
+          <div class="command-group">
+            <h3>Manual & Auto Scaling</h3>
+            <pre><code># Scale deployment manually
+kubectl scale deployment/&lt;deployment-name&gt; --replicas=5
+
+# Scale with current replicas check
+kubectl scale deployment/&lt;deployment-name&gt; --replicas=5 --current-replicas=3
+
+# Create Horizontal Pod Autoscaler
+kubectl autoscale deployment/&lt;deployment-name&gt; --min=2 --max=10 --cpu-percent=70
+
+# Get HPA
+kubectl get hpa
+
+# Describe HPA
+kubectl describe hpa &lt;hpa-name&gt;
+
+# Delete HPA
+kubectl delete hpa &lt;hpa-name&gt;
+
+# View pod metrics
+kubectl top pods
+
+# View node metrics
+kubectl top nodes
+
+# View metrics for specific pod
+kubectl top pod &lt;pod-name&gt;</code></pre>
+          </div>
+
+          <h2>Context & Configuration</h2>
+
+          <div class="command-group">
+            <h3>Kubectl Configuration</h3>
+            <pre><code># View current context
+kubectl config current-context
+
+# List all contexts
+kubectl config get-contexts
+
+# Switch context
+kubectl config use-context &lt;context-name&gt;
+
+# View configuration
+kubectl config view
+
+# View specific context
+kubectl config view --context=&lt;context-name&gt;
+
+# Set context
+kubectl config set-context &lt;context-name&gt; --cluster=&lt;cluster-name&gt; --user=&lt;user-name&gt; --namespace=&lt;namespace&gt;
+
+# Set default namespace for context
+kubectl config set-context --current --namespace=&lt;namespace-name&gt;
+
+# Rename context
+kubectl config rename-context &lt;old-name&gt; &lt;new-name&gt;
+
+# Delete context
+kubectl config delete-context &lt;context-name&gt;
+
+# Get clusters
+kubectl config get-clusters
+
+# Get users
+kubectl config get-users</code></pre>
+          </div>
+
+          <h2>Debugging & Troubleshooting</h2>
+
+          <div class="command-group">
+            <h3>Debug Commands</h3>
+            <pre><code># Get events
+kubectl get events
+
+# Get events sorted by time
+kubectl get events --sort-by='.lastTimestamp'
+
+# Get events in namespace
+kubectl get events -n &lt;namespace&gt;
+
+# Watch events
+kubectl get events --watch
+
+# Describe resource (detailed info)
+kubectl describe pod &lt;pod-name&gt;
+
+# Get resource YAML
+kubectl get pod &lt;pod-name&gt; -o yaml
+
+# Get resource JSON
+kubectl get pod &lt;pod-name&gt; -o json
+
+# Get resource with JSONPath
+kubectl get pod &lt;pod-name&gt; -o jsonpath='{.status.phase}'
+
+# Dry run (preview changes)
+kubectl apply -f deployment.yaml --dry-run=client
+
+# Validate YAML
+kubectl apply -f deployment.yaml --validate=true --dry-run=client
+
+# Diff between live and file
+kubectl diff -f deployment.yaml
+
+# Execute into pod for debugging
+kubectl exec -it &lt;pod-name&gt; -- /bin/sh
+
+# Run temporary pod for debugging
+kubectl run debug-pod --image=busybox -it --rm -- sh</code></pre>
+          </div>
+
+          <h2>Advanced Operations</h2>
+
+          <div class="command-group">
+            <h3>Advanced Commands</h3>
+            <pre><code># Apply multiple YAML files
+kubectl apply -f deployment.yaml -f service.yaml
+
+# Apply all YAML files in directory
+kubectl apply -f &lt;directory&gt;/
+
+# Patch resource
+kubectl patch deployment &lt;deployment-name&gt; -p '{"spec":{"replicas":5}}'
+
+# Label resource
+kubectl label pod &lt;pod-name&gt; environment=production
+
+# Remove label
+kubectl label pod &lt;pod-name&gt; environment-
+
+# Annotate resource
+kubectl annotate pod &lt;pod-name&gt; description="Production pod"
+
+# Remove annotation
+kubectl annotate pod &lt;pod-name&gt; description-
+
+# Drain node (evict pods)
+kubectl drain &lt;node-name&gt; --ignore-daemonsets --delete-emptydir-data
+
+# Cordon node (mark unschedulable)
+kubectl cordon &lt;node-name&gt;
+
+# Uncordon node
+kubectl uncordon &lt;node-name&gt;
+
+# Get API versions
+kubectl api-versions
+
+# Get API resources
+kubectl api-resources
+
+# Explain resource
+kubectl explain pod
+kubectl explain pod.spec
+kubectl explain pod.spec.containers</code></pre>
+          </div>
+
+          <h2>Useful Aliases</h2>
+
+          <div class="command-group">
+            <h3>Common Aliases</h3>
+            <pre><code># Add to ~/.bashrc or ~/.zshrc
+alias k='kubectl'
+alias kg='kubectl get'
+alias kd='kubectl describe'
+alias ka='kubectl apply -f'
+alias kd='kubectl delete'
+alias kgp='kubectl get pods'
+alias kgs='kubectl get services'
+alias kgd='kubectl get deployments'
+alias kgn='kubectl get nodes'
+alias kga='kubectl get all'
+alias kl='kubectl logs'
+alias kx='kubectl exec -it'
+alias kpf='kubectl port-forward'
+alias kgpa='kubectl get pods -A'
+alias kgpw='kubectl get pods -w'
+alias kdp='kubectl describe pod'
+alias kds='kubectl describe service'
+alias kdd='kubectl describe deployment'</code></pre>
+          </div>
+
+          <h2>Output Formats</h2>
+
+          <div class="command-group">
+            <h3>Common Output Options</h3>
+            <table>
+              <tr>
+                <th>Flag</th>
+                <th>Output Format</th>
+              </tr>
+              <tr>
+                <td><code>-o wide</code></td>
+                <td>More columns with additional information</td>
+              </tr>
+              <tr>
+                <td><code>-o yaml</code></td>
+                <td>YAML format</td>
+              </tr>
+              <tr>
+                <td><code>-o json</code></td>
+                <td>JSON format</td>
+              </tr>
+              <tr>
+                <td><code>-o name</code></td>
+                <td>Resource names only</td>
+              </tr>
+              <tr>
+                <td><code>-o custom-columns=</code></td>
+                <td>Custom column format</td>
+              </tr>
+              <tr>
+                <td><code>-o jsonpath=</code></td>
+                <td>JSONPath expression</td>
+              </tr>
+              <tr>
+                <td><code>-o go-template=</code></td>
+                <td>Go template</td>
+              </tr>
+            </table>
+          </div>
+
+          <h2>Quick Reference</h2>
+
+          <div class="command-group">
+            <h3>Most Common Commands</h3>
+            <pre><code># Cluster info
+kubectl cluster-info
+kubectl get nodes
+
+# Pods
+kubectl get pods
+kubectl get pods -o wide
+kubectl describe pod &lt;name&gt;
+kubectl logs &lt;pod-name&gt;
+kubectl exec -it &lt;pod-name&gt; -- sh
+
+# Deployments
+kubectl get deployments
+kubectl scale deployment/&lt;name&gt; --replicas=5
+kubectl rollout status deployment/&lt;name&gt;
+kubectl rollout undo deployment/&lt;name&gt;
+
+# Services
+kubectl get services
+kubectl describe service &lt;name&gt;
+kubectl port-forward service/&lt;name&gt; 8080:80
+
+# All resources
+kubectl get all
+kubectl get all -n &lt;namespace&gt;
+
+# Apply/Delete
+kubectl apply -f file.yaml
+kubectl delete -f file.yaml
+kubectl delete deployment &lt;name&gt;</code></pre>
+          </div>
+
+          <div class="tip-box">
+            <strong>💡 Pro Tip:</strong> Use <code>kubectl explain &lt;resource&gt;</code> to understand the structure 
+            of any Kubernetes resource and see available fields.
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="../kubernetes/index.html">Kubernetes Getting Started</a></strong> - Learn the basics</li>
+            <li><strong><a href="../kubernetes/deployment.html">Deployment Guide</a></strong> - Production deployment strategies</li>
+            <li><strong><a href="../kubernetes/scaling.html">Scaling & Monitoring</a></strong> - Auto-scaling and monitoring</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
