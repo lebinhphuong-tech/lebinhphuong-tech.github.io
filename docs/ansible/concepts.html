@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ansible Core Concepts | Ansible Docs</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .concept-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .concept-card h3 {
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Ansible</a></li>
+        <li class="breadcrumb-item active">Core Concepts</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-gear-fill me-2"></i>Ansible</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link active" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="deployment.html">Playbook Guide</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-diagram-3 me-2"></i>Ansible Core Concepts</h1>
+
+          <p>
+            Understanding Ansible core concepts is essential for writing effective automation. This guide covers the fundamental building blocks of Ansible.
+          </p>
+
+          <h2>Inventory</h2>
+          <div class="concept-card">
+            <h3>What is Inventory?</h3>
+            <p>
+              Inventory defines the hosts and groups of hosts that Ansible will manage. It contains connection details, variables, and organizes managed nodes into logical groups.
+            </p>
+
+            <h4>Inventory File Structure:</h4>
+            <pre><code># /etc/ansible/hosts or hosts.ini
+[webservers]
+web1 ansible_host=192.168.1.10 ansible_user=ubuntu
+web2 ansible_host=192.168.1.11 ansible_user=ubuntu
+
+[databases]
+db1 ansible_host=192.168.1.20 ansible_user=centos
+
+[production:children]
+webservers
+databases
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3</code></pre>
+
+            <h4>Dynamic Inventory:</h4>
+            <p>Ansible supports dynamic inventory from cloud providers:</p>
+            <pre><code># AWS EC2 dynamic inventory
+plugin: aws_ec2
+regions:
+  - us-east-1
+filters:
+  instance-state-name: running
+keyed_groups:
+  - key: tags.Environment
+    prefix: env</code></pre>
+
+            <h4>Common Commands:</h4>
+            <pre><code># Test connectivity to all hosts
+ansible all -m ping -i inventory.ini
+
+# List all hosts in inventory
+ansible all --list-hosts -i inventory.ini
+
+# Show inventory variables
+ansible web1 -m debug -a 'var=hostvars[inventory_hostname]' -i inventory.ini</code></pre>
+          </div>
+
+          <h2>Playbooks</h2>
+          <div class="concept-card">
+            <h3>What is a Playbook?</h3>
+            <p>
+              Playbooks are YAML files that define a series of tasks to be executed on managed hosts. They are the primary way to orchestrate complex automation workflows.
+            </p>
+
+            <h4>Basic Playbook Structure:</h4>
+            <pre><code>---
+- name: Install and configure web server
+  hosts: webservers
+  become: yes
+  gather_facts: yes
+
+  vars:
+    http_port: 80
+    max_clients: 200
+
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Start nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+      listen: restart_webserver</code></pre>
+
+            <h4>Playbook Components:</h4>
+            <ul>
+              <li><strong>name</strong> - Descriptive name for the play</li>
+              <li><strong>hosts</strong> - Target hosts to run against</li>
+              <li><strong>become</strong> - Run with elevated privileges</li>
+              <li><strong>vars</strong> - Variables for the play</li>
+              <li><strong>tasks</strong> - List of tasks to execute</li>
+              <li><strong>handlers</strong> - Tasks triggered by other tasks</li>
+            </ul>
+          </div>
+
+          <h2>Tasks</h2>
+          <div class="concept-card">
+            <h3>What is a Task?</h3>
+            <p>
+              Tasks are the individual units of work in Ansible. Each task executes a module with specific parameters and can include conditionals, loops, and error handling.
+            </p>
+
+            <h4>Task Examples:</h4>
+            <pre><code>tasks:
+  # Simple task
+  - name: Install package
+    package:
+      name: nginx
+      state: present
+
+  # Task with conditional
+  - name: Configure firewall
+    ufw:
+      rule: allow
+      port: "80"
+      proto: tcp
+    when: ansible_distribution == "Ubuntu"
+
+  # Task with loop
+  - name: Install multiple packages
+    package:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - nginx
+      - curl
+      - vim
+
+  # Task with register
+  - name: Check service status
+    command: systemctl is-active nginx
+    register: nginx_status
+    ignore_errors: yes
+
+  - name: Debug service status
+    debug:
+      var: nginx_status.stdout</code></pre>
+
+            <h4>Task Execution Control:</h4>
+            <pre><code>tasks:
+  - name: Critical task
+    command: /bin/false
+    ignore_errors: no  # Fail on error (default)
+
+  - name: Optional task
+    command: systemctl status myservice
+    ignore_errors: yes  # Continue on error
+
+  - name: Idempotent task
+    file:
+      path: /tmp/test
+      state: touch
+    changed_when: false  # Never report as changed</code></pre>
+          </div>
+
+          <h2>Modules</h2>
+          <div class="concept-card">
+            <h3>What are Modules?</h3>
+            <p>
+              Modules are reusable units of code that Ansible executes on managed nodes. They handle the actual work of configuration management, package installation, and system administration.
+            </p>
+
+            <h4>Common Module Categories:</h4>
+            <ul>
+              <li><strong>System</strong> - User, group, service management</li>
+              <li><strong>Package</strong> - apt, yum, pip, npm</li>
+              <li><strong>Files</strong> - copy, template, file, lineinfile</li>
+              <li><strong>Commands</strong> - command, shell, script</li>
+              <li><strong>Cloud</strong> - AWS, Azure, GCP modules</li>
+              <li><strong>Database</strong> - MySQL, PostgreSQL, MongoDB</li>
+            </ul>
+
+            <h4>Module Examples:</h4>
+            <pre><code># Package management
+- apt: name=nginx state=present
+- yum: name=httpd state=latest
+- pip: name=django state=present
+
+# File operations
+- copy: src=config dest=/etc/app/config
+- template: src=nginx.j2 dest=/etc/nginx/nginx.conf
+- file: path=/tmp/cache state=directory mode=0755
+
+# Service management
+- service: name=nginx state=started enabled=yes
+
+# User management
+- user: name=deploy state=present groups=wheel
+- group: name=developers state=present</code></pre>
+
+            <div class="tip-box">
+              <strong>💡 Tip:</strong> Use <code>ansible-doc module_name</code> to get detailed documentation for any module.
+            </div>
+          </div>
+
+          <h2>Roles</h2>
+          <div class="concept-card">
+            <h3>What is a Role?</h3>
+            <p>
+              Roles are a way to organize playbooks into reusable components. They encapsulate variables, tasks, files, templates, and handlers into a standardized directory structure.
+            </p>
+
+            <h4>Role Directory Structure:</h4>
+            <pre><code>roles/
+├── nginx/
+│   ├── tasks/
+│   │   └── main.yml
+│   ├── handlers/
+│   │   └── main.yml
+│   ├── vars/
+│   │   └── main.yml
+│   ├── defaults/
+│   │   └── main.yml
+│   ├── files/
+│   ├── templates/
+│   ├── meta/
+│   │   └── main.yml
+│   └── README.md</code></pre>
+
+            <h4>Role Example:</h4>
+            <pre><code># roles/nginx/tasks/main.yml
+---
+- name: Install nginx
+  package:
+    name: nginx
+    state: present
+
+- name: Configure nginx
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify: restart nginx
+
+- name: Enable nginx service
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+# roles/nginx/handlers/main.yml
+---
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted</code></pre>
+
+            <h4>Using Roles in Playbook:</h4>
+            <pre><code>---
+- name: Configure web server
+  hosts: webservers
+  roles:
+    - nginx
+    - { role: mysql, db_name: myapp }
+    - { role: monitoring, when: env == "production" }</code></pre>
+          </div>
+
+          <h2>Variables</h2>
+          <div class="concept-card">
+            <h3>What are Variables?</h3>
+            <p>
+              Variables store values that can be used throughout playbooks. They allow for flexibility and reusability in Ansible automation.
+            </p>
+
+            <h4>Variable Sources:</h4>
+            <ul>
+              <li><strong>Playbook vars</strong> - Defined in playbook</li>
+              <li><strong>Role vars</strong> - Defined in roles</li>
+              <li><strong>Inventory vars</strong> - Host/group variables</li>
+              <li><strong>Extra vars</strong> - Command line variables</li>
+              <li><strong>Facts</strong> - Gathered from managed hosts</li>
+            </ul>
+
+            <h4>Variable Examples:</h4>
+            <pre><code># Playbook variables
+vars:
+  app_name: myapp
+  app_port: 8080
+  db_host: "{{ groups['databases'][0] }}"
+
+# Group variables (group_vars/webservers.yml)
+---
+nginx_version: "1.20"
+php_version: "8.1"
+
+# Host variables (host_vars/web1.yml)
+---
+ansible_host: 192.168.1.10
+server_role: frontend
+
+# Using variables
+- name: Install specific version
+  apt:
+    name: "nginx={{ nginx_version }}"
+    state: present
+
+- name: Configure application
+  template:
+    src: app.conf.j2
+    dest: /etc/app/config.yml
+  vars:
+    port: "{{ app_port }}"
+    database_url: "{{ db_host }}"</code></pre>
+
+            <h4>Variable Precedence:</h4>
+            <ol>
+              <li>Extra vars (highest priority)</li>
+              <li>Task vars</li>
+              <li>Block vars</li>
+              <li>Role vars</li>
+              <li>Play vars</li>
+              <li>Host vars</li>
+              <li>Group vars</li>
+              <li>Defaults (lowest priority)</li>
+            </ol>
+          </div>
+
+          <h2>Templates</h2>
+          <div class="concept-card">
+            <h3>What are Templates?</h3>
+            <p>
+              Templates use Jinja2 templating engine to generate configuration files dynamically. They combine static content with variables to create customized configurations.
+            </p>
+
+            <h4>Jinja2 Template Example:</h4>
+            <pre><code"># templates/nginx.conf.j2
+server {
+    listen {{ nginx_port | default(80) }};
+    server_name {{ server_name | default('localhost') }};
+
+    {% if ssl_enabled | default(false) %}
+    listen 443 ssl;
+    ssl_certificate {{ ssl_cert_path }};
+    ssl_certificate_key {{ ssl_key_path }};
+    {% endif %}
+
+    location / {
+        proxy_pass http://{{ app_host }}:{{ app_port }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    {% for location in additional_locations | default([]) %}
+    location {{ location.path }} {
+        {{ location.config | indent(8) }}
+    }
+    {% endfor %}
+}</code></pre>
+
+            <h4>Using Templates in Tasks:</h4>
+            <pre><code>tasks:
+  - name: Configure nginx
+    template:
+      src: nginx.conf.j2
+      dest: /etc/nginx/sites-available/app
+      mode: '0644'
+      backup: yes
+    vars:
+      nginx_port: 80
+      server_name: "{{ inventory_hostname }}"
+      app_host: "127.0.0.1"
+      app_port: 8080
+    notify: reload nginx</code></pre>
+
+            <h4>Jinja2 Filters:</h4>
+            <pre><code># String filters
+{{ variable | upper }}           # Convert to uppercase
+{{ variable | lower }}           # Convert to lowercase
+{{ variable | title }}           # Title case
+{{ variable | replace('old','new') }}  # Replace text
+
+# List filters
+{{ mylist | join(',') }}         # Join list items
+{{ mylist | first }}             # First item
+{{ mylist | last }}              # Last item
+{{ mylist | length }}            # List length
+
+# Default values
+{{ variable | default('default_value') }}
+{{ variable | default(80, true) }}  # Treat empty string as false</code></pre>
+          </div>
+
+          <h2>Facts</h2>
+          <div class="concept-card">
+            <h3>What are Facts?</h3>
+            <p>
+              Facts are variables that contain information about the managed hosts. Ansible automatically gathers facts about system properties, network interfaces, and installed packages.
+            </p>
+
+            <h4>Common Facts:</h4>
+            <pre><code># System facts
+ansible_hostname                    # Hostname
+ansible_os_family                   # OS family (RedHat, Debian)
+ansible_distribution               # Distribution (Ubuntu, CentOS)
+ansible_architecture               # CPU architecture
+
+# Network facts
+ansible_default_ipv4.address        # Default IPv4 address
+ansible_all_ipv4_addresses          # All IPv4 addresses
+ansible_interfaces                  # Network interfaces
+
+# Hardware facts
+ansible_processor_count             # CPU count
+ansible_memtotal_mb                 # Total memory in MB
+ansible_mounts                      # Mounted filesystems</code></pre>
+
+            <h4>Using Facts in Tasks:</h4>
+            <pre><code>tasks:
+  - name: Install on Ubuntu
+    apt:
+      name: apache2
+      state: present
+    when: ansible_os_family == "Debian"
+
+  - name: Install on CentOS
+    yum:
+      name: httpd
+      state: present
+    when: ansible_os_family == "RedHat"
+
+  - name: Configure based on memory
+    template:
+      src: myapp.conf.j2
+      dest: /etc/myapp/config
+    vars:
+      worker_processes: "{{ ansible_processor_count }}"
+      max_memory: "{{ ansible_memtotal_mb }}"</code></pre>
+
+            <h4>Custom Facts:</h4>
+            <pre><code># Create custom fact file
+- name: Create custom fact
+  copy:
+    content: |
+      [application]
+      version=1.2.3
+      environment=production
+    dest: /etc/ansible/facts.d/app.fact
+    mode: '0644'
+
+# Use custom fact
+- name: Debug custom fact
+  debug:
+    msg: "App version: {{ ansible_local.app.application.version }}"</code></pre>
+          </div>
+
+          <h2>Conditionals and Loops</h2>
+          <div class="concept-card">
+            <h3>Conditional Execution</h3>
+            <p>
+              Conditionals allow tasks to run only when certain conditions are met. They use Jinja2 expressions and can reference variables, facts, and registered results.
+            </p>
+
+            <h4>Conditional Examples:</h4>
+            <pre><code>tasks:
+  - name: Install nginx on Ubuntu
+    apt:
+      name: nginx
+      state: present
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Configure firewall
+    ufw:
+      rule: allow
+      port: "{{ item }}"
+      proto: tcp
+    loop:
+      - 80
+      - 443
+    when: ansible_os_family == "Debian"
+
+  - name: Upgrade packages
+    apt:
+      upgrade: dist
+    when:
+      - ansible_distribution == "Ubuntu"
+      - upgrade_packages | default(false)
+
+  - name: Check service status
+    command: systemctl status nginx
+    register: nginx_status
+    ignore_errors: yes
+
+  - name: Start nginx if not running
+    service:
+      name: nginx
+      state: started
+    when: nginx_status.rc != 0</code></pre>
+
+            <h4>Loop Constructs:</h4>
+            <pre><code># Simple loop
+- name: Install packages
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - nginx
+    - curl
+    - vim
+
+# Loop with dictionary
+- name: Create users
+  user:
+    name: "{{ item.name }}"
+    state: present
+    groups: "{{ item.groups }}"
+  loop:
+    - { name: 'alice', groups: 'wheel' }
+    - { name: 'bob', groups: 'developers' }
+
+# Loop with conditional
+- name: Configure services
+  service:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  loop:
+    - { name: 'nginx', state: 'started' }
+    - { name: 'mysql', state: 'stopped' }
+  when: item.state == 'started'</code></pre>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="deployment.html">Playbook Guide</a></strong> - Advanced playbook techniques</li>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Writing maintainable automation</li>
+            <li><strong><a href="index.html">Getting Started</a></strong> - Back to basics</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

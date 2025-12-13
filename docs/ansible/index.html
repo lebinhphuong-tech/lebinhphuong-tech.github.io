@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ansible Documentation | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .alert-info {
+      background: #e7f3ff;
+      border-left: 4px solid var(--primary-color);
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+    }
+
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .concept-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .concept-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item active">Ansible</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-gear-fill me-2"></i>Ansible</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Getting Started</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="deployment.html">Playbook Guide</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+            <a class="nav-link" href="#commands">Common Commands</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-gear-fill me-2"></i>Ansible Documentation</h1>
+
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Configuration Management & Automation</strong> - Ansible is an open-source automation tool that simplifies configuration management, application deployment, and task automation.
+          </div>
+
+          <h2>What is Ansible?</h2>
+          <p>
+            Ansible is an open-source software provisioning, configuration management, and application-deployment tool.
+            It runs on many Unix-like systems, and can configure both Unix-like systems as well as Microsoft Windows.
+            It includes its own declarative language to describe system configuration.
+          </p>
+
+          <h2>Key Features</h2>
+          <ul>
+            <li>🚀 <strong>Agentless</strong> - No agents to install on managed nodes</li>
+            <li>📝 <strong>Declarative</strong> - Describe desired state, not steps to achieve it</li>
+            <li>🔧 <strong>Idempotent</strong> - Safe to run multiple times</li>
+            <li>📚 <strong>Human-readable</strong> - YAML-based playbooks are easy to understand</li>
+            <li>🔌 <strong>Extensible</strong> - Thousands of modules for various tasks</li>
+            <li>🏗️ <strong>Infrastructure as Code</strong> - Version control your infrastructure</li>
+          </ul>
+
+          <h2>Architecture Overview</h2>
+
+          <h3>Control Node</h3>
+          <div class="concept-card">
+            <h4>Ansible Core</h4>
+            <p>The main engine that executes playbooks and communicates with managed nodes.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Inventory</h4>
+            <p>Defines the hosts and groups of hosts that Ansible will manage.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Playbooks</h4>
+            <p>YAML files containing a series of tasks to be executed on managed nodes.</p>
+          </div>
+
+          <h3>Managed Nodes</h3>
+          <div class="concept-card">
+            <h4>Target Systems</h4>
+            <p>Remote systems that Ansible manages. Only require SSH and Python.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Modules</h4>
+            <p>Reusable units of code that Ansible executes on managed nodes.</p>
+          </div>
+
+          <h2>Installation</h2>
+
+          <h3>Install Ansible on Control Node</h3>
+
+          <h4>Linux (Ubuntu/Debian)</h4>
+          <pre><code># Update package index
+sudo apt update
+
+# Install Ansible
+sudo apt install ansible
+
+# Verify installation
+ansible --version</code></pre>
+
+          <h4>CentOS/RHEL/Fedora</h4>
+          <pre><code># Install EPEL repository (if not already installed)
+sudo yum install epel-release
+
+# Install Ansible
+sudo yum install ansible
+
+# Or using dnf on newer systems
+sudo dnf install ansible
+
+# Verify installation
+ansible --version</code></pre>
+
+          <h4>macOS</h4>
+          <pre><code># Install using Homebrew
+brew install ansible
+
+# Verify installation
+ansible --version</code></pre>
+
+          <h4>Python pip</h4>
+          <pre><code># Install Ansible via pip
+pip install ansible
+
+# Verify installation
+ansible --version</code></pre>
+
+          <h3>Setup SSH Key Authentication</h3>
+          <pre><code># Generate SSH key pair (if not exists)
+ssh-keygen -t rsa -b 4096
+
+# Copy public key to managed nodes
+ssh-copy-id user@managed-node
+
+# Test connection
+ssh user@managed-node</code></pre>
+
+          <h2 id="commands">Essential Ansible Commands</h2>
+
+          <h3>Inventory Management</h3>
+          <pre><code># Test connectivity to all hosts
+ansible all -m ping
+
+# Test connectivity to specific host
+ansible target-host -m ping
+
+# Test connectivity to group
+ansible webservers -m ping
+
+# List all hosts in inventory
+ansible all --list-hosts</code></pre>
+
+          <h3>Ad-hoc Commands</h3>
+          <pre><code># Execute shell command on all hosts
+ansible all -m shell -a "uptime"
+
+# Install package on Ubuntu/Debian
+ansible webservers -m apt -a "name=nginx state=present"
+
+# Install package on CentOS/RHEL
+ansible webservers -m yum -a "name=nginx state=present"
+
+# Copy file to remote hosts
+ansible webservers -m copy -a "src=/local/file dest=/remote/path"
+
+# Create directory
+ansible webservers -m file -a "path=/opt/myapp state=directory"
+
+# Restart service
+ansible webservers -m service -a "name=nginx state=restarted"</code></pre>
+
+          <h3>Playbook Execution</h3>
+          <pre><code># Run playbook
+ansible-playbook playbook.yml
+
+# Run playbook with verbose output
+ansible-playbook playbook.yml -v
+
+# Run playbook on specific hosts
+ansible-playbook playbook.yml --limit webservers
+
+# Run playbook with extra variables
+ansible-playbook playbook.yml -e "env=production"
+
+# Check playbook syntax
+ansible-playbook playbook.yml --syntax-check
+
+# Dry run (check mode)
+ansible-playbook playbook.yml --check</code></pre>
+
+          <h3>Configuration & Debugging</h3>
+          <pre><code># Show Ansible configuration
+ansible-config dump
+
+# Show available modules
+ansible-doc -l
+
+# Show module documentation
+ansible-doc yum
+ansible-doc apt
+
+# Show playbook execution with maximum verbosity
+ansible-playbook playbook.yml -vvv</code></pre>
+
+          <h2>Quick Start Example</h2>
+          <p>Install and configure Nginx on web servers:</p>
+
+          <h3>1. Create Inventory File (hosts.ini)</h3>
+          <pre><code>[webservers]
+web1 ansible_host=192.168.1.10
+web2 ansible_host=192.168.1.11
+
+[webservers:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=~/.ssh/id_rsa</code></pre>
+
+          <h3>2. Create Playbook (nginx.yml)</h3>
+          <pre><code>---
+- name: Install and configure Nginx
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Start and enable Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Copy custom index.html
+      copy:
+        content: |
+          &lt;h1&gt;Welcome to Nginx&lt;/h1&gt;
+          &lt;p&gt;Configured by Ansible&lt;/p&gt;
+        dest: /var/www/html/index.html</code></pre>
+
+          <h3>3. Run the Playbook</h3>
+          <pre><code>ansible-playbook nginx.yml</code></pre>
+
+          <h2>YAML Playbook Structure</h2>
+
+          <h3>Basic Playbook Anatomy</h3>
+          <pre><code>---
+- name: Play description
+  hosts: target_hosts
+  become: yes/no                    # Run with sudo
+  gather_facts: yes/no             # Gather system info
+
+  vars:                           # Variables
+    package_name: nginx
+    service_name: nginx
+
+  tasks:                          # List of tasks
+    - name: Task description
+      module_name:
+        parameter1: value1
+        parameter2: value2
+      when: condition               # Conditional execution
+      register: result             # Store result
+
+  handlers:                       # Triggered by tasks
+    - name: Restart service
+      service:
+        name: "{{ service_name }}"
+        state: restarted
+      listen: restart_webserver</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Use <code>ansible-playbook --check</code> to validate playbooks before running them in production.
+          </div>
+
+          <h2>Core Concepts</h2>
+          <p>Understanding key Ansible components:</p>
+          <ul>
+            <li><strong>Inventory</strong> - List of managed hosts and their connection details</li>
+            <li><strong>Playbooks</strong> - YAML files defining automation tasks</li>
+            <li><strong>Tasks</strong> - Individual actions executed by modules</li>
+            <li><strong>Modules</strong> - Reusable code units for specific operations</li>
+            <li><strong>Roles</strong> - Reusable collections of playbooks and related files</li>
+            <li><strong>Variables</strong> - Dynamic data used in playbooks</li>
+            <li><strong>Templates</strong> - Jinja2 templates for configuration files</li>
+            <li><strong>Facts</strong> - Information gathered about managed hosts</li>
+          </ul>
+
+          <h2>Next Steps</h2>
+          <p>Continue learning with our detailed guides:</p>
+          <ul>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Deep dive into Ansible components</li>
+            <li><strong><a href="deployment.html">Playbook Guide</a></strong> - Advanced playbook techniques</li>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Writing maintainable automation</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

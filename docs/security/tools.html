@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Tools & Platforms | Security Documentation</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .tool-card {
+      background: var(--bg-light);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--primary-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .tool-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .tool-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--primary-color);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      flex-shrink: 0;
+    }
+
+    .tool-title {
+      margin: 0;
+      color: var(--secondary-color);
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .tool-category {
+      background: var(--primary-color);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+
+    .tool-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .tool-feature {
+      background: white;
+      padding: 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+      font-size: 0.9rem;
+    }
+
+    .tool-feature i {
+      color: var(--primary-color);
+      margin-right: 0.5rem;
+    }
+
+    .comparison-table {
+      margin: 2rem 0;
+      overflow-x: auto;
+    }
+
+    .comparison-table table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .comparison-table th {
+      background: var(--secondary-color);
+      color: white;
+      font-weight: 600;
+    }
+
+    .comparison-table tr:nth-child(even) {
+      background: var(--bg-light);
+    }
+
+    .comparison-table .check {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .comparison-table .cross {
+      color: #dc3545;
+    }
+
+    .setup-guide {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .setup-guide h4 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .step-list {
+      counter-reset: step-counter;
+    }
+
+    .step-item {
+      counter-increment: step-counter;
+      margin-bottom: 1rem;
+      padding-left: 2rem;
+      position: relative;
+    }
+
+    .step-item::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: var(--primary-color);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .pricing-badge {
+      background: #28a745;
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      margin-left: 1rem;
+    }
+
+    .pricing-badge.free {
+      background: #17a2b8;
+    }
+
+    .pricing-badge.enterprise {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Security</a></li>
+        <li class="breadcrumb-item active">Security Tools</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-shield-check me-2"></i>Security</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="cloud-security.html">Cloud Security</a>
+            <a class="nav-link active" href="tools.html">Security Tools</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-tools me-2"></i>Security Tools & Platforms</h1>
+
+          <p>
+            A comprehensive guide to essential security tools and platforms for modern cybersecurity practices.
+            Learn about industry-leading solutions for threat detection, vulnerability management, and security operations.
+          </p>
+
+          <h2>Security Information and Event Management (SIEM)</h2>
+
+          <div class="tool-grid">
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-bar-chart-line"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">Splunk Enterprise</h3>
+                  <span class="tool-category">SIEM</span>
+                  <span class="pricing-badge enterprise">Enterprise</span>
+                </div>
+              </div>
+
+              <p>Leading SIEM platform for log analysis, threat detection, and security analytics.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-search"></i> Real-time log analysis
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-graph-up"></i> Advanced analytics
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-shield-check"></i> Threat intelligence
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bell"></i> Alerting & automation
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bar-chart"></i> Custom dashboards
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-plugin"></i> Extensive integrations
+                </div>
+              </div>
+
+              <h4>Key Features:</h4>
+              <ul>
+                <li>SPL (Search Processing Language) for advanced queries</li>
+                <li>Machine learning for anomaly detection</li>
+                <li>Enterprise Security for threat management</li>
+                <li>IT Service Intelligence for operational visibility</li>
+              </ul>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-bar-chart"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">ELK Stack</h3>
+                  <span class="tool-category">SIEM</span>
+                  <span class="pricing-badge free">Open Source</span>
+                </div>
+              </div>
+
+              <p>Open-source log aggregation and analysis platform (Elasticsearch, Logstash, Kibana).</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-database"></i> Distributed search
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-funnel"></i> Data processing pipelines
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-graph-up"></i> Real-time visualization
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-plugin"></i> Rich ecosystem
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-speedometer2"></i> High performance
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-currency-dollar"></i> Cost-effective
+                </div>
+              </div>
+
+              <h4>Setup Commands:</h4>
+              <pre><code># Install ELK stack with Docker
+docker network create elastic
+docker run -d --name elasticsearch --net elastic -p 9200:9200 -p 9300:9300 \
+  -e "discovery.type=single-node" elasticsearch:8.5.0
+docker run -d --name logstash --net elastic -p 5044:5044 logstash:8.5.0
+docker run -d --name kibana --net elastic -p 5601:5601 \
+  -e "ELASTICSEARCH_HOSTS=http://elasticsearch:9200" kibana:8.5.0</code></pre>
+            </div>
+          </div>
+
+          <div class="tool-card">
+            <div class="tool-header">
+              <div class="tool-icon">
+                <i class="bi bi-eye"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">Wazuh</h3>
+                  <span class="tool-category">SIEM/XDR</span>
+                  <span class="pricing-badge free">Free Core</span>
+                </div>
+              </div>
+
+              <p>Open-source security monitoring platform with SIEM and XDR capabilities.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-shield-check"></i> Security event monitoring
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-search"></i> Log analysis & correlation
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-file-earmark-text"></i> File integrity monitoring
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bug"></i> Vulnerability detection
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-graph-up"></i> Compliance reporting
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-robot"></i> Automated response
+                </div>
+              </div>
+            </div>
+
+          <h2>Vulnerability Management</h2>
+
+          <div class="tool-grid">
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-bug"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">Nessus</h3>
+                  <span class="tool-category">Vulnerability Scanner</span>
+                  <span class="pricing-badge enterprise">Enterprise</span>
+                </div>
+              </div>
+
+              <p>Industry-leading vulnerability assessment and management platform.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-search"></i> Comprehensive scanning
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bar-chart"></i> Risk-based prioritization
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-shield-check"></i> Compliance reporting
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-robot"></i> Automated remediation
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-cloud"></i> Cloud asset discovery
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-graph-up"></i> Trend analysis
+                </div>
+              </div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-search"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">OpenVAS</h3>
+                  <span class="tool-category">Vulnerability Scanner</span>
+                  <span class="pricing-badge free">Open Source</span>
+                </div>
+              </div>
+
+              <p>Full-featured vulnerability scanner forked from the original Nessus project.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-search"></i> Comprehensive scanning
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bell"></i> Alert management
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bar-chart"></i> Reporting & analytics
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-plugin"></i> Extensible architecture
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-currency-dollar"></i> Cost-effective
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-code"></i> Open source
+                </div>
+              </div>
+
+              <h4>Installation:</h4>
+              <pre><code># Install OpenVAS on Ubuntu
+sudo apt update
+sudo apt install openvas
+sudo gvm-setup
+sudo gvm-start</code></pre>
+            </div>
+          </div>
+
+          <h2>Web Application Security</h2>
+
+          <div class="tool-grid">
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-globe"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">OWASP ZAP</h3>
+                  <span class="tool-category">Web App Scanner</span>
+                  <span class="pricing-badge free">Free</span>
+                </div>
+              </div>
+
+              <p>Open-source web application security scanner and penetration testing tool.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-search"></i> Automated scanning
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-mouse"></i> Manual testing tools
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-robot"></i> Active/Passive scanning
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-plugin"></i> Extensible with add-ons
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-code"></i> API testing support
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bar-chart"></i> Reporting capabilities
+                </div>
+              </div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-shield"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">Burp Suite</h3>
+                  <span class="tool-category">Web App Testing</span>
+                  <span class="pricing-badge enterprise">Professional</span>
+                </div>
+              </div>
+
+              <p>Comprehensive web application security testing platform.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-intersect"></i> Intercepting proxy
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-search"></i> Automated scanning
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bug"></i> Vulnerability detection
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-tools"></i> Manual testing tools
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-code"></i> Extensibility
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-repeat"></i> Repeater functionality
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h2>Endpoint Protection</h2>
+
+          <div class="tool-grid">
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-laptop"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">CrowdStrike Falcon</h3>
+                  <span class="tool-category">EDR/XDR</span>
+                  <span class="pricing-badge enterprise">Enterprise</span>
+                </div>
+              </div>
+
+              <p>Next-generation endpoint protection with advanced threat detection.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-shield-check"></i> Real-time protection
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-search"></i> Advanced threat hunting
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bar-chart"></i> Behavioral analytics
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-robot"></i> Automated response
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-cloud"></i> Cloud-native architecture
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-lightning"></i> Low performance impact
+                </div>
+              </div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-shield-exclamation"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">OSSEC</h3>
+                  <span class="tool-category">HIDS</span>
+                  <span class="pricing-badge free">Open Source</span>
+                </div>
+              </div>
+
+              <p>Open-source host-based intrusion detection system.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-file-earmark-text"></i> File integrity monitoring
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-search"></i> Log analysis
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-shield-check"></i> Rootkit detection
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bell"></i> Real-time alerting
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bar-chart"></i> Compliance reporting
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-plugin"></i> Active response
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h2>Network Security</h2>
+
+          <div class="tool-grid">
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-router"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">Wireshark</h3>
+                  <span class="tool-category">Network Analyzer</span>
+                  <span class="pricing-badge free">Free</span>
+                </div>
+              </div>
+
+              <p>Network protocol analyzer for troubleshooting, analysis, and security auditing.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-search"></i> Deep packet inspection
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-diagram-3"></i> Protocol decoding
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-funnel"></i> Advanced filtering
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-graph-up"></i> Traffic analysis
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bar-chart"></i> Statistics and graphs
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-code"></i> Extensible with Lua
+                </div>
+              </div>
+
+              <h4>Common Filters:</h4>
+              <pre><code># Capture HTTP traffic
+http
+
+# Capture specific IP
+ip.src == 192.168.1.1
+
+# Capture DNS queries
+dns
+
+# Capture TCP SYN packets
+tcp.flags.syn == 1
+
+# Capture large packets
+frame.len > 1500</code></pre>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-diagram-3"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">Snort</h3>
+                  <span class="tool-category">IDS/IPS</span>
+                  <span class="pricing-badge free">Open Source</span>
+                </div>
+              </div>
+
+              <p>Open-source intrusion detection and prevention system.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-search"></i> Signature-based detection
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-brain"></i> Anomaly detection
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-shield-check"></i> Real-time traffic analysis
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bell"></i> Alert generation
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-plugin"></i> Modular architecture
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bar-chart"></i> Comprehensive logging
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h2>Cloud Security Tools</h2>
+
+          <div class="tool-grid">
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-check-circle"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">Checkov</h3>
+                  <span class="tool-category">IaC Scanner</span>
+                  <span class="pricing-badge free">Open Source</span>
+                </div>
+              </div>
+
+              <p>Static analysis tool for infrastructure as code security scanning.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-code"></i> Terraform scanning
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-cloud"></i> CloudFormation support
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-shield-check"></i> Security best practices
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-robot"></i> CI/CD integration
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bar-chart"></i> Compliance reporting
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-plugin"></i> Custom policies
+                </div>
+              </div>
+
+              <h4>Usage:</h4>
+              <pre><code># Scan Terraform files
+checkov -f main.tf
+
+# Scan directory
+checkov -d terraform/
+
+# CI/CD integration
+checkov --framework terraform --output cli</code></pre>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-header">
+                <div class="tool-icon">
+                  <i class="bi bi-shield-lock"></i>
+                </div>
+                <div>
+                  <h3 class="tool-title">Trivy</h3>
+                  <span class="tool-category">Vulnerability Scanner</span>
+                  <span class="pricing-badge free">Open Source</span>
+                </div>
+              </div>
+
+              <p>Comprehensive vulnerability scanner for containers and artifacts.</p>
+
+              <div class="tool-features">
+                <div class="tool-feature">
+                  <i class="bi bi-box-seam"></i> Container scanning
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-file-code"></i> Filesystem scanning
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-git"></i> Git repository scanning
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-robot"></i> CI/CD integration
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-bar-chart"></i> SBOM generation
+                </div>
+                <div class="tool-feature">
+                  <i class="bi bi-lightning"></i> Fast scanning
+                </div>
+              </div>
+
+              <h4>Usage:</h4>
+              <pre><code># Scan container image
+trivy image nginx:latest
+
+# Scan filesystem
+trivy fs /path/to/project
+
+# Generate SBOM
+trivy image --format spdx-json nginx:latest > sbom.json</code></pre>
+            </div>
+          </div>
+
+          <h2>Comparison Tables</h2>
+
+          <h3>SIEM Solutions Comparison</h3>
+          <div class="comparison-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Splunk</th>
+                  <th>ELK Stack</th>
+                  <th>Wazuh</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Cost</td>
+                  <td>Enterprise</td>
+                  <td>Open Source</td>
+                  <td>Open Source</td>
+                </tr>
+                <tr>
+                  <td>Scalability</td>
+                  <td class="check">High</td>
+                  <td class="check">High</td>
+                  <td class="check">Medium</td>
+                </tr>
+                <tr>
+                  <td>Ease of Use</td>
+                  <td class="check">User-friendly</td>
+                  <td>Complex</td>
+                  <td class="check">Moderate</td>
+                </tr>
+                <tr>
+                  <td>Real-time Analysis</td>
+                  <td class="check">Yes</td>
+                  <td class="check">Yes</td>
+                  <td class="check">Yes</td>
+                </tr>
+                <tr>
+                  <td>Machine Learning</td>
+                  <td class="check">Advanced</td>
+                  <td>Basic</td>
+                  <td class="check">Moderate</td>
+                </tr>
+                <tr>
+                  <td>Cloud Integration</td>
+                  <td class="check">Extensive</td>
+                  <td class="check">Good</td>
+                  <td class="check">Good</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Vulnerability Scanners Comparison</h3>
+          <div class="comparison-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Nessus</th>
+                  <th>OpenVAS</th>
+                  <th>Trivy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Cost</td>
+                  <td>Enterprise</td>
+                  <td>Open Source</td>
+                  <td>Open Source</td>
+                </tr>
+                <tr>
+                  <td>Container Scanning</td>
+                  <td class="check">Yes</td>
+                  <td class="cross">Limited</td>
+                  <td class="check">Excellent</td>
+                </tr>
+                <tr>
+                  <td>Compliance Reporting</td>
+                  <td class="check">Extensive</td>
+                  <td class="check">Good</td>
+                  <td>Basic</td>
+                </tr>
+                <tr>
+                  <td>CI/CD Integration</td>
+                  <td class="check">Yes</td>
+                  <td>Basic</td>
+                  <td class="check">Excellent</td>
+                </tr>
+                <tr>
+                  <td>Performance</td>
+                  <td class="check">High</td>
+                  <td>Moderate</td>
+                  <td class="check">Very Fast</td>
+                </tr>
+                <tr>
+                  <td>Web UI</td>
+                  <td class="check">Professional</td>
+                  <td class="check">Basic</td>
+                  <td class="cross">CLI Only</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Implementation Guides</h2>
+
+          <h3>Setting Up ELK Stack for Log Analysis</h3>
+          <div class="setup-guide">
+            <h4>Complete ELK Stack Setup</h4>
+
+            <div class="step-list">
+              <div class="step-item">Install Elasticsearch with security enabled</div>
+              <div class="step-item">Configure Logstash pipelines for data processing</div>
+              <div class="step-item">Set up Filebeat on application servers</div>
+              <div class="step-item">Create Kibana dashboards for visualization</div>
+              <div class="step-item">Configure alerts and notifications</div>
+              <div class="step-item">Implement log retention policies</div>
+            </div>
+          </div>
+
+          <h3>Integrating Security Tools into CI/CD</h3>
+          <div class="setup-guide">
+            <h4>DevSecOps Pipeline Integration</h4>
+
+            <div class="step-list">
+              <div class="step-item">Add SAST scanning in build stage</div>
+              <div class="step-item">Implement container scanning for images</div>
+              <div class="step-item">Configure dependency vulnerability checks</div>
+              <div class="step-item">Set up infrastructure security scanning</div>
+              <div class="step-item">Implement automated security gates</div>
+              <div class="step-item">Configure security reporting and alerting</div>
+            </div>
+          </div>
+
+          <h2>Best Practices for Tool Selection</h2>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
+            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+              <h5 style="color: var(--secondary-color);">Startups & Small Teams</h5>
+              <ul style="margin: 0;">
+                <li>Open-source tools (ELK, Trivy, OWASP ZAP)</li>
+                <li>Cloud-native security services</li>
+                <li>Integrated DevSecOps platforms</li>
+                <li>Focus on automation and ease of use</li>
+              </ul>
+            </div>
+
+            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+              <h5 style="color: var(--secondary-color);">Mid-Size Companies</h5>
+              <ul style="margin: 0;">
+                <li>Commercial tools with enterprise support</li>
+                <li>Integrated security platforms</li>
+                <li>Advanced automation and orchestration</li>
+                <li>Compliance-focused solutions</li>
+              </ul>
+            </div>
+
+            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+              <h5 style="color: var(--secondary-color);">Enterprise Organizations</h5>
+              <ul style="margin: 0;">
+                <li>Enterprise-grade SIEM platforms</li>
+                <li>Integrated security operations centers</li>
+                <li>Custom security tooling and integrations</li>
+                <li>Advanced threat hunting capabilities</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Implementation strategies and compliance</li>
+            <li><strong><a href="cloud-security.html">Cloud Security</a></strong> - Cloud-specific security practices</li>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Review fundamental security principles</li>
+            <li><strong><a href="index.html">Security Overview</a></strong> - Back to fundamentals</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

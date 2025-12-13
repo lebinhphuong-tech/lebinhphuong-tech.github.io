@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOPS Cheatsheet | Quick Reference</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+      font-size: 0.9rem;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+      font-size: 0.9rem;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .command-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .command-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .command-card h4 {
+      color: var(--secondary-color);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .command-item {
+      margin-bottom: 1rem;
+    }
+
+    .command-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .command-syntax {
+      background: white;
+      padding: 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+      margin-bottom: 0.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .command-desc {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .config-example {
+      background: var(--bg-light);
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      border-left: 4px solid #28a745;
+    }
+
+    .config-example h4 {
+      color: #155724;
+      margin-bottom: 1rem;
+    }
+
+    .security-note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .security-note h5 {
+      color: #856404;
+      margin-bottom: 0.5rem;
+    }
+
+    .tool-badge {
+      background: var(--primary-color);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Quick Reference</a></li>
+        <li class="breadcrumb-item active">SOPS</li>
+      </ol>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-book me-2"></i>SOPS</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="#installation">Installation</a>
+            <a class="nav-link" href="#basic-operations">Operations</a>
+            <a class="nav-link" href="#key-management">Key Management</a>
+            <a class="nav-link" href="#configuration-files">Configuration</a>
+            <a class="nav-link" href="#advanced-operations">Advanced</a>
+            <a class="nav-link" href="#integration-examples">Integration</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-book me-2"></i>SOPS</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="#installation">Installation</a>
+            <a class="nav-link" href="#basic-operations">Operations</a>
+            <a class="nav-link" href="#key-management">Key Management</a>
+            <a class="nav-link" href="#configuration-files">Configuration</a>
+            <a class="nav-link" href="#advanced-operations">Advanced</a>
+            <a class="nav-link" href="#integration-examples">Integration</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+      <h1><i class="bi bi-lock me-2"></i>SOPS Cheatsheet</h1>
+
+      <p>
+        SOPS (Secrets OPerationS) is an editor of encrypted files that supports YAML, JSON, ENV, INI and BINARY formats.
+        It encrypts/decrypts secrets using AWS KMS, GCP KMS, Azure Key Vault, age, and PGP.
+      </p>
+
+      <div class="security-note">
+        <h5><i class="bi bi-shield-check me-2"></i>Security Best Practices</h5>
+        <ul>
+          <li>Use strong encryption keys (KMS, age, PGP)</li>
+          <li>Never commit decrypted secrets to version control</li>
+          <li>Rotate encryption keys regularly</li>
+          <li>Use separate keys for different environments</li>
+          <li>Implement proper key management and access controls</li>
+        </ul>
+      </div>
+
+      <h2 id="installation">Installation</h2>
+
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Linux/macOS</h4>
+            <div class="command-item">
+              <div class="command-syntax">curl -LO https://github.com/mozilla/sops/releases/latest/download/sops-linux</div>
+              <div class="command-desc">Download SOPS binary for Linux</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">chmod +x sops-linux && sudo mv sops-linux /usr/local/bin/sops</div>
+              <div class="command-desc">Make executable and move to PATH</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>macOS with Homebrew</h4>
+            <div class="command-item">
+              <div class="command-syntax">brew install sops</div>
+              <div class="command-desc">Install via Homebrew</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops --version</div>
+              <div class="command-desc">Verify installation</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="basic-operations">Basic Operations</h2>
+
+      <h3>Encrypting Files</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Basic Encryption</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops -e secrets.yaml > secrets.enc.yaml</div>
+              <div class="command-desc">Encrypt YAML file</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops -e --input-type json secrets.json > secrets.enc.json</div>
+              <div class="command-desc">Encrypt JSON file with explicit type</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops -e secrets.env > secrets.enc.env</div>
+              <div class="command-desc">Encrypt environment file</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>In-place Encryption</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops -e -i secrets.yaml</div>
+              <div class="command-desc">Encrypt file in-place</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops --encrypt --in-place secrets.json</div>
+              <div class="command-desc">Long form in-place encryption</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Decrypting Files</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Basic Decryption</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops -d secrets.enc.yaml</div>
+              <div class="command-desc">Decrypt YAML file to stdout</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops -d secrets.enc.yaml > secrets.decrypted.yaml</div>
+              <div class="command-desc">Decrypt and save to file</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops --decrypt secrets.enc.json</div>
+              <div class="command-desc">Long form decryption</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>View Encrypted Files</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops secrets.enc.yaml</div>
+              <div class="command-desc">View encrypted file (decrypts automatically)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">cat secrets.enc.yaml | sops -d -</div>
+              <div class="command-desc">Decrypt from stdin</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="key-management">Key Management</h2>
+
+      <h3>AWS KMS</h3>
+      <div class="config-example">
+        <h4>Using AWS KMS for Encryption</h4>
+        <pre><code># Create KMS key
+aws kms create-key --description "SOPS encryption key"
+
+# Get key ARN (replace with actual ARN)
+KEY_ARN="arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
+
+# Encrypt with KMS
+sops -e --kms $KEY_ARN secrets.yaml > secrets.enc.yaml
+
+# For multiple KMS keys (production + development)
+PROD_KEY="arn:aws:kms:us-east-1:123456789012:key/prod-key"
+DEV_KEY="arn:aws:kms:us-east-1:123456789012:key/dev-key"
+
+sops -e --kms $PROD_KEY --kms $DEV_KEY secrets.yaml > secrets.enc.yaml</code></pre>
+      </div>
+
+      <h3>GCP KMS</h3>
+      <div class="config-example">
+        <h4>Using Google Cloud KMS</h4>
+        <pre><code># Create KMS key
+gcloud kms keyrings create sops --location global
+gcloud kms keys create sops-key --location global --keyring sops --purpose encryption
+
+# Get key resource name
+KEY_RESOURCE="projects/myproject/locations/global/keyRings/sops/cryptoKeys/sops-key"
+
+# Encrypt with GCP KMS
+sops -e --gcp-kms $KEY_RESOURCE secrets.yaml > secrets.enc.yaml</code></pre>
+      </div>
+
+      <h3>Azure Key Vault</h3>
+      <div class="config-example">
+        <h4>Using Azure Key Vault</h4>
+        <pre><code># Create Key Vault and key
+az keyvault create --name mykeyvault --resource-group mygroup --location eastus
+az keyvault key create --vault-name mykeyvault --name sops-key --protection software
+
+# Get key URL
+KEY_URL="https://mykeyvault.vault.azure.net/keys/sops-key"
+
+# Encrypt with Azure Key Vault
+sops -e --azure-kv $KEY_URL secrets.yaml > secrets.enc.yaml</code></pre>
+      </div>
+
+      <h3>Age Encryption</h3>
+      <div class="config-example">
+        <h4>Using Age for Encryption</h4>
+        <pre><code># Generate age key pair
+age-keygen -o key.txt
+
+# Key file content (example):
+# # created: 2023-01-01T00:00:00+00:00
+# # public key: age1xyz...
+# AGE-SECRET-KEY-1XYZ...
+
+# Extract public key
+PUBLIC_KEY=$(age-keygen -y key.txt)
+
+# Encrypt with age
+sops -e --age $PUBLIC_KEY secrets.yaml > secrets.enc.yaml
+
+# For multiple recipients
+sops -e --age $PUBLIC_KEY1 --age $PUBLIC_KEY2 secrets.yaml > secrets.enc.yaml</code></pre>
+      </div>
+
+      <h3>PGP/GPG</h3>
+      <div class="config-example">
+        <h4>Using PGP/GPG Keys</h4>
+        <pre><code># Generate GPG key (or use existing)
+gpg --gen-key
+
+# List keys to get key ID
+gpg --list-keys
+
+# Get key fingerprint
+KEY_FP=$(gpg --list-keys --with-colons user@example.com | grep '^fpr' | cut -d: -f10)
+
+# Encrypt with PGP
+sops -e --pgp $KEY_FP secrets.yaml > secrets.enc.yaml
+
+# For multiple PGP keys
+sops -e --pgp $KEY_FP1 --pgp $KEY_FP2 secrets.yaml > secrets.enc.yaml</code></pre>
+      </div>
+
+      <h2 id="configuration-files">Configuration Files</h2>
+
+      <h3>SOPS Configuration (.sops.yaml)</h3>
+      <div class="config-example">
+        <h4>Sample .sops.yaml Configuration</h4>
+        <pre><code>creation_rules:
+  # Encrypt everything by default
+  - path_regex: .*
+    kms: 'arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012'
+    pgp: '1234567890ABCDEF1234567890ABCDEF12345678'
+
+  # Specific rules for different environments
+  - path_regex: .*prod.*
+    kms: 'arn:aws:kms:us-east-1:123456789012:key/prod-key-arn'
+    gcp_kms: 'projects/myproject/locations/global/keyRings/prod/cryptoKeys/prod-key'
+
+  - path_regex: .*dev.*
+    age: 'age1xyz...'
+
+  # Exclude certain files or keys
+  - path_regex: .*test.*
+    encrypted_regex: '^(password|secret)$'
+
+# Key groups for multiple encryption keys
+key_groups:
+  - kms:
+      - arn: arn:aws:kms:us-east-1:123456789012:key/key1
+      - arn: arn:aws:kms:us-west-2:123456789012:key/key2
+    pgp:
+      - 1234567890ABCDEF1234567890ABCDEF12345678
+      - 9876543210FEDCBA9876543210FEDCBA98765432</code></pre>
+      </div>
+
+      <h3>Selective Encryption</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Encrypt Specific Keys</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops -e --encrypted-regex '^(password|secret)$' secrets.yaml</div>
+              <div class="command-desc">Encrypt only password and secret keys</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops -e --unencrypted-regex '^public_' secrets.yaml</div>
+              <div class="command-desc">Leave public_ prefixed keys unencrypted</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Key Patterns</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops -e --encrypted-regex 'db.*' secrets.yaml</div>
+              <div class="command-desc">Encrypt all keys starting with 'db'</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops -e --encrypted-regex '.*_password$' secrets.yaml</div>
+              <div class="command-desc">Encrypt all keys ending with '_password'</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="advanced-operations">Advanced Operations</h2>
+
+      <h3>Editing Encrypted Files</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Edit Commands</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops secrets.enc.yaml</div>
+              <div class="command-desc">Edit encrypted file with default editor</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">EDITOR=vim sops secrets.enc.yaml</div>
+              <div class="command-desc">Edit with specific editor</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">SOPS_EDITOR=nano sops secrets.enc.yaml</div>
+              <div class="command-desc">Set editor via environment variable</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Edit Options</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops --set '["app"]["database"]["password"]' 'newpassword' secrets.enc.yaml</div>
+              <div class="command-desc">Set value without opening editor</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops --set '["newkey"]' 'newvalue' secrets.enc.yaml</div>
+              <div class="command-desc">Add new encrypted key</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Rotation & Key Management</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Key Rotation</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops --rotate --kms new-key-arn secrets.enc.yaml</div>
+              <div class="command-desc">Rotate to new KMS key</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops --rotate --in-place secrets.enc.yaml</div>
+              <div class="command-desc">Rotate keys in-place</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Key Information</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops -i secrets.enc.yaml</div>
+              <div class="command-desc">Show encryption information</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops --show-master-keys secrets.enc.yaml</div>
+              <div class="command-desc">Display master keys used for encryption</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="integration-examples">Integration Examples</h2>
+
+      <h3>Kubernetes Integration</h3>
+      <div class="config-example">
+        <h4>Using SOPS with Kubernetes</h4>
+        <pre><code># Encrypt secrets file
+sops -e secrets.yaml > secrets.enc.yaml
+
+# View decrypted content
+sops -d secrets.enc.yaml
+
+# Use in Kubernetes with KSOPS or similar
+kubectl apply -f <(sops -d secrets.enc.yaml)
+
+# Or use kustomize with sops
+# Create kustomization.yaml
+cat > kustomization.yaml << EOF
+secretGenerator:
+- name: mysecret
+  literals:
+  - username=admin
+  - password=secret
+  generators:
+  - sops:
+      file: secrets.enc.yaml
+EOF
+
+kubectl apply -k .</code></pre>
+      </div>
+
+      <h3>CI/CD Integration</h3>
+      <div class="config-example">
+        <h4>GitHub Actions with SOPS</h4>
+        <pre><code># .github/workflows/deploy.yml
+name: Deploy
+on: push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup SOPS
+      uses: mdgreenwald/mozilla-sops-action@v1
+
+    - name: Decrypt secrets
+      run: sops -d secrets.enc.yaml > secrets.yaml
+
+    - name: Deploy
+      run: ./deploy.sh
+      env:
+        SECRET_KEY: ${{ secrets.SOPS_AGE_KEY }}</code></pre>
+      </div>
+
+      <h3>Terraform Integration</h3>
+      <div class="config-example">
+        <h4>Using SOPS with Terraform</h4>
+        <pre><code># Encrypt Terraform variables
+sops -e terraform.tfvars > terraform.enc.tfvars
+
+# Decrypt for terraform apply
+sops -d terraform.enc.tfvars > terraform.tfvars
+
+# Or use terraform-sops provider
+terraform {
+  required_providers {
+    sops = {
+      source = "carlpett/sops"
+      version = "~> 0.7"
+    }
+  }
+}
+
+data "sops_file" "secrets" {
+  source_file = "secrets.enc.yaml"
+}
+
+output "database_password" {
+  value = data.sops_file.secrets.data["database.password"]
+  sensitive = true
+}</code></pre>
+      </div>
+
+      <h2 id="troubleshooting">Troubleshooting</h2>
+
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Common Issues</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops --verbose secrets.enc.yaml</div>
+              <div class="command-desc">Enable verbose output for debugging</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops --debug secrets.enc.yaml</div>
+              <div class="command-desc">Show debug information</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">SOPS_LOG_LEVEL=debug sops secrets.enc.yaml</div>
+              <div class="command-desc">Set debug level via environment</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Key Issues</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops --show-master-keys secrets.enc.yaml</div>
+              <div class="command-desc">Check which keys are used for encryption</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops --ignore-mac secrets.enc.yaml</div>
+              <div class="command-desc">Ignore MAC verification (dangerous)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="best-practices">Best Practices</h2>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 2rem 0;">
+        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+          <h5 style="color: var(--secondary-color);">Key Management</h5>
+          <ul style="margin: 0;">
+            <li>Use separate keys for each environment</li>
+            <li>Regular key rotation (quarterly/annually)</li>
+            <li>Backup encryption keys securely</li>
+            <li>Implement proper access controls for keys</li>
+            <li>Use KMS over local keys when possible</li>
+          </ul>
+        </div>
+
+        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+          <h5 style="color: var(--secondary-color);">File Organization</h5>
+          <ul style="margin: 0;">
+            <li>Use consistent file naming (.enc.yaml)</li>
+            <li>Keep .sops.yaml in repository root</li>
+            <li>Separate secrets by environment</li>
+            <li>Document decryption requirements</li>
+            <li>Exclude encrypted files from git if needed</li>
+          </ul>
+        </div>
+
+        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+          <h5 style="color: var(--secondary-color);">CI/CD Integration</h5>
+          <ul style="margin: 0;">
+            <li>Decrypt secrets at runtime, not build time</li>
+            <li>Use environment-specific keys</li>
+            <li>Implement secret scanning in CI</li>
+            <li>Automate key rotation in pipelines</li>
+            <li>Monitor secret access and usage</li>
+          </ul>
+        </div>
+
+        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+          <h5 style="color: var(--secondary-color);">Security Practices</h5>
+          <ul style="margin: 0;">
+            <li>Never commit decrypted secrets</li>
+            <li>Use strong encryption keys</li>
+            <li>Implement audit logging</li>
+            <li>Regular security assessments</li>
+            <li>Follow principle of least privilege</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 id="performance-tips">Performance & Tips</h2>
+
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Performance Optimization</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops --input-type yaml --output-type yaml secrets.enc.yaml</div>
+              <div class="command-desc">Specify input/output types for better performance</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops --shamir-secret-sharing-threshold 2 secrets.yaml</div>
+              <div class="command-desc">Use Shamir's secret sharing for key recovery</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Useful Tips</h4>
+            <div class="command-item">
+              <div class="command-syntax">sops --extract '["database"]["password"]' secrets.enc.yaml</div>
+              <div class="command-desc">Extract specific values from encrypted files</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sops --show-master-keys --show-private-keys secrets.enc.yaml</div>
+              <div class="command-desc">Show private key information (for debugging)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+      </div>
+
+    </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

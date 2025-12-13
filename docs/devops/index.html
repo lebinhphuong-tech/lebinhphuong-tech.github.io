@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Documentation | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .alert-info {
+      background: #e7f3ff;
+      border-left: 4px solid var(--primary-color);
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+    }
+
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .concept-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .concept-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item active">DevOps</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-code-slash me-2"></i>DevOps</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Overview</a>
+            <a class="nav-link" href="cicd.html">CI/CD Pipelines</a>
+            <a class="nav-link" href="monitoring.html">Monitoring & Logging</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+            <a class="nav-link" href="#tools">DevOps Tools</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-code-slash me-2"></i>DevOps Documentation</h1>
+
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Culture, Practices & Tools</strong> - DevOps combines software development (Dev) and IT operations (Ops) to shorten the development lifecycle and provide continuous delivery of high-quality software.
+          </div>
+
+          <h2>What is DevOps?</h2>
+          <p>
+            DevOps is a set of practices that combines software development and IT operations. It aims to shorten the systems development life cycle
+            and provide continuous delivery with high software quality. DevOps is complementary with Agile software development; several DevOps aspects
+            came from Agile methodology.
+          </p>
+
+          <h2>Core Principles</h2>
+          <ul>
+            <li>🏗️ <strong>Automation</strong> - Automate everything possible to reduce manual errors</li>
+            <li>📊 <strong>Monitoring</strong> - Continuous monitoring of applications and infrastructure</li>
+            <li>🔄 <strong>Continuous Integration</strong> - Frequent code integration and testing</li>
+            <li>🚀 <strong>Continuous Delivery</strong> - Automated deployment to production</li>
+            <li>🤝 <strong>Collaboration</strong> - Break down silos between development and operations</li>
+            <li>📈 <strong>Continuous Improvement</strong> - Learn from failures and improve processes</li>
+          </ul>
+
+          <h2>DevOps Culture</h2>
+
+          <h3>The Three Ways</h3>
+          <div class="concept-card">
+            <h4>First Way: Flow</h4>
+            <p>Focus on the flow of work from development to operations to the customer. Eliminate bottlenecks and improve feedback loops.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Second Way: Feedback</h4>
+            <p>Create feedback loops to understand how systems perform in production and how to improve them.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Third Way: Continual Learning</h4>
+            <p>Create a culture of innovation and risk-taking. Encourage experimentation and learning from failures.</p>
+          </div>
+
+          <h2>DevOps Lifecycle</h2>
+
+          <h3>Plan</h3>
+          <div class="concept-card">
+            <p>Planning phase includes requirement gathering, design, and backlog management using tools like Jira, Azure DevOps, or GitHub Issues.</p>
+          </div>
+
+          <h3>Code</h3>
+          <div class="concept-card">
+            <p>Version control systems like Git, collaborative coding practices, and code reviews ensure quality and maintainability.</p>
+          </div>
+
+          <h3>Build</h3>
+          <div class="concept-card">
+            <p>Automated building of applications using tools like Maven, Gradle, npm, or Docker for containerization.</p>
+          </div>
+
+          <h3>Test</h3>
+          <div class="concept-card">
+            <p>Automated testing including unit tests, integration tests, and acceptance tests using frameworks like JUnit, Selenium, or Cypress.</p>
+          </div>
+
+          <h3>Release</h3>
+          <div class="concept-card">
+            <p>Automated release management and deployment preparation with artifact repositories and release pipelines.</p>
+          </div>
+
+          <h3>Deploy</h3>
+          <div class="concept-card">
+            <p>Automated deployment to various environments using infrastructure as code and configuration management tools.</p>
+          </div>
+
+          <h3>Operate</h3>
+          <div class="concept-card">
+            <p>System administration, monitoring, and maintenance of production environments.</p>
+          </div>
+
+          <h3>Monitor</h3>
+          <div class="concept-card">
+            <p>Continuous monitoring, logging, and alerting to ensure system health and performance.</p>
+          </div>
+
+          <h2 id="tools">Essential DevOps Tools</h2>
+
+          <h3>Version Control</h3>
+          <pre><code># Git basic workflow
+git init                    # Initialize repository
+git add .                   # Stage changes
+git commit -m "message"     # Commit changes
+git push origin main        # Push to remote
+
+# Branching strategy
+git checkout -b feature/new-feature  # Create feature branch
+git checkout main                   # Switch to main
+git merge feature/new-feature       # Merge feature
+git branch -d feature/new-feature   # Delete branch</code></pre>
+
+          <h3>CI/CD Tools</h3>
+          <ul>
+            <li><strong>Jenkins</strong> - Open-source automation server</li>
+            <li><strong>GitHub Actions</strong> - CI/CD integrated with GitHub</li>
+            <li><strong>GitLab CI/CD</strong> - Built-in CI/CD with GitLab</li>
+            <li><strong>Azure DevOps</strong> - Microsoft's DevOps platform</li>
+            <li><strong>CircleCI</strong> - Cloud-based CI/CD platform</li>
+          </ul>
+
+          <h3>Configuration Management</h3>
+          <ul>
+            <li><strong>Ansible</strong> - Agentless automation tool</li>
+            <li><strong>Puppet</strong> - Configuration management tool</li>
+            <li><strong>Chef</strong> - Infrastructure as code platform</li>
+            <li><strong>Terraform</strong> - Infrastructure provisioning</li>
+          </ul>
+
+          <h3>Containerization & Orchestration</h3>
+          <ul>
+            <li><strong>Docker</strong> - Container platform</li>
+            <li><strong>Kubernetes</strong> - Container orchestration</li>
+            <li><strong>Docker Compose</strong> - Multi-container applications</li>
+            <li><strong>Helm</strong> - Kubernetes package manager</li>
+          </ul>
+
+          <h3>Monitoring & Logging</h3>
+          <ul>
+            <li><strong>Prometheus</strong> - Monitoring and alerting toolkit</li>
+            <li><strong>Grafana</strong> - Analytics and monitoring dashboard</li>
+            <li><strong>ELK Stack</strong> - Elasticsearch, Logstash, Kibana</li>
+            <li><strong>Datadog</strong> - Cloud monitoring platform</li>
+            <li><strong>New Relic</strong> - Application performance monitoring</li>
+          </ul>
+
+          <h2>Getting Started with DevOps</h2>
+
+          <h3>1. Set Up Version Control</h3>
+          <pre><code># Initialize Git repository
+mkdir my-devops-project
+cd my-devops-project
+git init
+
+# Create initial structure
+mkdir -p src tests docs ci
+echo "# My DevOps Project" > README.md
+git add .
+git commit -m "Initial commit"</code></pre>
+
+          <h3>2. Choose Your CI/CD Platform</h3>
+          <p>Start with GitHub Actions for simplicity:</p>
+          <pre><code># .github/workflows/ci.yml
+name: CI Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run tests
+      run: echo "Running tests..."</code></pre>
+
+          <h3>3. Implement Infrastructure as Code</h3>
+          <pre><code># Example Terraform configuration
+# main.tf
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1d0"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "DevOps-WebServer"
+  }
+}</code></pre>
+
+          <h3>4. Set Up Monitoring</h3>
+          <pre><code># docker-compose.yml for ELK stack
+version: '3.7'
+services:
+  elasticsearch:
+    image: elasticsearch:7.10.0
+    ports:
+      - "9200:9200"
+
+  logstash:
+    image: logstash:7.10.0
+    ports:
+      - "5044:5044"
+
+  kibana:
+    image: kibana:7.10.0
+    ports:
+      - "5601:5601"</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Pro Tip:</strong> Start small and focus on automating one process at a time. Begin with version control and CI/CD, then gradually add more tools and practices.
+          </div>
+
+          <h2>Common DevOps Challenges</h2>
+
+          <h3>Cultural Resistance</h3>
+          <p>Breaking down silos between development and operations teams requires cultural change and leadership support.</p>
+
+          <h3>Tool Overload</h3>
+          <p>Don't try to implement every DevOps tool at once. Start with tools that solve your immediate problems.</p>
+
+          <h3>Security Concerns</h3>
+          <p>DevOps practices must include security (DevSecOps) from the beginning, not as an afterthought.</p>
+
+          <h3>Skill Gaps</h3>
+          <p>Training and upskilling teams is crucial for successful DevOps adoption.</p>
+
+          <h2>Measuring DevOps Success</h2>
+
+          <h3>Key Metrics</h3>
+          <ul>
+            <li><strong>Deployment Frequency</strong> - How often you deploy to production</li>
+            <li><strong>Lead Time for Changes</strong> - Time from commit to production</li>
+            <li><strong>Change Failure Rate</strong> - Percentage of deployments that fail</li>
+            <li><strong>Time to Restore Service</strong> - How quickly you recover from incidents</li>
+          </ul>
+
+          <h3>DORA Metrics</h3>
+          <p>The DevOps Research and Assessment (DORA) team identified four key metrics for measuring DevOps performance:</p>
+
+          <div class="concept-card">
+            <h4>Elite Performers vs. Low Performers</h4>
+            <ul>
+              <li><strong>Deployment Frequency</strong>: Multiple times per day vs. Once every 6 months</li>
+              <li><strong>Lead Time</strong>: Less than 1 hour vs. 1-6 months</li>
+              <li><strong>Change Failure Rate</strong>: 0-15% vs. 31-45%</li>
+              <li><strong>Time to Restore</strong>: Less than 1 hour vs. 1 week to 1 month</li>
+            </ul>
+          </div>
+
+          <h2>Next Steps</h2>
+          <p>Continue learning with our detailed guides:</p>
+          <ul>
+            <li><strong><a href="cicd.html">CI/CD Pipelines</a></strong> - Build automated delivery pipelines</li>
+            <li><strong><a href="monitoring.html">Monitoring & Logging</a></strong> - Implement observability</li>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Advanced DevOps patterns</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

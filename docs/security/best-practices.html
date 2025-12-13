@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Best Practices | Security Documentation</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .practice-card {
+      background: var(--bg-light);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--primary-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .practice-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .practice-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .practice-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--primary-color);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      flex-shrink: 0;
+    }
+
+    .practice-title {
+      margin: 0;
+      color: var(--secondary-color);
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .practice-category {
+      background: var(--primary-color);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      margin-left: 1rem;
+    }
+
+    .practice-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .practice-item {
+      background: white;
+      padding: 1rem;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+      font-size: 0.9rem;
+    }
+
+    .practice-item i {
+      color: var(--primary-color);
+      margin-right: 0.5rem;
+    }
+
+    .implementation-steps {
+      counter-reset: step-counter;
+      margin: 2rem 0;
+    }
+
+    .implementation-step {
+      counter-increment: step-counter;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #e9ecef;
+      position: relative;
+    }
+
+    .implementation-step::before {
+      content: counter(step-counter);
+      position: absolute;
+      top: -15px;
+      left: 20px;
+      background: var(--primary-color);
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .security-framework {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .security-framework h4 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .checklist {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .checklist h4 {
+      color: var(--secondary-color);
+      margin-bottom: 1rem;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 0.8rem;
+    }
+
+    .checklist-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .checklist-item .check-icon {
+      color: #28a745;
+      margin-right: 0.8rem;
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+    }
+
+    .checklist-item .cross-icon {
+      color: #dc3545;
+      margin-right: 0.8rem;
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+    }
+
+    .case-study {
+      background: linear-gradient(135deg, var(--bg-light) 0%, white 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+      border: 2px solid var(--primary-color);
+      position: relative;
+    }
+
+    .case-study::before {
+      content: "💡";
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 2rem;
+    }
+
+    .case-study h4 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Security</a></li>
+        <li class="breadcrumb-item active">Best Practices</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-shield-check me-2"></i>Security</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="cloud-security.html">Cloud Security</a>
+            <a class="nav-link" href="tools.html">Security Tools</a>
+            <a class="nav-link active" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-star-fill me-2"></i>Security Best Practices</h1>
+
+          <p>
+            This comprehensive guide covers proven security best practices for implementing robust cybersecurity
+            measures across your organization. Learn practical strategies for prevention, detection, and response.
+          </p>
+
+          <div class="success-box">
+            <strong>🎯 Security Success Principles:</strong>
+            <ul>
+              <li><strong>Defense in Depth</strong> - Multiple layers of security controls</li>
+              <li><strong>Zero Trust</strong> - Never trust, always verify</li>
+              <li><strong>Least Privilege</strong> - Grant minimum required access</li>
+              <li><strong>Fail Safe Defaults</strong> - Secure by default configuration</li>
+              <li><strong>Continuous Monitoring</strong> - Real-time security monitoring</li>
+            </ul>
+          </div>
+
+          <h2>Access Control & Identity Management</h2>
+
+          <div class="practice-card">
+            <div class="practice-header">
+              <div class="practice-icon">
+                <i class="bi bi-person-check"></i>
+              </div>
+              <div>
+                <h3 class="practice-title">Multi-Factor Authentication (MFA)</h3>
+                <span class="practice-category">Essential</span>
+              </div>
+            </div>
+
+            <p>Implement MFA for all user accounts and privileged access to prevent unauthorized access.</p>
+
+            <div class="practice-content">
+              <div class="practice-item">
+                <i class="bi bi-shield-check"></i> <strong>Enable Everywhere:</strong> Require MFA for all user accounts, admin access, and API keys
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-key"></i> <strong>Use Hardware Keys:</strong> Prefer hardware security keys over SMS for better security
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-clock"></i> <strong>Session Management:</strong> Implement automatic logout for inactive sessions
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-bell"></i> <strong>Monitor Failed Attempts:</strong> Alert on multiple failed MFA attempts
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-gear"></i> <strong>Backup Methods:</strong> Provide multiple MFA options for redundancy
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-graph-up"></i> <strong>Regular Review:</strong> Audit MFA usage and effectiveness quarterly
+              </div>
+            </div>
+          </div>
+
+          <div class="practice-card">
+            <div class="practice-header">
+              <div class="practice-icon">
+                <i class="bi bi-lock"></i>
+              </div>
+              <div>
+                <h3 class="practice-title">Password Security & Management</h3>
+                <span class="practice-category">Fundamental</span>
+              </div>
+            </div>
+
+            <div class="practice-content">
+              <div class="practice-item">
+                <i class="bi bi-key"></i> <strong>Password Policies:</strong> Minimum 12 characters, complexity requirements
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-shield-x"></i> <strong>No Reuse:</strong> Prevent password reuse across systems
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-clock-history"></i> <strong>Regular Rotation:</strong> Change passwords every 90 days for privileged accounts
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-safe"></i> <strong>Password Managers:</strong> Encourage use of password managers
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-eye-slash"></i> <strong>No Plain Text:</strong> Never store passwords in plain text
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-hash"></i> <strong>Use Hashing:</strong> Store passwords using bcrypt, scrypt, or Argon2
+              </div>
+            </div>
+          </div>
+
+          <h2>Data Protection</h2>
+
+          <div class="practice-card">
+            <div class="practice-header">
+              <div class="practice-icon">
+                <i class="bi bi-shield-lock"></i>
+              </div>
+              <div>
+                <h3 class="practice-title">Encryption Best Practices</h3>
+                <span class="practice-category">Critical</span>
+              </div>
+            </div>
+
+            <div class="practice-content">
+              <div class="practice-item">
+                <i class="bi bi-hdd"></i> <strong>Data at Rest:</strong> Encrypt all sensitive data stored in databases and files
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-arrow-left-right"></i> <strong>Data in Transit:</strong> Use TLS 1.3 for all network communications
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-cpu"></i> <strong>Data in Use:</strong> Implement confidential computing for sensitive processing
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-key"></i> <strong>Key Management:</strong> Use dedicated key management services (KMS, HSM)
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-arrow-repeat"></i> <strong>Key Rotation:</strong> Rotate encryption keys regularly
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-file-earmark-lock"></i> <strong>Backup Encryption:</strong> Encrypt backups and test restoration
+              </div>
+            </div>
+          </div>
+
+          <h2>Network Security</h2>
+
+          <div class="practice-card">
+            <div class="practice-header">
+              <div class="practice-icon">
+                <i class="bi bi-diagram-3"></i>
+              </div>
+              <div>
+                <h3 class="practice-title">Network Segmentation</h3>
+                <span class="practice-category">Architecture</span>
+              </div>
+            </div>
+
+            <div class="practice-content">
+              <div class="practice-item">
+                <i class="bi bi-grid-3x3"></i> <strong>Micro-Segmentation:</strong> Divide network into small, isolated segments
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-shield"></i> <strong>Zero Trust:</strong> Implement identity-based access controls
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-router"></i> <strong>DMZ:</strong> Use demilitarized zones for public-facing services
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-lock"></i> <strong>East-West Traffic:</strong> Control traffic between internal systems
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-eye"></i> <strong>Network Monitoring:</strong> Monitor all network traffic for anomalies
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-ban"></i> <strong>Default Deny:</strong> Block all traffic by default, allow explicitly
+              </div>
+            </div>
+          </div>
+
+          <h2>Application Security</h2>
+
+          <div class="practice-card">
+            <div class="practice-header">
+              <div class="practice-icon">
+                <i class="bi bi-code-slash"></i>
+              </div>
+              <div>
+                <h3 class="practice-title">Secure Software Development</h3>
+                <span class="practice-category">DevSecOps</span>
+              </div>
+            </div>
+
+            <div class="practice-content">
+              <div class="practice-item">
+                <i class="bi bi-search"></i> <strong>Static Analysis:</strong> Scan code for security vulnerabilities (SAST)
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-bug"></i> <strong>Dependency Scanning:</strong> Check third-party libraries for vulnerabilities
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-shield-check"></i> <strong>Container Scanning:</strong> Scan container images for security issues
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-robot"></i> <strong>Automated Testing:</strong> Include security tests in CI/CD pipeline
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-file-earmark-text"></i> <strong>Security Reviews:</strong> Regular code security reviews
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-lightbulb"></i> <strong>Threat Modeling:</strong> Identify and mitigate security threats early
+              </div>
+            </div>
+          </div>
+
+          <h2>Incident Response & Management</h2>
+
+          <h3>Incident Response Plan</h3>
+          <div class="implementation-steps">
+            <div class="implementation-step">
+              <h4>Preparation Phase</h4>
+              <ul>
+                <li>Develop and document incident response procedures</li>
+                <li>Assemble incident response team with defined roles</li>
+                <li>Set up monitoring and alerting systems</li>
+                <li>Create communication plans and contact lists</li>
+                <li>Prepare incident response tools and environments</li>
+                <li>Conduct regular training and simulations</li>
+              </ul>
+            </div>
+
+            <div class="implementation-step">
+              <h4>Detection & Analysis</h4>
+              <ul>
+                <li>Implement continuous monitoring across all systems</li>
+                <li>Set up automated alerting for security events</li>
+                <li>Establish clear incident classification criteria</li>
+                <li>Create incident triage procedures</li>
+                <li>Document evidence collection processes</li>
+                <li>Implement log correlation and analysis</li>
+              </ul>
+            </div>
+
+            <div class="implementation-step">
+              <h4>Containment & Recovery</h4>
+              <ul>
+                <li>Isolate affected systems to prevent spread</li>
+                <li>Implement short-term containment measures</li>
+                <li>Gather forensic evidence while preserving chain of custody</li>
+                <li>Develop and test recovery procedures</li>
+                <li>Restore systems from clean backups</li>
+                <li>Monitor restored systems for reinfection</li>
+              </ul>
+            </div>
+
+            <div class="implementation-step">
+              <h4>Post-Incident Review</h4>
+              <ul>
+                <li>Conduct blameless post-mortem analysis</li>
+                <li>Document lessons learned and root causes</li>
+                <li>Update incident response procedures</li>
+                <li>Implement preventive measures and controls</li>
+                <li>Share findings with relevant stakeholders</li>
+                <li>Track metrics and improve response times</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2>Compliance & Governance</h2>
+
+          <h3>Compliance Frameworks Implementation</h3>
+          <div class="security-framework">
+            <h4>NIST Cybersecurity Framework</h4>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+              <div style="background: var(--bg-light); padding: 1rem; border-radius: 6px; text-align: center;">
+                <h5 style="color: var(--primary-color);">Identify</h5>
+                <ul style="text-align: left; font-size: 0.9rem;">
+                  <li>Asset management</li>
+                  <li>Risk assessment</li>
+                  <li>Supply chain security</li>
+                </ul>
+              </div>
+
+              <div style="background: var(--bg-light); padding: 1rem; border-radius: 6px; text-align: center;">
+                <h5 style="color: var(--primary-color);">Protect</h5>
+                <ul style="text-align: left; font-size: 0.9rem;">
+                  <li>Access control</li>
+                  <li>Data security</li>
+                  <li>Training & awareness</li>
+                </ul>
+              </div>
+
+              <div style="background: var(--bg-light); padding: 1rem; border-radius: 6px; text-align: center;">
+                <h5 style="color: var(--primary-color);">Detect</h5>
+                <ul style="text-align: left; font-size: 0.9rem;">
+                  <li>Monitoring</li>
+                  <li>Anomaly detection</li>
+                  <li>Security testing</li>
+                </ul>
+              </div>
+
+              <div style="background: var(--bg-light); padding: 1rem; border-radius: 6px; text-align: center;">
+                <h5 style="color: var(--primary-color);">Respond</h5>
+                <ul style="text-align: left; font-size: 0.9rem;">
+                  <li>Incident response</li>
+                  <li>Communication</li>
+                  <li>Recovery planning</li>
+                </ul>
+              </div>
+
+              <div style="background: var(--bg-light); padding: 1rem; border-radius: 6px; text-align: center;">
+                <h5 style="color: var(--primary-color);">Recover</h5>
+                <ul style="text-align: left; font-size: 0.9rem;">
+                  <li>Business continuity</li>
+                  <li>Disaster recovery</li>
+                  <li>Lessons learned</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h2>Security Operations</h2>
+
+          <h3>Security Monitoring & Alerting</h3>
+          <div class="checklist">
+            <h4>Monitoring Best Practices</h4>
+
+            <div class="checklist-item">
+              <i class="bi bi-check-circle-fill check-icon"></i>
+              <div>
+                <strong>Centralized Logging:</strong> Aggregate logs from all systems and applications
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <i class="bi bi-check-circle-fill check-icon"></i>
+              <div>
+                <strong>Real-time Alerting:</strong> Set up alerts for critical security events
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <i class="bi bi-check-circle-fill check-icon"></i>
+              <div>
+                <strong>SIEM Integration:</strong> Use SIEM for log correlation and analysis
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <i class="bi bi-check-circle-fill check-icon"></i>
+              <div>
+                <strong>Threat Intelligence:</strong> Integrate threat intelligence feeds
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <i class="bi bi-check-circle-fill check-icon"></i>
+              <div>
+                <strong>Performance Monitoring:</strong> Monitor system performance for security anomalies
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <i class="bi bi-check-circle-fill check-icon"></i>
+              <div>
+                <strong>Regular Audits:</strong> Conduct regular security assessments and audits
+              </div>
+            </div>
+          </div>
+
+          <h2>Cloud Security Best Practices</h2>
+
+          <div class="practice-card">
+            <div class="practice-header">
+              <div class="practice-icon">
+                <i class="bi bi-cloud-check"></i>
+              </div>
+              <div>
+                <h3 class="practice-title">Cloud Security Essentials</h3>
+                <span class="practice-category">Cloud</span>
+              </div>
+            </div>
+
+            <div class="practice-content">
+              <div class="practice-item">
+                <i class="bi bi-tags"></i> <strong>Resource Tagging:</strong> Implement consistent tagging for cost and security tracking
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-shield"></i> <strong>Identity Management:</strong> Use IAM with least privilege principles
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-lock"></i> <strong>Data Encryption:</strong> Encrypt data at rest and in transit
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-router"></i> <strong>Network Security:</strong> Implement security groups and network ACLs
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-eye"></i> <strong>Monitoring:</strong> Enable CloudTrail, VPC Flow Logs, and GuardDuty
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-file-earmark-check"></i> <strong>Compliance:</strong> Use Config Rules and Security Hub for compliance monitoring
+              </div>
+            </div>
+          </div>
+
+          <h2>Common Security Mistakes to Avoid</h2>
+
+          <div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 1.5rem; margin: 2rem 0;">
+            <h4 style="color: #721c24; margin-bottom: 1rem;">
+              <i class="bi bi-exclamation-triangle me-2"></i>Critical Security Mistakes
+            </h4>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+              <div>
+                <h6 style="color: #721c24;">❌ Default Configurations</h6>
+                <p style="margin: 0; font-size: 0.9rem;">Never use default passwords or configurations in production</p>
+              </div>
+
+              <div>
+                <h6 style="color: #721c24;">❌ Over-privileged Accounts</h6>
+                <p style="margin: 0; font-size: 0.9rem;">Avoid admin/root access for everyday tasks</p>
+              </div>
+
+              <div>
+                <h6 style="color: #721c24;">❌ Unencrypted Communications</h6>
+                <p style="margin: 0; font-size: 0.9rem;">Always use HTTPS/TLS for sensitive data transmission</p>
+              </div>
+
+              <div>
+                <h6 style="color: #721c24;">❌ Missing Updates</h6>
+                <p style="margin: 0; font-size: 0.9rem;">Keep systems and software updated with security patches</p>
+              </div>
+
+              <div>
+                <h6 style="color: #721c24;">❌ Weak Passwords</h6>
+                <p style="margin: 0; font-size: 0.9rem;">Enforce strong password policies and MFA</p>
+              </div>
+
+              <div>
+                <h6 style="color: #721c24;">❌ No Backup Strategy</h6>
+                <p style="margin: 0; font-size: 0.9rem;">Implement regular backups with encryption and testing</p>
+              </div>
+            </div>
+          </div>
+
+          <h2>Case Studies</h2>
+
+          <div class="case-study">
+            <h4>Financial Institution Security Transformation</h4>
+            <p><strong>Challenge:</strong> Legacy banking systems with outdated security controls and increasing cyber threats</p>
+            <p><strong>Solution:</strong> Implemented comprehensive security modernization program</p>
+            <ul>
+              <li>Migrated to zero-trust architecture with identity-aware proxies</li>
+              <li>Implemented automated vulnerability scanning and patching</li>
+              <li>Deployed SIEM for real-time threat detection and response</li>
+              <li>Established security operations center (SOC) with 24/7 monitoring</li>
+            </ul>
+            <p><strong>Result:</strong> 85% reduction in security incidents, 50% faster incident response time</p>
+          </div>
+
+          <div class="case-study">
+            <h4>E-commerce Platform DevSecOps Implementation</h4>
+            <p><strong>Challenge:</strong> Frequent security vulnerabilities in rapid deployment cycles</p>
+            <p><strong>Solution:</strong> Integrated security into CI/CD pipeline</p>
+            <ul>
+              <li>Implemented automated SAST and DAST in development pipeline</li>
+              <li>Added container image scanning for all deployments</li>
+              <li>Created security gates preventing vulnerable code deployment</li>
+              <li>Established security champions in each development team</li>
+            </ul>
+            <p><strong>Result:</strong> 90% reduction in production security vulnerabilities, improved deployment velocity</p>
+          </div>
+
+          <div class="case-study">
+            <h4>Healthcare Provider HIPAA Compliance</h4>
+            <p><strong>Challenge:</strong> Complex regulatory requirements and sensitive patient data protection</p>
+            <p><strong>Solution:</strong> Comprehensive compliance and security program</p>
+            <ul>
+              <li>Implemented data classification and encryption at rest/transit</li>
+              <li>Established role-based access control with audit logging</li>
+              <li>Deployed DLP solutions for sensitive data protection</li>
+              <li>Created automated compliance monitoring and reporting</li>
+            </ul>
+            <p><strong>Result:</strong> 100% HIPAA compliance maintained, zero data breaches in 3 years</p>
+          </div>
+
+          <h2>Security Metrics & KPIs</h2>
+
+          <div class="practice-card">
+            <div class="practice-header">
+              <div class="practice-icon">
+                <i class="bi bi-graph-up"></i>
+              </div>
+              <div>
+                <h3 class="practice-title">Measuring Security Effectiveness</h3>
+                <span class="practice-category">Metrics</span>
+              </div>
+            </div>
+
+            <div class="practice-content">
+              <div class="practice-item">
+                <i class="bi bi-clock"></i> <strong>MTTD:</strong> Mean Time to Detect security incidents
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-stopwatch"></i> <strong>MTTR:</strong> Mean Time to Respond to incidents
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-shield-check"></i> <strong>Patch Coverage:</strong> Percentage of systems patched within SLA
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-key"></i> <strong>MFA Adoption:</strong> Percentage of users with MFA enabled
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-bug"></i> <strong>Vulnerability Density:</strong> Vulnerabilities per 1000 lines of code
+              </div>
+              <div class="practice-item">
+                <i class="bi bi-bar-chart"></i> <strong>Security Score:</strong> Overall security posture rating
+              </div>
+            </div>
+          </div>
+
+          <div class="success-box">
+            <strong>✅ Security Implementation Checklist:</strong>
+            <ul>
+              <li>Multi-factor authentication enabled for all accounts</li>
+              <li>Role-based access control implemented</li>
+              <li>Data encryption at rest and in transit</li>
+              <li>Regular security assessments and penetration testing</li>
+              <li>Incident response plan documented and tested</li>
+              <li>Security monitoring and alerting operational</li>
+              <li>Employee security awareness training completed</li>
+              <li>Compliance requirements met and audited</li>
+              <li>Security controls regularly reviewed and updated</li>
+              <li>Security metrics tracked and reported</li>
+            </ul>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="tools.html">Security Tools</a></strong> - Essential security tools and platforms</li>
+            <li><strong><a href="cloud-security.html">Cloud Security</a></strong> - Cloud-specific security practices</li>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Review fundamental security principles</li>
+            <li><strong><a href="index.html">Security Overview</a></strong> - Back to fundamentals</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

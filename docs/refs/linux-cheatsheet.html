@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linux Commands Cheatsheet | Quick Reference</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .command-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .command-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .command-card h4 {
+      color: var(--secondary-color);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .command-item {
+      margin-bottom: 1rem;
+    }
+
+    .command-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .command-syntax {
+      background: white;
+      padding: 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+      margin-bottom: 0.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .command-desc {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .command-example {
+      background: #f8f9fa;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+
+    .important-note {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 6px;
+      padding: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .important-note h5 {
+      color: #856404;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .command-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Quick Reference</a></li>
+        <li class="breadcrumb-item active">Linux Commands</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-lightning me-2"></i>Quick Reference</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="docker-cheatsheet.html">Docker</a>
+            <a class="nav-link" href="git-cheatsheet.html">Git</a>
+            <a class="nav-link active" href="linux-cheatsheet.html">Linux</a>
+            <a class="nav-link" href="kubectl-cheatsheet.html">kubectl</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-terminal me-2"></i>Linux Commands Cheatsheet</h1>
+
+          <p>
+            Essential Linux commands for file management, process control, system administration, and networking.
+            This cheatsheet covers the most commonly used commands with practical examples.
+          </p>
+
+          <div class="important-note">
+            <h5><i class="bi bi-info-circle me-2"></i>Quick Start</h5>
+            <p>Navigation: <code>pwd</code> (current directory), <code>ls</code> (list files), <code>cd</code> (change directory)<br>
+            Help: <code>command --help</code> or <code>man command</code><br>
+            Superuser: <code>sudo</code> for administrative commands</p>
+          </div>
+
+          <h2 id="file-directory-operations">File & Directory Operations</h2>
+
+          <div class="command-grid">
+            <div class="command-card">
+              <h4>Navigation</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">pwd</div>
+                <div class="command-desc">Print current working directory</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">ls</div>
+                <div class="command-desc">List directory contents</div>
+                <div class="command-example">ls -la  # Long format with hidden files</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">cd &lt;directory&gt;</div>
+                <div class="command-desc">Change directory</div>
+                <div class="command-example">cd /home/user  # Absolute path<br>cd ..          # Parent directory<br>cd ~           # Home directory</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">mkdir &lt;name&gt;</div>
+                <div class="command-desc">Create directory</div>
+                <div class="command-example">mkdir -p dir1/dir2/dir3  # Create nested dirs</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>File Operations</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">touch &lt;file&gt;</div>
+                <div class="command-desc">Create empty file or update timestamp</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">cp &lt;source&gt; &lt;dest&gt;</div>
+                <div class="command-desc">Copy files or directories</div>
+                <div class="command-example">cp file1 file2        # Copy file<br>cp -r dir1 dir2      # Copy directory</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">mv &lt;source&gt; &lt;dest&gt;</div>
+                <div class="command-desc">Move or rename files</div>
+                <div class="command-example">mv file1 file2       # Rename<br>mv file1 /tmp/       # Move to directory</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">rm &lt;file&gt;</div>
+                <div class="command-desc">Remove files</div>
+                <div class="command-example">rm -rf directory/     # Remove directory recursively</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>File Viewing</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">cat &lt;file&gt;</div>
+                <div class="command-desc">Display file contents</div>
+                <div class="command-example">cat file1 file2       # Concatenate files</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">less &lt;file&gt;</div>
+                <div class="command-desc">View file with navigation</div>
+                <div class="command-example">less large_file.log   # Navigate with arrow keys</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">head -n 10 &lt;file&gt;</div>
+                <div class="command-desc">Show first 10 lines</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">tail -n 10 &lt;file&gt;</div>
+                <div class="command-desc">Show last 10 lines</div>
+                <div class="command-example">tail -f logfile.log    # Follow log in real-time</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="file-permissions-ownership">File Permissions & Ownership</h2>
+
+          <div class="command-grid">
+            <div class="command-card">
+              <h4>Permissions</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">chmod &lt;mode&gt; &lt;file&gt;</div>
+                <div class="command-desc">Change file permissions</div>
+                <div class="command-example">chmod 755 script.sh   # rwxr-xr-x<br>chmod +x script.sh    # Add execute permission<br>chmod u+w file.txt    # Add write for owner</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">chown &lt;user&gt;:&lt;group&gt; &lt;file&gt;</div>
+                <div class="command-desc">Change file ownership</div>
+                <div class="command-example">chown user1:group1 file.txt<br>chown -R user1 /home/user1/  # Recursive</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">chgrp &lt;group&gt; &lt;file&gt;</div>
+                <div class="command-desc">Change file group</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">umask</div>
+                <div class="command-desc">Display or set default permissions mask</div>
+                <div class="command-example">umask 022  # Default permissions for new files</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>Permission Reference</h4>
+
+              <div class="command-item">
+                <div class="command-desc"><strong>Permission Numbers:</strong></div>
+                <div class="command-example">4 = read (r)<br>2 = write (w)<br>1 = execute (x)<br>0 = no permission (-)</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-desc"><strong>Common Permissions:</strong></div>
+                <div class="command-example">644 = rw-r--r-- (files)<br>755 = rwxr-xr-x (executables)<br>777 = rwxrwxrwx (all permissions)</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">ls -l &lt;file&gt;</div>
+                <div class="command-desc">View detailed permissions</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="process-management">Process Management</h2>
+
+          <div class="command-grid">
+            <div class="command-card">
+              <h4>Process Information</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">ps</div>
+                <div class="command-desc">Display current processes</div>
+                <div class="command-example">ps aux  # All processes with details</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">top</div>
+                <div class="command-desc">Interactive process viewer</div>
+                <div class="command-example">htop  # Enhanced version if installed</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">pgrep &lt;name&gt;</div>
+                <div class="command-desc">Find process by name</div>
+                <div class="command-example">pgrep nginx  # Get nginx process IDs</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">pstree</div>
+                <div class="command-desc">Display process tree</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>Process Control</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">kill &lt;pid&gt;</div>
+                <div class="command-desc">Send signal to process</div>
+                <div class="command-example">kill -9 1234  # Force kill process 1234<br>kill -TERM 1234  # Graceful termination</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">killall &lt;name&gt;</div>
+                <div class="command-desc">Kill all processes by name</div>
+                <div class="command-example">killall firefox</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">pkill &lt;pattern&gt;</div>
+                <div class="command-desc">Kill processes matching pattern</div>
+                <div class="command-example">pkill -f "java.*tomcat"</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">jobs</div>
+                <div class="command-desc">List background jobs</div>
+                <div class="command-example">bg %1  # Resume job 1 in background<br>fg %1  # Bring job 1 to foreground</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="system-information">System Information</h2>
+
+          <div class="command-grid">
+            <div class="command-card">
+              <h4>System Resources</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">df -h</div>
+                <div class="command-desc">Show disk usage</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">du -sh &lt;directory&gt;</div>
+                <div class="command-desc">Show directory size</div>
+                <div class="command-example">du -sh *  # Size of all items in current dir</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">free -h</div>
+                <div class="command-desc">Show memory usage</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">uptime</div>
+                <div class="command-desc">Show system uptime and load</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>System Details</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">uname -a</div>
+                <div class="command-desc">Show system information</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">hostname</div>
+                <div class="command-desc">Show or set hostname</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">whoami</div>
+                <div class="command-desc">Show current user</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">id</div>
+                <div class="command-desc">Show user and group IDs</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">date</div>
+                <div class="command-desc">Show current date and time</div>
+                <div class="command-example">date "+%Y-%m-%d %H:%M:%S"</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="networking">Networking</h2>
+
+          <div class="command-grid">
+            <div class="command-card">
+              <h4>Network Configuration</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">ifconfig</div>
+                <div class="command-desc">Show network interfaces (deprecated)</div>
+                <div class="command-example">ip addr show  # Modern replacement</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">ip addr show</div>
+                <div class="command-desc">Show IP addresses</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">ip route show</div>
+                <div class="command-desc">Show routing table</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">ping &lt;host&gt;</div>
+                <div class="command-desc">Test network connectivity</div>
+                <div class="command-example">ping -c 4 google.com</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>Network Tools</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">netstat -tlnp</div>
+                <div class="command-desc">Show listening ports and processes</div>
+                <div class="command-example">ss -tlnp  # Modern replacement</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">ss -tlnp</div>
+                <div class="command-desc">Show socket statistics</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">curl &lt;url&gt;</div>
+                <div class="command-desc">Transfer data from server</div>
+                <div class="command-example">curl -I http://example.com  # Headers only</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">wget &lt;url&gt;</div>
+                <div class="command-desc">Download files from web</div>
+                <div class="command-example">wget -O output.html http://example.com</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">nslookup &lt;domain&gt;</div>
+                <div class="command-desc">DNS lookup</div>
+                <div class="command-example">dig example.com  # More detailed DNS info</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="package-management">Package Management</h2>
+
+          <div class="command-grid">
+            <div class="command-card">
+              <h4>APT (Debian/Ubuntu)</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">apt update</div>
+                <div class="command-desc">Update package list</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">apt upgrade</div>
+                <div class="command-desc">Upgrade installed packages</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">apt install &lt;package&gt;</div>
+                <div class="command-desc">Install package</div>
+                <div class="command-example">apt install nginx</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">apt remove &lt;package&gt;</div>
+                <div class="command-desc">Remove package</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">apt search &lt;keyword&gt;</div>
+                <div class="command-desc">Search for packages</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>YUM/DNF (Red Hat/CentOS)</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">yum update</div>
+                <div class="command-desc">Update packages (or dnf update)</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">yum install &lt;package&gt;</div>
+                <div class="command-desc">Install package</div>
+                <div class="command-example">yum install httpd</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">yum remove &lt;package&gt;</div>
+                <div class="command-desc">Remove package</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">yum search &lt;keyword&gt;</div>
+                <div class="command-desc">Search for packages</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="text-processing">Text Processing</h2>
+
+          <div class="command-grid">
+            <div class="command-card">
+              <h4>Search & Filter</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">grep &lt;pattern&gt; &lt;file&gt;</div>
+                <div class="command-desc">Search for pattern in file</div>
+                <div class="command-example">grep "error" logfile.log<br>grep -r "TODO" .  # Recursive search<br>grep -i "Error" file.txt  # Case insensitive</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">sed 's/old/new/g' &lt;file&gt;</div>
+                <div class="command-desc">Stream editor for text transformation</div>
+                <div class="command-example">sed 's/localhost/127.0.0.1/g' config.txt</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">awk '{print $1}' &lt;file&gt;</div>
+                <div class="command-desc">Pattern scanning and processing</div>
+                <div class="command-example">ps aux | awk '{print $2, $11}'  # PID and command</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>Sort & Count</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">sort &lt;file&gt;</div>
+                <div class="command-desc">Sort lines in file</div>
+                <div class="command-example">sort -n numbers.txt  # Numeric sort<br>sort -r file.txt     # Reverse sort</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">uniq</div>
+                <div class="command-desc">Remove duplicate lines</div>
+                <div class="command-example">sort file.txt | uniq</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">wc &lt;file&gt;</div>
+                <div class="command-desc">Count lines, words, characters</div>
+                <div class="command-example">wc -l file.txt  # Count lines</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">cut -d',' -f1 &lt;file&gt;</div>
+                <div class="command-desc">Extract columns from delimited file</div>
+                <div class="command-example">cut -d':' -f1 /etc/passwd  # Get usernames</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="compression-archives">Compression & Archives</h2>
+
+          <div class="command-grid">
+            <div class="command-card">
+              <h4>Tar Archives</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">tar -cvf archive.tar &lt;files&gt;</div>
+                <div class="command-desc">Create tar archive</div>
+                <div class="command-example">tar -cvf backup.tar /home/user/</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">tar -xvf archive.tar</div>
+                <div class="command-desc">Extract tar archive</div>
+                <div class="command-example">tar -xvf backup.tar -C /tmp/  # Extract to directory</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">tar -tvf archive.tar</div>
+                <div class="command-desc">List tar archive contents</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">tar -czvf archive.tar.gz &lt;files&gt;</div>
+                <div class="command-desc">Create compressed tar archive</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>Other Formats</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">gzip &lt;file&gt;</div>
+                <div class="command-desc">Compress file with gzip</div>
+                <div class="command-example">gzip -d file.gz  # Decompress</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">bzip2 &lt;file&gt;</div>
+                <div class="command-desc">Compress file with bzip2</div>
+                <div class="command-example">bzip2 -d file.bz2  # Decompress</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">zip -r archive.zip &lt;files&gt;</div>
+                <div class="command-desc">Create zip archive</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">unzip archive.zip</div>
+                <div class="command-desc">Extract zip archive</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="system-services">System Services</h2>
+
+          <div class="command-grid">
+            <div class="command-card">
+              <h4>Systemd (Modern Linux)</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">systemctl status &lt;service&gt;</div>
+                <div class="command-desc">Check service status</div>
+                <div class="command-example">systemctl status nginx</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">systemctl start &lt;service&gt;</div>
+                <div class="command-desc">Start service</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">systemctl stop &lt;service&gt;</div>
+                <div class="command-desc">Stop service</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">systemctl restart &lt;service&gt;</div>
+                <div class="command-desc">Restart service</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">systemctl enable &lt;service&gt;</div>
+                <div class="command-desc">Enable service at boot</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>Service Management</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">systemctl list-units --type=service</div>
+                <div class="command-desc">List all services</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">systemctl daemon-reload</div>
+                <div class="command-desc">Reload systemd configuration</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">journalctl -u &lt;service&gt;</div>
+                <div class="command-desc">View service logs</div>
+                <div class="command-example">journalctl -u nginx -f  # Follow logs</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="user-management">User Management</h2>
+
+          <div class="command-grid">
+            <div class="command-card">
+              <h4>User Operations</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">useradd &lt;username&gt;</div>
+                <div class="command-desc">Create new user</div>
+                <div class="command-example">useradd -m -s /bin/bash john</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">usermod -aG &lt;group&gt; &lt;user&gt;</div>
+                <div class="command-desc">Add user to group</div>
+                <div class="command-example">usermod -aG sudo john</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">passwd &lt;username&gt;</div>
+                <div class="command-desc">Change user password</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">userdel &lt;username&gt;</div>
+                <div class="command-desc">Delete user</div>
+                <div class="command-example">userdel -r john  # Remove home directory too</div>
+              </div>
+            </div>
+
+            <div class="command-card">
+              <h4>Group Operations</h4>
+
+              <div class="command-item">
+                <div class="command-syntax">groupadd &lt;groupname&gt;</div>
+                <div class="command-desc">Create new group</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">groupdel &lt;groupname&gt;</div>
+                <div class="command-desc">Delete group</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">groups &lt;username&gt;</div>
+                <div class="command-desc">Show user groups</div>
+              </div>
+
+              <div class="command-item">
+                <div class="command-syntax">id &lt;username&gt;</div>
+                <div class="command-desc">Show user and group IDs</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="common-command-patterns">Common Command Patterns</h2>
+
+          <h3>Find Files</h3>
+          <pre><code># Find files by name
+find /path -name "*.log"
+
+# Find files modified in last 7 days
+find /var/log -mtime -7
+
+# Find large files (>100MB)
+find / -size +100M
+
+# Find and execute command
+find /tmp -name "*.tmp" -exec rm {} \;</code></pre>
+
+          <h3>Monitor System</h3>
+          <pre><code># Monitor disk usage
+df -h | grep -v tmpfs
+
+# Check memory usage
+free -h
+
+# Monitor processes
+ps aux --sort=-%cpu | head -10
+
+# System load average
+uptime
+
+# Network connections
+netstat -tlnp | grep LISTEN</code></pre>
+
+          <h3>Log Analysis</h3>
+          <pre><code># Count errors in log
+grep -c "ERROR" application.log
+
+# Find recent errors
+tail -f /var/log/syslog | grep -i error
+
+# Extract IP addresses from log
+grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" access.log
+
+# Show unique visitors
+awk '{print $1}' access.log | sort | uniq | wc -l</code></pre>
+
+          <h3>Backup Operations</h3>
+          <pre><code># Create backup
+tar -czf backup-$(date +%Y%m%d).tar.gz /home/user/
+
+# Database backup
+mysqldump -u root -p database > backup.sql
+
+# Rsync for incremental backup
+rsync -avz /source/ /backup/
+
+# Cron job for daily backup
+# Add to crontab: crontab -e
+# 0 2 * * * /path/to/backup-script.sh</code></pre>
+
+          <h2 id="quick-reference-table">Quick Reference Table</h2>
+
+          <div style="overflow-x: auto;">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Command</th>
+                  <th>Description</th>
+                  <th>Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>ls</code></td>
+                  <td>List directory contents</td>
+                  <td><code>ls -la</code></td>
+                </tr>
+                <tr>
+                  <td><code>cd</code></td>
+                  <td>Change directory</td>
+                  <td><code>cd /home/user</code></td>
+                </tr>
+                <tr>
+                  <td><code>pwd</code></td>
+                  <td>Print working directory</td>
+                  <td><code>pwd</code></td>
+                </tr>
+                <tr>
+                  <td><code>cp</code></td>
+                  <td>Copy files</td>
+                  <td><code>cp file1 file2</code></td>
+                </tr>
+                <tr>
+                  <td><code>mv</code></td>
+                  <td>Move/rename files</td>
+                  <td><code>mv oldname newname</code></td>
+                </tr>
+                <tr>
+                  <td><code>rm</code></td>
+                  <td>Remove files</td>
+                  <td><code>rm -rf directory/</code></td>
+                </tr>
+                <tr>
+                  <td><code>chmod</code></td>
+                  <td>Change permissions</td>
+                  <td><code>chmod 755 script.sh</code></td>
+                </tr>
+                <tr>
+                  <td><code>ps</code></td>
+                  <td>Show processes</td>
+                  <td><code>ps aux</code></td>
+                </tr>
+                <tr>
+                  <td><code>top</code></td>
+                  <td>Process monitor</td>
+                  <td><code>top</code></td>
+                </tr>
+                <tr>
+                  <td><code>grep</code></td>
+                  <td>Search text</td>
+                  <td><code>grep "pattern" file</code></td>
+                </tr>
+                <tr>
+                  <td><code>find</code></td>
+                  <td>Find files</td>
+                  <td><code>find . -name "*.txt"</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

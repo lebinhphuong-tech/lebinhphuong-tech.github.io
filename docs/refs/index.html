@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Reference | Technical Cheatsheets</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .cheatsheet-grid {
+      margin-top: 2rem;
+    }
+
+    .cheatsheet-card {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: var(--text-color);
+      display: block;
+    }
+
+    .cheatsheet-card:hover {
+      border-color: var(--primary-color);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+      color: var(--text-color);
+    }
+
+    .cheatsheet-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--bg-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .cheatsheet-card h3 {
+      color: var(--secondary-color);
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .cheatsheet-card p {
+      color: #666;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .cheatsheet-badge {
+      background: var(--primary-color);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+
+    .popular-tag {
+      background: #28a745;
+    }
+
+    .quick-commands {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .quick-commands h4 {
+      color: var(--secondary-color);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .command-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .command-item:last-child {
+      border-bottom: none;
+    }
+
+    .command-code {
+      background: white;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: #e83e8c;
+      border: 1px solid #e9ecef;
+    }
+
+    .command-desc {
+      font-size: 0.9rem;
+      color: #666;
+      flex: 1;
+      margin-left: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .command-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .command-desc {
+        margin-left: 0;
+        margin-top: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item active">Quick Reference</li>
+      </ol>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+      <h1><i class="bi bi-lightning-fill me-2"></i>Quick Reference</h1>
+
+      <p>
+        A collection of cheatsheets and quick reference guides for essential DevOps tools and commands.
+        Perfect for daily use and quick lookups during development and operations.
+      </p>
+
+      <h2><i class="bi bi-grid-3x3-gap me-2"></i>Available Cheatsheets</h2>
+
+      <div class="row cheatsheet-grid">
+        <!-- Docker -->
+        <div class="col-lg-4 col-md-6">
+          <a href="docker-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-box-seam"></i>
+            </div>
+            <span class="cheatsheet-badge popular-tag">Popular</span>
+            <h3>Docker Commands</h3>
+            <p>Essential Docker commands for container management, images, networks, and volumes.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">docker run</code>
+                <span class="command-desc">Run a container</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">docker build</code>
+                <span class="command-desc">Build an image</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">docker ps</code>
+                <span class="command-desc">List containers</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Git -->
+        <div class="col-lg-4 col-md-6">
+          <a href="git-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-git"></i>
+            </div>
+            <span class="cheatsheet-badge popular-tag">Popular</span>
+            <h3>Git Commands</h3>
+            <p>Version control essentials including branching, merging, and collaboration workflows.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">git status</code>
+                <span class="command-desc">Check repository status</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">git commit</code>
+                <span class="command-desc">Commit changes</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">git push</code>
+                <span class="command-desc">Push to remote</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Linux -->
+        <div class="col-lg-4 col-md-6">
+          <a href="linux-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-terminal"></i>
+            </div>
+            <span class="cheatsheet-badge">Essential</span>
+            <h3>Linux Commands</h3>
+            <p>Essential Linux commands for file management, process control, and system administration.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">ls -la</code>
+                <span class="command-desc">List files with details</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">ps aux</code>
+                <span class="command-desc">Show running processes</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">df -h</code>
+                <span class="command-desc">Check disk usage</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Kubernetes -->
+        <div class="col-lg-4 col-md-6">
+          <a href="kubectl-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-cloud"></i>
+            </div>
+            <span class="cheatsheet-badge">DevOps</span>
+            <h3>Kubernetes (kubectl)</h3>
+            <p>Essential kubectl commands for managing Kubernetes clusters, pods, services, and deployments.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">kubectl get</code>
+                <span class="command-desc">List resources</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">kubectl apply</code>
+                <span class="command-desc">Apply configuration</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">kubectl logs</code>
+                <span class="command-desc">View pod logs</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- SSH -->
+        <div class="col-lg-4 col-md-6">
+          <a href="ssh-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-terminal"></i>
+            </div>
+            <span class="cheatsheet-badge">Security</span>
+            <h3>SSH Commands</h3>
+            <p>SSH connection management, key generation, tunneling, and secure remote access techniques.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">ssh user@host</code>
+                <span class="command-desc">Connect to remote host</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">ssh-keygen -t rsa</code>
+                <span class="command-desc">Generate SSH key</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">ssh -L 8080:host:80</code>
+                <span class="command-desc">Local port forwarding</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Shell Scripting -->
+        <div class="col-lg-4 col-md-6">
+          <a href="shellscripts-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-code-slash"></i>
+            </div>
+            <span class="cheatsheet-badge">Scripting</span>
+            <h3>Shell Scripting</h3>
+            <p>Bash scripting essentials including variables, functions, control structures, and best practices.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">#!/bin/bash</code>
+                <span class="command-desc">Script shebang</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">set -euo pipefail</code>
+                <span class="command-desc">Error handling</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">if [ condition ]</code>
+                <span class="command-desc">Conditional statement</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Build Tools -->
+        <div class="col-lg-4 col-md-6">
+          <a href="buildtools-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-tools"></i>
+            </div>
+            <span class="cheatsheet-badge">Build</span>
+            <h3>Build Tools</h3>
+            <p>Essential commands for Make, Maven, Gradle, npm, and Yarn build automation tools.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">make build</code>
+                <span class="command-desc">Make build target</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">mvn compile</code>
+                <span class="command-desc">Maven compile</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">gradle build</code>
+                <span class="command-desc">Gradle build</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Helm -->
+        <div class="col-lg-4 col-md-6">
+          <a href="helm-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-helm"></i>
+            </div>
+            <span class="cheatsheet-badge">Kubernetes</span>
+            <h3>Helm Package Manager</h3>
+            <p>Kubernetes package management with Helm charts, repositories, and deployment automation.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">helm install</code>
+                <span class="command-desc">Install chart</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">helm upgrade</code>
+                <span class="command-desc">Upgrade release</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">helm list</code>
+                <span class="command-desc">List releases</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- SSL/TLS -->
+        <div class="col-lg-4 col-md-6">
+          <a href="ssl-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-shield-lock"></i>
+            </div>
+            <span class="cheatsheet-badge">Security</span>
+            <h3>SSL/TLS Certificates</h3>
+            <p>OpenSSL commands for certificate generation, management, and SSL/TLS troubleshooting.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">openssl genrsa</code>
+                <span class="command-desc">Generate RSA key</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">openssl req -new</code>
+                <span class="command-desc">Create CSR</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">openssl x509</code>
+                <span class="command-desc">Certificate operations</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- SOPS -->
+        <div class="col-lg-4 col-md-6">
+          <a href="sops-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-lock"></i>
+            </div>
+            <span class="cheatsheet-badge">Encryption</span>
+            <h3>SOPS Secrets Management</h3>
+            <p>Encrypted secrets management for YAML/JSON files using AWS KMS, GCP KMS, age, and PGP.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">sops -e file.yaml</code>
+                <span class="command-desc">Encrypt file</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">sops -d file.enc.yaml</code>
+                <span class="command-desc">Decrypt file</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">sops --kms key-arn</code>
+                <span class="command-desc">Use AWS KMS</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- GnuPG -->
+        <div class="col-lg-4 col-md-6">
+          <a href="gnupg-cheatsheet.html" class="cheatsheet-card">
+            <div class="cheatsheet-icon">
+              <i class="bi bi-key"></i>
+            </div>
+            <span class="cheatsheet-badge">Security</span>
+            <h3>GnuPG (GPG)</h3>
+            <p>Complete GPG key management, encryption, digital signatures, and secure communication.</p>
+            <div class="quick-commands">
+              <h4>Quick Commands</h4>
+              <div class="command-item">
+                <code class="command-code">gpg --gen-key</code>
+                <span class="command-desc">Generate key pair</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">gpg --encrypt</code>
+                <span class="command-desc">Encrypt file</span>
+              </div>
+              <div class="command-item">
+                <code class="command-code">gpg --sign</code>
+                <span class="command-desc">Sign file</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+      </div>
+
+      <h2><i class="bi bi-star me-2"></i>Most Popular</h2>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="quick-commands">
+            <h4><i class="bi bi-box-seam me-2"></i>Docker Quick Reference</h4>
+            <div class="command-item">
+              <code class="command-code">docker run -d -p 8080:80 nginx</code>
+              <span class="command-desc">Run Nginx container in background</span>
+            </div>
+            <div class="command-item">
+              <code class="command-code">docker exec -it container_name bash</code>
+              <span class="command-desc">Execute shell in running container</span>
+            </div>
+            <div class="command-item">
+              <code class="command-code">docker-compose up -d</code>
+              <span class="command-desc">Start services with docker-compose</span>
+            </div>
+            <div class="command-item">
+              <code class="command-code">docker system prune</code>
+              <span class="command-desc">Remove unused containers and images</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="quick-commands">
+            <h4><i class="bi bi-git me-2"></i>Git Quick Reference</h4>
+            <div class="command-item">
+              <code class="command-code">git add . && git commit -m "message"</code>
+              <span class="command-desc">Stage and commit all changes</span>
+            </div>
+            <div class="command-item">
+              <code class="command-code">git checkout -b feature-branch</code>
+              <span class="command-desc">Create and switch to new branch</span>
+            </div>
+            <div class="command-item">
+              <code class="command-code">git pull origin main</code>
+              <span class="command-desc">Pull latest changes from remote</span>
+            </div>
+            <div class="command-item">
+              <code class="command-code">git log --oneline -10</code>
+              <span class="command-desc">Show last 10 commits in compact format</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2><i class="bi bi-search me-2"></i>How to Use These Cheatsheets</h2>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <i class="bi bi-bookmark-check" style="font-size: 3rem; color: var(--primary-color);"></i>
+            <h4 style="margin-top: 1rem;">Quick Lookup</h4>
+            <p>Use these cheatsheets for quick reference during development and troubleshooting.</p>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <i class="bi bi-code-square" style="font-size: 3rem; color: var(--primary-color);"></i>
+            <h4 style="margin-top: 1rem;">Copy Commands</h4>
+            <p>Copy and paste commands directly into your terminal or CI/CD pipelines.</p>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <i class="bi bi-share" style="font-size: 3rem; color: var(--primary-color);"></i>
+            <h4 style="margin-top: 1rem;">Share Knowledge</h4>
+            <p>Share these references with your team members and colleagues.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: var(--bg-light); padding: 2rem; border-radius: 8px; margin-top: 2rem;">
+        <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">
+          <i class="bi bi-plus-circle me-2"></i>Contributing
+        </h3>
+        <p>
+          Found a useful command or tool that's missing? Want to improve an existing cheatsheet?
+          Feel free to contribute by creating issues or pull requests in the project repository.
+        </p>
+        <p style="margin-top: 1rem;">
+          <strong>Recently Added:</strong> SSH, Shell Scripting, Build Tools, Helm, SSL/TLS, SOPS, and GnuPG cheatsheets.
+        </p>
+        <p style="margin-top: 0.5rem;">
+          <strong>Coming Soon:</strong> AWS CLI, Terraform, Ansible, and more cheatsheets.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoring & Logging | DevOps Documentation</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .success-box {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .strategy-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .strategy-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">DevOps</a></li>
+        <li class="breadcrumb-item active">Monitoring & Logging</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-code-slash me-2"></i>DevOps</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="cicd.html">CI/CD Pipelines</a>
+            <a class="nav-link active" href="monitoring.html">Monitoring & Logging</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-graph-up me-2"></i>Monitoring & Logging</h1>
+
+          <p>
+            Effective monitoring and logging are crucial for maintaining reliable systems. This guide covers observability
+            practices, tools, and strategies for comprehensive system monitoring and log management.
+          </p>
+
+          <h2>Observability Fundamentals</h2>
+
+          <h3>The Three Pillars</h3>
+          <div class="strategy-card">
+            <h4>Metrics - What Happened?</h4>
+            <p>Quantitative measurements of system performance and behavior over time.</p>
+            <ul>
+              <li>CPU, memory, disk usage</li>
+              <li>Response times and throughput</li>
+              <li>Error rates and success rates</li>
+              <li>Business KPIs</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Logs - Why Did It Happen?</h4>
+            <p>Detailed records of events, errors, and system activities with timestamps.</p>
+            <ul>
+              <li>Application logs</li>
+              <li>System logs</li>
+              <li>Audit logs</li>
+              <li>Security events</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Traces - How Did It Happen?</h4>
+            <p>Distributed tracing shows the path of requests through your system.</p>
+            <ul>
+              <li>Request flows</li>
+              <li>Service dependencies</li>
+              <li>Performance bottlenecks</li>
+              <li>Debugging complex issues</li>
+            </ul>
+          </div>
+
+          <h2>Metrics Monitoring</h2>
+
+          <h3>Prometheus + Grafana Stack</h3>
+          <div class="strategy-card">
+            <h4>Industry Standard Monitoring</h4>
+            <pre><code># docker-compose.yml for Prometheus + Grafana
+version: '3.8'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+
+volumes:
+  prometheus_data:
+  grafana_data:</code></pre>
+          </div>
+
+          <h3>Prometheus Configuration</h3>
+          <div class="strategy-card">
+            <h4>Targets and Rules</h4>
+            <pre><code># prometheus.yml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alert_rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: 'application'
+    static_configs:
+      - targets: ['app:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  - job_name: 'database'
+    static_configs:
+      - targets: ['postgres:9187']
+    scrape_interval: 30s
+
+  - job_name: 'kubernetes-pods'
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__</code></pre>
+          </div>
+
+          <h3>Application Metrics</h3>
+          <div class="strategy-card">
+            <h4>Instrument Your Code</h4>
+            <pre><code># Python Flask app with Prometheus metrics
+from flask import Flask
+from prometheus_flask_exporter import PrometheusMetrics
+
+app = Flask(__name__)
+metrics = PrometheusMetrics(app)
+
+# Static information as metric
+metrics.info('app_info', 'Application info', version='1.0.0')
+
+@app.route('/')
+@metrics.counter('requests_total', 'Total requests', labels={'endpoint': 'home'})
+def home():
+    return 'Hello World!'
+
+@app.route('/health')
+@metrics.do_not_track()
+def health():
+    return {'status': 'healthy'}
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)</code></pre>
+
+            <pre><code># Node.js Express app
+const express = require('express');
+const promBundle = require('express-prom-bundle');
+
+const app = express();
+const metricsMiddleware = promBundle({
+  includeMethod: true,
+  includePath: true,
+  includeStatusCode: true,
+  includeUp: true,
+  customLabels: { project_name: 'myapp' },
+  promClient: { collectDefaultMetrics: {} }
+});
+
+app.use(metricsMiddleware);
+
+// Routes
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy' });
+});
+
+app.listen(8080, () => {
+  console.log('Server running on port 8080');
+});</code></pre>
+          </div>
+
+          <h2>Logging Systems</h2>
+
+          <h3>ELK Stack (Elasticsearch, Logstash, Kibana)</h3>
+          <div class="strategy-card">
+            <h4>Complete Log Management Solution</h4>
+            <pre><code># docker-compose.yml for ELK stack
+version: '3.8'
+services:
+  elasticsearch:
+    image: elasticsearch:8.5.0
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  logstash:
+    image: logstash:8.5.0
+    ports:
+      - "5044:5044"
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+
+  kibana:
+    image: kibana:8.5.0
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    image: elastic/filebeat:8.5.0
+    user: root
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - logstash
+
+volumes:
+  elasticsearch_data:</code></pre>
+          </div>
+
+          <h3>Logstash Configuration</h3>
+          <div class="strategy-card">
+            <h4>Log Processing Pipeline</h4>
+            <pre><code># logstash.conf
+input {
+  beats {
+    port => 5044
+  }
+
+  tcp {
+    port => 5000
+    codec => json
+  }
+}
+
+filter {
+  if [type] == "apache" {
+    grok {
+      match => { "message" => "%{COMBINEDAPACHELOG}" }
+    }
+    date {
+      match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" ]
+      target => "@timestamp"
+    }
+    geoip {
+      source => "clientip"
+    }
+  }
+
+  if [type] == "nginx" {
+    grok {
+      match => { "message" => "%{NGINXACCESS}" }
+    }
+    mutate {
+      convert => { "bytes" => "integer" }
+      convert => { "response" => "integer" }
+    }
+  }
+
+  if [type] == "app" {
+    json {
+      source => "message"
+    }
+    mutate {
+      remove_field => ["message"]
+    }
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["elasticsearch:9200"]
+    index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
+  }
+
+  stdout {
+    codec => rubydebug
+  }
+}</code></pre>
+          </div>
+
+          <h3>Filebeat Configuration</h3>
+          <div class="strategy-card">
+            <h4>Log Shipper</h4>
+            <pre><code># filebeat.yml
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/*.log
+    - /var/log/nginx/*.log
+    - /var/log/apache2/*.log
+  fields:
+    type: syslog
+
+- type: docker
+  enabled: true
+  containers.ids:
+    - "*"
+  processors:
+  - add_docker_metadata:
+      host: "unix:///var/run/docker.sock"
+  fields:
+    type: docker
+
+filebeat.modules:
+- module: nginx
+  access:
+    enabled: true
+    var.paths: ["/var/log/nginx/access.log*"]
+  error:
+    enabled: true
+    var.paths: ["/var/log/nginx/error.log*"]
+
+- module: apache
+  access:
+    enabled: true
+    var.paths: ["/var/log/apache2/access.log*"]
+  error:
+    enabled: true
+    var.paths: ["/var/log/apache2/error.log*"]
+
+output.logstash:
+  hosts: ["logstash:5044"]
+
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7</code></pre>
+          </div>
+
+          <h2>Distributed Tracing</h2>
+
+          <h3>Jaeger + OpenTelemetry</h3>
+          <div class="strategy-card">
+            <h4>End-to-End Request Tracing</h4>
+            <pre><code># docker-compose.yml for Jaeger
+version: '3.8'
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "14268:14268"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    volumes:
+      - jaeger_data:/tmp
+
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888:8888"   # Prometheus metrics
+      - "8889:8889"   # Prometheus exporter
+      - "13133:13133" # health check
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+      - "55670:55679" # zpages extension
+    depends_on:
+      - jaeger
+
+volumes:
+  jaeger_data:</code></pre>
+          </div>
+
+          <h3>OpenTelemetry Configuration</h3>
+          <div class="strategy-card">
+            <h4>Collector Configuration</h4>
+            <pre><code># otel-collector-config.yaml
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  jaeger:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:14250
+      thrift_http:
+        endpoint: 0.0.0.0:14268
+
+processors:
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+
+  memory_limiter:
+    limit_mib: 400
+    spike_limit_mib: 100
+    check_interval: 5s
+
+exporters:
+  jaeger:
+    endpoint: "jaeger:14268"
+    tls:
+      insecure: true
+
+  logging:
+    loglevel: debug
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp, jaeger]
+      processors: [memory_limiter, batch]
+      exporters: [jaeger, logging]
+
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [logging]</code></pre>
+          </div>
+
+          <h2>Alerting</h2>
+
+          <h3>Alertmanager Configuration</h3>
+          <div class="strategy-card">
+            <h4>Intelligent Alert Routing</h4>
+            <pre><code># alertmanager.yml
+global:
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'alerts@example.com'
+  smtp_auth_username: 'alerts@example.com'
+  smtp_auth_password: 'your-password'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'team'
+  routes:
+  - match:
+      severity: critical
+    receiver: 'team-critical'
+    group_wait: 5s
+  - match:
+      team: devops
+    receiver: 'devops-pager'
+  - match:
+      team: frontend
+    receiver: 'frontend-slack'
+
+receivers:
+- name: 'team'
+  email_configs:
+  - to: 'team@example.com'
+    send_resolved: true
+
+- name: 'team-critical'
+  email_configs:
+  - to: 'team@example.com'
+    send_resolved: true
+  pagerduty_configs:
+  - service_key: 'your-pagerduty-key'
+
+- name: 'devops-pager'
+  pagerduty_configs:
+  - service_key: 'devops-pagerduty-key'
+
+- name: 'frontend-slack'
+  slack_configs:
+  - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+    channel: '#frontend-alerts'
+    send_resolved: true
+    title: '{{ .GroupLabels.alertname }}'
+    text: '{{ .CommonAnnotations.description }}'</code></pre>
+          </div>
+
+          <h3>Prometheus Alert Rules</h3>
+          <div class="strategy-card">
+            <h4>Define Alert Conditions</h4>
+            <pre><code># alert_rules.yml
+groups:
+- name: example
+  rules:
+
+  # Instance down alert
+  - alert: InstanceDown
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Instance {{ $labels.instance }} down"
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+
+  # High CPU usage
+  - alert: HighCpuUsage
+    expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU usage on {{ $labels.instance }}"
+      description: "CPU usage is {{ $value }}%"
+
+  # Low disk space
+  - alert: LowDiskSpace
+    expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Low disk space on {{ $labels.instance }}"
+      description: "Disk space is below 10%"
+
+  # High memory usage
+  - alert: HighMemoryUsage
+    expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 0.9
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High memory usage on {{ $labels.instance }}"
+      description: "Memory usage is {{ $value }}%"
+
+  # Application errors
+  - alert: HighErrorRate
+    expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High error rate on {{ $labels.instance }}"
+      description: "Error rate is {{ $value }}"</code></pre>
+          </div>
+
+          <h2>Dashboard Creation</h2>
+
+          <h3>Grafana Dashboards</h3>
+          <div class="strategy-card">
+            <h4>Visualize Your Metrics</h4>
+            <pre><code># Node Exporter Dashboard JSON (excerpt)
+{
+  "dashboard": {
+    "title": "Node Exporter",
+    "tags": ["linux", "system"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "CPU Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "100 - (avg by(instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+            "legendFormat": "{{instance}}"
+          }
+        ]
+      },
+      {
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100",
+            "legendFormat": "{{instance}}"
+          }
+        ]
+      },
+      {
+        "title": "Disk Usage",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "100 - ((node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes)",
+            "legendFormat": "{{mountpoint}}"
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+          </div>
+
+          <h3>Kibana Dashboards</h3>
+          <div class="strategy-card">
+            <h4>Log Analysis Dashboards</h4>
+            <pre><code># Sample Kibana visualization queries
+
+# Error rate over time
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now-1h",
+              "lte": "now"
+            }
+          }
+        },
+        {
+          "match": {
+            "level": "ERROR"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "errors_over_time": {
+      "date_histogram": {
+        "field": "@timestamp",
+        "interval": "5m"
+      }
+    }
+  }
+}
+
+# Top error messages
+{
+  "query": {
+    "match": {
+      "level": "ERROR"
+    }
+  },
+  "aggs": {
+    "top_errors": {
+      "terms": {
+        "field": "message.keyword",
+        "size": 10
+      }
+    }
+  }
+}
+
+# Response time percentiles
+{
+  "query": {
+    "exists": {
+      "field": "response_time"
+    }
+  },
+  "aggs": {
+    "response_time_percentiles": {
+      "percentiles": {
+        "field": "response_time",
+        "percents": [50, 95, 99]
+      }
+    }
+  }
+}</code></pre>
+          </div>
+
+          <h2>Best Practices</h2>
+
+          <div class="success-box">
+            <strong>✅ Monitoring Best Practices:</strong>
+            <ul>
+              <li>Use the RED method for services: Rate, Errors, Duration</li>
+              <li>Use the USE method for resources: Utilization, Saturation, Errors</li>
+              <li>Implement proper log levels (DEBUG, INFO, WARN, ERROR)</li>
+              <li>Structure logs as JSON for better parsing</li>
+              <li>Set up alerts for symptoms, not causes</li>
+              <li>Use distributed tracing for microservices</li>
+              <li>Implement log rotation to prevent disk space issues</li>
+              <li>Create runbooks for common alerts</li>
+              <li>Monitor business metrics, not just technical metrics</li>
+              <li>Implement proper retention policies for logs and metrics</li>
+            </ul>
+          </div>
+
+          <div class="warning-box">
+            <strong>⚠️ Common Monitoring Mistakes:</strong>
+            <ul>
+              <li>Alert fatigue from too many alerts</li>
+              <li>Missing context in alerts and logs</li>
+              <li>Not monitoring business KPIs</li>
+              <li>Poor log message quality</li>
+              <li>Storing sensitive data in logs</li>
+              <li>No alert escalation procedures</li>
+              <li>Ignoring monitoring during development</li>
+              <li>Not testing monitoring systems</li>
+            </ul>
+          </div>
+
+          <h2>Implementation Strategy</h2>
+
+          <h3>Start Small and Scale</h3>
+          <ol>
+            <li><strong>Week 1</strong>: Set up basic infrastructure monitoring (CPU, memory, disk)</li>
+            <li><strong>Week 2</strong>: Implement application health checks and basic metrics</li>
+            <li><strong>Week 3</strong>: Set up centralized logging for critical applications</li>
+            <li><strong>Week 4</strong>: Create basic alerts and notification channels</li>
+            <li><strong>Month 2</strong>: Implement distributed tracing and advanced dashboards</li>
+            <li><strong>Month 3</strong>: Set up business metrics monitoring and SLOs</li>
+          </ol>
+
+          <h3>Define SLOs and SLIs</h3>
+          <div class="strategy-card">
+            <h4>Service Level Objectives</h4>
+            <pre><code># Example SLOs
+# API Availability: 99.9% uptime
+# API Latency: 95% of requests < 500ms
+# Error Rate: < 1% of requests return errors
+# Data Freshness: < 5 minutes lag
+
+# SLI calculations
+# Availability = (total time - downtime) / total time
+# Latency = percentile of response times
+# Error Rate = (error responses / total responses) * 100
+# Freshness = time since last successful update</code></pre>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Advanced DevOps patterns and culture</li>
+            <li><strong><a href="cicd.html">CI/CD Pipelines</a></strong> - Build automated delivery pipelines</li>
+            <li><strong><a href="index.html">DevOps Overview</a></strong> - Back to fundamentals</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GnuPG Cheatsheet | Quick Reference</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+      font-size: 0.9rem;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+      font-size: 0.9rem;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .command-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .command-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .command-card h4 {
+      color: var(--secondary-color);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .command-item {
+      margin-bottom: 1rem;
+    }
+
+    .command-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .command-syntax {
+      background: white;
+      padding: 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+      margin-bottom: 0.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .command-desc {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .config-example {
+      background: var(--bg-light);
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      border-left: 4px solid #28a745;
+    }
+
+    .config-example h4 {
+      color: #155724;
+      margin-bottom: 1rem;
+    }
+
+    .security-note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .security-note h5 {
+      color: #856404;
+      margin-bottom: 0.5rem;
+    }
+
+    .tool-badge {
+      background: var(--primary-color);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Quick Reference</a></li>
+        <li class="breadcrumb-item active">GnuPG</li>
+      </ol>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-book me-2"></i>GnuPG</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="#installation-setup">Installation</a>
+            <a class="nav-link" href="#key-generation">Key Generation</a>
+            <a class="nav-link" href="#key-management">Key Management</a>
+            <a class="nav-link" href="#encryption-decryption">Encryption</a>
+            <a class="nav-link" href="#digital-signatures">Signatures</a>
+            <a class="nav-link" href="#key-servers">Key Servers</a>
+            <a class="nav-link" href="#revocation-maintenance">Maintenance</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-book me-2"></i>GnuPG</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="#installation-setup">Installation</a>
+            <a class="nav-link" href="#key-generation">Key Generation</a>
+            <a class="nav-link" href="#key-management">Key Management</a>
+            <a class="nav-link" href="#encryption-decryption">Encryption</a>
+            <a class="nav-link" href="#digital-signatures">Signatures</a>
+            <a class="nav-link" href="#key-servers">Key Servers</a>
+            <a class="nav-link" href="#revocation-maintenance">Maintenance</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+      <h1><i class="bi bi-key me-2"></i>GnuPG Cheatsheet</h1>
+
+      <p>
+        GnuPG (GNU Privacy Guard) is a complete and free implementation of the OpenPGP standard for encrypting and signing data.
+        This cheatsheet covers key generation, management, encryption/decryption, and digital signatures.
+      </p>
+
+      <div class="security-note">
+        <h5><i class="bi bi-shield-check me-2"></i>Security Best Practices</h5>
+        <ul>
+          <li>Use strong passphrases (20+ characters, mixed case, numbers, symbols)</li>
+          <li>Regularly backup your private keys and revocation certificates</li>
+          <li>Never share your private keys or passphrases</li>
+          <li>Use subkeys for day-to-day operations</li>
+          <li>Keep your GnuPG installation updated</li>
+          <li>Verify key fingerprints before trusting keys</li>
+        </ul>
+      </div>
+
+      <h2 id="installation-setup">Installation & Setup</h2>
+
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Linux</h4>
+            <div class="command-item">
+              <div class="command-syntax">sudo apt install gnupg</div>
+              <div class="command-desc">Install on Ubuntu/Debian</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sudo yum install gnupg</div>
+              <div class="command-desc">Install on CentOS/RHEL</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sudo pacman -S gnupg</div>
+              <div class="command-desc">Install on Arch Linux</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>macOS</h4>
+            <div class="command-item">
+              <div class="command-syntax">brew install gnupg</div>
+              <div class="command-desc">Install via Homebrew</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --version</div>
+              <div class="command-desc">Check GnuPG version</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="key-generation">Key Generation</h2>
+
+      <h3>Generate New Key Pair</h3>
+      <div class="config-example">
+        <h4>Interactive Key Generation</h4>
+        <pre><code>gpg --gen-key
+
+# Follow the prompts:
+# 1. Key type: RSA and RSA (default)
+# 2. Key size: 4096 (recommended)
+# 3. Expiration: 2y (2 years, or 0 for no expiration)
+# 4. Name: Your Full Name
+# 5. Email: your.email@example.com
+# 6. Comment: (optional)
+# 7. Passphrase: Choose a strong passphrase</code></pre>
+      </div>
+
+      <h3>Batch Key Generation</h3>
+      <div class="config-example">
+        <h4>Unattended Key Generation</h4>
+        <pre><code># Create batch configuration file
+cat > keygen.conf << EOF
+Key-Type: RSA
+Key-Length: 4096
+Subkey-Type: RSA
+Subkey-Length: 4096
+Name-Real: Your Name
+Name-Comment: Key for secure communication
+Name-Email: your.email@example.com
+Expire-Date: 2y
+Passphrase: your-secure-passphrase
+EOF
+
+# Generate key
+gpg --batch --gen-key keygen.conf
+
+# Clean up
+rm keygen.conf</code></pre>
+      </div>
+
+      <h3>Generate Subkeys</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Edit Key to Add Subkeys</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --edit-key your.email@example.com</div>
+              <div class="command-desc">Enter key edit mode</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">addkey</div>
+              <div class="command-desc">Add a subkey (follow prompts)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">save</div>
+              <div class="command-desc">Save changes and exit</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Subkey Types</h4>
+            <div class="command-item">
+              <div class="command-syntax">4</div>
+              <div class="command-desc">RSA (sign only)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">6</div>
+              <div class="command-desc">RSA (encrypt only)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">8</div>
+              <div class="command-desc">RSA (sign and encrypt)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="key-management">Key Management</h2>
+
+      <h3>List Keys</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Public Keys</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --list-keys</div>
+              <div class="command-desc">List all public keys</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --list-public-keys</div>
+              <div class="command-desc">List public keys (long form)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --list-keys user@example.com</div>
+              <div class="command-desc">List specific user's keys</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Private Keys</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --list-secret-keys</div>
+              <div class="command-desc">List private keys</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --list-secret-keys --keyid-format LONG</div>
+              <div class="command-desc">Show full key fingerprints</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Key Information</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Key Details</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --fingerprint</div>
+              <div class="command-desc">Show all key fingerprints</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --fingerprint user@example.com</div>
+              <div class="command-desc">Show specific key fingerprint</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --keyid-format 0xlong --list-keys</div>
+              <div class="command-desc">Show key IDs in hex format</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Export Keys</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --export -a user@example.com > public.asc</div>
+              <div class="command-desc">Export public key in ASCII format</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --export-secret-keys -a user@example.com > private.asc</div>
+              <div class="command-desc">Export private key (backup only)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Import & Trust Keys</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Import Keys</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --import public.asc</div>
+              <div class="command-desc">Import public key</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --import --armor public.asc</div>
+              <div class="command-desc">Import ASCII-armored key</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --recv-keys KEYID</div>
+              <div class="command-desc">Fetch key from keyserver</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Trust Levels</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --edit-key user@example.com</div>
+              <div class="command-desc">Edit key trust level</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">trust</div>
+              <div class="command-desc">Set owner trust (1-5 scale)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">save</div>
+              <div class="command-desc">Save and exit</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="encryption-decryption">Encryption & Decryption</h2>
+
+      <h3>Encrypt Files</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Basic Encryption</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --encrypt --recipient user@example.com file.txt</div>
+              <div class="command-desc">Encrypt file for specific recipient</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg -e -r user@example.com file.txt</div>
+              <div class="command-desc">Short form encryption</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --encrypt --sign --recipient user@example.com file.txt</div>
+              <div class="command-desc">Encrypt and sign file</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Multiple Recipients</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg -e -r user1@example.com -r user2@example.com file.txt</div>
+              <div class="command-desc">Encrypt for multiple recipients</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --encrypt --recipient user@example.com --armor file.txt</div>
+              <div class="command-desc">Create ASCII-armored output</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Symmetric Encryption</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Password-based Encryption</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --symmetric file.txt</div>
+              <div class="command-desc">Encrypt with symmetric cipher (password)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg -c file.txt</div>
+              <div class="command-desc">Short form symmetric encryption</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --cipher-algo AES256 --symmetric file.txt</div>
+              <div class="command-desc">Specify cipher algorithm</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Decrypt Files</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --decrypt file.txt.gpg</div>
+              <div class="command-desc">Decrypt file</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg -d file.txt.gpg</div>
+              <div class="command-desc">Short form decryption</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --decrypt file.txt.gpg > output.txt</div>
+              <div class="command-desc">Decrypt to specific file</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="digital-signatures">Digital Signatures</h2>
+
+      <h3>Create Signatures</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Sign Files</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --sign file.txt</div>
+              <div class="command-desc">Create signed file (binary)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --clear-sign file.txt</div>
+              <div class="command-desc">Create clear text signature</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --detach-sign file.txt</div>
+              <div class="command-desc">Create detached signature (.sig file)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg -s file.txt</div>
+              <div class="command-desc">Short form signing</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Verify Signatures</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --verify file.txt.gpg</div>
+              <div class="command-desc">Verify signed file</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --verify file.txt.sig file.txt</div>
+              <div class="command-desc">Verify detached signature</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --verify --verbose file.txt.asc</div>
+              <div class="command-desc">Verbose signature verification</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="key-servers">Key Servers</h2>
+
+      <h3>Keyserver Operations</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Upload Keys</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --keyserver hkps://keys.openpgp.org --send-keys KEYID</div>
+              <div class="command-desc">Upload public key to keyserver</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --send-keys KEYID</div>
+              <div class="command-desc">Upload to default keyserver</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Download Keys</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --keyserver hkps://keys.openpgp.org --recv-keys KEYID</div>
+              <div class="command-desc">Download key from keyserver</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --search-keys "user@example.com"</div>
+              <div class="command-desc">Search for keys by email</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Configure Keyserver</h3>
+      <div class="config-example">
+        <h4>GnuPG Configuration (~/.gnupg/gpg.conf)</h4>
+        <pre><code># Keyserver configuration
+keyserver hkps://keys.openpgp.org
+keyserver-options no-honor-keyserver-url
+keyserver-options include-revoked
+keyserver-options verbose
+
+# Default preferences
+personal-cipher-preferences AES256 AES192 AES CAST5
+personal-digest-preferences SHA512 SHA384 SHA256 SHA224
+personal-compress-preferences ZLIB BZIP2 ZIP Uncompressed
+default-preference-list AES256 AES192 AES CAST5 SHA512 SHA384 SHA256 SHA224 ZLIB BZIP2 ZIP Uncompressed
+
+# Other settings
+use-agent
+keyid-format 0xlong
+with-fingerprint
+with-keygrip
+
+# Auto-retrieve keys from keyserver
+auto-key-retrieve</code></pre>
+      </div>
+
+      <h2 id="revocation-maintenance">Revocation & Maintenance</h2>
+
+      <h3>Create Revocation Certificate</h3>
+      <div class="config-example">
+        <h4>Generate Revocation Certificate</h4>
+        <pre><code># Create revocation certificate (do this immediately after key generation)
+gpg --gen-revoke your.email@example.com > revocation.asc
+
+# Store this file in a safe place!
+# Use it only if your private key is compromised
+
+# To revoke a key:
+# gpg --import revocation.asc
+# gpg --keyserver hkps://keys.openpgp.org --send-keys KEYID</code></pre>
+      </div>
+
+      <h3>Key Maintenance</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Key Operations</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --edit-key your.email@example.com</div>
+              <div class="command-desc">Edit key properties</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">passwd</div>
+              <div class="command-desc">Change passphrase</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">expire</div>
+              <div class="command-desc">Change expiration date</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">revsig</div>
+              <div class="command-desc">Revoke a signature</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Delete Keys</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --delete-key user@example.com</div>
+              <div class="command-desc">Delete public key</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --delete-secret-key user@example.com</div>
+              <div class="command-desc">Delete private key</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --delete-secret-and-public-key user@example.com</div>
+              <div class="command-desc">Delete both keys</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="gpg-agent">GPG Agent</h2>
+
+      <h3>GPG Agent Management</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Agent Control</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpgconf --launch gpg-agent</div>
+              <div class="command-desc">Start GPG agent</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpgconf --kill gpg-agent</div>
+              <div class="command-desc">Stop GPG agent</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg-connect-agent reloadagent /bye</div>
+              <div class="command-desc">Reload agent configuration</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Agent Status</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg-agent --daemon</div>
+              <div class="command-desc">Start agent manually</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">echo RELOADAGENT | gpg-connect-agent</div>
+              <div class="command-desc">Reload agent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>GPG Agent Configuration</h3>
+      <div class="config-example">
+        <h4>GPG Agent Config (~/.gnupg/gpg-agent.conf)</h4>
+        <pre><code># Cache settings
+default-cache-ttl 300
+max-cache-ttl 7200
+default-cache-ttl-ssh 7200
+max-cache-ttl-ssh 86400
+
+# PIN entry program
+pinentry-program /usr/bin/pinentry-gtk-2
+
+# Enable SSH support
+enable-ssh-support
+
+# Logging
+log-file ~/.gnupg/gpg-agent.log
+verbose
+
+# Socket locations
+extra-socket ~/.gnupg/S.gpg-agent.extra</code></pre>
+      </div>
+
+      <h2 id="integration-examples">Integration Examples</h2>
+
+      <h3>Git Commit Signing</h3>
+      <div class="config-example">
+        <h4>Configure Git to use GPG</h4>
+        <pre><code># Configure Git
+git config --global user.signingkey KEYID
+git config --global commit.gpgsign true
+
+# Sign commits
+git commit -S -m "Signed commit message"
+
+# Verify signature
+git log --show-signature
+
+# For GitHub, add GPG key to account:
+# gpg --export --armor KEYID
+# Copy output to GitHub Settings > GPG keys</code></pre>
+      </div>
+
+      <h3>Email Encryption</h3>
+      <div class="config-example">
+        <h4>Thunderbird/Enigmail Setup</h4>
+        <pre><code># Export public key for sharing
+gpg --export --armor your.email@example.com > public.asc
+
+# Import other's public key
+gpg --import friend.asc
+
+# Encrypt email
+gpg -e -r friend@example.com message.txt
+
+# Sign and encrypt
+gpg -se -r friend@example.com message.txt
+
+# Decrypt received message
+gpg -d encrypted.asc</code></pre>
+      </div>
+
+      <h3>Password Manager Integration</h3>
+      <div class="config-example">
+        <h4>Pass (Password Store)</h4>
+        <pre><code># Initialize password store
+pass init your.gpg.key@example.com
+
+# Add password
+pass insert myservice/username
+
+# Retrieve password
+pass myservice/username
+
+# Generate password
+pass generate myservice/newuser 20
+
+# Use with Git
+pass git init
+pass git remote add origin /path/to/repo</code></pre>
+      </div>
+
+      <h2 id="advanced-operations">Advanced Operations</h2>
+
+      <h3>Batch Operations</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Batch Encryption</h4>
+            <div class="command-item">
+              <div class="command-syntax">find . -name "*.txt" -exec gpg -e -r user@example.com {} \;</div>
+              <div class="command-desc">Encrypt all .txt files</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">for file in *.txt; do gpg -e -r user@example.com "$file"; done</div>
+              <div class="command-desc">Batch encrypt files in loop</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Key Operations</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --export | gpg --list-packets</div>
+              <div class="command-desc">Inspect key packets</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --list-packets keyfile.asc</div>
+              <div class="command-desc">Analyze key file structure</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Troubleshooting</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Common Issues</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --card-status</div>
+              <div class="command-desc">Check smart card status</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --card-edit</div>
+              <div class="command-desc">Edit smart card settings</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpgconf --list-dirs</div>
+              <div class="command-desc">Show GnuPG directory locations</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Debug Options</h4>
+            <div class="command-item">
+              <div class="command-syntax">gpg --debug-level guru --decrypt file.gpg</div>
+              <div class="command-desc">Maximum debugging output</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">gpg --verbose --decrypt file.gpg</div>
+              <div class="command-desc">Verbose operation</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="best-practices-summary">Best Practices Summary</h2>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 2rem 0;">
+        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+          <h5 style="color: var(--secondary-color);">Key Management</h5>
+          <ul style="margin: 0;">
+            <li>Use RSA 4096-bit keys minimum</li>
+            <li>Create separate subkeys for signing/encryption</li>
+            <li>Set reasonable expiration dates</li>
+            <li>Backup keys and revocation certificates</li>
+            <li>Regular key rotation and maintenance</li>
+          </ul>
+        </div>
+
+        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+          <h5 style="color: var(--secondary-color);">Security Practices</h5>
+          <ul style="margin: 0;">
+            <li>Never share private keys</li>
+            <li>Use strong, unique passphrases</li>
+            <li>Verify key fingerprints before trusting</li>
+            <li>Keep GnuPG updated</li>
+            <li>Use keyservers responsibly</li>
+          </ul>
+        </div>
+
+        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+          <h5 style="color: var(--secondary-color);">Operational Best Practices</h5>
+          <ul style="margin: 0;">
+            <li>Use detached signatures for verification</li>
+            <li>Sign and encrypt sensitive communications</li>
+            <li>Regularly update key trust levels</li>
+            <li>Monitor key expiration dates</li>
+            <li>Document key management procedures</li>
+          </ul>
+        </div>
+
+        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+          <h5 style="color: var(--secondary-color);">Integration Tips</h5>
+          <ul style="margin: 0;">
+            <li>Configure Git commit signing</li>
+            <li>Use with email clients for secure communication</li>
+            <li>Integrate with password managers</li>
+            <li>Automate encryption in scripts</li>
+            <li>Use with CI/CD pipelines</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+      </div>
+
+    </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

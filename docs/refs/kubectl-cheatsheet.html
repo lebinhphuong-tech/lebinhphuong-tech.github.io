@@ -98,6 +98,40 @@
       color: var(--primary-color);
       text-decoration: none;
     }
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+      font-size: 0.9rem;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
     
     .command-group {
       background: var(--bg-light);
@@ -182,7 +216,7 @@
             for detailed help on any command.
           </div>
 
-          <h2>Cluster Information</h2>
+          <h2 id="cluster-information">Cluster Information</h2>
 
           <div class="command-group">
             <h3>Basic Cluster Commands</h3>
@@ -218,7 +252,7 @@
             </table>
           </div>
 
-          <h2>Nodes</h2>
+          <h2 id="nodes">Nodes</h2>
 
           <div class="command-group">
             <h3>Node Commands</h3>
@@ -256,7 +290,7 @@ kubectl label nodes &lt;node-name&gt; disktype=ssd
 kubectl annotate nodes &lt;node-name&gt; description="Production node"</code></pre>
           </div>
 
-          <h2>Pods</h2>
+          <h2 id="pods">Pods</h2>
 
           <div class="command-group">
             <h3>Pod Management</h3>
@@ -337,7 +371,7 @@ kubectl delete pods -l app=nginx
 kubectl delete pod &lt;pod-name&gt; --grace-period=0 --force</code></pre>
           </div>
 
-          <h2>Deployments</h2>
+          <h2 id="deployments">Deployments</h2>
 
           <div class="command-group">
             <h3>Deployment Operations</h3>
@@ -400,7 +434,7 @@ kubectl delete deployment &lt;deployment-name&gt;
 kubectl delete deployment &lt;deployment-name&gt; --cascade=orphan</code></pre>
           </div>
 
-          <h2>Services</h2>
+          <h2 id="services">Services</h2>
 
           <div class="command-group">
             <h3>Service Management</h3>
@@ -430,7 +464,7 @@ kubectl get endpoints &lt;service-name&gt;
 kubectl delete service &lt;service-name&gt;</code></pre>
           </div>
 
-          <h2>ConfigMaps & Secrets</h2>
+          <h2 id="configmaps-secrets">ConfigMaps & Secrets</h2>
 
           <div class="command-group">
             <h3>ConfigMap Commands</h3>
@@ -493,7 +527,7 @@ kubectl edit secret &lt;secret-name&gt;
 kubectl delete secret &lt;secret-name&gt;</code></pre>
           </div>
 
-          <h2>Namespaces</h2>
+          <h2 id="namespaces">Namespaces</h2>
 
           <div class="command-group">
             <h3>Namespace Operations</h3>
@@ -523,7 +557,7 @@ kubectl delete namespace &lt;namespace-name&gt;
 kubectl label namespace &lt;namespace-name&gt; environment=production</code></pre>
           </div>
 
-          <h2>Resource Management</h2>
+          <h2 id="resource-management">Resource Management</h2>
 
           <div class="command-group">
             <h3>Common Resource Commands</h3>
@@ -567,7 +601,7 @@ kubectl delete pods -l app=nginx
 kubectl delete all --all -n &lt;namespace&gt;</code></pre>
           </div>
 
-          <h2>Scaling & Autoscaling</h2>
+          <h2 id="scaling-autoscaling">Scaling & Autoscaling</h2>
 
           <div class="command-group">
             <h3>Manual & Auto Scaling</h3>
@@ -599,7 +633,7 @@ kubectl top nodes
 kubectl top pod &lt;pod-name&gt;</code></pre>
           </div>
 
-          <h2>Context & Configuration</h2>
+          <h2 id="context-configuration">Context & Configuration</h2>
 
           <div class="command-group">
             <h3>Kubectl Configuration</h3>
@@ -637,7 +671,7 @@ kubectl config get-clusters
 kubectl config get-users</code></pre>
           </div>
 
-          <h2>Debugging & Troubleshooting</h2>
+          <h2 id="debugging-troubleshooting">Debugging & Troubleshooting</h2>
 
           <div class="command-group">
             <h3>Debug Commands</h3>
@@ -681,7 +715,7 @@ kubectl exec -it &lt;pod-name&gt; -- /bin/sh
 kubectl run debug-pod --image=busybox -it --rm -- sh</code></pre>
           </div>
 
-          <h2>Advanced Operations</h2>
+          <h2 id="advanced-operations">Advanced Operations</h2>
 
           <div class="command-group">
             <h3>Advanced Commands</h3>
@@ -727,7 +761,7 @@ kubectl explain pod.spec
 kubectl explain pod.spec.containers</code></pre>
           </div>
 
-          <h2>Useful Aliases</h2>
+          <h2 id="useful-aliases">Useful Aliases</h2>
 
           <div class="command-group">
             <h3>Common Aliases</h3>
@@ -752,7 +786,7 @@ alias kds='kubectl describe service'
 alias kdd='kubectl describe deployment'</code></pre>
           </div>
 
-          <h2>Output Formats</h2>
+          <h2 id="output-formats">Output Formats</h2>
 
           <div class="command-group">
             <h3>Common Output Options</h3>
@@ -792,7 +826,7 @@ alias kdd='kubectl describe deployment'</code></pre>
             </table>
           </div>
 
-          <h2>Quick Reference</h2>
+          <h2 id="quick-reference">Quick Reference</h2>
 
           <div class="command-group">
             <h3>Most Common Commands</h3>
@@ -833,7 +867,7 @@ kubectl delete deployment &lt;name&gt;</code></pre>
             of any Kubernetes resource and see available fields.
           </div>
 
-          <h2>Next Steps</h2>
+          <h2 id="next-steps">Next Steps</h2>
           <ul>
             <li><strong><a href="../kubernetes/index.html">Kubernetes Getting Started</a></strong> - Learn the basics</li>
             <li><strong><a href="../kubernetes/deployment.html">Deployment Guide</a></strong> - Production deployment strategies</li>
@@ -842,6 +876,9 @@ kubectl delete deployment &lt;name&gt;</code></pre>
 
         </div>
       </div>
+    </div>
+      </div>
+
     </div>
   </div>
 

@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Security Best Practices | Security Documentation</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .cloud-card {
+      background: var(--bg-light);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--primary-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cloud-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .cloud-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .cloud-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--primary-color);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      flex-shrink: 0;
+    }
+
+    .cloud-title {
+      margin: 0;
+      color: var(--secondary-color);
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .shared-responsibility {
+      background: linear-gradient(135deg, var(--bg-light) 0%, white 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+      border: 2px solid var(--primary-color);
+      position: relative;
+    }
+
+    .shared-responsibility::before {
+      content: "🤝";
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 2rem;
+    }
+
+    .shared-responsibility h3 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .practice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .practice-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      border: 2px solid #e9ecef;
+      transition: all 0.3s ease;
+    }
+
+    .practice-card:hover {
+      border-color: var(--primary-color);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .practice-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .practice-card .icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    .implementation-steps {
+      counter-reset: step-counter;
+      margin: 2rem 0;
+    }
+
+    .implementation-step {
+      counter-increment: step-counter;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #e9ecef;
+      position: relative;
+    }
+
+    .implementation-step::before {
+      content: counter(step-counter);
+      position: absolute;
+      top: -15px;
+      left: 20px;
+      background: var(--primary-color);
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .security-framework {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .security-framework h4 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .framework-pillars {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .framework-pillar {
+      background: var(--bg-light);
+      padding: 1rem;
+      border-radius: 6px;
+      text-align: center;
+      border: 1px solid #e9ecef;
+    }
+
+    .framework-pillar h5 {
+      color: var(--secondary-color);
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Security</a></li>
+        <li class="breadcrumb-item active">Cloud Security</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-shield-check me-2"></i>Security</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link active" href="cloud-security.html">Cloud Security</a>
+            <a class="nav-link" href="tools.html">Security Tools</a>
+            <a class="nav-link" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-cloud-check me-2"></i>Cloud Security Best Practices</h1>
+
+          <p>
+            Cloud security requires a different approach than traditional on-premises security.
+            This guide covers essential cloud security practices, shared responsibility models, and platform-specific implementations.
+          </p>
+
+          <div class="shared-responsibility">
+            <h3>🔐 Shared Responsibility Model</h3>
+            <p>
+              Cloud security is a shared responsibility between cloud providers and customers.
+              Understanding what each party is responsible for is crucial for effective security implementation.
+            </p>
+
+            <div class="framework-pillars">
+              <div class="framework-pillar">
+                <h5>Cloud Provider</h5>
+                <ul style="text-align: left; margin: 0; padding-left: 1rem;">
+                  <li>Physical security</li>
+                  <li>Network infrastructure</li>
+                  <li>Hypervisor security</li>
+                  <li>Platform availability</li>
+                </ul>
+              </div>
+
+              <div class="framework-pillar">
+                <h5>Customer</h5>
+                <ul style="text-align: left; margin: 0; padding-left: 1rem;">
+                  <li>Data security</li>
+                  <li>Access management</li>
+                  <li>Application security</li>
+                  <li>Compliance requirements</li>
+                </ul>
+              </div>
+
+              <div class="framework-pillar">
+                <h5>Shared</h5>
+                <ul style="text-align: left; margin: 0; padding-left: 1rem;">
+                  <li>Configuration management</li>
+                  <li>Patching</li>
+                  <li>Monitoring</li>
+                  <li>Incident response</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h2>Identity & Access Management</h2>
+
+          <h3>Zero Trust Architecture</h3>
+          <div class="cloud-card">
+            <div class="cloud-header">
+              <div class="cloud-icon">
+                <i class="bi bi-person-check"></i>
+              </div>
+              <div>
+                <h3 class="cloud-title">Never Trust, Always Verify</h3>
+                <span style="background: #28a745; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500;">Essential</span>
+              </div>
+            </div>
+
+            <p>Zero Trust assumes no user or system is trustworthy by default, requiring continuous verification.</p>
+
+            <div class="practice-grid">
+              <div class="practice-card">
+                <div class="icon">🔐</div>
+                <h4>Micro-Segmentation</h4>
+                <p>Divide network into small segments with granular access controls.</p>
+                <ul>
+                  <li>East-west traffic control</li>
+                  <li>Application-level segmentation</li>
+                  <li>Identity-based access</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">📱</div>
+                <h4>Device Trust</h4>
+                <p>Verify device health and compliance before granting access.</p>
+                <ul>
+                  <li>Endpoint verification</li>
+                  <li>Security posture assessment</li>
+                  <li>Conditional access policies</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🔍</div>
+                <h4>Continuous Monitoring</h4>
+                <p>Monitor all access attempts and system activities in real-time.</p>
+                <ul>
+                  <li>User behavior analytics</li>
+                  <li>Anomaly detection</li>
+                  <li>Automated response</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3>Multi-Factor Authentication (MFA)</h3>
+          <div class="security-framework">
+            <h4>Implement MFA Everywhere</h4>
+            <p>MFA should be required for all privileged accounts and sensitive operations.</p>
+
+            <pre><code># AWS - Enable MFA for root account
+aws iam enable-mfa-device \
+  --user-name root \
+  --serial-number arn:aws:iam::123456789012:mfa/root-account-mfa-device \
+  --authentication-code-1 123456 \
+  --authentication-code-2 789012
+
+# Azure - Enable MFA
+az account get-access-token --resource https://graph.microsoft.com
+
+# GCP - Enable MFA
+gcloud auth configure-docker
+gcloud auth application-default login</code></pre>
+          </div>
+
+          <h2>Data Protection</h2>
+
+          <h3>Encryption Strategies</h3>
+          <div class="cloud-card">
+            <div class="cloud-header">
+              <div class="cloud-icon">
+                <i class="bi bi-lock"></i>
+              </div>
+              <div>
+                <h3 class="cloud-title">Defense in Depth Encryption</h3>
+                <span style="background: #dc3545; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500;">Critical</span>
+              </div>
+            </div>
+
+            <div class="practice-grid">
+              <div class="practice-card">
+                <div class="icon">💾</div>
+                <h4>Data at Rest</h4>
+                <p>Encrypt data stored in databases, files, and storage systems.</p>
+                <ul>
+                  <li>AES-256 encryption</li>
+                  <li>Key management services</li>
+                  <li>Automatic encryption</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🚀</div>
+                <h4>Data in Transit</h4>
+                <p>Encrypt data moving between systems and over networks.</p>
+                <ul>
+                  <li>TLS 1.3 encryption</li>
+                  <li>End-to-end encryption</li>
+                  <li>VPN connections</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">⚙️</div>
+                <h4>Data in Use</h4>
+                <p>Protect data while it's being processed by applications.</p>
+                <ul>
+                  <li>Confidential computing</li>
+                  <li>Secure enclaves</li>
+                  <li>Memory encryption</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3>Data Classification & Handling</h3>
+          <div class="security-framework">
+            <h4>Classify Data by Sensitivity</h4>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1rem 0;">
+              <div style="background: #d4edda; padding: 1rem; border-radius: 6px;">
+                <h5 style="color: #155724; margin-bottom: 0.5rem;">Public Data</h5>
+                <p style="margin: 0; font-size: 0.9rem;">No restrictions, can be shared freely</p>
+                <ul style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+                  <li>Marketing materials</li>
+                  <li>Public documentation</li>
+                  <li>General information</li>
+                </ul>
+              </div>
+
+              <div style="background: #fff3cd; padding: 1rem; border-radius: 6px;">
+                <h5 style="color: #856404; margin-bottom: 0.5rem;">Internal Data</h5>
+                <p style="margin: 0; font-size: 0.9rem;">Limited to employees and authorized partners</p>
+                <ul style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+                  <li>Internal emails</li>
+                  <li>Business plans</li>
+                  <li>Employee data</li>
+                </ul>
+              </div>
+
+              <div style="background: #f8d7da; padding: 1rem; border-radius: 6px;">
+                <h5 style="color: #721c24; margin-bottom: 0.5rem;">Sensitive Data</h5>
+                <p style="margin: 0; font-size: 0.9rem;">Strict controls, encryption required</p>
+                <ul style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+                  <li>Financial records</li>
+                  <li>Personal information</li>
+                  <li>Intellectual property</li>
+                </ul>
+              </div>
+
+              <div style="background: #f5c6cb; padding: 1rem; border-radius: 6px;">
+                <h5 style="color: #721c24; margin-bottom: 0.5rem;">Restricted Data</h5>
+                <p style="margin: 0; font-size: 0.9rem;">Maximum security, limited access</p>
+                <ul style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+                  <li>Trade secrets</li>
+                  <li>Regulated data</li>
+                  <li>Critical infrastructure</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h2>Network Security</h2>
+
+          <h3>Cloud Network Security</h3>
+          <div class="cloud-card">
+            <div class="cloud-header">
+              <div class="cloud-icon">
+                <i class="bi bi-diagram-3"></i>
+              </div>
+              <div>
+                <h3 class="cloud-title">Secure Network Architecture</h3>
+                <span style="background: #17a2b8; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500;">Architecture</span>
+              </div>
+            </div>
+
+            <div class="practice-grid">
+              <div class="practice-card">
+                <div class="icon">🔥</div>
+                <h4>Web Application Firewall</h4>
+                <p>Protect web applications from common attacks.</p>
+                <ul>
+                  <li>OWASP Top 10 protection</li>
+                  <li>SQL injection prevention</li>
+                  <li>XSS attack blocking</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🛡️</div>
+                <h4>DDoS Protection</h4>
+                <p>Mitigate distributed denial of service attacks.</p>
+                <ul>
+                  <li>Traffic filtering</li>
+                  <li>Rate limiting</li>
+                  <li>Auto-scaling response</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🌐</div>
+                <h4>Network Segmentation</h4>
+                <p>Isolate systems and limit lateral movement.</p>
+                <ul>
+                  <li>Security groups</li>
+                  <li>Network ACLs</li>
+                  <li>VPC/subnet isolation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h2>Platform-Specific Security</h2>
+
+          <h3>AWS Security Best Practices</h3>
+          <div class="security-framework">
+            <h4>Amazon Web Services Security</h4>
+
+            <div class="implementation-steps">
+              <div class="implementation-step">
+                <h5>Identity and Access Management</h5>
+                <ul>
+                  <li>Use IAM roles instead of access keys</li>
+                  <li>Implement least privilege principle</li>
+                  <li>Enable MFA for all users</li>
+                  <li>Use AWS Organizations for multi-account management</li>
+                </ul>
+              </div>
+
+              <div class="implementation-step">
+                <h5>Network Security</h5>
+                <ul>
+                  <li>Use VPC with private subnets</li>
+                  <li>Implement security groups and NACLs</li>
+                  <li>Use AWS WAF for application protection</li>
+                  <li>Enable VPC flow logs for monitoring</li>
+                </ul>
+              </div>
+
+              <div class="implementation-step">
+                <h5>Data Protection</h5>
+                <ul>
+                  <li>Enable encryption for S3 buckets</li>
+                  <li>Use AWS KMS for key management</li>
+                  <li>Implement SSL/TLS for data in transit</li>
+                  <li>Use AWS Backup for automated backups</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3>Azure Security Best Practices</h3>
+          <div class="security-framework">
+            <h4>Microsoft Azure Security</h4>
+
+            <div class="practice-grid">
+              <div class="practice-card">
+                <div class="icon">🛡️</div>
+                <h4>Azure AD Integration</h4>
+                <p>Leverage Azure Active Directory for identity management.</p>
+                <ul>
+                  <li>Conditional access policies</li>
+                  <li>Self-service password reset</li>
+                  <li>Privileged identity management</li>
+                  <li>Azure AD Connect for hybrid environments</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🔍</div>
+                <h4>Azure Security Center</h4>
+                <p>Unified security management and threat protection.</p>
+                <ul>
+                  <li>Security posture assessment</li>
+                  <li>Threat detection and response</li>
+                  <li>Compliance monitoring</li>
+                  <li>Secure score recommendations</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🔒</div>
+                <h4>Azure Key Vault</h4>
+                <p>Secure key management and secrets storage.</p>
+                <ul>
+                  <li>Hardware security modules</li>
+                  <li>Certificate management</li>
+                  <li>Secret rotation</li>
+                  <li>Access policies</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3>Google Cloud Security</h3>
+          <div class="security-framework">
+            <h4>Google Cloud Platform Security</h4>
+
+            <div class="practice-grid">
+              <div class="practice-card">
+                <div class="icon">🔐</div>
+                <h4>Identity-Aware Proxy</h4>
+                <p>Context-aware access to applications.</p>
+                <ul>
+                  <li>Zero-trust access</li>
+                  <li>Device and location verification</li>
+                  <li>Real-time risk assessment</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🛡️</div>
+                <h4>Cloud Armor</h4>
+                <p>DDoS protection and web application firewall.</p>
+                <ul>
+                  <li>Global threat intelligence</li>
+                  <li>Custom security rules</li>
+                  <li>Adaptive protection</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🔑</div>
+                <h4>Cloud KMS</h4>
+                <p>Cloud Key Management Service for encryption.</p>
+                <ul>
+                  <li>Automatic key rotation</li>
+                  <li>Audit logging</li>
+                  <li>Integration with all GCP services</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h2>Configuration Management</h2>
+
+          <h3>Infrastructure as Code Security</h3>
+          <div class="cloud-card">
+            <div class="cloud-header">
+              <div class="cloud-icon">
+                <i class="bi bi-code-slash"></i>
+              </div>
+              <div>
+                <h3 class="cloud-title">Secure Infrastructure Automation</h3>
+                <span style="background: #6f42c1; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500;">DevSecOps</span>
+              </div>
+            </div>
+
+            <div class="practice-grid">
+              <div class="practice-card">
+                <div class="icon">🔍</div>
+                <h4>Template Scanning</h4>
+                <p>Scan infrastructure templates for security issues.</p>
+                <ul>
+                  <li>Checkov for Terraform</li>
+                  <li>CloudFormation Guard</li>
+                  <li>ARM template validation</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🔒</div>
+                <h4>Secrets Management</h4>
+                <p>Handle secrets securely in IaC templates.</p>
+                <ul>
+                  <li>Parameter store</li>
+                  <li>Key vaults</li>
+                  <li>External secret management</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">📋</div>
+                <h4>Compliance as Code</h4>
+                <p>Embed compliance checks in infrastructure code.</p>
+                <ul>
+                  <li>Policy as code</li>
+                  <li>Automated compliance testing</li>
+                  <li>Security group validation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h2>Monitoring & Compliance</h2>
+
+          <h3>Cloud Security Monitoring</h3>
+          <div class="security-framework">
+            <h4>Continuous Security Monitoring</h4>
+
+            <div class="practice-grid">
+              <div class="practice-card">
+                <div class="icon">📊</div>
+                <h4>CloudTrail (AWS)</h4>
+                <p>Audit logging for API calls and resource changes.</p>
+                <ul>
+                  <li>API activity monitoring</li>
+                  <li>Resource change tracking</li>
+                  <li>Compliance auditing</li>
+                  <li>Security analysis</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">📈</div>
+                <h4>Azure Monitor</h4>
+                <p>Comprehensive monitoring for Azure resources.</p>
+                <ul>
+                  <li>Application insights</li>
+                  <li>Log analytics</li>
+                  <li>Alerting and automation</li>
+                  <li>Performance monitoring</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🔍</div>
+                <h4>Cloud Logging (GCP)</h4>
+                <p>Centralized logging and analysis platform.</p>
+                <ul>
+                  <li>Log aggregation</li>
+                  <li>Error reporting</li>
+                  <li>Log-based metrics</li>
+                  <li>Security monitoring</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3>Compliance Automation</h3>
+          <div class="cloud-card">
+            <div class="cloud-header">
+              <div class="cloud-icon">
+                <i class="bi bi-check-circle"></i>
+              </div>
+              <div>
+                <h3 class="cloud-title">Automated Compliance Monitoring</h3>
+                <span style="background: #28a745; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500;">Compliance</span>
+              </div>
+            </div>
+
+            <div class="practice-grid">
+              <div class="practice-card">
+                <div class="icon">📋</div>
+                <h4>Config Rules</h4>
+                <p>Automated compliance checking and remediation.</p>
+                <ul>
+                  <li>Policy as code</li>
+                  <li>Automated remediation</li>
+                  <li>Compliance reporting</li>
+                  <li>Drift detection</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">🔧</div>
+                <h4>Security Hub</h4>
+                <p>Unified security and compliance center.</p>
+                <ul>
+                  <li>Cross-service findings</li>
+                  <li>Compliance standards</li>
+                  <li>Automated responses</li>
+                  <li>Risk prioritization</li>
+                </ul>
+              </div>
+
+              <div class="practice-card">
+                <div class="icon">📊</div>
+                <h4>Compliance Dashboards</h4>
+                <p>Real-time compliance status and reporting.</p>
+                <ul>
+                  <li>Executive dashboards</li>
+                  <li>Compliance scoring</li>
+                  <li>Audit trail reporting</li>
+                  <li>Remediation tracking</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h2>Incident Response in Cloud</h2>
+
+          <h3>Cloud Incident Response</h3>
+          <div class="implementation-steps">
+            <div class="implementation-step">
+              <h4>Preparation Phase</h4>
+              <ul>
+                <li>Set up automated alerting and monitoring</li>
+                <li>Create incident response playbooks</li>
+                <li>Define roles and responsibilities</li>
+                <li>Establish communication channels</li>
+                <li>Configure automated backup and recovery</li>
+              </ul>
+            </div>
+
+            <div class="implementation-step">
+              <h4>Detection & Analysis</h4>
+              <ul>
+                <li>Use cloud-native monitoring tools</li>
+                <li>Implement log aggregation and analysis</li>
+                <li>Set up anomaly detection</li>
+                <li>Enable security information and event management</li>
+                <li>Create automated alerting rules</li>
+              </ul>
+            </div>
+
+            <div class="implementation-step">
+              <h4>Containment & Recovery</h4>
+              <ul>
+                <li>Isolate affected systems</li>
+                <li>Implement automated remediation</li>
+                <li>Restore from clean backups</li>
+                <li>Update security controls</li>
+                <li>Document incident details</li>
+              </ul>
+            </div>
+
+            <div class="implementation-step">
+              <h4>Post-Incident Review</h4>
+              <ul>
+                <li>Conduct blameless post-mortem</li>
+                <li>Update incident response procedures</li>
+                <li>Implement preventive measures</li>
+                <li>Share lessons learned</li>
+                <li>Improve monitoring and alerting</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="tools.html">Security Tools</a></strong> - Essential security tools and platforms</li>
+            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Implementation strategies and compliance</li>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Review fundamental security principles</li>
+            <li><strong><a href="index.html">Security Overview</a></strong> - Back to fundamentals</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

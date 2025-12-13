@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSH Commands Cheatsheet | Quick Reference</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+      font-size: 0.9rem;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .command-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .command-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .command-card h4 {
+      color: var(--secondary-color);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .command-item {
+      margin-bottom: 1rem;
+    }
+
+    .command-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .command-syntax {
+      background: white;
+      padding: 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+      margin-bottom: 0.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .command-desc {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .example-section {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+    }
+
+    .example-section h5 {
+      color: var(--secondary-color);
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .config-section {
+      background: var(--bg-light);
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      border-left: 4px solid #28a745;
+    }
+
+    .config-section h4 {
+      color: #155724;
+      margin-bottom: 1rem;
+    }
+
+    .security-note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .security-note h5 {
+      color: #856404;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Quick Reference</a></li>
+        <li class="breadcrumb-item active">SSH Commands</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-terminal me-2"></i>SSH Guide</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="#getting-started">Getting Started</a>
+            <a class="nav-link" href="#basic-connections">Basic Connections</a>
+            <a class="nav-link" href="#key-management">Key Management</a>
+            <a class="nav-link" href="#tunneling">SSH Tunneling</a>
+            <a class="nav-link" href="#configuration">Configuration</a>
+            <a class="nav-link" href="#server-config">Server Config</a>
+            <a class="nav-link" href="#advanced">Advanced</a>
+            <a class="nav-link" href="#troubleshooting">Troubleshooting</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+      <h1><i class="bi bi-terminal me-2"></i>SSH Commands Cheatsheet</h1>
+
+      <p>
+        SSH (Secure Shell) is a cryptographic network protocol for operating network services securely over an unsecured network.
+        This cheatsheet covers essential SSH commands, key management, tunneling, and security best practices.
+      </p>
+
+      <div class="security-note">
+        <h5><i class="bi bi-shield-check me-2"></i>Security Best Practices</h5>
+        <ul>
+          <li>Never use password authentication in production</li>
+          <li>Use strong, unique SSH keys for each server</li>
+          <li>Disable root login and password authentication</li>
+          <li>Use fail2ban or similar tools to prevent brute force attacks</li>
+          <li>Regularly rotate SSH keys and update authorized_keys</li>
+        </ul>
+      </div>
+
+      <h2 id="getting-started">Getting Started</h2>
+
+      <h3>Installation</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Linux</h4>
+            <div class="command-item">
+              <div class="command-syntax">sudo apt install openssh-client openssh-server</div>
+              <div class="command-desc">Ubuntu/Debian</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sudo yum install openssh-clients openssh-server</div>
+              <div class="command-desc">CentOS/RHEL</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>macOS</h4>
+            <div class="command-item">
+              <div class="command-syntax">brew install openssh</div>
+              <div class="command-desc">Via Homebrew</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh -V</div>
+              <div class="command-desc">Check SSH version</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="basic-connections">Basic SSH Connections</h2>
+
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Basic Connection</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh user@hostname</div>
+              <div class="command-desc">Connect to remote host as user</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh -p 2222 user@hostname</div>
+              <div class="command-desc">Connect using custom port</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh user@192.168.1.100</div>
+              <div class="command-desc">Connect using IP address</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Connection Options</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh -v user@hostname</div>
+              <div class="command-desc">Verbose output for debugging</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh -X user@hostname</div>
+              <div class="command-desc">Enable X11 forwarding</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh -Y user@hostname</div>
+              <div class="command-desc">Enable trusted X11 forwarding</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="key-management">SSH Key Management</h2>
+
+      <h3>Key Generation</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>RSA Keys (Default)</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh-keygen -t rsa -b 4096</div>
+              <div class="command-desc">Generate RSA key pair (4096 bits)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh-keygen -t rsa -b 4096 -C "user@domain.com"</div>
+              <div class="command-desc">Generate RSA key with comment</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Ed25519 Keys (Modern)</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh-keygen -t ed25519</div>
+              <div class="command-desc">Generate Ed25519 key pair (recommended)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh-keygen -t ed25519 -C "user@domain.com"</div>
+              <div class="command-desc">Generate Ed25519 key with comment</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Key Distribution</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Copy Public Key</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh-copy-id user@hostname</div>
+              <div class="command-desc">Copy public key to remote host</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh-copy-id -i ~/.ssh/id_rsa.pub user@hostname</div>
+              <div class="command-desc">Copy specific key to remote host</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Manual Setup</h4>
+            <div class="command-item">
+              <div class="command-syntax">cat ~/.ssh/id_rsa.pub | ssh user@hostname "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"</div>
+              <div class="command-desc">Manually append public key</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh user@hostname "chmod 600 ~/.ssh/authorized_keys"</div>
+              <div class="command-desc">Set correct permissions on remote host</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Key Management</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Key Information</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh-keygen -l -f ~/.ssh/id_rsa.pub</div>
+              <div class="command-desc">Show key fingerprint and type</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh-keygen -l -v -f ~/.ssh/id_rsa.pub</div>
+              <div class="command-desc">Show detailed key information</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Key Conversion</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh-keygen -p -f ~/.ssh/id_rsa</div>
+              <div class="command-desc">Change private key passphrase</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh-keygen -y -f ~/.ssh/id_rsa</div>
+              <div class="command-desc">Extract public key from private key</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="tunneling">SSH Tunneling & Port Forwarding</h2>
+
+      <h3>Local Port Forwarding</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Basic Local Forwarding</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh -L 8080:localhost:80 user@hostname</div>
+              <div class="command-desc">Forward local port 8080 to remote port 80</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh -L 3306:db.example.com:3306 user@jumpbox</div>
+              <div class="command-desc">Access remote database through jumpbox</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Dynamic Port Forwarding</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh -D 8080 user@hostname</div>
+              <div class="command-desc">Create SOCKS proxy on local port 8080</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh -D 1080 -N user@hostname</div>
+              <div class="command-desc">SOCKS proxy without shell (-N flag)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Remote Port Forwarding</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Basic Remote Forwarding</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh -R 8080:localhost:80 user@hostname</div>
+              <div class="command-desc">Forward remote port 8080 to local port 80</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh -R 2222:localhost:22 user@jumpbox</div>
+              <div class="command-desc">Allow external access to local SSH</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Reverse Tunnel</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh -R 0.0.0.0:8080:localhost:80 user@server</div>
+              <div class="command-desc">Bind to all interfaces (dangerous)</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh -R 8080:localhost:80 -N user@server</div>
+              <div class="command-desc">Reverse tunnel without shell</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="configuration">SSH Configuration & Automation</h2>
+
+      <h3>SSH Config File (~/.ssh/config)</h3>
+      <div class="config-section">
+        <h4>SSH Config Examples</h4>
+        <pre><code># Basic host configuration
+Host myserver
+    HostName server.example.com
+    User myuser
+    Port 22
+    IdentityFile ~/.ssh/id_rsa
+
+# Jump host configuration
+Host internal-server
+    HostName 192.168.1.100
+    User admin
+    ProxyJump jumpbox.example.com
+
+# Multiple identity files
+Host github.com
+    User git
+    IdentityFile ~/.ssh/id_rsa_github
+    IdentityFile ~/.ssh/id_ed25519_github
+
+# Connection options
+Host *
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    StrictHostKeyChecking ask
+    UserKnownHostsFile ~/.ssh/known_hosts
+
+# Disable password authentication
+Host production
+    PasswordAuthentication no
+    PubkeyAuthentication yes</code></pre>
+      </div>
+
+      <h3>SSH Agent Management</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Agent Control</h4>
+            <div class="command-item">
+              <div class="command-syntax">eval "$(ssh-agent -s)"</div>
+              <div class="command-desc">Start SSH agent in shell</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh-add ~/.ssh/id_rsa</div>
+              <div class="command-desc">Add private key to agent</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh-add -l</div>
+              <div class="command-desc">List loaded keys</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Agent Management</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh-add -D</div>
+              <div class="command-desc">Delete all identities from agent</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh-add -t 3600 ~/.ssh/id_rsa</div>
+              <div class="command-desc">Add key with 1-hour timeout</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh-agent -k</div>
+              <div class="command-desc">Kill SSH agent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="server-config">SSH Server Configuration</h2>
+
+      <h3>sshd_config (/etc/ssh/sshd_config)</h3>
+      <div class="config-section">
+        <h4>Security Hardening</h4>
+        <pre><code># Disable root login
+PermitRootLogin no
+
+# Disable password authentication
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+
+# Use only strong ciphers
+Ciphers aes256-gcm@openssh.com,chacha20-poly1305@openssh.com
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+
+# Limit authentication attempts
+MaxAuthTries 3
+LoginGraceTime 30
+
+# Use strong key exchange algorithms
+KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group16-sha512
+
+# Enable X11 forwarding (if needed)
+X11Forwarding yes
+X11UseLocalhost yes
+
+# Keep connections alive
+ClientAliveInterval 60
+ClientAliveCountMax 3
+
+# Log more information
+LogLevel VERBOSE</code></pre>
+      </div>
+
+      <h3>SSH Server Management</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Service Control</h4>
+            <div class="command-item">
+              <div class="command-syntax">sudo systemctl restart sshd</div>
+              <div class="command-desc">Restart SSH service</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sudo systemctl status sshd</div>
+              <div class="command-desc">Check SSH service status</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sudo systemctl reload sshd</div>
+              <div class="command-desc">Reload SSH configuration</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Configuration Testing</h4>
+            <div class="command-item">
+              <div class="command-syntax">sudo sshd -t</div>
+              <div class="command-desc">Test SSH configuration syntax</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sudo sshd -T</div>
+              <div class="command-desc">Dump current configuration</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="advanced">Advanced SSH Techniques</h2>
+
+      <h3>SCP & SFTP</h3>
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>SCP Commands</h4>
+            <div class="command-item">
+              <div class="command-syntax">scp file.txt user@hostname:/path/</div>
+              <div class="command-desc">Copy file to remote host</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">scp -r directory/ user@hostname:/path/</div>
+              <div class="command-desc">Copy directory recursively</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">scp user@hostname:/path/file.txt .</div>
+              <div class="command-desc">Copy file from remote host</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>SFTP Commands</h4>
+            <div class="command-item">
+              <div class="command-syntax">sftp user@hostname</div>
+              <div class="command-desc">Start SFTP interactive session</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sftp -b batchfile user@hostname</div>
+              <div class="command-desc">Execute SFTP commands from file</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>SSH Escape Sequences</h3>
+      <div class="example-section">
+        <h5>Useful SSH Escape Sequences</h5>
+        <ul>
+          <li><code>~.</code> - Terminate connection</li>
+          <li><code>~C</code> - Open command line (for port forwarding)</li>
+          <li><code>~R</code> - Request rekeying</li>
+          <li><code>~V</code> - Decrease verbosity</li>
+          <li><code>~v</code> - Increase verbosity</li>
+          <li><code>~~</code> - Send literal tilde</li>
+        </ul>
+      </div>
+
+      <h3>SSH Bastion/Jump Host</h3>
+      <div class="example-section">
+        <h5>Jump Host Configuration</h5>
+        <pre><code># SSH config for jump host
+Host jumpbox
+    HostName bastion.example.com
+    User jumpuser
+    IdentityFile ~/.ssh/jump_key
+
+Host internal-server
+    HostName 10.0.1.100
+    User admin
+    ProxyCommand ssh -W %h:%p jumpbox
+    IdentityFile ~/.ssh/internal_key
+
+# Alternative using ProxyJump
+Host internal-server
+    HostName 10.0.1.100
+    User admin
+    ProxyJump jumpuser@bastion.example.com
+    IdentityFile ~/.ssh/internal_key</code></pre>
+      </div>
+
+      <h2 id="troubleshooting">SSH Troubleshooting</h2>
+
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Debugging Connections</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh -vvv user@hostname</div>
+              <div class="command-desc">Maximum verbosity for troubleshooting</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh -o ConnectTimeout=10 user@hostname</div>
+              <div class="command-desc">Set connection timeout</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh -o StrictHostKeyChecking=no user@hostname</div>
+              <div class="command-desc">Skip host key verification (dangerous)</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Key Issues</h4>
+            <div class="command-item">
+              <div class="command-syntax">ssh-keygen -R hostname</div>
+              <div class="command-desc">Remove host from known_hosts</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">ssh-keyscan hostname >> ~/.ssh/known_hosts</div>
+              <div class="command-desc">Add host key to known_hosts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2>SSH Performance Optimization</h2>
+
+      <div class="config-section">
+        <h4>Performance Tuning</h4>
+        <pre><code># Client-side optimizations
+Host *
+    # Connection multiplexing
+    ControlMaster auto
+    ControlPath ~/.ssh/master-%r@%h:%p
+    ControlPersist 10m
+
+    # Compression
+    Compression yes
+    CompressionLevel 6
+
+    # Connection reuse
+    ServerAliveInterval 60
+    ServerAliveCountMax 10
+
+    # Faster ciphers (if security allows)
+    Ciphers aes128-gcm@openssh.com,aes256-gcm@openssh.com
+
+# Server-side optimizations
+# In /etc/ssh/sshd_config
+UseDNS no
+GSSAPIAuthentication no
+UsePAM yes
+
+# TCP optimizations
+TCPKeepAlive yes
+ClientAliveInterval 60
+ClientAliveCountMax 3</code></pre>
+      </div>
+
+      <h2>SSH Security Monitoring</h2>
+
+      <div class="command-section">
+        <div class="command-grid">
+          <div class="command-card">
+            <h4>Log Analysis</h4>
+            <div class="command-item">
+              <div class="command-syntax">sudo tail -f /var/log/auth.log | grep sshd</div>
+              <div class="command-desc">Monitor SSH authentication logs</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sudo journalctl -u sshd -f</div>
+              <div class="command-desc">Monitor SSH service with journalctl</div>
+            </div>
+          </div>
+
+          <div class="command-card">
+            <h4>Failed Attempts</h4>
+            <div class="command-item">
+              <div class="command-syntax">sudo grep "Failed password" /var/log/auth.log</div>
+              <div class="command-desc">Check failed password attempts</div>
+            </div>
+            <div class="command-item">
+              <div class="command-syntax">sudo lastb | head -20</div>
+              <div class="command-desc">Show bad login attempts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

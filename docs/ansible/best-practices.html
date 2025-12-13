@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ansible Best Practices | Ansible Docs</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .success-box {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .practice-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .practice-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .do-list {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .dont-list {
+      background: #f8d7da;
+      border-left: 4px solid #dc3545;
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Ansible</a></li>
+        <li class="breadcrumb-item active">Best Practices</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-gear-fill me-2"></i>Ansible</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Getting Started</a>
+            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="deployment.html">Playbook Guide</a>
+            <a class="nav-link active" href="best-practices.html">Best Practices</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-star-fill me-2"></i>Ansible Best Practices</h1>
+
+          <p>
+            This comprehensive guide covers best practices for writing maintainable, secure, and efficient Ansible automation.
+            Following these practices will help you create production-ready infrastructure as code.
+          </p>
+
+          <div class="success-box">
+            <strong>🎯 Key Principles:</strong>
+            <ul>
+              <li><strong>DRY (Don't Repeat Yourself)</strong> - Avoid code duplication</li>
+              <li><strong>Idempotency</strong> - Playbooks should be safe to run multiple times</li>
+              <li><strong>Readability</strong> - Code should be self-documenting</li>
+              <li><strong>Security</strong> - Never store secrets in plain text</li>
+              <li><strong>Testability</strong> - Write testable and verifiable code</li>
+            </ul>
+          </div>
+
+          <h2>Project Organization</h2>
+
+          <h3>Directory Structure</h3>
+          <div class="practice-card">
+            <h4>Standard Ansible Project Layout</h4>
+
+            <div class="do-list">
+              <strong>✅ Recommended Structure:</strong>
+            </div>
+            <pre><code>my-ansible-project/
+├── ansible.cfg              # Ansible configuration
+├── inventories/             # Inventory files
+│   ├── development/
+│   ├── staging/
+│   └── production/
+├── group_vars/              # Group variables
+│   ├── all.yml
+│   └── webservers.yml
+├── host_vars/               # Host variables
+│   └── db01.example.com.yml
+├── playbooks/               # Playbook files
+│   ├── deploy-webapp.yml
+│   └── setup-monitoring.yml
+├── roles/                   # Roles directory
+│   ├── requirements.yml     # Role dependencies
+│   └── webapp/
+│       ├── defaults/
+│       ├── vars/
+│       ├── tasks/
+│       ├── templates/
+│       ├── files/
+│       ├── handlers/
+│       └── meta/
+├── library/                 # Custom modules
+├── filter_plugins/          # Custom filters
+├── tests/                   # Test files
+│   ├── molecule/            # Molecule scenarios
+│   └── test-requirements.txt
+├── docs/                    # Documentation
+├── README.md                # Project documentation
+└── .gitignore</code></pre>
+
+            <div class="dont-list">
+              <strong>❌ Avoid:</strong>
+              <ul>
+                <li>Flat file structure with everything in root</li>
+                <li>Mixing inventory, playbooks, and roles in same directory</li>
+                <li>Hardcoded paths and values</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3>Naming Conventions</h3>
+          <div class="practice-card">
+            <h4>Consistent Naming Standards</h4>
+
+            <h5>File and Directory Names:</h5>
+            <div class="do-list">
+              <strong>✅ Use:</strong>
+              <ul>
+                <li>Lowercase with underscores: <code>deploy_webapp.yml</code></li>
+                <li>Descriptive names: <code>setup_nginx.yml</code></li>
+                <li>Role names: <code>nginx</code>, <code>postgresql</code></li>
+              </ul>
+            </div>
+
+            <div class="dont-list">
+              <strong>❌ Avoid:</strong>
+              <ul>
+                <li>CamelCase: <code>deployWebApp.yml</code></li>
+                <li>Abbreviations: <code>dep_webapp.yml</code></li>
+                <li>Special characters: <code>nginx-setup!.yml</code></li>
+              </ul>
+            </div>
+
+            <h5>Variable Names:</h5>
+            <div class="do-list">
+              <strong>✅ Use:</strong>
+              <pre><code># Good variable names
+nginx_port: 80
+app_database_host: "{{ groups['databases'][0] }}"
+ssl_certificate_path: /etc/ssl/certs/app.crt
+
+# Consistent prefixes
+app_name: mywebapp
+app_version: "1.2.3"
+app_port: 8080</code></pre>
+            </div>
+
+            <div class="dont-list">
+              <strong>❌ Avoid:</strong>
+              <pre><code># Bad variable names
+port: 80                    # Too generic
+dbhost: localhost           # Inconsistent naming
+APP_NAME: mywebapp          # All caps
+nginx_port_num: 80          # Redundant</code></pre>
+            </div>
+          </div>
+
+          <h2>Playbook Best Practices</h2>
+
+          <h3>Task Organization</h3>
+          <div class="practice-card">
+            <h4>Writing Clear and Maintainable Tasks</h4>
+
+            <div class="do-list">
+              <strong>✅ Good Task Practices:</strong>
+            </div>
+            <pre><code>tasks:
+  - name: Install Nginx web server
+    package:
+      name: nginx
+      state: present
+    when: ansible_os_family == "Debian"
+
+  - name: Configure Nginx virtual host
+    template:
+      src: nginx-vhost.conf.j2
+      dest: /etc/nginx/sites-available/app
+      mode: '0644'
+      backup: yes
+    notify: reload nginx
+    tags: ['nginx', 'config']
+
+  - name: Enable Nginx site
+    file:
+      src: /etc/nginx/sites-available/app
+      dest: /etc/nginx/sites-enabled/app
+      state: link
+    notify: reload nginx
+    tags: ['nginx', 'config']</code></pre>
+
+            <div class="dont-list">
+              <strong>❌ Avoid These Patterns:</strong>
+            </div>
+            <pre><code>tasks:
+  # Too vague
+  - name: Do stuff
+    shell: wget -qO- http://example.com/script.sh | bash
+
+  # Too long command lines
+  - name: Install and configure everything
+    shell: |
+      apt-get update && apt-get install -y nginx php mysql-server &&
+      systemctl enable nginx && systemctl start nginx
+
+  # Missing error handling
+  - name: Copy files
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+    loop:
+      - { src: file1, dest: /tmp/file1 }  # No mode specified</code></pre>
+          </div>
+
+          <h3>Variable Management</h3>
+          <div class="practice-card">
+            <h4>Effective Variable Usage</h4>
+
+            <h5>Variable Precedence Order:</h5>
+            <ol>
+              <li>Extra vars (highest priority)</li>
+              <li>Task vars</li>
+              <li>Block vars</li>
+              <li>Role vars</li>
+              <li>Play vars</li>
+              <li>Host vars</li>
+              <li>Group vars</li>
+              <li>Defaults (lowest priority)</li>
+            </ol>
+
+            <div class="do-list">
+              <strong>✅ Good Variable Practices:</strong>
+            </div>
+            <pre><code># Use defaults for flexibility
+# roles/nginx/defaults/main.yml
+---
+nginx_port: 80
+nginx_user: nginx
+nginx_worker_processes: auto
+
+# Override in inventory for specific environments
+# inventories/production/group_vars/webservers.yml
+---
+nginx_port: 443
+nginx_ssl_enabled: true
+
+# Use facts for dynamic values
+- name: Create user with correct shell
+  user:
+    name: appuser
+    shell: "{{ ansible_facts['user']['shell'] }}"</code></pre>
+
+            <div class="tip-box">
+              <strong>💡 Variable Tips:</strong>
+              <ul>
+                <li>Use <code>default()</code> filter for optional variables</li>
+                <li>Group related variables with consistent prefixes</li>
+                <li>Document variable purpose and expected values</li>
+                <li>Avoid overriding important variables unexpectedly</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3>Error Handling</h3>
+          <div class="practice-card">
+            <h4>Robust Error Handling and Recovery</h4>
+
+            <div class="do-list">
+              <strong>✅ Implement Error Handling:</strong>
+            </div>
+            <pre><code>tasks:
+  - name: Check service status
+    command: systemctl is-active nginx
+    register: nginx_status
+    ignore_errors: yes
+    changed_when: false
+
+  - name: Start nginx if not running
+    service:
+      name: nginx
+      state: started
+    when: nginx_status.rc != 0
+
+  - name: Verify nginx is responding
+    uri:
+      url: http://localhost/health
+      status_code: 200
+    register: health_check
+    until: health_check.status == 200
+    retries: 30
+    delay: 10
+    when: nginx_status.rc == 0</code></pre>
+
+            <div class="dont-list">
+              <strong>❌ Avoid Silent Failures:</strong>
+            </div>
+            <pre><code>tasks:
+  # Dangerous - ignores all errors
+  - name: Risky operation
+    shell: rm -rf /important/data
+    ignore_errors: yes  # Never do this!
+
+  # Better approach
+  - name: Safe file removal
+    file:
+      path: /important/data
+      state: absent
+    register: removal_result
+
+  - name: Warn about data removal
+    debug:
+      msg: "Data directory removed successfully"
+    when: removal_result.changed</code></pre>
+          </div>
+
+          <h2>Role Development</h2>
+
+          <h3>Role Structure</h3>
+          <div class="practice-card">
+            <h4>Well-Organized Role Architecture</h4>
+
+            <div class="do-list">
+              <strong>✅ Role Best Practices:</strong>
+            </div>
+            <pre><code># roles/nginx/tasks/main.yml - Keep it simple
+---
+- name: Include OS-specific tasks
+  include_tasks: "{{ ansible_os_family }}.yml"
+
+# roles/nginx/tasks/Debian.yml
+---
+- name: Install Nginx (Debian)
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+# roles/nginx/tasks/RedHat.yml
+---
+- name: Install Nginx (RedHat)
+  yum:
+    name: nginx
+    state: present
+
+# roles/nginx/defaults/main.yml - Sensible defaults
+---
+nginx_port: 80
+nginx_user: nginx
+nginx_worker_processes: auto
+nginx_ssl_enabled: false
+
+# roles/nginx/vars/main.yml - Internal variables
+---
+nginx_conf_path: /etc/nginx/nginx.conf
+nginx_sites_available: /etc/nginx/sites-available
+nginx_sites_enabled: /etc/nginx/sites-enabled</code></pre>
+          </div>
+
+          <h3>Role Dependencies</h3>
+          <div class="practice-card">
+            <h4>Managing Role Dependencies</h4>
+
+            <pre><code># roles/nginx/meta/main.yml
+---
+dependencies:
+  - role: common
+    tags: ['common']
+  - role: ssl
+    when: nginx_ssl_enabled | default(false)
+    tags: ['ssl']
+  - role: logrotate
+    when: nginx_logrotate_enabled | default(true)
+    tags: ['logging']
+
+# roles/requirements.yml - External dependencies
+---
+roles:
+  - name: geerlingguy.nginx
+    version: "3.0.0"
+  - name: geerlingguy.certbot
+    version: "2.0.0"
+
+collections:
+  - name: community.general
+  - name: community.crypto</code></pre>
+
+            <div class="tip-box">
+              <strong>💡 Dependency Tips:</strong>
+              <ul>
+                <li>Use <code>ansible-galaxy install -r requirements.yml</code> to install dependencies</li>
+                <li>Specify versions to ensure reproducible deployments</li>
+                <li>Use tags to control when dependencies are applied</li>
+                <li>Document role requirements in README.md</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2>Security Practices</h2>
+
+          <h3>Secret Management</h3>
+          <div class="practice-card">
+            <h4>Secure Handling of Sensitive Data</h4>
+
+            <div class="do-list">
+              <strong>✅ Security Best Practices:</strong>
+            </div>
+            <pre><code># Use Ansible Vault for secrets
+# Encrypt sensitive variables
+ansible-vault encrypt group_vars/production/vault.yml
+
+# group_vars/production/vault.yml (encrypted)
+---
+db_password: verysecretpassword
+api_key: mysecretapikey
+ssl_private_key: |
+  -----BEGIN PRIVATE KEY-----
+  MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSk...
+  -----END PRIVATE KEY-----
+
+# Use vault variables in playbooks
+tasks:
+  - name: Configure database
+    template:
+      src: config.php.j2
+      dest: /var/www/config.php
+    vars:
+      db_pass: "{{ db_password }}"
+      api_key: "{{ api_key }}"
+
+# Never expose secrets in logs
+- name: Run sensitive command
+  command: myapp --password "{{ db_password }}"
+  no_log: true</code></pre>
+
+            <div class="warning-box">
+              <strong>⚠️ Security Warnings:</strong>
+              <ul>
+                <li>Never commit unencrypted secrets to version control</li>
+                <li>Use <code>no_log: true</code> for sensitive tasks</li>
+                <li>Rotate secrets regularly</li>
+                <li>Limit vault password access</li>
+                <li>Use different vaults for different environments</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3>SSH Security</h3>
+          <div class="practice-card">
+            <h4>Secure SSH Configuration</h4>
+
+            <pre><code># ansible.cfg - Secure SSH settings
+[ssh_connection]
+ssh_args = -o ControlMaster=auto -o ControlPersist=60s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+control_path = ~/.ssh/ansible-%%r@%%h:%%p
+pipelining = True
+
+# Use dedicated Ansible user
+# inventories/production/hosts.ini
+[webservers]
+web1 ansible_host=192.168.1.10 ansible_user=ansible
+web2 ansible_host=192.168.1.11 ansible_user=ansible
+
+[webservers:vars]
+ansible_ssh_private_key_file=~/.ssh/ansible_production_key
+ansible_become=yes
+ansible_become_method=sudo
+ansible_become_user=root</code></pre>
+
+            <div class="tip-box">
+              <strong>🔐 SSH Security Tips:</strong>
+              <ul>
+                <li>Use SSH keys instead of passwords</li>
+                <li>Disable password authentication on managed hosts</li>
+                <li>Use dedicated Ansible user with minimal privileges</li>
+                <li>Rotate SSH keys regularly</li>
+                <li>Use SSH config file for connection settings</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2>Performance Optimization</h2>
+
+          <h3>Efficient Execution</h3>
+          <div class="practice-card">
+            <h4>Optimizing Ansible Performance</h4>
+
+            <pre><code># ansible.cfg - Performance settings
+[defaults]
+forks = 50                    # Parallel execution
+host_key_checking = False     # Skip host key checking
+gathering = smart            # Smart fact gathering
+fact_caching = jsonfile       # Cache facts
+fact_caching_connection = ~/.ansible/cache
+fact_caching_timeout = 86400  # 24 hours
+
+[ssh_connection]
+pipelining = True            # Reduce SSH connections
+control_path = ~/.ssh/ansible-%%r@%%h:%%p</code></pre>
+
+            <div class="do-list">
+              <strong>✅ Performance Best Practices:</strong>
+            </div>
+            <pre><code># Use async for long-running tasks
+- name: Run database migration
+  command: php artisan migrate
+  async: 300
+  poll: 10
+
+# Selective fact gathering
+- name: Gather minimal facts
+  setup:
+    gather_subset:
+      - network
+      - hardware
+      - virtual
+
+# Use tags for selective execution
+- name: Deploy application
+  include_role:
+    name: webapp
+  tags: ['deploy']
+
+- name: Configure monitoring
+  include_role:
+    name: monitoring
+  tags: ['monitoring']</code></pre>
+          </div>
+
+          <h3>Idempotency</h3>
+          <div class="practice-card">
+            <h4>Ensuring Safe Repeated Execution</h4>
+
+            <div class="do-list">
+              <strong>✅ Idempotent Patterns:</strong>
+            </div>
+            <pre><code># Use state: present/absent
+- name: Install packages
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - nginx
+    - curl
+    - vim
+
+# Use creates/removes for commands
+- name: Download file if not exists
+  get_url:
+    url: http://example.com/file.tar.gz
+    dest: /tmp/file.tar.gz
+  register: download_result
+
+- name: Extract archive
+  unarchive:
+    src: /tmp/file.tar.gz
+    dest: /opt/app
+    creates: /opt/app/index.html  # Skip if already extracted
+
+# Use check mode support
+- name: Safe template deployment
+  template:
+    src: config.j2
+    dest: /etc/app/config.yml
+    backup: yes
+  check_mode: yes</code></pre>
+
+            <div class="dont-list">
+              <strong>❌ Non-Idempotent Commands:</strong>
+            </div>
+            <pre><code># Dangerous - runs every time
+- name: Add line to file
+  shell: echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+
+# Better - idempotent
+- name: Configure DNS
+  lineinfile:
+    path: /etc/resolv.conf
+    line: "nameserver 8.8.8.8"
+    state: present</code></pre>
+          </div>
+
+          <h2>Testing and Validation</h2>
+
+          <h3>Automated Testing</h3>
+          <div class="practice-card">
+            <h4>Testing Ansible Code</h4>
+
+            <pre><code># molecule/default/molecule.yml
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: ubuntu:20.04
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+
+# molecule/default/verify.yml
+---
+- name: Verify
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Check nginx service
+      service:
+        name: nginx
+        state: started
+      register: service_status
+
+    - name: Verify nginx port
+      wait_for:
+        port: 80
+        timeout: 10
+
+    - name: Test nginx response
+      uri:
+        url: http://localhost
+        status_code: 200</code></pre>
+
+            <div class="tip-box">
+              <strong>🧪 Testing Commands:</strong>
+              <pre><code># Run tests
+molecule test
+
+# Run syntax check
+ansible-playbook --syntax-check playbook.yml
+
+# Dry run
+ansible-playbook --check playbook.yml
+
+# Lint playbooks
+ansible-lint playbook.yml</code></pre>
+            </div>
+          </div>
+
+          <h3>Code Quality</h3>
+          <div class="practice-card">
+            <h4>Code Quality Tools</h4>
+
+            <pre><code># .ansible-lint
+---
+exclude_paths:
+  - .git/
+  - molecule/
+skip_list:
+  - role-name
+  - yaml[line-length]
+
+# Use pre-commit hooks
+# .pre-commit-config.yaml
+---
+repos:
+  - repo: https://github.com/ansible-community/ansible-lint
+    rev: v6.0.0
+    hooks:
+      - id: ansible-lint
+        files: \.(yaml|yml)$
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files</code></pre>
+          </div>
+
+          <h2>Documentation</h2>
+
+          <h3>Inline Documentation</h3>
+          <div class="practice-card">
+            <h4>Self-Documenting Code</h4>
+
+            <div class="do-list">
+              <strong>✅ Good Documentation Practices:</strong>
+            </div>
+            <pre><code>---
+# Playbook: Deploy Web Application
+# Description: Complete deployment of web application including database,
+#              web server, and monitoring setup
+# Author: DevOps Team
+# Version: 1.2.0
+
+- name: Deploy web application stack
+  hosts: all
+  become: yes
+
+  vars:
+    # Application configuration
+    app_name: mywebapp
+    app_version: "1.2.3"
+    app_port: 8080
+
+    # Database configuration
+    db_name: mywebapp
+    db_user: appuser
+
+  pre_tasks:
+    - name: Validate required variables
+      assert:
+        that:
+          - app_name is defined
+          - app_version is defined
+        fail_msg: "Required variables not defined"
+
+  roles:
+    # Infrastructure setup
+    - role: common
+      tags: ['common']
+
+    # Database layer
+    - role: postgresql
+      db_name: "{{ db_name }}"
+      db_user: "{{ db_user }}"
+      tags: ['database']
+
+    # Application layer
+    - role: webapp
+      app_name: "{{ app_name }}"
+      app_version: "{{ app_version }}"
+      app_port: "{{ app_port }}"
+      tags: ['application']
+
+    # Monitoring layer
+    - role: monitoring
+      when: monitoring_enabled | default(true)
+      tags: ['monitoring']
+
+  post_tasks:
+    - name: Verify deployment
+      uri:
+        url: "http://localhost:{{ app_port }}/health"
+        status_code: 200
+      tags: ['verify']</code></pre>
+          </div>
+
+          <h3>README Documentation</h3>
+          <div class="practice-card">
+            <h4>Project Documentation</h4>
+
+            <pre><code># README.md Structure
+# Project Name
+
+## Overview
+Brief description of what this Ansible project does.
+
+## Requirements
+- Ansible 2.9+
+- Python 3.6+
+- Access to target environments
+
+## Installation
+```bash
+# Clone repository
+git clone https://github.com/org/ansible-project.git
+cd ansible-project
+
+# Install dependencies
+ansible-galaxy install -r roles/requirements.yml
+pip install -r tests/test-requirements.txt
+```
+
+## Usage
+
+### Quick Start
+```bash
+# Deploy to development
+ansible-playbook -i inventories/development playbooks/deploy.yml
+
+# Deploy to production
+ansible-playbook -i inventories/production playbooks/deploy.yml
+```
+
+### Available Tags
+- `common`: Basic system setup
+- `database`: Database configuration
+- `application`: Application deployment
+- `monitoring`: Monitoring setup
+
+### Variables
+See `group_vars/all.yml` for available variables.
+
+## Testing
+```bash
+# Run molecule tests
+molecule test
+
+# Syntax check
+ansible-playbook --syntax-check playbooks/deploy.yml
+```
+
+## Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
+
+## License
+MIT License</code></pre>
+          </div>
+
+          <h2>Maintenance and Updates</h2>
+
+          <h3>Keeping Code Current</h3>
+          <div class="practice-card">
+            <h4>Regular Maintenance Practices</h4>
+
+            <div class="do-list">
+              <strong>✅ Maintenance Tasks:</strong>
+            </div>
+            <pre><code># Update Ansible version regularly
+# requirements.yml
+---
+collections:
+  - name: ansible.netcommon
+    version: ">=2.0.0"
+  - name: community.general
+    version: ">=4.0.0"
+
+# Update role dependencies
+ansible-galaxy install -r roles/requirements.yml --force
+
+# Review and update variables
+# Check for deprecated features
+ansible-playbook --check playbook.yml
+
+# Update documentation
+# Keep README.md and inline comments current
+
+# Regular security audits
+# Review vault contents
+ansible-vault view group_vars/production/vault.yml
+
+# Update SSH keys periodically
+# Rotate vault passwords</code></pre>
+          </div>
+
+          <div class="success-box">
+            <strong>🎯 Best Practices Checklist:</strong>
+            <ul>
+              <li>✅ Use proper directory structure</li>
+              <li>✅ Follow consistent naming conventions</li>
+              <li>✅ Implement proper error handling</li>
+              <li>✅ Use Ansible Vault for secrets</li>
+              <li>✅ Write idempotent playbooks</li>
+              <li>✅ Test code with Molecule</li>
+              <li>✅ Document everything thoroughly</li>
+              <li>✅ Use version control effectively</li>
+              <li>✅ Implement CI/CD pipelines</li>
+              <li>✅ Regular code reviews and updates</li>
+            </ul>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="deployment.html">Playbook Guide</a></strong> - Advanced deployment techniques</li>
+            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Review fundamental concepts</li>
+            <li><strong><a href="index.html">Getting Started</a></strong> - Back to basics</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
