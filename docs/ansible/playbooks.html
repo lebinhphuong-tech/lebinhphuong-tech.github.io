@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ansible Playbooks | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .success-box {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .strategy-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .strategy-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Ansible</a></li>
+        <li class="breadcrumb-item active">Playbooks</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-gear me-2"></i>Ansible</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Introduction</a>
+            <a class="nav-link active" href="playbooks.html">Playbooks</a>
+            <a class="nav-link" href="roles.html">Roles &amp; Modules</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-file-earmark-code me-2"></i>Ansible Playbooks</h1>
+
+          <p>
+            Playbooks are the heart of Ansible automation — YAML files that define the desired state of your
+            infrastructure. They describe <em>what</em> should happen, on <em>which hosts</em>, and <em>in what order</em>.
+          </p>
+
+          <h2>Playbook Structure</h2>
+
+          <h3>Basic Playbook</h3>
+          <pre><code>---
+# site.yml
+- name: Configure web servers
+  hosts: webservers
+  become: true        # Run as root (sudo)
+  gather_facts: true  # Collect system info before tasks
+
+  vars:
+    http_port: 80
+    app_name: myapp
+
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Start and enable Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Deploy configuration file
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ app_name }}
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reload Nginx
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded</code></pre>
+
+          <h3>Multi-Play Playbook</h3>
+          <pre><code>---
+# site.yml — configure multiple server types
+
+- name: Configure database servers
+  hosts: dbservers
+  become: true
+  roles:
+    - postgresql
+
+- name: Configure web servers
+  hosts: webservers
+  become: true
+  roles:
+    - nginx
+    - myapp
+
+- name: Configure load balancers
+  hosts: loadbalancers
+  become: true
+  roles:
+    - haproxy</code></pre>
+
+          <h2>Tasks</h2>
+
+          <h3>Task Options</h3>
+          <pre><code>tasks:
+  - name: Ensure directory exists
+    file:
+      path: /opt/myapp
+      state: directory
+      owner: ubuntu
+      group: ubuntu
+      mode: '0755'
+
+    # Conditionally run only on Ubuntu
+    when: ansible_distribution == "Ubuntu"
+
+    # Run as a different user
+    become_user: ubuntu
+
+    # Ignore errors and continue
+    ignore_errors: true
+
+    # Retry on failure
+    retries: 3
+    delay: 5
+    register: result
+    until: result is succeeded
+
+    # Tag for selective execution
+    tags:
+      - filesystem
+      - setup</code></pre>
+
+          <h3>Loops</h3>
+          <pre><code># Install multiple packages with loop
+- name: Install required packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - nginx
+    - python3
+    - git
+    - curl
+
+# Loop with dictionaries
+- name: Create application users
+  user:
+    name: "{{ item.name }}"
+    groups: "{{ item.groups }}"
+    shell: "{{ item.shell }}"
+    state: present
+  loop:
+    - { name: "appuser", groups: "www-data", shell: "/bin/bash" }
+    - { name: "dbadmin", groups: "postgres", shell: "/bin/sh" }
+
+# Loop over files
+- name: Copy configuration files
+  copy:
+    src: "{{ item }}"
+    dest: /etc/myapp/
+  loop: "{{ query('fileglob', 'files/configs/*.conf') }}"</code></pre>
+
+          <h3>Conditionals</h3>
+          <pre><code># Run task only on Debian-family systems
+- name: Install package (apt)
+  apt:
+    name: nginx
+    state: present
+  when: ansible_os_family == "Debian"
+
+# Run task only on RHEL-family systems
+- name: Install package (dnf)
+  dnf:
+    name: nginx
+    state: present
+  when: ansible_os_family == "RedHat"
+
+# Combine conditions
+- name: Install on Ubuntu 22.04 only
+  apt:
+    name: myapp
+    state: present
+  when:
+    - ansible_distribution == "Ubuntu"
+    - ansible_distribution_version == "22.04"
+
+# Check registered variable
+- name: Check if service is running
+  shell: systemctl is-active nginx
+  register: nginx_status
+  ignore_errors: true
+
+- name: Start nginx if not running
+  service:
+    name: nginx
+    state: started
+  when: nginx_status.rc != 0</code></pre>
+
+          <h2>Variables</h2>
+
+          <h3>Defining Variables</h3>
+          <pre><code>---
+- name: Configure application
+  hosts: webservers
+  become: true
+
+  # Inline vars
+  vars:
+    app_name: myapp
+    app_port: 8080
+    app_version: "1.2.0"
+    app_config:
+      log_level: info
+      max_connections: 100
+
+  # Load from external files
+  vars_files:
+    - vars/common.yml
+    - vars/{{ ansible_distribution }}.yml
+
+  tasks:
+    - name: Show app name
+      debug:
+        msg: "Deploying {{ app_name }} version {{ app_version }}"
+
+    - name: Use nested variable
+      debug:
+        msg: "Log level: {{ app_config.log_level }}"</code></pre>
+
+          <h3>Variable Precedence (low to high)</h3>
+          <pre><code># 1. Role defaults       (roles/myrole/defaults/main.yml)
+# 2. Inventory vars      (inventory/group_vars/, inventory/host_vars/)
+# 3. Playbook vars       (vars: in playbook)
+# 4. Task vars           (vars: in a task)
+# 5. Extra vars          (ansible-playbook -e "key=value")  ← highest priority
+
+# Run with extra variables
+ansible-playbook site.yml -e "app_version=2.0.0 env=production"
+ansible-playbook site.yml -e @overrides.yml</code></pre>
+
+          <h3>Group and Host Variables</h3>
+          <pre><code># inventory/group_vars/webservers.yml
+http_port: 80
+max_clients: 200
+nginx_worker_processes: auto
+
+# inventory/group_vars/production.yml
+env: production
+log_level: warning
+app_version: "1.5.0"
+
+# inventory/host_vars/web1.example.com.yml
+ansible_host: 192.168.1.21
+http_port: 8080    # Override group var for this host only</code></pre>
+
+          <h2>Handlers</h2>
+          <p>Handlers are tasks triggered only when notified by another task — and only run once, at the end of the play.</p>
+          <pre><code>---
+- name: Configure Nginx
+  hosts: webservers
+  become: true
+
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+      notify: Start Nginx
+
+    - name: Deploy Nginx config
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify:
+        - Validate Nginx config
+        - Reload Nginx
+
+    - name: Deploy SSL certificate
+      copy:
+        src: files/cert.pem
+        dest: /etc/ssl/certs/myapp.pem
+      notify: Reload Nginx
+
+  handlers:
+    - name: Start Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Validate Nginx config
+      command: nginx -t
+      changed_when: false
+
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded</code></pre>
+
+          <h2>Templates (Jinja2)</h2>
+
+          <h3>Template File Example</h3>
+          <pre><code># templates/nginx.conf.j2
+
+worker_processes {{ nginx_worker_processes | default('auto') }};
+
+events {
+    worker_connections {{ nginx_worker_connections | default(1024) }};
+}
+
+http {
+    server {
+        listen {{ http_port }};
+        server_name {{ ansible_hostname }};
+
+        {% if ssl_enabled | default(false) %}
+        listen 443 ssl;
+        ssl_certificate /etc/ssl/certs/{{ app_name }}.pem;
+        ssl_certificate_key /etc/ssl/private/{{ app_name }}.key;
+        {% endif %}
+
+        location / {
+            proxy_pass http://127.0.0.1:{{ app_port }};
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        {% for path in static_paths | default([]) %}
+        location {{ path.url }} {
+            alias {{ path.dir }};
+        }
+        {% endfor %}
+    }
+}</code></pre>
+
+          <h3>Using Templates in Tasks</h3>
+          <pre><code>- name: Deploy Nginx config from template
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+    validate: nginx -t -c %s    # Validate before deploying
+  notify: Reload Nginx</code></pre>
+
+          <h2>Error Handling</h2>
+          <pre><code>tasks:
+  # Ignore a task's failure and continue
+  - name: Try to stop old service
+    service:
+      name: old-service
+      state: stopped
+    ignore_errors: true
+
+  # Force task to report 'changed' only on specific condition
+  - name: Run init script
+    command: /opt/myapp/init.sh
+    register: init_result
+    changed_when: "'initialized' in init_result.stdout"
+    failed_when: init_result.rc != 0 and 'already exists' not in init_result.stderr
+
+  # Block / Rescue / Always (try-catch-finally)
+  - name: Deploy application with rollback
+    block:
+      - name: Stop application
+        service:
+          name: myapp
+          state: stopped
+
+      - name: Deploy new version
+        unarchive:
+          src: "myapp-{{ app_version }}.tar.gz"
+          dest: /opt/myapp/
+          remote_src: false
+
+      - name: Start application
+        service:
+          name: myapp
+          state: started
+
+    rescue:
+      - name: Rollback — restore previous version
+        shell: cp -r /opt/myapp/backup/* /opt/myapp/
+
+      - name: Rollback — start old version
+        service:
+          name: myapp
+          state: started
+
+    always:
+      - name: Send deployment notification
+        uri:
+          url: "https://hooks.slack.com/services/xxx"
+          method: POST
+          body_format: json
+          body:
+            text: "Deployment of {{ app_version }} completed on {{ inventory_hostname }}"</code></pre>
+
+          <h2>Vault — Managing Secrets</h2>
+          <pre><code># Encrypt a file
+ansible-vault encrypt vars/secrets.yml
+
+# Decrypt a file
+ansible-vault decrypt vars/secrets.yml
+
+# Edit an encrypted file
+ansible-vault edit vars/secrets.yml
+
+# Encrypt a single string value
+ansible-vault encrypt_string 'my_secret_password' --name 'db_password'
+
+# Create a new encrypted file
+ansible-vault create vars/secrets.yml
+
+# Run playbook with vault password
+ansible-playbook site.yml --ask-vault-pass
+ansible-playbook site.yml --vault-password-file ~/.vault_pass</code></pre>
+
+          <pre><code># vars/secrets.yml (after encrypt)
+$ANSIBLE_VAULT;1.1;AES256
+66386439...
+
+# Reference vault vars in playbook
+vars_files:
+  - vars/common.yml
+  - vars/secrets.yml    # Ansible decrypts at runtime
+
+tasks:
+  - name: Configure database
+    template:
+      src: database.conf.j2
+      dest: /etc/myapp/database.conf
+    # Template uses {{ db_password }} from vault</code></pre>
+
+          <h2>Running Playbooks</h2>
+          <pre><code># Run a playbook
+ansible-playbook site.yml
+
+# Dry run (check mode)
+ansible-playbook site.yml --check
+
+# Show diffs in changed files
+ansible-playbook site.yml --check --diff
+
+# Limit to specific hosts or groups
+ansible-playbook site.yml --limit webservers
+ansible-playbook site.yml --limit web1.example.com
+
+# Run only tasks with specific tags
+ansible-playbook site.yml --tags "nginx,ssl"
+
+# Skip tasks with specific tags
+ansible-playbook site.yml --skip-tags "setup"
+
+# Increase verbosity for debugging
+ansible-playbook site.yml -v
+ansible-playbook site.yml -vvv    # Very verbose
+
+# Start from a specific task
+ansible-playbook site.yml --start-at-task "Deploy Nginx config"
+
+# Step through tasks one by one
+ansible-playbook site.yml --step</code></pre>
+
+          <div class="success-box">
+            <strong>✅ Best Practice:</strong> Always run with <code>--check --diff</code> first in production to preview changes before applying them.
+          </div>
+
+          <div class="warning-box">
+            <strong>⚠️ Warning:</strong> Some modules (e.g. <code>shell</code>, <code>command</code>) may not support check mode and will be skipped. Use <code>check_mode: false</code> on tasks that must always run.
+          </div>
+
+          <h2>Real-World Example: Deploy a Web Application</h2>
+          <pre><code>---
+# deploy-app.yml
+- name: Deploy MyApp to production
+  hosts: webservers
+  become: true
+  vars_files:
+    - vars/common.yml
+    - vars/secrets.yml
+
+  pre_tasks:
+    - name: Verify deployment target
+      assert:
+        that:
+          - app_version is defined
+          - env == "production"
+        fail_msg: "app_version or env not set"
+
+  tasks:
+    - name: Create application directory
+      file:
+        path: /opt/myapp/releases/{{ app_version }}
+        state: directory
+        owner: ubuntu
+        mode: '0755'
+
+    - name: Upload application archive
+      unarchive:
+        src: "dist/myapp-{{ app_version }}.tar.gz"
+        dest: /opt/myapp/releases/{{ app_version }}
+
+    - name: Install Python dependencies
+      pip:
+        requirements: /opt/myapp/releases/{{ app_version }}/requirements.txt
+        virtualenv: /opt/myapp/venv
+        virtualenv_python: python3
+
+    - name: Run database migrations
+      command: /opt/myapp/venv/bin/python manage.py migrate --noinput
+      args:
+        chdir: /opt/myapp/releases/{{ app_version }}
+      environment:
+        DATABASE_URL: "{{ db_url }}"
+      run_once: true         # Run only on first host
+
+    - name: Update symlink to current release
+      file:
+        src: /opt/myapp/releases/{{ app_version }}
+        dest: /opt/myapp/current
+        state: link
+      notify: Restart MyApp
+
+    - name: Deploy Nginx configuration
+      template:
+        src: nginx-myapp.conf.j2
+        dest: /etc/nginx/sites-available/myapp
+      notify: Reload Nginx
+
+    - name: Enable Nginx site
+      file:
+        src: /etc/nginx/sites-available/myapp
+        dest: /etc/nginx/sites-enabled/myapp
+        state: link
+      notify: Reload Nginx
+
+    - name: Keep only last 5 releases
+      shell: |
+        ls -dt /opt/myapp/releases/*/ | tail -n +6 | xargs rm -rf
+      changed_when: false
+
+  handlers:
+    - name: Restart MyApp
+      service:
+        name: myapp
+        state: restarted
+
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded
+
+  post_tasks:
+    - name: Verify application is responding
+      uri:
+        url: "http://localhost:{{ app_port }}/health"
+        status_code: 200
+      retries: 5
+      delay: 5</code></pre>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="roles.html">Roles &amp; Modules</a></strong> - Structure your automation with reusable roles</li>
+            <li><strong><a href="index.html">Introduction</a></strong> - Back to Ansible basics</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

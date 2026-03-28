@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compliance &amp; Audit | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    .criteria-card { background: var(--bg-light); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 0.8rem 0; border-left: 4px solid var(--primary-color); }
+    .criteria-card h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 0.4rem; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Security</a></li>
+        <li class="breadcrumb-item active">Compliance &amp; Audit</li>
+      </ol>
+    </nav>
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-shield-lock me-2"></i>Security</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="iam.html">IAM &amp; Access Control</a>
+            <a class="nav-link" href="devsecops.html">DevSecOps</a>
+            <a class="nav-link" href="secrets.html">Secrets Management</a>
+            <a class="nav-link active" href="compliance.html">Compliance &amp; Audit</a>
+          </nav>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="content">
+
+          <h1><i class="bi bi-clipboard-check me-2"></i>Compliance &amp; Audit</h1>
+
+          <div class="alert-info">
+            <strong><i class="bi bi-info-circle me-2"></i>Compliance Philosophy:</strong>
+            Compliance is not a checkbox exercise — it is a continuous process of implementing, verifying, and improving security controls. "Compliance as Code" automates this process by codifying security policies and continuously evaluating your cloud infrastructure against them, turning point-in-time audits into real-time posture management.
+          </div>
+
+          <h2>SOC 2 Type II</h2>
+          <p>
+            SOC 2 (System and Organization Controls 2) is an auditing standard developed by the AICPA that evaluates how service organizations manage customer data. <strong>Type II</strong> reports cover the operational effectiveness of controls over a period (typically 6–12 months), not just their design.
+          </p>
+
+          <h3>Five Trust Service Criteria</h3>
+
+          <div class="criteria-card">
+            <h5><i class="bi bi-shield-check me-2"></i>1. Security (Common Criteria — required)</h5>
+            <p>Protection of the system against unauthorized access. This is the only mandatory criterion. Covers: logical and physical access controls, encryption, vulnerability management, incident response, change management.</p>
+          </div>
+          <div class="criteria-card">
+            <h5><i class="bi bi-activity me-2"></i>2. Availability</h5>
+            <p>System availability per SLA commitments. Covers: uptime monitoring, redundancy, disaster recovery, capacity planning, performance monitoring.</p>
+          </div>
+          <div class="criteria-card">
+            <h5><i class="bi bi-check2-all me-2"></i>3. Processing Integrity</h5>
+            <p>System processing is complete, valid, accurate, timely, and authorized. Covers: input/output validation, error handling, processing monitoring, data quality controls.</p>
+          </div>
+          <div class="criteria-card">
+            <h5><i class="bi bi-lock me-2"></i>4. Confidentiality</h5>
+            <p>Information designated as confidential is protected. Covers: data classification, encryption, access controls on sensitive data, NDAs, data retention/disposal.</p>
+          </div>
+          <div class="criteria-card">
+            <h5><i class="bi bi-person-lock me-2"></i>5. Privacy</h5>
+            <p>Personal information is collected, used, retained, disclosed, and disposed per the privacy notice. Covers: consent management, data subject rights, privacy by design, DPAs.</p>
+          </div>
+
+          <h3>What Auditors Look For (Technical Controls)</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead><tr><th>Control Area</th><th>Evidence Auditors Require</th><th>Implementation</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>Access Control</td>
+                  <td>User access reviews (quarterly), MFA enabled for all users, least privilege policy</td>
+                  <td>IAM audit reports, access review documentation, MFA enforcement policies</td>
+                </tr>
+                <tr>
+                  <td>Monitoring</td>
+                  <td>SIEM alerts, 24/7 monitoring, log retention (1+ year)</td>
+                  <td>CloudTrail + S3 with 365-day retention, alerting runbooks</td>
+                </tr>
+                <tr>
+                  <td>Incident Response</td>
+                  <td>IR plan, tabletop exercises (annual), incident post-mortems</td>
+                  <td>Documented IR playbooks, exercise records, ticket history</td>
+                </tr>
+                <tr>
+                  <td>Change Management</td>
+                  <td>All changes reviewed and approved before deployment</td>
+                  <td>PR approvals, CI/CD audit logs, change request tickets</td>
+                </tr>
+                <tr>
+                  <td>Encryption</td>
+                  <td>Data encrypted at rest and in transit, key management documented</td>
+                  <td>KMS key policies, TLS 1.2+ enforcement, S3/RDS encryption enabled</td>
+                </tr>
+                <tr>
+                  <td>Vulnerability Management</td>
+                  <td>Regular scans, SLA for remediation (critical: 24h, high: 7d)</td>
+                  <td>Trivy/Inspector scan reports, patch management records</td>
+                </tr>
+                <tr>
+                  <td>Vendor Risk</td>
+                  <td>Third-party risk assessments, SoC2 reports from vendors</td>
+                  <td>Vendor questionnaires, vendor SOC2 reports, DPAs</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>ISO 27001</h2>
+          <p>
+            ISO/IEC 27001 is the international standard specifying requirements for an Information Security Management System (ISMS). It takes a risk-based approach — organizations identify risks, implement controls to mitigate them, and continuously improve.
+          </p>
+
+          <h3>ISMS Implementation Roadmap</h3>
+          <div class="concept-card">
+            <h4>Phase 1: Gap Analysis (Weeks 1–4)</h4>
+            <ul>
+              <li>Assess current security posture against ISO 27001 Annex A controls</li>
+              <li>Identify gaps and document findings in a gap analysis report</li>
+              <li>Define scope of the ISMS (which systems, locations, processes)</li>
+              <li>Secure executive sponsorship and budget</li>
+            </ul>
+          </div>
+          <div class="concept-card">
+            <h4>Phase 2: Risk Treatment (Weeks 5–10)</h4>
+            <ul>
+              <li>Conduct formal risk assessment (identify assets, threats, vulnerabilities, likelihood, impact)</li>
+              <li>Create Risk Register with risk ratings and treatment decisions (Accept, Mitigate, Transfer, Avoid)</li>
+              <li>Develop Statement of Applicability (SoA) — document which Annex A controls apply and why</li>
+              <li>Create Risk Treatment Plan with owners, timelines, and success criteria</li>
+            </ul>
+          </div>
+          <div class="concept-card">
+            <h4>Phase 3: Controls Implementation (Months 3–9)</h4>
+            <ul>
+              <li>Implement selected controls from Annex A (all 93 controls should be considered)</li>
+              <li>Develop required policies: IS Policy, Acceptable Use, Access Control, Incident Response, BCDR</li>
+              <li>Train all staff on information security awareness</li>
+              <li>Implement technical controls: MFA, encryption, SIEM, patch management, vulnerability scanning</li>
+              <li>Establish supplier management and third-party risk processes</li>
+            </ul>
+          </div>
+          <div class="concept-card">
+            <h4>Phase 4: Internal Audit &amp; Certification (Months 10–12)</h4>
+            <ul>
+              <li>Conduct internal audit against all ISO 27001 requirements</li>
+              <li>Management review meeting — review ISMS performance, risks, objectives</li>
+              <li>Stage 1 audit: External auditor reviews documentation</li>
+              <li>Stage 2 audit: External auditor tests control effectiveness on-site</li>
+              <li>Achieve certification (valid 3 years with annual surveillance audits)</li>
+            </ul>
+          </div>
+
+          <h2>CIS Benchmarks</h2>
+
+          <h3>CIS Controls v8 — 18 Controls Overview</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead><tr><th>#</th><th>Control</th><th>Implementation Group</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Inventory and Control of Enterprise Assets</td><td>IG1</td></tr>
+                <tr><td>2</td><td>Inventory and Control of Software Assets</td><td>IG1</td></tr>
+                <tr><td>3</td><td>Data Protection</td><td>IG1</td></tr>
+                <tr><td>4</td><td>Secure Configuration of Enterprise Assets and Software</td><td>IG1</td></tr>
+                <tr><td>5</td><td>Account Management</td><td>IG1</td></tr>
+                <tr><td>6</td><td>Access Control Management</td><td>IG1</td></tr>
+                <tr><td>7</td><td>Continuous Vulnerability Management</td><td>IG2</td></tr>
+                <tr><td>8</td><td>Audit Log Management</td><td>IG2</td></tr>
+                <tr><td>9</td><td>Email and Web Browser Protections</td><td>IG2</td></tr>
+                <tr><td>10</td><td>Malware Defenses</td><td>IG2</td></tr>
+                <tr><td>11</td><td>Data Recovery</td><td>IG2</td></tr>
+                <tr><td>12</td><td>Network Infrastructure Management</td><td>IG2</td></tr>
+                <tr><td>13</td><td>Network Monitoring and Defense</td><td>IG2</td></tr>
+                <tr><td>14</td><td>Security Awareness and Skills Training</td><td>IG2</td></tr>
+                <tr><td>15</td><td>Service Provider Management</td><td>IG2</td></tr>
+                <tr><td>16</td><td>Application Software Security</td><td>IG2</td></tr>
+                <tr><td>17</td><td>Incident Response Management</td><td>IG3</td></tr>
+                <tr><td>18</td><td>Penetration Testing</td><td>IG3</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>CIS Kubernetes Benchmark — kube-bench</h3>
+<pre><code># Run kube-bench on a node
+docker run --pid=host -v /etc:/etc:ro -v /var:/var:ro \
+  -t aquasec/kube-bench:latest \
+  --version 1.27
+
+# Run as a Kubernetes Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kube-bench
+  namespace: kube-system
+spec:
+  template:
+    spec:
+      hostPID: true
+      containers:
+        - name: kube-bench
+          image: aquasec/kube-bench:latest
+          command: ["kube-bench"]
+          args: ["--json", "--outputfile", "/output/report.json"]
+          volumeMounts:
+            - name: var-lib-etcd
+              mountPath: /var/lib/etcd
+              readOnly: true
+            - name: var-lib-kubelet
+              mountPath: /var/lib/kubelet
+              readOnly: true
+            - name: etc-systemd
+              mountPath: /etc/systemd
+              readOnly: true
+            - name: etc-kubernetes
+              mountPath: /etc/kubernetes
+              readOnly: true
+            - name: output
+              mountPath: /output
+      restartPolicy: Never
+      volumes:
+        - name: var-lib-etcd
+          hostPath: { path: "/var/lib/etcd" }
+        - name: var-lib-kubelet
+          hostPath: { path: "/var/lib/kubelet" }
+        - name: etc-systemd
+          hostPath: { path: "/etc/systemd" }
+        - name: etc-kubernetes
+          hostPath: { path: "/etc/kubernetes" }
+        - name: output
+          emptyDir: {}</code></pre>
+
+          <h3>Sample kube-bench Output</h3>
+<pre><code>[INFO] 1 Control Plane Security Configuration
+[INFO] 1.2 API Server
+[PASS] 1.2.1 Ensure that the --anonymous-auth argument is set to false
+[PASS] 1.2.2 Ensure that the --token-auth-file parameter is not set
+[FAIL] 1.2.6 Ensure that the --kubelet-certificate-authority argument is set as appropriate
+[PASS] 1.2.7 Ensure that the --authorization-mode argument is not set to AlwaysAllow
+[WARN] 1.2.10 Ensure that the admission control plugin EventRateLimit is set
+
+[INFO] 4 Worker Node Security Configuration
+[PASS] 4.1.1 Ensure that the kubelet service file permissions are set to 644 or more restrictive
+[FAIL] 4.2.1 Ensure that the anonymous-auth argument is set to false
+[PASS] 4.2.6 Ensure that the --protect-kernel-defaults argument is set to true
+
+== Summary ==
+42 checks PASS
+8 checks FAIL
+10 checks WARN
+0 checks INFO</code></pre>
+
+          <h3>CIS AWS Foundations Benchmark — Security Hub</h3>
+<pre><code># Enable AWS Security Hub with CIS AWS Foundations standard
+aws securityhub enable-security-hub \
+  --enable-default-standards \
+  --region ap-southeast-1
+
+# Enable CIS AWS Foundations Benchmark v1.4.0
+aws securityhub batch-enable-standards \
+  --standards-subscription-requests \
+    StandardsArn=arn:aws:securityhub:ap-southeast-1::standards/cis-aws-foundations-benchmark/v/1.4.0
+
+# Get compliance summary
+aws securityhub get-findings \
+  --filters '{"ComplianceStatus":[{"Value":"FAILED","Comparison":"EQUALS"}],"RecordState":[{"Value":"ACTIVE","Comparison":"EQUALS"}]}' \
+  --query 'Findings[*].[Title,Severity.Label,Compliance.Status]' \
+  --output table</code></pre>
+
+          <h2>PCI DSS</h2>
+          <p>
+            The Payment Card Industry Data Security Standard (PCI DSS) v4.0 applies to any organization that stores, processes, or transmits cardholder data. It has 12 main requirements organized into 6 goals.
+          </p>
+
+          <h3>12 PCI DSS Requirements Overview</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead><tr><th>Goal</th><th>Requirement</th><th>Summary</th></tr></thead>
+              <tbody>
+                <tr><td rowspan="2">Build &amp; Maintain Secure Network</td><td>1</td><td>Install and maintain network security controls</td></tr>
+                <tr><td>2</td><td>Apply secure configurations to all system components</td></tr>
+                <tr><td rowspan="2">Protect Account Data</td><td>3</td><td>Protect stored account data (truncate, mask, encrypt PANs)</td></tr>
+                <tr><td>4</td><td>Protect cardholder data with strong cryptography during transmission</td></tr>
+                <tr><td rowspan="2">Maintain Vulnerability Management</td><td>5</td><td>Protect all systems against malware; maintain AV</td></tr>
+                <tr><td>6</td><td>Develop and maintain secure systems and software</td></tr>
+                <tr><td rowspan="2">Implement Strong Access Control</td><td>7</td><td>Restrict access by business need-to-know</td></tr>
+                <tr><td>8</td><td>Identify users and authenticate access to system components (MFA required)</td></tr>
+                <tr><td>Protect Physical Access</td><td>9</td><td>Restrict physical access to cardholder data</td></tr>
+                <tr><td rowspan="2">Monitor &amp; Test Networks</td><td>10</td><td>Log and monitor all access to system components and cardholder data</td></tr>
+                <tr><td>11</td><td>Test security of systems and networks regularly (pen test annually)</td></tr>
+                <tr><td>Maintain Information Security Policy</td><td>12</td><td>Support information security with organizational policies and programs</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Network Segmentation for CDE</h3>
+          <p>
+            The Cardholder Data Environment (CDE) must be isolated from all other networks. Proper segmentation can significantly reduce the scope of PCI DSS assessment.
+          </p>
+<pre><code># AWS VPC segmentation for CDE
+# CDE VPC — strictly isolated
+resource "aws_vpc" "cde" {
+  cidr_block           = "10.10.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+
+  tags = {
+    Name        = "cde-vpc"
+    Environment = "production"
+    Compliance  = "PCI-DSS"
+  }
+}
+
+# No VPC peering to non-CDE environments
+# All egress through NAT Gateway with allowlist
+resource "aws_security_group" "cde_app" {
+  name   = "cde-application"
+  vpc_id = aws_vpc.cde.id
+
+  # Only allow HTTPS from payment processor IPs
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["192.0.2.0/24"]  # Payment processor IP range
+  }
+
+  # Egress: only to payment processor and internal
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["192.0.2.0/24"]
+  }
+}</code></pre>
+
+          <h2>Cloud Compliance Tools</h2>
+
+          <h3>AWS Config Rules</h3>
+<pre><code># Enable AWS Config
+aws configservice put-configuration-recorder \
+  --configuration-recorder name=default,roleARN=arn:aws:iam::123456789012:role/config-role \
+  --recording-group allSupported=true,includeGlobalResources=true
+
+# Deploy managed Config rules via CloudFormation/Terraform
+resource "aws_config_config_rule" "s3_bucket_public_read" {
+  name = "s3-bucket-public-read-prohibited"
+
+  source {
+    owner             = "AWS"
+    source_identifier = "S3_BUCKET_PUBLIC_READ_PROHIBITED"
+  }
+
+  tags = { Compliance = "CIS-AWS" }
+}
+
+resource "aws_config_config_rule" "root_mfa" {
+  name = "root-account-mfa-enabled"
+
+  source {
+    owner             = "AWS"
+    source_identifier = "ROOT_ACCOUNT_MFA_ENABLED"
+  }
+}
+
+resource "aws_config_config_rule" "encrypted_volumes" {
+  name = "encrypted-volumes"
+
+  source {
+    owner             = "AWS"
+    source_identifier = "ENCRYPTED_VOLUMES"
+  }
+}
+
+# Custom Config rule: ensure all EC2 instances use IMDSv2
+resource "aws_config_config_rule" "ec2_imdsv2" {
+  name = "ec2-imdsv2-required"
+
+  source {
+    owner             = "AWS"
+    source_identifier = "EC2_IMDSV2_CHECK"
+  }
+}</code></pre>
+
+          <h3>GCP Security Command Center</h3>
+<pre><code># Enable Security Command Center (Premium)
+gcloud scc settings update \
+  --organization=123456789 \
+  --enable-asset-discovery
+
+# List active findings
+gcloud scc findings list \
+  --organization=123456789 \
+  --filter="state=ACTIVE AND severity=CRITICAL" \
+  --format="table(name,category,resourceName,severity)"
+
+# Export findings to BigQuery for analysis
+gcloud scc findings list \
+  --organization=123456789 \
+  --format=json | bq load \
+  --source_format=NEWLINE_DELIMITED_JSON \
+  my-project:security.scc_findings \
+  -
+
+# Create a notification config for real-time alerts
+gcloud scc notifications create critical-findings \
+  --organization=123456789 \
+  --description="Notify on critical findings" \
+  --pubsub-topic=projects/my-project/topics/scc-alerts \
+  --filter="severity=CRITICAL OR severity=HIGH"</code></pre>
+
+          <h2>Audit Logging</h2>
+
+          <h3>What to Log</h3>
+          <div class="concept-card">
+            <h4>Critical Events That Must Be Logged</h4>
+            <ul>
+              <li><strong>API calls:</strong> Every API call to cloud control plane (AWS CloudTrail, GCP Cloud Audit Logs)</li>
+              <li><strong>Authentication events:</strong> Login success/failure, MFA usage, token issuance</li>
+              <li><strong>Authorization failures:</strong> Access denied events — critical for detecting probing/attacks</li>
+              <li><strong>Data access:</strong> Who accessed what data and when (S3 access logs, database query logs)</li>
+              <li><strong>Configuration changes:</strong> IAM changes, security group modifications, resource creation/deletion</li>
+              <li><strong>Privilege escalation:</strong> Role assumption, sudo usage, kubectl exec into pods</li>
+              <li><strong>Network flows:</strong> VPC Flow Logs, firewall allow/deny decisions</li>
+              <li><strong>Secret access:</strong> Who retrieved which secret from Vault/Secrets Manager</li>
+            </ul>
+          </div>
+
+          <h3>AWS CloudTrail — Production Configuration</h3>
+<pre><code># Terraform: CloudTrail with S3 encryption and integrity validation
+resource "aws_cloudtrail" "main" {
+  name                          = "org-cloudtrail"
+  s3_bucket_name                = aws_s3_bucket.cloudtrail.id
+  include_global_service_events = true
+  is_multi_region_trail         = true
+  is_organization_trail         = true
+  enable_log_file_validation    = true  # SHA-256 integrity hashing
+  kms_key_id                    = aws_kms_key.cloudtrail.arn
+
+  event_selector {
+    read_write_type           = "All"
+    include_management_events = true
+
+    data_resource {
+      type   = "AWS::S3::Object"
+      values = ["arn:aws:s3:::"]  # Log all S3 object-level events
+    }
+
+    data_resource {
+      type   = "AWS::Lambda::Function"
+      values = ["arn:aws:lambda"]
+    }
+  }
+
+  insight_selector {
+    insight_type = "ApiCallRateInsight"
+  }
+
+  tags = {
+    Environment = "production"
+    Compliance  = "SOC2,PCI-DSS"
+  }
+}
+
+# S3 bucket for CloudTrail with lifecycle (1 year hot, then glacier)
+resource "aws_s3_bucket_lifecycle_configuration" "cloudtrail" {
+  bucket = aws_s3_bucket.cloudtrail.id
+
+  rule {
+    id     = "archive-logs"
+    status = "Enabled"
+
+    transition {
+      days          = 90
+      storage_class = "STANDARD_IA"
+    }
+
+    transition {
+      days          = 365
+      storage_class = "GLACIER"
+    }
+
+    expiration {
+      days = 2557  # 7 years for PCI DSS compliance
+    }
+  }
+}</code></pre>
+
+          <h3>GCP Cloud Audit Logs</h3>
+<pre><code># Enable all audit log types for an organization
+gcloud resource-manager org-policies set-policy \
+  --organization=123456789 \
+  audit_log_policy.yaml
+
+# audit_log_policy.yaml (enable DATA_READ and DATA_WRITE for all services)
+auditConfigs:
+  - service: allServices
+    auditLogConfigs:
+      - logType: ADMIN_READ
+      - logType: DATA_READ
+      - logType: DATA_WRITE
+
+# Query audit logs in Cloud Logging
+gcloud logging read \
+  'logName="projects/my-project/logs/cloudaudit.googleapis.com%2Factivity" AND severity&gt;=WARNING' \
+  --limit=50 \
+  --format=json | jq '.[] | {time: .timestamp, user: .protoPayload.authenticationInfo.principalEmail, action: .protoPayload.methodName, resource: .resource.labels}'</code></pre>
+
+          <h3>Kubernetes Audit Policy</h3>
+<pre><code># k8s-audit-policy.yaml
+apiVersion: audit.k8s.io/v1
+kind: Policy
+rules:
+  # Log all requests to secrets, configmaps (sensitive resources)
+  - level: RequestResponse
+    resources:
+      - group: ""
+        resources: ["secrets", "configmaps"]
+
+  # Log pod exec/attach (privileged operations)
+  - level: RequestResponse
+    resources:
+      - group: ""
+        resources: ["pods/exec", "pods/attach", "pods/portforward"]
+
+  # Log RBAC changes
+  - level: RequestResponse
+    resources:
+      - group: "rbac.authorization.k8s.io"
+        resources: ["roles", "clusterroles", "rolebindings", "clusterrolebindings"]
+
+  # Log auth events (authentication failures logged at Metadata)
+  - level: Metadata
+    omitStages:
+      - RequestReceived
+    userGroups: ["system:unauthenticated"]
+
+  # Reduced logging for read-only operations on non-sensitive resources
+  - level: Metadata
+    verbs: ["get", "list", "watch"]
+    resources:
+      - group: ""
+        resources: ["pods", "services", "endpoints"]
+      - group: "apps"
+        resources: ["deployments", "replicasets"]
+
+  # Log all other requests at Request level
+  - level: Request
+    omitStages:
+      - RequestReceived</code></pre>
+
+          <h2>Compliance as Code</h2>
+
+          <h3>OPA for Compliance Enforcement</h3>
+<pre><code># Rego policy: Enforce encryption for all S3 buckets
+package cloud.compliance.aws.s3
+
+import future.keywords.in
+
+deny[msg] {
+    bucket := input.resource.aws_s3_bucket[name]
+    not bucket_has_encryption(name)
+    msg := sprintf("S3 bucket '%v' must have server-side encryption enabled", [name])
+}
+
+bucket_has_encryption(bucket_name) {
+    encryption := input.resource.aws_s3_bucket_server_side_encryption_configuration[_]
+    encryption.bucket == input.resource.aws_s3_bucket[bucket_name].id
+}
+
+# Rego policy: No public S3 buckets
+deny[msg] {
+    bucket := input.resource.aws_s3_bucket[name]
+    acl := bucket.acl
+    acl in ["public-read", "public-read-write", "authenticated-read"]
+    msg := sprintf("S3 bucket '%v' must not have public ACL: %v", [name, acl])
+}
+
+# Rego policy: All RDS instances must be encrypted
+deny[msg] {
+    db := input.resource.aws_db_instance[name]
+    not db.storage_encrypted
+    msg := sprintf("RDS instance '%v' must have storage_encrypted = true", [name])
+}</code></pre>
+
+          <h3>Terraform Compliance Checks</h3>
+<pre><code># terraform-compliance: BDD-style compliance testing
+# features/s3_security.feature
+Feature: S3 Security Controls
+
+  Scenario: All S3 buckets must have versioning enabled
+    Given I have aws_s3_bucket_versioning defined
+    When its status is defined
+    Then its status must match the "Enabled" regex
+
+  Scenario: S3 buckets must not allow public access
+    Given I have aws_s3_bucket_public_access_block defined
+    Then its block_public_acls must be true
+    And its block_public_policy must be true
+    And its ignore_public_acls must be true
+    And its restrict_public_buckets must be true
+
+  Scenario: All EC2 instances must use approved AMIs
+    Given I have aws_instance defined
+    When its ami is defined
+    Then its ami must match the "ami-0[a-z0-9]{16}" regex
+
+# Run terraform-compliance
+terraform-compliance \
+  --features ./features/ \
+  --planfile ./tfplan.json</code></pre>
+
+          <h2>GDPR Basics for Cloud Infrastructure</h2>
+
+          <h3>Key GDPR Requirements for Cloud Teams</h3>
+          <ul>
+            <li><strong>Data Residency:</strong> Personal data of EU residents must remain within the EU/EEA unless adequate safeguards exist (SCCs, adequacy decisions). Use AWS/GCP region constraints via SCP/org policies to enforce data residency.</li>
+            <li><strong>Right to Erasure:</strong> Systems must be capable of deleting all personal data for a given individual. Design data stores with deletion in mind; avoid data duplication across systems without tracking.</li>
+            <li><strong>Data Processing Agreements (DPAs):</strong> Any cloud provider processing personal data must have a DPA. AWS, GCP, and Azure all offer DPAs — ensure they are in place before processing EU data.</li>
+            <li><strong>Data Minimization:</strong> Only collect and process personal data that is strictly necessary for the stated purpose.</li>
+            <li><strong>Breach Notification:</strong> Report data breaches to the supervisory authority within 72 hours. Affected individuals must be notified if high risk. Requires robust monitoring and incident response.</li>
+          </ul>
+
+<pre><code># Enforce EU data residency with AWS SCP
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EnforceEUDataResidency",
+      "Effect": "Deny",
+      "Action": [
+        "s3:CreateBucket",
+        "rds:CreateDBInstance",
+        "dynamodb:CreateTable",
+        "es:CreateDomain"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": [
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1"
+          ]
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+          <div class="tip-box">
+            <strong><i class="bi bi-lightbulb me-2"></i>Tip:</strong>
+            Use cloud-native Cloud Security Posture Management (CSPM) tools — <strong>AWS Security Hub</strong>, <strong>GCP Security Command Center</strong>, <strong>Microsoft Defender for Cloud</strong>, or third-party tools like <strong>Wiz</strong>, <strong>Orca Security</strong>, or <strong>Prisma Cloud</strong> — to continuously assess your cloud environment against compliance frameworks (CIS, PCI DSS, SOC 2, ISO 27001, GDPR) and receive prioritized remediation guidance.
+          </div>
+
+          <div class="success-box">
+            <strong><i class="bi bi-check-circle me-2"></i>Compliance Checklist for Cloud Infrastructure:</strong>
+            <ul class="mb-0">
+              <li><strong>Identity:</strong> MFA enforced for all users, no shared accounts, root/owner accounts locked down, access reviews quarterly</li>
+              <li><strong>Encryption:</strong> All data encrypted at rest (KMS-managed keys), TLS 1.2+ in transit, no plaintext secrets in code or configs</li>
+              <li><strong>Logging:</strong> CloudTrail/Cloud Audit Logs enabled org-wide, logs retained 1+ year (7 years for PCI), log integrity validation enabled</li>
+              <li><strong>Network:</strong> Private subnets for workloads, VPC Flow Logs enabled, no 0.0.0.0/0 ingress rules except for known load balancers</li>
+              <li><strong>Vulnerability Management:</strong> Container and host scanning in CI/CD, critical CVEs remediated within 24h, high within 7 days</li>
+              <li><strong>Secrets:</strong> No hardcoded secrets, secrets manager in use, automatic rotation enabled, K8s secrets encrypted at rest</li>
+              <li><strong>Change Management:</strong> All infrastructure changes via IaC, PR-based approval, CI/CD audit trail, no manual changes to production</li>
+              <li><strong>Incident Response:</strong> IR plan documented and tested, SIEM alerts configured, on-call rotation in place, post-mortems conducted</li>
+              <li><strong>Backup:</strong> Automated backups enabled, backup encryption enabled, restore tested quarterly</li>
+              <li><strong>Compliance Scanning:</strong> CSPM tool active, CIS benchmarks scanned weekly, findings tracked in ticketing system with SLA</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

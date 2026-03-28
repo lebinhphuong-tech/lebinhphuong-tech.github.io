@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VPC Design | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+    .provider-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; }
+    .aws-badge { background: #ff9900; color: white; }
+    .gcp-badge { background: #4285f4; color: white; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container py-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Networking</a></li>
+        <li class="breadcrumb-item active">VPC Design</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5><i class="bi bi-diagram-3 me-2"></i>Networking</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link active" href="vpc.html">VPC Design</a>
+            <a class="nav-link" href="dns-lb.html">DNS &amp; Load Balancing</a>
+            <a class="nav-link" href="vpn-bgp.html">VPN &amp; BGP</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-layers me-3"></i>VPC Design</h1>
+          <p class="lead">Designing secure, scalable Virtual Private Clouds on AWS and GCP — CIDR planning, subnet architecture, routing, security controls, and connectivity patterns.</p>
+
+          <!-- =========================================================
+               AWS VPC
+               ========================================================= -->
+          <h2><span class="provider-badge aws-badge">AWS</span> AWS VPC</h2>
+
+          <h3>CIDR Planning Best Practices</h3>
+          <div class="tip-box">
+            <strong>Golden rules for VPC CIDR planning:</strong>
+            <ul class="mb-0 mt-2">
+              <li>Use <strong>/16</strong> for each VPC — gives 65,536 addresses with room to grow</li>
+              <li>Never overlap with on-premises ranges — plan a master IP address management (IPAM) scheme</li>
+              <li>Reserve entire /8 blocks per cloud (e.g. 10.0.0.0/8 for AWS, 10.128.0.0/9 for GCP)</li>
+              <li>Leave gaps between VPC CIDRs for future peering expansion</li>
+              <li>Avoid RFC 1918 ranges already used on-prem — use AWS IPAM for centralized management</li>
+            </ul>
+          </div>
+
+          <pre><code># Example enterprise IP plan
+# AWS Production VPCs (10.0.0.0/13 → 10.0.0.0 – 10.7.255.255)
+10.0.0.0/16    → prod-us-east-1 VPC
+10.1.0.0/16    → prod-eu-west-1 VPC
+10.2.0.0/16    → prod-ap-southeast-1 VPC
+10.3.0.0/16    → prod-us-west-2 VPC
+
+# AWS Non-prod VPCs (10.8.0.0/13)
+10.8.0.0/16    → staging-us-east-1 VPC
+10.9.0.0/16    → dev-us-east-1 VPC
+
+# Shared Services / Hub
+10.100.0.0/16  → shared-services VPC (DNS, bastion, monitoring)
+
+# On-premises (avoid in cloud)
+192.168.0.0/16  → HQ LAN (never use this in cloud VPCs)
+172.16.0.0/12   → DC network
+
+# GCP VPCs (10.128.0.0/9)
+10.128.0.0/16  → gcp-prod subnet region us-central1
+10.132.0.0/16  → gcp-prod subnet region europe-west1</code></pre>
+
+          <h3>3-Tier Subnet Architecture (Multi-AZ)</h3>
+          <pre><code># prod-us-east-1 VPC: 10.0.0.0/16
+
+# PUBLIC TIER — Internet-facing (ALB, NAT GW, Bastion)
+10.0.0.0/24    → public-us-east-1a   (254 hosts)
+10.0.1.0/24    → public-us-east-1b   (254 hosts)
+10.0.2.0/24    → public-us-east-1c   (254 hosts)
+
+# PRIVATE APP TIER — Application servers, ECS tasks, Lambda VPC
+10.0.10.0/23   → private-app-us-east-1a  (510 hosts — /23 for larger fleets)
+10.0.12.0/23   → private-app-us-east-1b  (510 hosts)
+10.0.14.0/23   → private-app-us-east-1c  (510 hosts)
+
+# PRIVATE DATA TIER — RDS, ElastiCache, OpenSearch
+10.0.20.0/24   → private-data-us-east-1a (254 hosts)
+10.0.21.0/24   → private-data-us-east-1b (254 hosts)
+10.0.22.0/24   → private-data-us-east-1c (254 hosts)
+
+# RESERVED — future use, VPC endpoints, Transit GW attachments
+10.0.30.0/24   → reserved-us-east-1a
+10.0.31.0/24   → reserved-us-east-1b
+10.0.32.0/24   → reserved-us-east-1c
+
+# NOTE: AWS reserves 5 IPs per subnet:
+# .0 Network address, .1 VPC router, .2 DNS, .3 Future, .255 Broadcast</code></pre>
+
+          <h3>Internet Gateway &amp; NAT Gateway</h3>
+          <table>
+            <tr><th>Component</th><th>Purpose</th><th>HA consideration</th><th>Cost</th></tr>
+            <tr><td>Internet Gateway (IGW)</td><td>Bidirectional internet access for public subnets</td><td>Highly available by default (AWS-managed, no AZ affinity)</td><td>Free (data transfer charges apply)</td></tr>
+            <tr><td>NAT Gateway (managed)</td><td>Outbound-only internet for private subnets</td><td>AZ-specific — deploy one per AZ for HA</td><td>~$0.045/hr + $0.045/GB processed</td></tr>
+            <tr><td>NAT Instance (self-managed)</td><td>Same as NAT GW but on EC2</td><td>Must configure your own HA (ASG)</td><td>EC2 cost only (cheaper at scale)</td></tr>
+          </table>
+
+          <div class="warning-box">
+            <strong>NAT Gateway HA:</strong> A single NAT Gateway serves only its AZ by default. If that AZ fails, private instances in other AZs lose internet access. Always deploy one NAT Gateway per AZ and route each AZ's private subnet to its local NAT GW.
+          </div>
+
+          <h3>Route Tables</h3>
+          <pre><code># Public subnet route table
+Destination       Target
+0.0.0.0/0         igw-0abc123def456789a    # Default route → Internet Gateway
+10.0.0.0/16       local                    # VPC local (automatic)
+10.100.0.0/16     tgw-0xyz987              # Shared services via Transit Gateway
+
+# Private app subnet route table (AZ-a)
+Destination       Target
+0.0.0.0/0         nat-0aaa111bbb222ccc33   # NAT Gateway in same AZ
+10.0.0.0/16       local
+10.100.0.0/16     tgw-0xyz987
+192.168.0.0/16    tgw-0xyz987              # On-premises via TGW+DX
+
+# Blackhole route — drop traffic to decommissioned VPC
+10.5.0.0/16       blackhole
+
+# Route propagation from VGW (BGP learned routes from Direct Connect)
+# Enable in route table: Actions → Edit route propagation → Enable</code></pre>
+
+          <h3>Security Groups</h3>
+          <div class="concept-card">
+            <h4>Security Group Characteristics</h4>
+            <p>Stateful — return traffic automatically allowed. Applied at the ENI (instance) level. No explicit deny rules — only allow rules. Rules evaluated collectively (all rules checked, most permissive wins). Can reference other security groups as source/destination.</p>
+          </div>
+
+          <pre><code># Web tier SG (ALB-facing)
+# Inbound:
+Type    Protocol  Port   Source
+HTTPS   TCP       443    0.0.0.0/0, ::/0       # Internet HTTPS
+HTTP    TCP       80     0.0.0.0/0, ::/0        # HTTP (redirect to HTTPS)
+# Outbound:
+Type    Protocol  Port   Destination
+Custom  TCP       8080   sg-app-tier            # Forward to app tier
+
+# App tier SG (EC2/ECS)
+# Inbound:
+Type    Protocol  Port   Source
+Custom  TCP       8080   sg-web-tier            # Only from web tier SG
+# Outbound:
+Type    Protocol  Port   Destination
+Custom  TCP       5432   sg-data-tier           # PostgreSQL
+Custom  TCP       6379   sg-data-tier           # Redis
+HTTPS   TCP       443    0.0.0.0/0              # AWS APIs, package repos
+
+# Data tier SG (RDS, ElastiCache)
+# Inbound:
+Type    Protocol  Port   Source
+Custom  TCP       5432   sg-app-tier            # PostgreSQL from app only
+Custom  TCP       6379   sg-app-tier            # Redis from app only</code></pre>
+
+          <h3>Network ACLs</h3>
+          <div class="warning-box">
+            <strong>NACLs are stateless:</strong> Unlike security groups, NACLs require explicit inbound AND outbound rules for each connection. Ephemeral/dynamic ports (1024-65535) must be explicitly allowed for return traffic on the outbound rule.
+          </div>
+          <pre><code># Network ACL for public subnet
+# INBOUND rules (numbered — lower = higher priority)
+Rule  Type    Protocol  Port Range   Source          Action
+100   HTTPS   TCP       443          0.0.0.0/0       ALLOW
+110   HTTP    TCP       80           0.0.0.0/0       ALLOW
+120   Custom  TCP       1024-65535   0.0.0.0/0       ALLOW   # ephemeral return
+130   SSH     TCP       22           10.100.0.0/16   ALLOW   # from bastion VPC
+*     All     All       All          0.0.0.0/0       DENY    # implicit deny
+
+# OUTBOUND rules
+Rule  Type    Protocol  Port Range   Destination     Action
+100   HTTPS   TCP       443          0.0.0.0/0       ALLOW
+110   HTTP    TCP       80           0.0.0.0/0       ALLOW
+120   Custom  TCP       1024-65535   0.0.0.0/0       ALLOW   # ephemeral ports
+*     All     All       All          0.0.0.0/0       DENY</code></pre>
+
+          <h3>VPC Endpoints</h3>
+          <table>
+            <tr><th>Type</th><th>Mechanism</th><th>Services</th><th>Cost</th></tr>
+            <tr><td>Gateway Endpoint</td><td>Route table entry, no ENI</td><td>S3, DynamoDB only</td><td>Free</td></tr>
+            <tr><td>Interface Endpoint (PrivateLink)</td><td>ENI with private IP in subnet</td><td>100+ AWS services, custom services</td><td>~$0.01/hr + $0.01/GB</td></tr>
+          </table>
+          <pre><code># Gateway endpoint for S3 (route table based)
+# Add to route table:
+Destination           Target
+pl-63a5400a (S3)      vpce-0123456789abcdef0   # S3 prefix list → endpoint
+
+# Interface endpoint — private DNS enabled
+# EC2 in private subnet can reach s3.amazonaws.com without internet
+# Endpoint DNS: vpce-xxx.s3.us-east-1.vpce.amazonaws.com (private)
+# With private DNS enabled: s3.amazonaws.com resolves to endpoint IP
+
+# Endpoint policy (restrict S3 access to specific bucket)
+{
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": "*",
+    "Action": ["s3:GetObject", "s3:PutObject"],
+    "Resource": "arn:aws:s3:::my-prod-bucket/*"
+  }]
+}</code></pre>
+
+          <h3>VPC Peering</h3>
+          <pre><code># VPC Peering characteristics:
+# - Non-transitive: A↔B, B↔C does NOT mean A↔C
+# - No overlapping CIDR blocks allowed
+# - Works cross-account and cross-region
+# - DNS resolution for peered VPCs must be explicitly enabled
+
+# Setup (Terraform)
+resource "aws_vpc_peering_connection" "prod_to_shared" {
+  vpc_id        = aws_vpc.prod.id
+  peer_vpc_id   = aws_vpc.shared.id
+  peer_owner_id = var.shared_account_id
+  auto_accept   = false
+  tags = { Name = "prod-to-shared" }
+}
+
+# Route table update required on BOTH sides
+resource "aws_route" "prod_to_shared" {
+  route_table_id            = aws_route_table.private_app.id
+  destination_cidr_block    = "10.100.0.0/16"
+  vpc_peering_connection_id = aws_vpc_peering_connection.prod_to_shared.id
+}</code></pre>
+
+          <h3>AWS Transit Gateway</h3>
+          <div class="concept-card">
+            <h4>Hub-and-Spoke Topology</h4>
+            <p>Transit Gateway (TGW) acts as a regional hub — attach multiple VPCs, VPNs, and Direct Connect GWs to a single TGW instead of a full mesh of VPC peering. Supports up to 5,000 VPC attachments. Transitive routing enabled. Route isolation via separate TGW route tables.</p>
+          </div>
+          <pre><code># TGW route table design — route isolation
+# Separate TGW route tables per security domain:
+
+# prod-rt:
+#   Associates: prod VPCs
+#   Propagates from: prod VPCs, shared-services, on-prem (via DX)
+#   Static: none
+
+# dev-rt:
+#   Associates: dev/staging VPCs
+#   Propagates from: dev VPCs, shared-services
+#   DOES NOT propagate from: prod (isolation)
+
+# shared-services-rt:
+#   Associates: shared-services VPC
+#   Propagates from: ALL VPCs (can reach anywhere)
+
+resource "aws_ec2_transit_gateway" "main" {
+  description                     = "Main TGW hub"
+  default_route_table_association = "disable"   # use custom route tables
+  default_route_table_propagation = "disable"
+  auto_accept_shared_attachments  = "enable"
+  dns_support                     = "enable"
+  vpn_ecmp_support                = "enable"
+  tags = { Name = "main-tgw" }
+}
+
+resource "aws_ec2_transit_gateway_vpc_attachment" "prod" {
+  subnet_ids         = aws_subnet.private_tgw[*].id
+  transit_gateway_id = aws_ec2_transit_gateway.main.id
+  vpc_id             = aws_vpc.prod.id
+  tags = { Name = "prod-vpc-attachment" }
+}</code></pre>
+
+          <h3>Terraform — Complete Multi-AZ VPC</h3>
+          <pre><code># vpc/main.tf — Production VPC with full 3-tier architecture
+
+variable "vpc_cidr"     { default = "10.0.0.0/16" }
+variable "environment"  { default = "prod" }
+variable "azs"          { default = ["us-east-1a", "us-east-1b", "us-east-1c"] }
+
+locals {
+  public_cidrs   = ["10.0.0.0/24",  "10.0.1.0/24",  "10.0.2.0/24"]
+  app_cidrs      = ["10.0.10.0/23", "10.0.12.0/23", "10.0.14.0/23"]
+  data_cidrs     = ["10.0.20.0/24", "10.0.21.0/24", "10.0.22.0/24"]
+}
+
+resource "aws_vpc" "main" {
+  cidr_block           = var.vpc_cidr
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+  tags = { Name = "${var.environment}-vpc" }
+}
+
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+  tags   = { Name = "${var.environment}-igw" }
+}
+
+resource "aws_subnet" "public" {
+  count                   = 3
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = local.public_cidrs[count.index]
+  availability_zone       = var.azs[count.index]
+  map_public_ip_on_launch = true
+  tags = { Name = "public-${var.azs[count.index]}", Tier = "public" }
+}
+
+resource "aws_subnet" "private_app" {
+  count             = 3
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = local.app_cidrs[count.index]
+  availability_zone = var.azs[count.index]
+  tags = { Name = "private-app-${var.azs[count.index]}", Tier = "app" }
+}
+
+resource "aws_subnet" "private_data" {
+  count             = 3
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = local.data_cidrs[count.index]
+  availability_zone = var.azs[count.index]
+  tags = { Name = "private-data-${var.azs[count.index]}", Tier = "data" }
+}
+
+# NAT Gateway per AZ (HA)
+resource "aws_eip" "nat" {
+  count  = 3
+  domain = "vpc"
+  tags   = { Name = "nat-eip-${var.azs[count.index]}" }
+}
+
+resource "aws_nat_gateway" "main" {
+  count         = 3
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
+  depends_on    = [aws_internet_gateway.main]
+  tags = { Name = "nat-gw-${var.azs[count.index]}" }
+}
+
+# Route tables
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+  tags = { Name = "public-rt" }
+}
+
+resource "aws_route_table" "private_app" {
+  count  = 3
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main[count.index].id
+  }
+  tags = { Name = "private-app-rt-${var.azs[count.index]}" }
+}
+
+resource "aws_route_table_association" "public" {
+  count          = 3
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table_association" "private_app" {
+  count          = 3
+  subnet_id      = aws_subnet.private_app[count.index].id
+  route_table_id = aws_route_table.private_app[count.index].id
+}
+
+# VPC Flow Logs
+resource "aws_flow_log" "main" {
+  vpc_id          = aws_vpc.main.id
+  traffic_type    = "ALL"
+  iam_role_arn    = aws_iam_role.flow_log.arn
+  log_destination = aws_cloudwatch_log_group.vpc_flow.arn
+}
+</code></pre>
+
+          <!-- =========================================================
+               GCP VPC
+               ========================================================= -->
+          <h2><span class="provider-badge gcp-badge">GCP</span> GCP VPC</h2>
+
+          <h3>Global VPC Concept</h3>
+          <div class="concept-card">
+            <h4>GCP vs AWS VPC Architecture</h4>
+            <p><strong>GCP VPC is global</strong> — a single VPC spans all regions. Subnets are regional (not AZ-specific). A VM in us-central1 and a VM in europe-west1 can be in the same VPC and communicate over private IPs using Google's global backbone, without VPC peering or Transit Gateway.</p>
+            <p><strong>AWS VPC is regional</strong> — one VPC per region. Cross-region requires VPC peering or Transit Gateway.</p>
+          </div>
+
+          <h3>Subnet Modes &amp; Secondary Ranges</h3>
+          <pre><code># Auto mode VPC: GCP automatically creates one subnet per region (10.128.0.0/9)
+# Custom mode VPC: You define all subnets — recommended for production
+
+# Create custom mode VPC
+gcloud compute networks create prod-vpc \
+  --subnet-mode=custom \
+  --bgp-routing-mode=global \
+  --mtu=1460
+
+# Create regional subnet
+gcloud compute networks subnets create prod-us-central1 \
+  --network=prod-vpc \
+  --region=us-central1 \
+  --range=10.0.0.0/20 \
+  --enable-private-ip-google-access
+
+# Secondary IP ranges (required for GKE Pods and Services)
+gcloud compute networks subnets create gke-nodes \
+  --network=prod-vpc \
+  --region=us-central1 \
+  --range=10.10.0.0/20 \
+  --secondary-range pods=10.100.0.0/14,services=10.96.0.0/20
+  # pods range: /14 = 262,144 addresses (GKE assigns /24 per node = 100+ nodes)
+  # services range: /20 = 4,096 ClusterIPs</code></pre>
+
+          <h3>Shared VPC</h3>
+          <div class="concept-card">
+            <h4>Shared VPC Architecture</h4>
+            <p>One <strong>host project</strong> owns the VPC and subnets. Multiple <strong>service projects</strong> deploy resources into shared subnets. Centralizes network management while allowing team autonomy. Requires Organization-level Shared VPC Admin role.</p>
+          </div>
+          <pre><code># Enable Shared VPC on host project
+gcloud compute shared-vpc enable HOST_PROJECT_ID
+
+# Associate service project
+gcloud compute shared-vpc associated-projects add SERVICE_PROJECT_ID \
+  --host-project=HOST_PROJECT_ID
+
+# Grant subnet access to service project's service account
+gcloud projects add-iam-policy-binding HOST_PROJECT_ID \
+  --member="serviceAccount:SERVICE_PROJECT_NUMBER@cloudservices.gserviceaccount.com" \
+  --role="roles/compute.networkUser"
+
+# Grant per-subnet access (more granular)
+gcloud compute networks subnets add-iam-policy-binding prod-us-central1 \
+  --region=us-central1 \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/compute.networkUser" \
+  --project=HOST_PROJECT_ID
+
+# Terraform Shared VPC
+resource "google_compute_shared_vpc_host_project" "host" {
+  project = var.host_project_id
+}
+
+resource "google_compute_shared_vpc_service_project" "service" {
+  host_project    = var.host_project_id
+  service_project = var.service_project_id
+}</code></pre>
+
+          <h3>GCP VPC Peering</h3>
+          <pre><code># GCP VPC Peering: non-transitive (same as AWS)
+# DNS is NOT shared by default — must configure DNS peering separately
+# CIDR must not overlap
+
+gcloud compute networks peerings create prod-to-shared \
+  --network=prod-vpc \
+  --peer-project=shared-services-project \
+  --peer-network=shared-vpc \
+  --import-custom-routes \
+  --export-custom-routes
+
+# DNS peering (to resolve shared-services DNS zones)
+gcloud dns managed-zones create shared-peering \
+  --dns-name="internal.example.com." \
+  --description="Peering to shared services DNS" \
+  --networks=prod-vpc \
+  --target-network=shared-vpc \
+  --target-project=shared-services-project \
+  --visibility=private</code></pre>
+
+          <h3>Cloud NAT</h3>
+          <pre><code># Cloud NAT: fully managed, no NAT instance to maintain
+# Region-level (covers all subnets in a region by default)
+# Can assign static external IPs (for IP allowlisting)
+
+gcloud compute routers create prod-router \
+  --network=prod-vpc \
+  --region=us-central1
+
+gcloud compute routers nats create prod-nat \
+  --router=prod-router \
+  --region=us-central1 \
+  --nat-all-subnet-ip-ranges \
+  --auto-allocate-nat-external-ips \
+  --min-ports-per-vm=64 \
+  --enable-logging
+
+# Static external IPs for NAT (for IP allowlisting with partners)
+gcloud compute addresses create nat-ip-1 --region=us-central1
+gcloud compute routers nats update prod-nat \
+  --router=prod-router \
+  --nat-external-ip-pool=nat-ip-1</code></pre>
+
+          <h3>Private Google Access &amp; VPC Service Controls</h3>
+          <pre><code># Private Google Access: VMs without public IPs can reach Google APIs
+# Enable per subnet:
+gcloud compute networks subnets update prod-us-central1 \
+  --enable-private-ip-google-access \
+  --region=us-central1
+
+# For GKE, Cloud SQL Proxy, Pub/Sub — no internet needed with PGA enabled
+# DNS: restricted.googleapis.com (199.36.153.4/30) — only allow allowlisted APIs
+# Add route:
+gcloud compute routes create private-google-access \
+  --network=prod-vpc \
+  --destination-range=199.36.153.4/30 \
+  --next-hop-gateway=default-internet-gateway
+
+# VPC Service Controls — perimeter around Google APIs
+# Service perimeter: group projects + allowed APIs
+# Prevents data exfiltration even with stolen credentials
+
+gcloud access-context-manager perimeters create prod-perimeter \
+  --title="Production Perimeter" \
+  --resources="projects/123456" \
+  --restricted-services="bigquery.googleapis.com,storage.googleapis.com" \
+  --policy=POLICY_NAME</code></pre>
+
+          <h3>GCP VPC — Terraform Example</h3>
+          <pre><code># gcp_vpc/main.tf
+
+resource "google_compute_network" "prod" {
+  name                    = "prod-vpc"
+  auto_create_subnetworks = false
+  routing_mode            = "GLOBAL"
+  mtu                     = 1460
+}
+
+resource "google_compute_subnetwork" "app" {
+  name                     = "app-us-central1"
+  ip_cidr_range            = "10.0.0.0/20"
+  region                   = "us-central1"
+  network                  = google_compute_network.prod.id
+  private_ip_google_access = true
+
+  secondary_ip_range {
+    range_name    = "pods"
+    ip_cidr_range = "10.100.0.0/14"
+  }
+  secondary_ip_range {
+    range_name    = "services"
+    ip_cidr_range = "10.96.0.0/20"
+  }
+}
+
+resource "google_compute_router" "prod" {
+  name    = "prod-router"
+  region  = "us-central1"
+  network = google_compute_network.prod.id
+}
+
+resource "google_compute_router_nat" "prod" {
+  name                               = "prod-nat"
+  router                             = google_compute_router.prod.name
+  region                             = "us-central1"
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
+  }
+}
+
+# Firewall rules (GCP VPC-level, unlike AWS SG which is instance-level)
+resource "google_compute_firewall" "allow_internal" {
+  name    = "allow-internal"
+  network = google_compute_network.prod.id
+  allow {
+    protocol = "tcp"
+    ports    = ["0-65535"]
+  }
+  allow { protocol = "udp"; ports = ["0-65535"] }
+  allow { protocol = "icmp" }
+  source_ranges = ["10.0.0.0/8"]
+}
+
+resource "google_compute_firewall" "allow_https" {
+  name    = "allow-https-lb"
+  network = google_compute_network.prod.id
+  allow   { protocol = "tcp"; ports = ["443", "80"] }
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["web-server"]
+}
+</code></pre>
+
+          <div class="success-box">
+            <strong>VPC Design checklist:</strong>
+            <ul class="mb-0 mt-2">
+              <li>Non-overlapping CIDRs across all environments and on-premises</li>
+              <li>3-tier subnet design: public / private-app / private-data per AZ</li>
+              <li>NAT Gateway per AZ (AWS) or Cloud NAT per region (GCP)</li>
+              <li>VPC Flow Logs enabled for security and troubleshooting</li>
+              <li>Security Groups follow least-privilege with SG-to-SG references</li>
+              <li>VPC Endpoints for AWS S3/DynamoDB to avoid NAT costs</li>
+              <li>Transit Gateway / Shared VPC for centralized connectivity</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

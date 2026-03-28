@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Platform Engineering | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) td { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item active">Platform Engineering</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-grid-3x3-gap me-2"></i>Platform Engineering</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Overview</a>
+            <a class="nav-link" href="service-mesh.html">Service Mesh</a>
+            <a class="nav-link" href="secrets-pki.html">Secrets &amp; PKI</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-grid-3x3-gap me-2"></i>Platform Engineering Overview</h1>
+
+          <div class="alert-info">
+            <strong>Platform Engineering</strong> builds Internal Developer Platforms (IDPs) that abstract infrastructure complexity and provide self-service capabilities to application developers — enabling them to move faster without needing deep ops expertise.
+          </div>
+
+          <!-- WHAT IS PLATFORM ENGINEERING -->
+          <h2>What is Platform Engineering?</h2>
+          <p>
+            Platform Engineering is the discipline of designing and building toolchains and workflows that enable self-service capabilities for software engineering organizations in the cloud-native era. A Platform Engineering team builds and maintains the Internal Developer Platform (IDP) — a layer of tools, services, and processes that application teams consume to build, deploy, and operate their software.
+          </p>
+          <p>
+            The core philosophy is building <strong>"paved roads"</strong>: opinionated, well-maintained paths that developers can follow to get their work done quickly and safely. Paved roads do not eliminate escape hatches — teams can deviate when genuinely necessary — but they reduce cognitive load for the common case.
+          </p>
+
+          <h3>Internal Developer Platform (IDP)</h3>
+          <p>An IDP typically encompasses:</p>
+          <ul>
+            <li><strong>Self-service infrastructure provisioning</strong> — developers request environments, databases, queues without filing tickets</li>
+            <li><strong>Golden path templates</strong> — opinionated project scaffolding that encodes security, observability, and compliance by default</li>
+            <li><strong>Developer portal</strong> — a unified UI (e.g., Backstage) for discovering services, docs, and runbooks</li>
+            <li><strong>Integrated CI/CD pipelines</strong> — reusable pipeline templates that handle build, test, security scan, and deploy</li>
+            <li><strong>Secrets and config management</strong> — centralized, auditable secret delivery without manual distribution</li>
+            <li><strong>Observability defaults</strong> — logs, metrics, and traces wired automatically for every new service</li>
+          </ul>
+
+          <div class="success-box">
+            <strong>Key outcome:</strong> A developer creating a new microservice goes from zero to production-ready in hours, not weeks — because the platform handles the undifferentiated heavy lifting.
+          </div>
+
+          <!-- PLATFORM ENGINEERING VS DEVOPS VS SRE -->
+          <h2>Platform Engineering vs DevOps vs SRE</h2>
+          <p>These roles are complementary, not competing. Understanding the distinction avoids organizational confusion:</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Dimension</th>
+                <th>DevOps</th>
+                <th>SRE</th>
+                <th>Platform Engineering</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Primary focus</strong></td>
+                <td>Culture &amp; collaboration between dev and ops</td>
+                <td>Reliability, SLOs, incident response</td>
+                <td>Developer productivity via IDP</td>
+              </tr>
+              <tr>
+                <td><strong>Customer</strong></td>
+                <td>The organization as a whole</td>
+                <td>End users (reliability)</td>
+                <td>Internal developers</td>
+              </tr>
+              <tr>
+                <td><strong>Output</strong></td>
+                <td>Practices and culture</td>
+                <td>Runbooks, SLOs, on-call</td>
+                <td>Tools, APIs, self-service workflows</td>
+              </tr>
+              <tr>
+                <td><strong>Success metric</strong></td>
+                <td>Deployment frequency, lead time</td>
+                <td>Error budget, MTTR</td>
+                <td>Developer NPS, time-to-first-deploy</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>In mature organizations, all three exist: SRE defines reliability standards, Platform Engineering implements the tooling that makes those standards easy to meet, and DevOps culture ensures teams actually collaborate around them.</p>
+
+          <!-- TEAM TOPOLOGIES -->
+          <h2>Team Topologies</h2>
+          <p>
+            The <em>Team Topologies</em> framework by Skelton &amp; Pais provides the language for structuring platform organizations. Four fundamental team types:
+          </p>
+
+          <div class="concept-card">
+            <h4>Stream-Aligned Teams</h4>
+            <p>Aligned to a flow of work from a business domain (e.g., "Checkout", "Payments"). They own their service end-to-end. They are the primary consumers of the platform — everything the platform team builds must reduce cognitive load for stream-aligned teams.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Platform Teams</h4>
+            <p>Provide a compelling internal product that stream-aligned teams can use self-service. They absorb accidental complexity (Kubernetes, Vault, observability stack) and expose simple, reliable APIs. They must treat internal developers as customers.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Enabling Teams</h4>
+            <p>Help stream-aligned teams acquire missing capabilities (e.g., a security enabling team that helps teams adopt SAST tooling). Enabling teams work in a time-limited, collaborative mode — they upskill and then step back.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Complicated-Subsystem Teams</h4>
+            <p>Own components requiring deep specialist knowledge (e.g., a video encoding pipeline, a trading risk engine). They expose their subsystem as a service to stream-aligned teams, reducing the cognitive load of maintaining specialized expertise broadly.</p>
+          </div>
+
+          <h3>Interaction Modes</h3>
+          <ul>
+            <li><strong>Collaboration</strong> — two teams work closely for a defined period (high bandwidth, high cost, not sustainable long-term)</li>
+            <li><strong>X-as-a-Service</strong> — one team consumes another's output with minimal interaction (low bandwidth, scalable)</li>
+            <li><strong>Facilitating</strong> — an enabling team helps another team learn and grow, then steps back</li>
+          </ul>
+
+          <div class="tip-box">
+            <strong>Anti-pattern to avoid:</strong> A platform team that only ever collaborates becomes a bottleneck. The goal is to evolve toward X-as-a-Service relationships where stream-aligned teams consume the platform without needing platform team involvement.
+          </div>
+
+          <!-- DORA METRICS -->
+          <h2>DORA Metrics and Platform Engineering</h2>
+          <p>
+            The DORA (DevOps Research and Assessment) four key metrics measure software delivery performance. Platform Engineering directly influences all four:
+          </p>
+
+          <div class="strategy-card">
+            <h4>Deployment Frequency</h4>
+            <p><em>How often does your organization deploy to production?</em> — Elite performers deploy multiple times per day. Platform Engineering improves this by providing standardized CI/CD pipelines that remove manual gates and reduce friction. When deploying is easy, teams deploy more often.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Lead Time for Changes</h4>
+            <p><em>Time from code commit to running in production.</em> — Golden path templates with pre-wired pipelines eliminate hours of setup per service. Automated security scanning integrated into the pipeline prevents late-stage rework.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Mean Time to Restore (MTTR)</h4>
+            <p><em>How quickly can you recover from a failure?</em> — Platform-provided observability (centralized logs, distributed traces, dashboards) means engineers spend minutes diagnosing rather than hours instrumenting. Runbook automation and self-healing infrastructure reduce MTTR further.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Change Failure Rate (CFR)</h4>
+            <p><em>What percentage of deployments cause a failure?</em> — Platform-enforced testing gates, progressive delivery (canary/blue-green), and automated rollback reduce the blast radius and frequency of bad deployments.</p>
+          </div>
+
+          <!-- GOLDEN PATH -->
+          <h2>The Golden Path</h2>
+          <p>
+            A Golden Path is an opinionated, supported software delivery path that balances speed and correctness. It is <em>not</em> mandatory — teams can diverge — but divergence means accepting higher cognitive load and losing platform support.
+          </p>
+
+          <h3>Anatomy of a Golden Path</h3>
+          <ul>
+            <li><strong>Project scaffolding</strong> — a Backstage Software Template that generates a repository with Dockerfile, CI pipeline, Helm chart, and catalog-info.yaml pre-configured</li>
+            <li><strong>Build defaults</strong> — pinned base images, mandatory SBOM generation, SAST/SCA scanning in CI</li>
+            <li><strong>Deploy defaults</strong> — GitOps via ArgoCD, rolling update strategy, resource requests/limits, PodDisruptionBudget</li>
+            <li><strong>Observability defaults</strong> — Prometheus scrape annotations, structured JSON logging, OpenTelemetry SDK wired</li>
+            <li><strong>Security defaults</strong> — non-root container, read-only filesystem, NetworkPolicy baseline, Vault sidecar for secrets</li>
+            <li><strong>Escape hatches</strong> — any default can be overridden with a documented, reviewable reason</li>
+          </ul>
+
+          <div class="warning-box">
+            <strong>Escape hatch governance:</strong> Escape hatches should require a code comment or PR description explaining <em>why</em> the default is inappropriate. This preserves the audit trail without creating a bureaucratic approval process.
+          </div>
+
+          <!-- BACKSTAGE -->
+          <h2>Backstage — Developer Portal</h2>
+          <p>
+            <a href="https://backstage.io" style="color: var(--primary-color);">Backstage</a> is an open-source developer portal framework from Spotify, now a CNCF incubating project. It provides a unified frontend for the IDP.
+          </p>
+
+          <h3>Core Architecture</h3>
+          <div class="concept-card">
+            <h4>Software Catalog</h4>
+            <p>A central registry of all software assets (services, libraries, websites, APIs, ML models). Each entity is described by a <code>catalog-info.yaml</code> file in its repository. Teams discover ownership, dependencies, and documentation here.</p>
+          </div>
+          <div class="concept-card">
+            <h4>TechDocs</h4>
+            <p>Documentation-as-Code — Backstage renders MkDocs-based documentation from the same repository as the service. Keeps docs co-located with code and eliminates stale wiki pages.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Scaffolder (Software Templates)</h4>
+            <p>The golden path engine. Templates define a sequence of steps (fetch template, run scripts, create repository, register entity) that produce a fully configured new service in minutes.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Plugins</h4>
+            <p>Backstage's extensibility model. Frontend and backend plugins surface data from external systems (ArgoCD, PagerDuty, Vault, GitHub Actions, SonarQube) directly in the portal — developers never need to switch contexts.</p>
+          </div>
+
+          <h3>Entity Descriptors — catalog-info.yaml</h3>
+          <p>Every entity in the Backstage catalog is described by a YAML file committed to its source repository. The Backstage catalog continuously reconciles from these files.</p>
+
+          <p><strong>Microservice entity:</strong></p>
+          <pre><code>apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: payment-service
+  description: Handles payment processing and refunds
+  annotations:
+    github.com/project-slug: acme/payment-service
+    backstage.io/techdocs-ref: dir:.
+    prometheus.io/scrape: "true"
+    argocd/app-name: payment-service-prod
+  tags:
+    - go
+    - payments
+    - pci-in-scope
+  links:
+    - url: https://grafana.internal/d/payment-service
+      title: Grafana Dashboard
+      icon: dashboard
+    - url: https://runbooks.internal/payment-service
+      title: Runbook
+      icon: book
+spec:
+  type: service
+  lifecycle: production
+  owner: group:payments-team
+  system: payment-platform
+  dependsOn:
+    - component:postgres-payments
+    - component:kafka-cluster
+  providesApis:
+    - payment-api-v2</code></pre>
+
+          <p><strong>Library entity:</strong></p>
+          <pre><code>apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: acme-observability-sdk
+  description: Shared Go library for OpenTelemetry instrumentation
+  annotations:
+    github.com/project-slug: acme/observability-sdk
+  tags:
+    - go
+    - library
+    - observability
+spec:
+  type: library
+  lifecycle: production
+  owner: group:platform-team</code></pre>
+
+          <p><strong>Website entity:</strong></p>
+          <pre><code>apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: customer-portal
+  description: Customer-facing web application
+  annotations:
+    github.com/project-slug: acme/customer-portal
+  tags:
+    - react
+    - frontend
+spec:
+  type: website
+  lifecycle: production
+  owner: group:frontend-team
+  system: customer-experience</code></pre>
+
+          <h3>Backstage Software Template</h3>
+          <p>A <code>template.yaml</code> defines the golden path for creating a new Go microservice:</p>
+          <pre><code>apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: go-microservice
+  title: Go Microservice
+  description: Creates a production-ready Go microservice with CI/CD, Helm chart, and observability
+  tags:
+    - go
+    - microservice
+    - recommended
+spec:
+  owner: group:platform-team
+  type: service
+
+  parameters:
+    - title: Service Information
+      required: [name, description, owner]
+      properties:
+        name:
+          title: Service Name
+          type: string
+          pattern: '^[a-z][a-z0-9-]*$'
+          description: Lowercase, hyphen-separated (e.g. payment-service)
+        description:
+          title: Description
+          type: string
+        owner:
+          title: Owning Team
+          type: string
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds: [Group]
+    - title: Infrastructure
+      properties:
+        database:
+          title: Provision PostgreSQL database?
+          type: boolean
+          default: false
+        queue:
+          title: Provision Kafka topic?
+          type: boolean
+          default: false
+
+  steps:
+    - id: fetch-template
+      name: Fetch Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+
+    - id: create-repo
+      name: Create GitHub Repository
+      action: publish:github
+      input:
+        repoUrl: github.com?owner=acme&repo=${{ parameters.name }}
+        defaultBranch: main
+        repoVisibility: private
+
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['create-repo'].output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps['create-repo'].output.remoteUrl }}
+      - title: Open in Catalog
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}</code></pre>
+
+          <!-- PLATFORM AS PRODUCT -->
+          <h2>Platform as Product</h2>
+          <p>
+            The most common failure mode for platform teams is building what they think developers need rather than what developers actually need. Treating the platform as a product means applying product management discipline to internal tooling.
+          </p>
+
+          <h3>Product Thinking for Platforms</h3>
+          <ul>
+            <li><strong>Identify internal customers</strong> — stream-aligned developers are the users. Segment by team size, tech stack, maturity</li>
+            <li><strong>Conduct user research</strong> — developer interviews, friction logs, shadowing on-call rotations</li>
+            <li><strong>Define a product roadmap</strong> — prioritize by impact on DORA metrics and reduction in support tickets</li>
+            <li><strong>Measure adoption</strong> — track what percentage of teams use the golden path vs. rolling their own</li>
+            <li><strong>Collect NPS</strong> — quarterly developer satisfaction surveys surface pain points before they become exodus risk</li>
+            <li><strong>Deprecation as a product decision</strong> — old platform versions need sunset plans, migration guides, and communication campaigns</li>
+          </ul>
+
+          <div class="tip-box">
+            <strong>The "thinnest viable platform" principle:</strong> Start with the smallest platform that removes the most pain. A well-documented shared Terraform module may deliver more value than a complex self-service portal that takes a year to build.
+          </div>
+
+          <!-- SELF-SERVICE CAPABILITIES -->
+          <h2>Self-Service Capabilities</h2>
+
+          <h3>Infrastructure Provisioning — Terraform Modules</h3>
+          <p>Platform teams build opinionated Terraform modules that encode best practices. Teams consume them without needing Terraform expertise:</p>
+          <pre><code># teams consume platform modules — they don't write Terraform from scratch
+module "service_database" {
+  source  = "git::https://github.com/acme/terraform-modules.git//modules/rds-postgres?ref=v2.3.0"
+
+  service_name        = "payment-service"
+  environment         = "production"
+  instance_class      = "db.t3.medium"
+  allocated_storage   = 100
+  multi_az            = true
+  deletion_protection = true
+  backup_retention    = 7
+
+  # Automatic: security group rules, parameter group, monitoring, tagging
+}</code></pre>
+
+          <h3>CI/CD Pipeline Templates</h3>
+          <p>Reusable GitHub Actions workflows that teams reference rather than copy-paste:</p>
+          <pre><code># .github/workflows/deploy.yaml in a service repo
+name: Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    uses: acme/platform-workflows/.github/workflows/go-service-deploy.yaml@v1
+    with:
+      service-name: payment-service
+      environment: production
+      helm-chart-path: ./charts/payment-service
+    secrets: inherit
+    # Platform workflow handles: build, SAST, container scan, SBOM, push to ECR,
+    # ArgoCD sync, smoke test, rollback on failure</code></pre>
+
+          <h3>Observability Setup</h3>
+          <p>Observability is automatic for golden path services. A service annotated with the platform label gets:</p>
+          <ul>
+            <li>Prometheus scraping configured via ServiceMonitor CRD</li>
+            <li>A pre-built Grafana dashboard (request rate, error rate, latency — RED method)</li>
+            <li>Log aggregation to the central Loki stack via the node log agent</li>
+            <li>Distributed tracing via OpenTelemetry collector sidecar</li>
+            <li>PagerDuty alert routing based on the catalog <code>owner</code> field</li>
+          </ul>
+
+          <!-- PLATFORM METRICS -->
+          <h2>Platform Engineering Metrics</h2>
+          <p>Beyond DORA, platform teams should track metrics specific to platform health and adoption:</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Description</th>
+                <th>Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Golden path adoption rate</strong></td>
+                <td>% of services using the standard template</td>
+                <td>&gt;80%</td>
+              </tr>
+              <tr>
+                <td><strong>Time-to-first-deploy</strong></td>
+                <td>Time from "new service created" to first production deploy</td>
+                <td>&lt;1 day</td>
+              </tr>
+              <tr>
+                <td><strong>Developer NPS</strong></td>
+                <td>Net Promoter Score from quarterly survey</td>
+                <td>&gt;40</td>
+              </tr>
+              <tr>
+                <td><strong>Platform ticket volume</strong></td>
+                <td>Support tickets routed to platform team (lower = more self-service)</td>
+                <td>Declining trend</td>
+              </tr>
+              <tr>
+                <td><strong>Cognitive load index</strong></td>
+                <td>Survey: how many tools/systems must a developer understand to deploy?</td>
+                <td>Declining trend</td>
+              </tr>
+              <tr>
+                <td><strong>Infrastructure provisioning time</strong></td>
+                <td>Time from request to usable resource</td>
+                <td>&lt;15 minutes</td>
+              </tr>
+              <tr>
+                <td><strong>Pipeline success rate</strong></td>
+                <td>% of CI runs that succeed (infra flakiness excluded)</td>
+                <td>&gt;95%</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- IMPLEMENTATION ROADMAP -->
+          <h2>Implementation Roadmap</h2>
+          <p>Building a platform is a multi-year journey. The following phased approach avoids the common pitfall of over-engineering before validating need:</p>
+
+          <div class="strategy-card">
+            <h4>Phase 1: Discover Pain Points (Month 1-2)</h4>
+            <ul>
+              <li>Conduct developer interviews across all stream-aligned teams</li>
+              <li>Audit current deployment times, on-call burden, and ticket sources</li>
+              <li>Map the current state of infrastructure provisioning (how long does a new env take?)</li>
+              <li>Identify the top 3 pain points by frequency and severity</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Phase 2: Foundational Platform (Month 3-6)</h4>
+            <ul>
+              <li>Establish a Kubernetes platform (EKS/GKE/AKS) with GitOps (ArgoCD)</li>
+              <li>Build initial Terraform modules for the 3 most-used infrastructure components</li>
+              <li>Create a basic CI/CD pipeline template for the dominant language/framework</li>
+              <li>Set up centralized logging and metrics (Loki, Prometheus, Grafana)</li>
+              <li>Deploy Backstage with catalog populated from existing repositories</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Phase 3: Golden Paths (Month 7-12)</h4>
+            <ul>
+              <li>Build Backstage Software Templates for common service archetypes</li>
+              <li>Integrate secrets management (Vault) with the platform</li>
+              <li>Implement service mesh (Istio) for mTLS and traffic management</li>
+              <li>Build the observability defaults into the golden path template</li>
+              <li>Establish developer NPS baseline and begin quarterly surveys</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Phase 4: Self-Service at Scale (Month 13+)</h4>
+            <ul>
+              <li>Full self-service environment provisioning (no tickets, no wait)</li>
+              <li>Policy-as-Code enforcement (OPA/Gatekeeper) across all clusters</li>
+              <li>Cost allocation and showback dashboards per team</li>
+              <li>Chaos engineering tooling integrated with platform</li>
+              <li>Platform roadmap driven by NPS data and DORA trend analysis</li>
+            </ul>
+          </div>
+
+          <div class="success-box">
+            <strong>Key principle:</strong> Ship something useful in the first 30 days. A single Terraform module that saves every team 4 hours of setup builds more trust than a 6-month platform project that developers haven't seen yet. Incremental delivery is not just efficient — it is how you earn the organizational mandate to keep building.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

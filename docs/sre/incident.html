@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incident Management | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .sev-critical { background: #f8d7da; border-left: 4px solid #dc3545; border-radius: 8px; padding: 1.2rem; margin: 0.8rem 0; }
+    .sev-high     { background: #fff3cd; border-left: 4px solid #fd7e14; border-radius: 8px; padding: 1.2rem; margin: 0.8rem 0; }
+    .sev-medium   { background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; padding: 1.2rem; margin: 0.8rem 0; }
+    .sev-low      { background: #d4edda; border-left: 4px solid #28a745; border-radius: 8px; padding: 1.2rem; margin: 0.8rem 0; }
+    .lifecycle-step { display: flex; align-items: flex-start; margin: 1rem 0; }
+    .lifecycle-num { background: var(--primary-color); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; margin-right: 1rem; }
+    .lifecycle-content { flex: 1; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">SRE</a></li>
+        <li class="breadcrumb-item active">Incident Management</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-shield-check me-2"></i>SRE</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="reliability.html">Reliability</a>
+            <a class="nav-link active" href="incident.html">Incident Management</a>
+            <a class="nav-link" href="chaos.html">Chaos Engineering</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-lightning-charge me-2"></i>Incident Management</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Incidents are inevitable.</strong> The measure of your SRE program is not the absence of incidents but the speed and effectiveness of your response: how quickly you detect, triage, mitigate, resolve, and learn from each incident.
+          </div>
+
+          <h2>Incident Lifecycle</h2>
+          <p>Every incident follows the same lifecycle. Having a defined process reduces cognitive load during high-stress situations and ensures nothing is skipped.</p>
+
+          <div class="lifecycle-step">
+            <div class="lifecycle-num">1</div>
+            <div class="lifecycle-content">
+              <strong>Detection</strong> — Alert fires (PagerDuty, Opsgenie), user report, synthetic monitor, or anomaly detection. Goal: detect before users notice. <em>Key metric: MTTD (Mean Time To Detect)</em>
+            </div>
+          </div>
+          <div class="lifecycle-step">
+            <div class="lifecycle-num">2</div>
+            <div class="lifecycle-content">
+              <strong>Triage</strong> — Acknowledge the alert. Assess impact and scope. Assign severity level (SEV1–4). Determine if incident commander is needed. <em>Target: &lt;5 minutes for SEV1</em>
+            </div>
+          </div>
+          <div class="lifecycle-step">
+            <div class="lifecycle-num">3</div>
+            <div class="lifecycle-content">
+              <strong>Response</strong> — Assemble the incident team. Open war-room channel. Begin diagnosis using runbooks. Communicate initial status to stakeholders. <em>Incident Commander takes control.</em>
+            </div>
+          </div>
+          <div class="lifecycle-step">
+            <div class="lifecycle-num">4</div>
+            <div class="lifecycle-content">
+              <strong>Mitigation</strong> — Restore service to users as quickly as possible — even partially. This may mean rolling back a deployment, enabling circuit breakers, rerouting traffic, or scaling up. Mitigation is not root cause fix. <em>Key metric: MTTR (Time to Mitigate)</em>
+            </div>
+          </div>
+          <div class="lifecycle-step">
+            <div class="lifecycle-num">5</div>
+            <div class="lifecycle-content">
+              <strong>Resolution</strong> — Fix the root cause. Verify full service restoration. Remove temporary mitigations if safe. Update status page. <em>Incident officially closed.</em>
+            </div>
+          </div>
+          <div class="lifecycle-step">
+            <div class="lifecycle-num">6</div>
+            <div class="lifecycle-content">
+              <strong>Post-mortem</strong> — Blameless review of the incident. Timeline reconstruction, root cause analysis, contributing factors, and action items. <em>Target: Draft within 24h, published within 5 business days.</em>
+            </div>
+          </div>
+
+          <h2>Severity Levels</h2>
+
+          <div class="sev-critical">
+            <h4><i class="bi bi-exclamation-octagon-fill me-2 text-danger"></i>SEV1 — Critical</h4>
+            <p><strong>Definition:</strong> Complete service outage affecting all or majority of users. Revenue impact per minute is material. Safety or data integrity may be at risk.</p>
+            <p><strong>Examples:</strong> Production database down, payment processing completely unavailable, authentication service down (login impossible), DDoS causing full outage.</p>
+            <p><strong>Response time:</strong> Acknowledge within 5 minutes, incident commander appointed within 10 minutes.</p>
+            <p><strong>Communication:</strong> Status page update within 15 minutes. Executive notification within 30 minutes. Updates every 15 minutes.</p>
+            <p><strong>Escalation:</strong> Page primary on-call → secondary on-call (5 min no-ack) → engineering lead (15 min) → VP Engineering (30 min).</p>
+          </div>
+
+          <div class="sev-high">
+            <h4><i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>SEV2 — High</h4>
+            <p><strong>Definition:</strong> Significant degradation affecting a substantial portion of users or a critical business function. Some users can work around the issue.</p>
+            <p><strong>Examples:</strong> Search returning errors for 20% of users, payment latency 10x normal (timeouts for some users), dashboard charts not loading, API rate limiting at lower-than-expected thresholds.</p>
+            <p><strong>Response time:</strong> Acknowledge within 15 minutes during business hours, 30 minutes off-hours.</p>
+            <p><strong>Communication:</strong> Status page update if user-visible. Team Slack notification. Manager awareness. Updates every 30 minutes.</p>
+          </div>
+
+          <div class="sev-medium">
+            <h4><i class="bi bi-dash-circle-fill me-2 text-warning"></i>SEV3 — Medium</h4>
+            <p><strong>Definition:</strong> Partial degradation or failure affecting a minority of users or a non-critical feature. Reliable workarounds exist.</p>
+            <p><strong>Examples:</strong> Email notifications delayed by 10 minutes, PDF export feature broken for some file types, analytics data delayed by 2 hours, specific browser compatibility issue.</p>
+            <p><strong>Response time:</strong> Acknowledge within 2 hours. Resolve within 24 hours.</p>
+            <p><strong>Communication:</strong> Slack notification in engineering channel. Ticket created and tracked.</p>
+          </div>
+
+          <div class="sev-low">
+            <h4><i class="bi bi-info-circle-fill me-2 text-success"></i>SEV4 — Low</h4>
+            <p><strong>Definition:</strong> Minor issue with minimal user impact. Cosmetic, performance is within acceptable range, or affects only internal tools.</p>
+            <p><strong>Examples:</strong> UI misalignment in admin panel, log verbosity too high causing storage growth, documentation link broken, slow report generation (within SLO).</p>
+            <p><strong>Response time:</strong> Handled during next business day. No on-call paging.</p>
+            <p><strong>Communication:</strong> Jira ticket. Resolved in next sprint planning.</p>
+          </div>
+
+          <h2>Incident Commander Role</h2>
+          <p>
+            The Incident Commander (IC) is the single decision-maker during an active incident. The IC does not do the technical work of fixing the problem — they coordinate the people who do. During high-stress incidents, clear command structure prevents chaos.
+          </p>
+
+          <h3>IC Responsibilities</h3>
+          <ul>
+            <li><strong>Declare the incident</strong> and assign severity immediately upon joining the war room</li>
+            <li><strong>Assign roles:</strong> Primary responder (owns diagnosis/fix), Communications Lead (status page + stakeholders), Scribe (takes timeline notes)</li>
+            <li><strong>Maintain communication cadence:</strong> Brief updates every 15 minutes (SEV1), every 30 minutes (SEV2)</li>
+            <li><strong>Control the war room:</strong> Prevent rabbit holes, refocus when team gets stuck, call timeouts on unproductive approaches</li>
+            <li><strong>Make rollback decision:</strong> IC has authority to order a rollback at any time, overriding engineering judgment</li>
+            <li><strong>Declare resolution:</strong> When service is confirmed restored, IC formally closes the incident</li>
+            <li><strong>Hand off:</strong> If incident spans shifts, IC formally hands off to a new IC with a verbal and written briefing</li>
+          </ul>
+
+          <div class="tip-box">
+            <strong>IC is a skill, not a title.</strong> Every senior engineer should be trained to be an IC. Rotate the IC role — don't always use the same person. The best ICs have strong communication skills and calm under pressure, not necessarily the deepest technical knowledge.
+          </div>
+
+          <h2>On-Call Best Practices</h2>
+
+          <h3>PagerDuty Escalation Policy (YAML Config)</h3>
+          <pre><code"># pagerduty-terraform/main.tf
+resource "pagerduty_escalation_policy" "payment_api" {
+  name      = "Payment API Escalation Policy"
+  num_loops = 3  # Try full escalation 3 times before giving up
+
+  rule {
+    escalation_delay_in_minutes = 5  # Page primary. After 5 min no-ack → next rule
+
+    target {
+      type = "schedule_reference"
+      id   = pagerduty_schedule.primary_oncall.id
+    }
+  }
+
+  rule {
+    escalation_delay_in_minutes = 10  # Page secondary. After 10 min → next rule
+
+    target {
+      type = "schedule_reference"
+      id   = pagerduty_schedule.secondary_oncall.id
+    }
+  }
+
+  rule {
+    escalation_delay_in_minutes = 15  # Page engineering lead
+
+    target {
+      type = "user_reference"
+      id   = pagerduty_user.engineering_lead.id
+    }
+  }
+}
+
+# On-call schedule: follow-the-sun rotation
+resource "pagerduty_schedule" "primary_oncall" {
+  name      = "Payment API Primary On-Call"
+  time_zone = "Asia/Ho_Chi_Minh"
+
+  layer {
+    name                         = "APAC Team"
+    start                        = "2025-01-01T00:00:00+07:00"
+    rotation_turn_length_seconds = 604800  # 1 week
+
+    users = [
+      pagerduty_user.engineer_1.id,
+      pagerduty_user.engineer_2.id,
+      pagerduty_user.engineer_3.id,
+      pagerduty_user.engineer_4.id,
+    ]
+
+    restriction {
+      type              = "weekly_restriction"
+      duration_seconds  = 57600  # 16 hours (8AM - midnight)
+      start_time_of_day = "08:00:00"
+      start_day_of_week = 1  # Monday
+    }
+  }
+}
+
+# Alert routing: route by service + severity
+resource "pagerduty_service" "payment_api" {
+  name                    = "Payment API"
+  escalation_policy       = pagerduty_escalation_policy.payment_api.id
+  alert_creation          = "create_alerts_and_incidents"
+  alert_grouping          = "time"
+  alert_grouping_timeout  = 300  # Group alerts within 5-minute window
+
+  incident_urgency_rule {
+    type = "use_support_hours"
+
+    during_support_hours {
+      type    = "constant"
+      urgency = "high"
+    }
+    outside_support_hours {
+      type    = "constant"
+      urgency = "low"  # Low urgency = no phone call, only push notification
+    }
+  }
+
+  support_hours {
+    type       = "fixed_time_per_day"
+    time_zone  = "Asia/Ho_Chi_Minh"
+    start_time = "08:00:00"
+    end_time   = "20:00:00"
+    days_of_week = [1, 2, 3, 4, 5]  # Monday - Friday
+  }
+}
+</code></pre>
+
+          <h3>Alert Fatigue Reduction</h3>
+          <ul>
+            <li><strong>Alert on symptoms, not causes:</strong> "Users are seeing errors" &gt; "CPU is at 80%"</li>
+            <li><strong>Every alert must be actionable:</strong> If the on-call can't do anything about it in the next hour, it should not wake them up</li>
+            <li><strong>Set minimum durations:</strong> Alert must fire for 5+ minutes before paging — transient spikes should not wake anyone</li>
+            <li><strong>Weekly alert review:</strong> Any alert that fired more than 3 times in a week without causing real user impact should be silenced or raised</li>
+            <li><strong>Alert categorization:</strong> Page (immediate action needed, call on-call), Ticket (needs attention in 24h, create Jira), Log (informational, no action)</li>
+            <li><strong>Track MTTA (Mean Time to Acknowledge):</strong> If MTTA is consistently &gt;5 minutes, alert routing or severity is wrong</li>
+          </ul>
+
+          <h2>Incident Communication</h2>
+
+          <h3>Status Page Protocol (Statuspage.io)</h3>
+          <pre><code"># Statuspage API integration — auto-update via Lambda/Cloud Function
+import requests
+import os
+
+STATUSPAGE_API_KEY  = os.environ['STATUSPAGE_API_KEY']
+PAGE_ID             = os.environ['STATUSPAGE_PAGE_ID']
+COMPONENT_ID        = os.environ['PAYMENT_COMPONENT_ID']
+
+def create_incident(title, body, component_status='degraded_performance'):
+    """component_status: operational | degraded_performance | partial_outage | major_outage"""
+
+    response = requests.post(
+        f'https://api.statuspage.io/v1/pages/{PAGE_ID}/incidents',
+        headers={'Authorization': f'OAuth {STATUSPAGE_API_KEY}'},
+        json={
+            'incident': {
+                'name': title,
+                'status': 'investigating',  # investigating | identified | monitoring | resolved
+                'body': body,
+                'components': {COMPONENT_ID: component_status},
+                'component_ids': [COMPONENT_ID],
+                'deliver_notifications': True,
+            }
+        }
+    )
+    incident_id = response.json()['id']
+    print(f"Incident created: https://status.company.com/incidents/{incident_id}")
+    return incident_id
+
+def update_incident(incident_id, status, body):
+    requests.patch(
+        f'https://api.statuspage.io/v1/pages/{PAGE_ID}/incidents/{incident_id}',
+        headers={'Authorization': f'OAuth {STATUSPAGE_API_KEY}'},
+        json={
+            'incident': {
+                'status': status,
+                'body': body,
+                'components': {COMPONENT_ID: 'operational' if status == 'resolved' else 'degraded_performance'},
+            }
+        }
+    )
+
+# Usage during incident:
+incident_id = create_incident(
+    title='Payment Processing Degradation',
+    body='We are investigating reports of payment failures. Our team is actively working on this.',
+    component_status='partial_outage'
+)
+
+# 15 minutes later:
+update_incident(incident_id, 'identified',
+    'We have identified an issue with our payment processor integration. '
+    'We are implementing a fix and expect resolution within 30 minutes.')
+
+# On resolution:
+update_incident(incident_id, 'resolved',
+    'This incident has been resolved. Payment processing is fully operational. '
+    'We apologize for any inconvenience.')
+</code></pre>
+
+          <h3>Slack War-Room Protocol</h3>
+          <pre><code"># War-room channel convention: #inc-YYYYMMDD-short-description
+# Example: #inc-20250228-payment-outage
+
+## Pinned message template (post immediately on incident declaration):
+---
+:rotating_light: *INCIDENT DECLARED — SEV1* :rotating_light:
+*Time:* 14:32 UTC
+*Incident Commander:* @nguyenvan.a
+*Primary Responder:* @tran.b
+*Scribe:* @le.c
+*Impact:* Payment processing failing for ~30% of users
+*Status:* Investigating
+*Status Page:* https://status.company.com/incidents/xyz
+*Next Update:* 14:47 UTC (15 min)
+---
+
+## Communication cadence (SEV1):
+# T+0:  "Incident declared. Investigating. IC is @nguyenvan.a"
+# T+15: "Update: Identified high error rate on payment-api pods. Checking DB."
+# T+30: "Update: DB connection pool saturation confirmed. Scaling DB connections."
+# T+45: "Update: DB scaled. Error rate dropping. Monitoring."
+# T+60: "RESOLVED: Full service restored at 15:32 UTC. Post-mortem scheduled."
+
+## War-room rules:
+# 1. Only IC and designated roles speak — no free-for-all
+# 2. No blame, no "I told you so" — solve first, learn after
+# 3. All decisions go through IC
+# 4. Use threads for sub-investigations — keep main channel clean
+# 5. Record every action taken in chronological order (scribe's job)
+</code></pre>
+
+          <h2>Blameless Post-Mortem</h2>
+          <p>
+            A blameless post-mortem is a structured learning exercise, not a tribunal. The goal is to understand what happened and why, and to build systemic improvements that prevent recurrence. Blame is counterproductive: engineers in fear of blame hide problems, avoid risk, and stop reporting near-misses.
+          </p>
+
+          <h3>Post-Mortem Template</h3>
+          <pre><code"># Post-Mortem: [Brief Description of Incident]
+# Date: 2025-02-28
+# Authors: [Names]
+# Severity: SEV1
+# Status: DRAFT / IN REVIEW / PUBLISHED
+
+## Summary
+A 47-minute payment processing outage affected approximately 28% of users between
+14:32 and 15:19 UTC on February 28, 2025. The root cause was database connection
+pool exhaustion triggered by a deployment that introduced a connection leak.
+
+## Impact
+- Users affected: ~28% (estimated 14,000 users)
+- Failed payment attempts: 2,847
+- Estimated revenue impact: $47,200
+- Error budget consumed: 0.22% of monthly budget (43% of weekly allowance)
+- SLO: Availability SLO breached during incident window
+
+## Timeline (all times UTC)
+| Time  | Event |
+|-------|-------|
+| 14:28 | Deployment v2.3.1 pushed to production (payment-api) |
+| 14:31 | Error rate begins rising (not yet alert threshold) |
+| 14:32 | PagerDuty alert: HighErrorRate > 5% fires. On-call paged. |
+| 14:37 | On-call @tran.b acknowledges. Incident declared SEV1. |
+| 14:38 | IC @nguyenvan.a appointed. War room opened: #inc-20250228-payment-outage |
+| 14:42 | Status page updated: "Investigating payment processing issues" |
+| 14:48 | Database connection pool exhaustion identified via Grafana |
+| 14:52 | Decision: rollback to v2.3.0 |
+| 14:55 | Rollback completed. Error rate begins dropping. |
+| 15:10 | Error rate below 0.1%. Monitoring period begins. |
+| 15:19 | All metrics nominal. Incident resolved. Status page updated. |
+
+## Root Cause
+A code change in v2.3.1 introduced a database connection leak in the payment
+transaction retry logic. When a payment timed out, the retry path failed to
+close the database connection before creating a new one. Under load, this
+exhausted the 50-connection pool within 4 minutes of deployment.
+
+## Contributing Factors
+1. **Load testing gap:** The staging environment uses a connection pool of 10,
+   which obscured the leak — it exhausted before tests completed, masking the error.
+2. **Monitoring gap:** We monitor connection pool utilization but had no alert for
+   "connection acquisition time > threshold" as an early warning.
+3. **Code review:** The connection leak was present in code review but was subtle
+   (a missing defer conn.Close() in one error path). No automated linter caught it.
+4. **Deployment timing:** Deployment occurred at 14:28, a historically high-traffic
+   period. Pre-deployment traffic checks were not performed.
+
+## What Went Well
+- PagerDuty alert fired within 1 minute of error rate exceeding threshold
+- Incident Commander assumed control within 5 minutes
+- Rollback decision was made decisively at the 20-minute mark
+- Status page updated promptly; stakeholders were kept informed
+
+## Action Items
+| Action | Owner | Priority | Due Date |
+|--------|-------|----------|----------|
+| Add linter rule to detect missing defer conn.Close() | Engineering | P1 | 2025-03-07 |
+| Update staging to match production connection pool size | Platform | P1 | 2025-03-05 |
+| Add alert: DB connection acquisition time > 500ms | SRE | P1 | 2025-03-05 |
+| Add pre-deployment traffic check step to CI/CD pipeline | DevOps | P2 | 2025-03-14 |
+| Add connection pool metrics to deployment rollout dashboard | SRE | P2 | 2025-03-14 |
+
+## Facilitation Anti-Patterns to Avoid
+# ❌ "Why did @tran.b not catch this in code review?"
+# ❌ "This should have been obvious"
+# ❌ "We need to be more careful" (too vague to act on)
+# ✓  "What process change would have caught this?"
+# ✓  "How do we make this category of error impossible or immediately visible?"
+</code></pre>
+
+          <h2>Incident Metrics</h2>
+
+          <h3>Mean Time Metrics</h3>
+          <table class="table table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>Metric</th>
+                <th>Definition</th>
+                <th>Formula</th>
+                <th>Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>MTTD</strong></td>
+                <td>Mean Time To Detect</td>
+                <td>Time from incident start to first alert</td>
+                <td>&lt;2 min for SEV1, &lt;10 min for SEV2</td>
+              </tr>
+              <tr>
+                <td><strong>MTTA</strong></td>
+                <td>Mean Time To Acknowledge</td>
+                <td>Time from alert to on-call acknowledgment</td>
+                <td>&lt;5 min for SEV1, &lt;15 min for SEV2</td>
+              </tr>
+              <tr>
+                <td><strong>MTTR</strong></td>
+                <td>Mean Time To Recover/Resolve</td>
+                <td>Time from incident start to service restoration</td>
+                <td>&lt;30 min for SEV1, &lt;2h for SEV2</td>
+              </tr>
+              <tr>
+                <td><strong>MTTF</strong></td>
+                <td>Mean Time To Failure</td>
+                <td>Average time between incidents</td>
+                <td>Increasing quarter-over-quarter</td>
+              </tr>
+              <tr>
+                <td><strong>MTBF</strong></td>
+                <td>Mean Time Between Failures</td>
+                <td>MTTF + MTTR (time between start of one incident to next)</td>
+                <td>High values = fewer incidents</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Incident Metrics Dashboard (PromQL)</h3>
+          <pre><code"># These queries work with AlertManager/Prometheus when incidents are tracked as metrics
+
+# 1. Incident frequency by severity (last 30 days)
+count_over_time(ALERTS{alertstate="firing", severity="critical"}[30d])
+
+# 2. MTTR tracking via incident duration
+# If you push incident open/close timestamps to Prometheus as gauges:
+# incident_open_time{sev="1"} = Unix timestamp when incident opened
+# incident_close_time{sev="1"} = Unix timestamp when resolved
+
+avg(incident_close_time - incident_open_time) by (severity) / 60
+# Result in minutes
+
+# 3. Error budget burn from incidents
+# (actual downtime minutes / total minutes) / (1 - SLO)
+(
+  sum_over_time(incident_downtime_minutes[30d])
+  / (30 * 24 * 60)
+) / (1 - 0.999)
+
+# 4. Incident trend (are we improving?)
+# Compare this month's SEV1 count to last month
+count_over_time(ALERTS{severity="critical", alertstate="firing"}[30d])
+/ count_over_time(ALERTS{severity="critical", alertstate="firing"}[60d:30d])
+# Ratio &lt; 1 means fewer incidents this month than last — good
+
+# 5. On-call load: alerts per person per week
+count by (receiver) (
+  count_over_time(ALERTS{alertstate="firing"}[7d])
+)
+</code></pre>
+
+          <h2>Action Item Follow-Through</h2>
+          <p>Post-mortems are only valuable if the action items are actually completed. Common failure modes: action items are created but never prioritized, no owner is assigned, or the due date passes without follow-up.</p>
+
+          <h3>Action Item Tracking Process</h3>
+          <ol>
+            <li><strong>Every action item must have:</strong> Owner (specific person, not team), priority (P1/P2/P3), due date, and a Jira/GitHub ticket number</li>
+            <li><strong>P1 items</strong> (prevent recurrence of the exact same incident) are added to the current sprint within 24 hours</li>
+            <li><strong>P2 items</strong> are added to the next sprint during planning</li>
+            <li><strong>Monthly reliability review:</strong> Review all open post-mortem action items. Escalate any overdue P1 items to engineering leadership</li>
+            <li><strong>Closure verification:</strong> Action item is not closed until the SRE team confirms the fix is in production and the risk is mitigated</li>
+            <li><strong>Effectiveness check:</strong> 30 days after a post-mortem, review whether the actions prevented recurrence</li>
+          </ol>
+
+          <div class="success-box">
+            <strong>Incident management culture:</strong> The best SRE teams treat every incident as a learning opportunity. They write detailed post-mortems, share them openly (company-wide), and celebrate good incident responses — even when the incident itself was severe. The blameless culture and the systematic action item follow-through are what convert incidents into improved reliability over time.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DNS &amp; Load Balancing | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+    .provider-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; }
+    .aws-badge { background: #ff9900; color: white; }
+    .gcp-badge { background: #4285f4; color: white; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container py-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Networking</a></li>
+        <li class="breadcrumb-item active">DNS &amp; Load Balancing</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5><i class="bi bi-diagram-3 me-2"></i>Networking</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="vpc.html">VPC Design</a>
+            <a class="nav-link active" href="dns-lb.html">DNS &amp; Load Balancing</a>
+            <a class="nav-link" href="vpn-bgp.html">VPN &amp; BGP</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-diagram-2 me-3"></i>DNS &amp; Load Balancing</h1>
+          <p class="lead">DNS architecture, record management, routing policies, and multi-layer load balancing strategies on AWS and GCP — from Route 53 health checks to GCP NEGs and Kubernetes Gateway API.</p>
+
+          <!-- =========================================================
+               DNS
+               ========================================================= -->
+          <h2>DNS Fundamentals</h2>
+
+          <h3>DNS Resolution Flow</h3>
+          <pre><code># Full recursive resolution for api.example.com
+
+1. Client queries local stub resolver (OS)
+   → checks /etc/hosts, then local DNS cache
+
+2. Local stub resolver queries Recursive Resolver (e.g. 8.8.8.8 or VPC DNS at .2)
+
+3. Recursive resolver (if not cached):
+   → queries Root nameservers (a.root-servers.net … m.root-servers.net, 13 anycast clusters)
+   → Root returns referral: "ask .com TLD servers"
+
+4. → queries .com TLD nameservers (managed by Verisign)
+   → TLD returns: "NS records for example.com are at ns-xxx.awsdns-xx.com"
+
+5. → queries authoritative NS for example.com (Route 53 / Cloud DNS)
+   → Returns: api.example.com A 203.0.113.45 TTL 300
+
+6. Recursive resolver caches result (for TTL duration), returns to client
+
+# Negative caching: NXDOMAIN responses are also cached for the SOA MINIMUM TTL
+# Verify with:
+dig api.example.com +trace
+dig @8.8.8.8 api.example.com +stats   # shows query time and when answer was cached</code></pre>
+
+          <h3>DNS Record Types</h3>
+          <table>
+            <tr><th>Record</th><th>Purpose</th><th>Example</th></tr>
+            <tr><td><code>A</code></td><td>IPv4 address mapping</td><td><code>api.example.com. 300 IN A 203.0.113.45</code></td></tr>
+            <tr><td><code>AAAA</code></td><td>IPv6 address mapping</td><td><code>api.example.com. 300 IN AAAA 2001:db8::1</code></td></tr>
+            <tr><td><code>CNAME</code></td><td>Alias to another hostname (cannot coexist with other records at same name)</td><td><code>www.example.com. CNAME example.com.</code></td></tr>
+            <tr><td><code>MX</code></td><td>Mail exchange with priority</td><td><code>example.com. MX 10 mail.example.com.</code></td></tr>
+            <tr><td><code>TXT</code></td><td>Text (SPF, DKIM, domain verification)</td><td><code>example.com. TXT "v=spf1 include:_spf.google.com ~all"</code></td></tr>
+            <tr><td><code>NS</code></td><td>Authoritative nameserver delegation</td><td><code>example.com. NS ns-1234.awsdns-45.com.</code></td></tr>
+            <tr><td><code>SOA</code></td><td>Zone authority, serial, refresh, retry, expire, minimum TTL</td><td>One per zone, defines zone properties</td></tr>
+            <tr><td><code>SRV</code></td><td>Service location (host + port + priority)</td><td><code>_https._tcp.example.com. SRV 10 5 443 api.example.com.</code></td></tr>
+            <tr><td><code>PTR</code></td><td>Reverse DNS lookup (IP → hostname)</td><td><code>45.113.0.203.in-addr.arpa. PTR api.example.com.</code></td></tr>
+            <tr><td><code>CAA</code></td><td>Certificate Authority Authorization</td><td><code>example.com. CAA 0 issue "letsencrypt.org"</code></td></tr>
+          </table>
+
+          <pre><code># Common DNS debugging commands
+dig api.example.com A                    # A record lookup
+dig api.example.com AAAA                 # IPv6
+dig api.example.com MX                   # mail records
+dig api.example.com TXT                  # TXT records (SPF, DKIM)
+dig api.example.com ANY                  # all record types (may be blocked)
+dig -x 203.0.113.45                      # reverse PTR lookup
+dig api.example.com +short               # IP only output
+dig @ns-1234.awsdns-45.com api.example.com  # query specific nameserver
+dig api.example.com +dnssec              # check DNSSEC signatures</code></pre>
+
+          <h3>TTL Strategy</h3>
+          <div class="strategy-card">
+            <h4>TTL Decision Framework</h4>
+            <ul class="mb-0">
+              <li><strong>High TTL (3600–86400s):</strong> Stable records (MX, NS, SPF, static IPs). Reduces DNS query load, lower Route 53/Cloud DNS costs.</li>
+              <li><strong>Medium TTL (300s):</strong> Good default for A/AAAA records on dynamic infrastructure.</li>
+              <li><strong>Low TTL (60s or less):</strong> Active traffic shifting (blue/green, failover). Lower 24–48h before planned changes to drain caches.</li>
+              <li><strong>Negative TTL:</strong> Controlled by SOA MINIMUM field. Keep low (300s) to recover quickly from NXDOMAIN errors.</li>
+            </ul>
+          </div>
+
+          <!-- AWS Route 53 -->
+          <h2><span class="provider-badge aws-badge">AWS</span> Route 53</h2>
+
+          <h3>Hosted Zones</h3>
+          <pre><code># Public Hosted Zone: resolves from the internet
+# Private Hosted Zone: resolves only within associated VPCs
+
+# Create private hosted zone (Terraform)
+resource "aws_route53_zone" "private" {
+  name = "internal.example.com"
+  vpc {
+    vpc_id = aws_vpc.prod.id
+  }
+  # Can associate multiple VPCs (cross-account with aws_route53_vpc_association_authorization)
+}
+
+# Associate private zone with additional VPCs
+resource "aws_route53_zone_association" "staging" {
+  zone_id = aws_route53_zone.private.zone_id
+  vpc_id  = aws_vpc.staging.id
+}
+
+# Split-horizon DNS: same domain name, different records for internal vs external
+# public zone:  api.example.com → 203.0.113.45 (public ALB)
+# private zone: api.example.com → 10.0.1.10 (internal service)</code></pre>
+
+          <h3>Routing Policies</h3>
+          <table>
+            <tr><th>Policy</th><th>Use Case</th><th>How it works</th></tr>
+            <tr><td>Simple</td><td>Single resource, no health checks</td><td>Returns one or multiple values (random selection for multiple)</td></tr>
+            <tr><td>Weighted</td><td>Canary deployments, A/B testing</td><td>Distribute traffic by percentage weight (e.g. 90/10)</td></tr>
+            <tr><td>Latency-based</td><td>Multi-region active-active</td><td>Routes to region with lowest measured latency for client</td></tr>
+            <tr><td>Failover</td><td>Active-passive DR</td><td>Primary record served; if health check fails, switch to secondary</td></tr>
+            <tr><td>Geolocation</td><td>Data residency, content localization</td><td>Routes based on client continent/country/state</td></tr>
+            <tr><td>Geoproximity</td><td>Fine-grained geographic routing</td><td>Routes based on client-to-resource geographic distance with bias</td></tr>
+            <tr><td>Multivalue Answer</td><td>Simple load distribution with health</td><td>Returns up to 8 healthy IPs; client picks randomly</td></tr>
+            <tr><td>IP-based</td><td>Route specific ISPs/prefixes</td><td>Routes based on client IP CIDR ranges you define</td></tr>
+          </table>
+
+          <pre><code># Route 53 — Failover routing with health check (Terraform)
+resource "aws_route53_health_check" "primary" {
+  fqdn              = "api-us-east-1.example.com"
+  port              = 443
+  type              = "HTTPS"
+  resource_path     = "/health"
+  failure_threshold = 3
+  request_interval  = 30   # seconds
+  tags = { Name = "primary-health-check" }
+}
+
+resource "aws_route53_record" "api_primary" {
+  zone_id        = aws_route53_zone.public.zone_id
+  name           = "api.example.com"
+  type           = "A"
+  set_identifier = "primary"
+  failover_routing_policy { type = "PRIMARY" }
+  health_check_id = aws_route53_health_check.primary.id
+  alias {
+    name                   = aws_lb.primary.dns_name
+    zone_id                = aws_lb.primary.zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "api_secondary" {
+  zone_id        = aws_route53_zone.public.zone_id
+  name           = "api.example.com"
+  type           = "A"
+  set_identifier = "secondary"
+  failover_routing_policy { type = "SECONDARY" }
+  alias {
+    name                   = aws_lb.secondary.dns_name   # us-west-2 ALB
+    zone_id                = aws_lb.secondary.zone_id
+    evaluate_target_health = true
+  }
+}
+
+# Weighted routing for canary deployment (10% to new version)
+resource "aws_route53_record" "api_v2_canary" {
+  zone_id        = aws_route53_zone.public.zone_id
+  name           = "api.example.com"
+  type           = "A"
+  set_identifier = "canary-v2"
+  weighted_routing_policy { weight = 10 }
+  alias {
+    name    = aws_lb.canary.dns_name
+    zone_id = aws_lb.canary.zone_id
+    evaluate_target_health = true
+  }
+}
+</code></pre>
+
+          <!-- GCP Cloud DNS -->
+          <h2><span class="provider-badge gcp-badge">GCP</span> Cloud DNS</h2>
+
+          <pre><code># Create public managed zone
+gcloud dns managed-zones create example-com \
+  --dns-name="example.com." \
+  --description="Production public zone" \
+  --visibility=public \
+  --dnssec-state=on
+
+# Create private managed zone
+gcloud dns managed-zones create internal-example \
+  --dns-name="internal.example.com." \
+  --visibility=private \
+  --networks=prod-vpc
+
+# Add records
+gcloud dns record-sets create api.example.com. \
+  --zone=example-com \
+  --type=A \
+  --ttl=300 \
+  --rrdatas=203.0.113.45
+
+gcloud dns record-sets create api.example.com. \
+  --zone=example-com \
+  --type=AAAA \
+  --ttl=300 \
+  --rrdatas=2001:db8::1
+
+# DNS Server Policy — override resolver for VPC (e.g. forward to on-prem DNS)
+gcloud dns policies create on-prem-forward \
+  --networks=prod-vpc \
+  --alternative-name-servers=192.168.1.53,192.168.1.54 \
+  --description="Forward to on-prem DNS"
+
+# DNS Response Policy (local override for specific names — split-horizon)
+gcloud dns response-policies create corp-overrides \
+  --networks=prod-vpc \
+  --description="Internal overrides"
+
+gcloud dns response-policies rules create api-override \
+  --response-policy=corp-overrides \
+  --dns-name="api.example.com." \
+  --local-data=name="api.example.com.",type="A",ttl=60,rrdatas="10.0.1.10"
+</code></pre>
+
+          <!-- LOAD BALANCING FUNDAMENTALS -->
+          <h2>Load Balancing Fundamentals</h2>
+
+          <h3>Load Balancing Algorithms</h3>
+          <table>
+            <tr><th>Algorithm</th><th>How it works</th><th>Best for</th></tr>
+            <tr><td>Round Robin</td><td>Requests sent to backends sequentially in rotation</td><td>Homogeneous backends, stateless services</td></tr>
+            <tr><td>Weighted Round Robin</td><td>Round robin with weight factors (higher weight = more requests)</td><td>Canary deployments, heterogeneous instance sizes</td></tr>
+            <tr><td>Least Connections</td><td>New request sent to backend with fewest active connections</td><td>Long-lived connections (WebSocket, gRPC streaming)</td></tr>
+            <tr><td>IP Hash</td><td>Client IP hashed to consistently pick same backend</td><td>Stateful apps needing session affinity (sticky sessions)</td></tr>
+            <tr><td>Random with Two Choices</td><td>Pick 2 backends randomly, send to one with fewer connections</td><td>Low-overhead approximation of least connections at scale</td></tr>
+            <tr><td>Least Response Time</td><td>Combines least connections + fastest response time</td><td>Heterogeneous backends with variable latency</td></tr>
+          </table>
+
+          <h3>Layer 4 vs Layer 7 Load Balancing</h3>
+          <table>
+            <tr><th>Feature</th><th>Layer 4 (Transport)</th><th>Layer 7 (Application)</th></tr>
+            <tr><td>Operates on</td><td>TCP/UDP connections</td><td>HTTP/HTTPS requests</td></tr>
+            <tr><td>Routing decisions</td><td>Source/dest IP + port</td><td>URL path, hostname, headers, cookies</td></tr>
+            <tr><td>TLS termination</td><td>Pass-through (backend terminates) or terminate</td><td>Always terminates TLS, then re-encrypts or HTTP to backend</td></tr>
+            <tr><td>Performance</td><td>Ultra-low latency, high throughput</td><td>Slightly higher latency (HTTP parsing overhead)</td></tr>
+            <tr><td>AWS equivalent</td><td>NLB</td><td>ALB</td></tr>
+            <tr><td>GCP equivalent</td><td>Network LB / TCP Proxy</td><td>Global HTTP(S) LB</td></tr>
+            <tr><td>Source IP</td><td>Preserved (with proxy protocol or direct)</td><td>Via X-Forwarded-For header</td></tr>
+          </table>
+
+          <!-- AWS LOAD BALANCERS -->
+          <h2><span class="provider-badge aws-badge">AWS</span> Load Balancers</h2>
+
+          <h3>Application Load Balancer (ALB)</h3>
+          <div class="concept-card">
+            <h4>ALB Architecture</h4>
+            <p>ALB operates at L7. Listeners define protocol/port. Rules evaluate conditions (path, host, header, query string, source IP, method) in priority order and forward to target groups. Target groups contain EC2 instances, ECS tasks, IPs, or Lambda functions.</p>
+          </div>
+
+          <pre><code># ALB Terraform — multi-rule listener
+
+resource "aws_lb" "prod" {
+  name               = "prod-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb.id]
+  subnets            = aws_subnet.public[*].id
+  enable_deletion_protection = true
+
+  access_logs {
+    bucket  = aws_s3_bucket.alb_logs.bucket
+    prefix  = "prod-alb"
+    enabled = true
+  }
+}
+
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.prod.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  certificate_arn   = aws_acm_certificate.wildcard.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.api_v1.arn
+  }
+}
+
+# HTTP → HTTPS redirect
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.prod.arn
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type = "redirect"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+# Listener rules — path-based routing
+resource "aws_lb_listener_rule" "api_v2" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 100
+
+  condition {
+    path_pattern { values = ["/api/v2/*"] }
+  }
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.api_v2.arn
+  }
+}
+
+resource "aws_lb_listener_rule" "admin" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 200
+
+  condition {
+    host_header { values = ["admin.example.com"] }
+  }
+  condition {
+    source_ip { values = ["10.100.0.0/16"] }   # restrict to corporate network
+  }
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.admin.arn
+  }
+}
+
+resource "aws_lb_listener_rule" "maintenance" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 999
+  condition {
+    http_header {
+      http_header_name = "X-Maintenance-Bypass"
+      values           = ["secret-bypass-token"]
+    }
+  }
+  action { type = "forward"; target_group_arn = aws_lb_target_group.api_v1.arn }
+}
+
+# Target group with health check
+resource "aws_lb_target_group" "api_v1" {
+  name        = "api-v1"
+  port        = 8080
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.prod.id
+  target_type = "ip"   # for ECS Fargate / direct IP
+
+  health_check {
+    path                = "/health"
+    protocol            = "HTTP"
+    matcher             = "200"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
+
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = 86400
+    enabled         = false   # enable only if stateful
+  }
+}
+</code></pre>
+
+          <h3>Network Load Balancer (NLB)</h3>
+          <pre><code># NLB key characteristics:
+# - Static Elastic IPs per AZ (whitelistable)
+# - Preserves source IP (unlike ALB which uses X-Forwarded-For)
+# - TLS termination at NLB, or TCP pass-through
+# - Ultra-low latency (~100 microseconds vs ALB ~1ms)
+# - Supports UDP (for DNS, syslog, game servers, QUIC)
+# - PrivateLink endpoint service requires NLB
+
+resource "aws_lb" "nlb" {
+  name               = "prod-nlb"
+  internal           = false
+  load_balancer_type = "network"
+  enable_cross_zone_load_balancing = true
+
+  subnet_mapping {
+    subnet_id     = aws_subnet.public[0].id
+    allocation_id = aws_eip.nlb[0].id   # static Elastic IP per AZ
+  }
+  subnet_mapping {
+    subnet_id     = aws_subnet.public[1].id
+    allocation_id = aws_eip.nlb[1].id
+  }
+}
+
+resource "aws_lb_listener" "nlb_tls" {
+  load_balancer_arn = aws_lb.nlb.arn
+  port              = 443
+  protocol          = "TLS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  certificate_arn   = aws_acm_certificate.wildcard.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.nlb_tcp.arn
+  }
+}
+
+resource "aws_lb_listener" "nlb_udp" {
+  load_balancer_arn = aws_lb.nlb.arn
+  port              = 53
+  protocol          = "UDP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.dns.arn
+  }
+}</code></pre>
+
+          <h3>Gateway Load Balancer (GWLB)</h3>
+          <div class="concept-card">
+            <h4>Inline Traffic Inspection</h4>
+            <p>GWLB uses Geneve encapsulation (port 6081) to transparently insert security appliances (IDS/IPS, firewall, DLP) into traffic path. Traffic flows: Internet → GWLB → Appliance (inspect) → GWLB → Destination. Appliance is either a commercial NGFW (Palo Alto, Check Point) or custom.</p>
+          </div>
+
+          <!-- GCP LOAD BALANCERS -->
+          <h2><span class="provider-badge gcp-badge">GCP</span> Load Balancers</h2>
+
+          <h3>Global HTTP(S) Load Balancer</h3>
+          <pre><code># GCP Global HTTPS LB: anycast IP, Google's edge PoPs worldwide
+# Terminates SSL at PoP (closest to user), then proxies to backend over Google backbone
+
+resource "google_compute_global_address" "lb_ip" {
+  name = "prod-lb-ip"
+}
+
+resource "google_compute_managed_ssl_certificate" "default" {
+  name = "prod-cert"
+  managed {
+    domains = ["api.example.com", "www.example.com"]
+  }
+}
+
+resource "google_compute_backend_service" "api" {
+  name                  = "api-backend"
+  protocol              = "HTTP"
+  port_name             = "http"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  timeout_sec           = 30
+
+  backend {
+    group           = google_compute_region_instance_group_manager.api.instance_group
+    balancing_mode  = "UTILIZATION"
+    max_utilization = 0.8
+  }
+
+  health_checks = [google_compute_health_check.api.id]
+
+  # Cloud CDN
+  enable_cdn = true
+  cdn_policy {
+    cache_mode = "CACHE_ALL_STATIC"
+    default_ttl = 3600
+  }
+
+  # Cloud Armor security policy
+  security_policy = google_compute_security_policy.waf.id
+}
+
+# URL Map — path-based routing
+resource "google_compute_url_map" "prod" {
+  name            = "prod-url-map"
+  default_service = google_compute_backend_service.api.id
+
+  host_rule {
+    hosts        = ["api.example.com"]
+    path_matcher = "api-paths"
+  }
+
+  path_matcher {
+    name            = "api-paths"
+    default_service = google_compute_backend_service.api.id
+
+    path_rule {
+      paths   = ["/v2/*"]
+      service = google_compute_backend_service.api_v2.id
+    }
+    path_rule {
+      paths   = ["/static/*"]
+      service = google_compute_backend_service.cdn.id
+    }
+  }
+}
+
+resource "google_compute_target_https_proxy" "prod" {
+  name             = "prod-https-proxy"
+  url_map          = google_compute_url_map.prod.id
+  ssl_certificates = [google_compute_managed_ssl_certificate.default.id]
+  ssl_policy       = google_compute_ssl_policy.modern.id
+}
+
+resource "google_compute_global_forwarding_rule" "https" {
+  name                  = "prod-https-rule"
+  target                = google_compute_target_https_proxy.prod.id
+  port_range            = "443"
+  ip_address            = google_compute_global_address.lb_ip.address
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+}
+</code></pre>
+
+          <h3>Network Endpoint Groups (NEGs)</h3>
+          <table>
+            <tr><th>NEG Type</th><th>Use Case</th><th>Backend</th></tr>
+            <tr><td>Zonal (GCE)</td><td>VM instances or containers in a zone</td><td>GCE VMs, GKE pods (directly)</td></tr>
+            <tr><td>Internet NEG</td><td>External endpoint (FQDN or IP)</td><td>Third-party APIs, on-prem, partner services</td></tr>
+            <tr><td>Serverless NEG</td><td>Cloud Run, App Engine, Cloud Functions</td><td>Serverless workloads behind GCP LB</td></tr>
+            <tr><td>Private Service Connect NEG</td><td>Consume PSC services via LB</td><td>Published services in other VPCs</td></tr>
+          </table>
+
+          <pre><code># Serverless NEG for Cloud Run (expose via Global HTTPS LB)
+resource "google_compute_region_network_endpoint_group" "cloudrun" {
+  name                  = "cloudrun-neg"
+  network_endpoint_type = "SERVERLESS"
+  region                = "us-central1"
+  cloud_run {
+    service = google_cloud_run_service.api.name
+  }
+}
+
+resource "google_compute_backend_service" "cloudrun" {
+  name                  = "cloudrun-backend"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  protocol              = "HTTPS"
+  backend {
+    group = google_compute_region_network_endpoint_group.cloudrun.id
+  }
+}
+
+# Internet NEG — route to external endpoint through GCP LB (for Cloud Armor protection)
+resource "google_compute_global_network_endpoint_group" "external_api" {
+  name                  = "partner-api-neg"
+  network_endpoint_type = "INTERNET_FQDN_PORT"
+  default_port          = 443
+}
+
+resource "google_compute_global_network_endpoint" "partner" {
+  global_network_endpoint_group = google_compute_global_network_endpoint_group.external_api.name
+  fqdn                          = "api.partner.com"
+  port                          = 443
+}</code></pre>
+
+          <!-- KUBERNETES -->
+          <h2>Kubernetes Ingress vs Gateway API</h2>
+
+          <table>
+            <tr><th>Feature</th><th>Ingress</th><th>Gateway API</th></tr>
+            <tr><td>Maturity</td><td>Stable, widely adopted</td><td>GA since Kubernetes 1.28</td></tr>
+            <tr><td>Role separation</td><td>Single object (admin + developer mixed)</td><td>GatewayClass (infra), Gateway (ops), HTTPRoute (dev)</td></tr>
+            <tr><td>Protocol support</td><td>HTTP/HTTPS only</td><td>HTTP, TCP, UDP, gRPC, TLS</td></tr>
+            <tr><td>Cross-namespace routing</td><td>Limited</td><td>First-class support via ReferenceGrant</td></tr>
+            <tr><td>Traffic splitting</td><td>Controller-specific annotations</td><td>Native via weight in HTTPRoute</td></tr>
+          </table>
+
+          <pre><code># NGINX Ingress — path and host routing
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prod-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts: [api.example.com]
+    secretName: api-tls-cert
+  rules:
+  - host: api.example.com
+    http:
+      paths:
+      - path: /api/v1
+        pathType: Prefix
+        backend:
+          service: { name: api-v1, port: { number: 80 } }
+      - path: /api/v2
+        pathType: Prefix
+        backend:
+          service: { name: api-v2, port: { number: 80 } }
+
+---
+# Gateway API — HTTPRoute with traffic splitting
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: api-canary
+spec:
+  parentRefs:
+  - name: prod-gateway
+    namespace: infra
+  hostnames: [api.example.com]
+  rules:
+  - matches:
+    - path: { type: PathPrefix, value: /api }
+    backendRefs:
+    - name: api-v1
+      port: 80
+      weight: 90
+    - name: api-v2
+      port: 80
+      weight: 10   # 10% canary traffic
+
+---
+# cert-manager ClusterIssuer (Let's Encrypt)
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: ops@example.com
+    privateKeySecretRef: { name: letsencrypt-prod }
+    solvers:
+    - http01:
+        ingress: { class: nginx }</code></pre>
+
+          <h3>Health Checks</h3>
+          <pre><code># AWS ALB health check (Terraform)
+health_check {
+  enabled             = true
+  path                = "/health"
+  protocol            = "HTTP"
+  matcher             = "200-299"
+  port                = "traffic-port"
+  interval            = 30        # seconds between checks
+  timeout             = 5         # fail if no response in 5s
+  healthy_threshold   = 2         # 2 consecutive successes = healthy
+  unhealthy_threshold = 3         # 3 consecutive failures = unhealthy
+}
+# Grace period: set deregistration_delay.timeout_seconds = 30 (drain existing connections)
+
+# GCP health check
+resource "google_compute_health_check" "api" {
+  name                = "api-health-check"
+  check_interval_sec  = 10
+  timeout_sec         = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 3
+
+  https_health_check {
+    port         = 8443
+    request_path = "/healthz"
+  }
+}
+
+# gRPC health check (for gRPC services on GCP)
+resource "google_compute_health_check" "grpc" {
+  name = "grpc-health"
+  grpc_health_check {
+    port         = 50051
+    grpc_service_name = "my.service.Health"
+  }
+}
+
+# Kubernetes Probes
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8080
+  initialDelaySeconds: 10   # wait before first check (app startup time)
+  periodSeconds: 10
+  failureThreshold: 3        # restart pod after 3 failures
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  failureThreshold: 3        # remove from LB endpoints after 3 failures
+</code></pre>
+
+          <div class="success-box">
+            <strong>DNS &amp; LB Best Practices Summary:</strong>
+            <ul class="mb-0 mt-2">
+              <li>Lower DNS TTL 24–48h before any migration or failover test</li>
+              <li>Use Route 53 alias records (not CNAME) for AWS resources — no extra query, works at zone apex</li>
+              <li>Enable ALB access logs → S3 + Athena for query analysis</li>
+              <li>Set ALB idle timeout greater than application keep-alive to avoid 504s</li>
+              <li>Use NLB for PrivateLink services, static IPs, UDP, or TLS pass-through</li>
+              <li>GCP: prefer Serverless NEG + Global HTTPS LB over direct Cloud Run URLs for WAF protection</li>
+              <li>Enable Cloud Armor / AWS WAF on public-facing load balancers</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

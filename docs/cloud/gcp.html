@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GCP Deep Dive | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light px-4">
+    <a class="navbar-brand fw-bold" style="color: var(--secondary-color);" href="../../index.html">
+      <i class="bi bi-person-circle me-2" style="color: var(--primary-color);"></i>Lê Bình Phương
+    </a>
+    <div class="ms-auto">
+      <a href="../../index.html" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-house me-1"></i>Home
+      </a>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Cloud</a></li>
+        <li class="breadcrumb-item active">GCP</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5><i class="bi bi-cloud me-2"></i>Cloud</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html"><i class="bi bi-house-door me-2"></i>Overview</a>
+            <a class="nav-link" href="aws.html"><i class="bi bi-cloud-fill me-2"></i>AWS</a>
+            <a class="nav-link active" href="gcp.html"><i class="bi bi-google me-2"></i>GCP</a>
+            <a class="nav-link" href="architecture.html"><i class="bi bi-diagram-3 me-2"></i>Architecture</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-google me-2"></i>GCP Deep Dive</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Google Cloud Platform — built on the same infrastructure that powers Google Search, Gmail, and YouTube. This guide covers production-grade GCP configurations with real <code>gcloud</code> commands and Terraform examples.
+          </div>
+
+          <!-- ==================== RESOURCE HIERARCHY ==================== -->
+          <h2>Resource Hierarchy</h2>
+          <p>GCP organizes resources in a strict parent-child hierarchy. IAM policies and Org Policies are inherited downward — a policy set at the Organization level automatically applies to all Folders, Projects, and Resources underneath it.</p>
+
+          <pre><code># GCP Resource Hierarchy
+Organization (example.com)
+├── Folder: Engineering
+│   ├── Folder: Production
+│   │   ├── Project: prod-backend (project-id: prod-backend-123)
+│   │   └── Project: prod-data   (project-id: prod-data-456)
+│   ├── Folder: Staging
+│   │   └── Project: staging-backend
+│   └── Folder: Development
+│       └── Project: dev-sandbox-team-a
+├── Folder: Security
+│   ├── Project: sec-audit-logs
+│   └── Project: sec-shared-vpc-host
+└── Folder: Shared Infrastructure
+    ├── Project: infra-networking (Shared VPC host)
+    └── Project: infra-monitoring</code></pre>
+
+          <pre><code># Create organization folder structure
+gcloud resource-manager folders create \
+  --display-name="Engineering" \
+  --organization=123456789012
+
+gcloud resource-manager folders create \
+  --display-name="Production" \
+  --folder=folders/111111111
+
+# Create project under folder
+gcloud projects create prod-backend-123456 \
+  --folder=folders/222222222 \
+  --name="Production Backend" \
+  --labels="environment=prod,team=backend,managed-by=terraform"
+
+# Link billing account
+gcloud billing projects link prod-backend-123456 \
+  --billing-account=01AB23-CD45EF-GH67IJ
+
+# Set org-level policy: require OS Login on all VMs
+gcloud resource-manager org-policies set-policy \
+  --organization=123456789012 \
+  policy.yaml
+
+# policy.yaml
+constraint: constraints/compute.requireOsLogin
+booleanPolicy:
+  enforced: true
+
+# Deny public IP addresses at org level
+gcloud resource-manager org-policies set-policy \
+  --organization=123456789012 \
+  deny-public-ip.yaml
+
+# deny-public-ip.yaml
+constraint: constraints/compute.vmExternalIpAccess
+listPolicy:
+  allValues: DENY
+
+# List effective policies for a project (inherited + set)
+gcloud resource-manager org-policies list \
+  --project=prod-backend-123456</code></pre>
+
+          <!-- ==================== COMPUTE ==================== -->
+          <h2>Compute</h2>
+
+          <h3>Compute Engine — Machine Types</h3>
+          <table>
+            <thead>
+              <tr><th>Family</th><th>Series</th><th>Use Case</th><th>Notes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>General Purpose</strong></td><td>N2, N2D, E2, N4</td><td>Web servers, microservices, dev environments</td><td>E2 is cheapest; N2/N4 for predictable performance</td></tr>
+              <tr><td><strong>Compute Optimized</strong></td><td>C2, C2D, C3, H3</td><td>HPC, gaming, batch, media transcoding</td><td>Highest per-core performance in GCP</td></tr>
+              <tr><td><strong>Memory Optimized</strong></td><td>M2, M3</td><td>SAP HANA, in-memory analytics, large databases</td><td>Up to 12 TB RAM (M2 megamem-416)</td></tr>
+              <tr><td><strong>Accelerator Optimized</strong></td><td>A2, A3, G2</td><td>ML training, GPU workloads, CUDA applications</td><td>NVIDIA A100 (A2/A3), L4 (G2)</td></tr>
+              <tr><td><strong>Arm-based</strong></td><td>T2D (AMD), T2A (Ampere)</td><td>Scale-out workloads, web serving</td><td>Cost-effective for containerized apps</td></tr>
+            </tbody>
+          </table>
+
+          <pre><code># Create VM with startup script
+gcloud compute instances create prod-web-01 \
+  --project=prod-backend-123456 \
+  --zone=asia-southeast1-a \
+  --machine-type=n2-standard-4 \
+  --image-family=debian-12 \
+  --image-project=debian-cloud \
+  --boot-disk-size=50GB \
+  --boot-disk-type=pd-ssd \
+  --network=projects/infra-networking/global/networks/shared-vpc \
+  --subnet=projects/infra-networking/regions/asia-southeast1/subnetworks/prod-subnet-1 \
+  --no-address \
+  --service-account=prod-app-sa@prod-backend-123456.iam.gserviceaccount.com \
+  --scopes=cloud-platform \
+  --metadata-from-file=startup-script=startup.sh \
+  --shielded-secure-boot \
+  --shielded-vtpm \
+  --shielded-integrity-monitoring \
+  --labels="environment=prod,managed-by=gcloud"
+
+# Create Spot VM (preemptible successor — ~70% cheaper)
+gcloud compute instances create batch-worker-01 \
+  --machine-type=c2-standard-8 \
+  --provisioning-model=SPOT \
+  --instance-termination-action=STOP \
+  --zone=asia-southeast1-b
+
+# Create instance template for MIG
+gcloud compute instance-templates create prod-web-template-v2 \
+  --machine-type=n2-standard-2 \
+  --image-family=cos-stable \
+  --image-project=cos-cloud \
+  --boot-disk-type=pd-balanced \
+  --boot-disk-size=30GB \
+  --no-address \
+  --metadata=startup-script='#!/bin/bash
+    docker run -d -p 8080:8080 gcr.io/prod-backend-123456/myapp:latest' \
+  --service-account=prod-app-sa@prod-backend-123456.iam.gserviceaccount.com \
+  --scopes=cloud-platform
+
+# Create Managed Instance Group with autoscaling
+gcloud compute instance-groups managed create prod-web-mig \
+  --template=prod-web-template-v2 \
+  --size=3 \
+  --zones=asia-southeast1-a,asia-southeast1-b,asia-southeast1-c \
+  --region=asia-southeast1
+
+gcloud compute instance-groups managed set-autoscaling prod-web-mig \
+  --region=asia-southeast1 \
+  --min-num-replicas=3 \
+  --max-num-replicas=20 \
+  --target-cpu-utilization=0.7 \
+  --cool-down-period=90</code></pre>
+
+          <h3>GKE — Google Kubernetes Engine</h3>
+          <pre><code># Create GKE Standard cluster (full control over nodes)
+gcloud container clusters create prod-cluster \
+  --project=prod-backend-123456 \
+  --region=asia-southeast1 \
+  --release-channel=regular \
+  --cluster-version=1.29 \
+  --machine-type=n2-standard-4 \
+  --num-nodes=2 \
+  --min-nodes=1 \
+  --max-nodes=10 \
+  --enable-autoscaling \
+  --enable-autorepair \
+  --enable-autoupgrade \
+  --network=projects/infra-networking/global/networks/shared-vpc \
+  --subnetwork=projects/infra-networking/regions/asia-southeast1/subnetworks/gke-subnet \
+  --cluster-secondary-range-name=pods \
+  --services-secondary-range-name=services \
+  --enable-private-nodes \
+  --master-ipv4-cidr=172.16.0.0/28 \
+  --enable-master-authorized-networks \
+  --master-authorized-networks=10.0.0.0/8 \
+  --enable-shielded-nodes \
+  --workload-pool=prod-backend-123456.svc.id.goog \
+  --enable-dataplane-v2 \
+  --logging=SYSTEM,WORKLOAD \
+  --monitoring=SYSTEM,WORKLOAD
+
+# Create GKE Autopilot cluster (Google manages nodes)
+gcloud container clusters create-auto prod-autopilot \
+  --project=prod-backend-123456 \
+  --region=asia-southeast1 \
+  --network=projects/infra-networking/global/networks/shared-vpc \
+  --subnetwork=projects/infra-networking/regions/asia-southeast1/subnetworks/gke-subnet \
+  --enable-private-nodes \
+  --master-ipv4-cidr=172.16.1.0/28
+
+# Get cluster credentials
+gcloud container clusters get-credentials prod-cluster \
+  --region=asia-southeast1 \
+  --project=prod-backend-123456
+
+# Add a GPU node pool
+gcloud container node-pools create gpu-pool \
+  --cluster=prod-cluster \
+  --region=asia-southeast1 \
+  --machine-type=a2-highgpu-1g \
+  --accelerator=type=nvidia-tesla-a100,count=1 \
+  --num-nodes=0 \
+  --min-nodes=0 \
+  --max-nodes=5 \
+  --enable-autoscaling \
+  --node-taints=nvidia.com/gpu=present:NoSchedule
+
+# Workload Identity — bind KSA to GSA
+# 1. Create Google Service Account
+gcloud iam service-accounts create prod-app-gsa \
+  --project=prod-backend-123456 \
+  --display-name="Production App Service Account"
+
+# 2. Grant GSA permissions on GCP resources
+gcloud projects add-iam-policy-binding prod-backend-123456 \
+  --member="serviceAccount:prod-app-gsa@prod-backend-123456.iam.gserviceaccount.com" \
+  --role="roles/storage.objectViewer"
+
+# 3. Allow Kubernetes SA to impersonate GSA
+gcloud iam service-accounts add-iam-policy-binding prod-app-gsa@prod-backend-123456.iam.gserviceaccount.com \
+  --role=roles/iam.workloadIdentityUser \
+  --member="serviceAccount:prod-backend-123456.svc.id.goog[default/prod-app-ksa]"
+
+# 4. Annotate Kubernetes Service Account
+kubectl annotate serviceaccount prod-app-ksa \
+  iam.gke.io/gcp-service-account=prod-app-gsa@prod-backend-123456.iam.gserviceaccount.com</code></pre>
+
+          <h3>Cloud Run</h3>
+          <pre><code># Deploy containerized app to Cloud Run
+gcloud run deploy prod-api \
+  --image=asia-southeast1-docker.pkg.dev/prod-backend-123456/apps/myapp:v1.2.3 \
+  --region=asia-southeast1 \
+  --platform=managed \
+  --service-account=prod-app-gsa@prod-backend-123456.iam.gserviceaccount.com \
+  --min-instances=2 \
+  --max-instances=100 \
+  --concurrency=80 \
+  --cpu=2 \
+  --memory=2Gi \
+  --timeout=300 \
+  --set-env-vars="STAGE=prod,REGION=asia-southeast1" \
+  --set-secrets="DB_PASSWORD=prod-db-password:latest" \
+  --vpc-connector=projects/infra-networking/locations/asia-southeast1/connectors/serverless-connector \
+  --vpc-egress=private-ranges-only \
+  --no-allow-unauthenticated \
+  --ingress=internal-and-cloud-load-balancing
+
+# Traffic splitting for canary deployment
+gcloud run services update-traffic prod-api \
+  --region=asia-southeast1 \
+  --to-revisions=prod-api-00025-abc=90,prod-api-00026-xyz=10
+
+# Map custom domain
+gcloud run domain-mappings create \
+  --service=prod-api \
+  --domain=api.example.com \
+  --region=asia-southeast1</code></pre>
+
+          <h3>Cloud Functions Gen 2</h3>
+          <pre><code># Deploy a Gen 2 Cloud Function (backed by Cloud Run)
+gcloud functions deploy process-event \
+  --gen2 \
+  --runtime=python312 \
+  --region=asia-southeast1 \
+  --source=./src \
+  --entry-point=handle_event \
+  --trigger-topic=prod-events-topic \
+  --service-account=func-sa@prod-backend-123456.iam.gserviceaccount.com \
+  --set-env-vars="STAGE=prod" \
+  --set-secrets="API_KEY=func-api-key:latest" \
+  --min-instances=1 \
+  --max-instances=50 \
+  --memory=512MB \
+  --timeout=120s</code></pre>
+
+          <!-- ==================== NETWORKING ==================== -->
+          <h2>Networking</h2>
+
+          <h3>VPC — Shared VPC, Peering, Private Services</h3>
+          <pre><code># Create VPC in auto mode (not recommended for production)
+gcloud compute networks create prod-vpc \
+  --project=infra-networking \
+  --subnet-mode=custom \
+  --mtu=1460 \
+  --bgp-routing-mode=regional
+
+# Create subnets with secondary ranges (for GKE pods/services)
+gcloud compute networks subnets create gke-subnet \
+  --project=infra-networking \
+  --network=prod-vpc \
+  --region=asia-southeast1 \
+  --range=10.10.0.0/20 \
+  --secondary-range=pods=10.20.0.0/16,services=10.30.0.0/20 \
+  --enable-private-ip-google-access \
+  --enable-flow-logs \
+  --logging-aggregation-interval=interval-5-sec \
+  --logging-flow-sampling=0.5
+
+# Enable Shared VPC — host project shares network with service projects
+gcloud compute shared-vpc enable infra-networking
+gcloud compute shared-vpc associated-projects add prod-backend-123456 \
+  --host-project=infra-networking
+
+# VPC Peering (no transitive routing)
+gcloud compute networks peerings create prod-to-staging \
+  --project=infra-networking \
+  --network=prod-vpc \
+  --peer-project=infra-networking-staging \
+  --peer-network=staging-vpc \
+  --import-custom-routes \
+  --export-custom-routes
+
+# Private Google Access — allow VMs without public IPs to reach Google APIs
+gcloud compute networks subnets update prod-subnet \
+  --project=infra-networking \
+  --region=asia-southeast1 \
+  --enable-private-ip-google-access
+
+# Private Service Connect — private endpoint for Google APIs
+gcloud compute addresses create google-apis-psc-ip \
+  --project=prod-backend-123456 \
+  --region=asia-southeast1 \
+  --subnet=prod-subnet \
+  --addresses=10.10.0.100
+
+gcloud compute forwarding-rules create google-apis-psc \
+  --project=prod-backend-123456 \
+  --region=asia-southeast1 \
+  --network=projects/infra-networking/global/networks/prod-vpc \
+  --address=google-apis-psc-ip \
+  --target-google-apis-bundle=all-apis \
+  --service-directory-registration=projects/prod-backend-123456/locations/asia-southeast1/namespaces/gcp</code></pre>
+
+          <h3>Cloud Load Balancing</h3>
+          <pre><code># Global External HTTP(S) Load Balancer
+# Reserve global static IP
+gcloud compute addresses create prod-global-ip \
+  --project=prod-backend-123456 \
+  --global
+
+# Create backend service with health check
+gcloud compute health-checks create http prod-hc \
+  --project=prod-backend-123456 \
+  --port=8080 \
+  --request-path=/health \
+  --check-interval=15s \
+  --timeout=5s \
+  --healthy-threshold=2 \
+  --unhealthy-threshold=3
+
+gcloud compute backend-services create prod-backend \
+  --project=prod-backend-123456 \
+  --global \
+  --protocol=HTTP \
+  --health-checks=prod-hc \
+  --load-balancing-scheme=EXTERNAL_MANAGED \
+  --connection-draining-timeout=300 \
+  --session-affinity=NONE
+
+gcloud compute backend-services add-backend prod-backend \
+  --project=prod-backend-123456 \
+  --global \
+  --instance-group=prod-web-mig \
+  --instance-group-region=asia-southeast1 \
+  --balancing-mode=UTILIZATION \
+  --max-utilization=0.8
+
+# Create URL map for path routing
+gcloud compute url-maps create prod-url-map \
+  --default-service=prod-backend \
+  --project=prod-backend-123456 \
+  --global
+
+gcloud compute url-maps import prod-url-map \
+  --source=url-map.yaml --global --project=prod-backend-123456
+
+# url-map.yaml with path routing
+# hostRules:
+# - hosts: ["api.example.com"]
+#   pathMatcher: api-paths
+# pathMatchers:
+# - name: api-paths
+#   defaultService: prod-backend
+#   pathRules:
+#   - paths: ["/v2/*"]
+#     service: prod-backend-v2
+
+# Create HTTPS proxy and forwarding rule
+gcloud compute ssl-certificates create prod-cert \
+  --domains=api.example.com \
+  --global --project=prod-backend-123456
+
+gcloud compute target-https-proxies create prod-https-proxy \
+  --url-map=prod-url-map \
+  --ssl-certificates=prod-cert \
+  --global --project=prod-backend-123456
+
+gcloud compute forwarding-rules create prod-https-rule \
+  --address=prod-global-ip \
+  --global \
+  --target-https-proxy=prod-https-proxy \
+  --ports=443 \
+  --project=prod-backend-123456
+
+# Network Endpoint Groups (NEGs) — for Cloud Run / serverless backends
+gcloud compute network-endpoint-groups create cloudrun-neg \
+  --region=asia-southeast1 \
+  --network-endpoint-type=serverless \
+  --cloud-run-service=prod-api \
+  --project=prod-backend-123456</code></pre>
+
+          <h3>Cloud DNS</h3>
+          <pre><code># Create private DNS zone
+gcloud dns managed-zones create internal-zone \
+  --project=prod-backend-123456 \
+  --dns-name=internal.example.com. \
+  --description="Internal private DNS" \
+  --visibility=private \
+  --networks=projects/infra-networking/global/networks/prod-vpc
+
+# Add A record
+gcloud dns record-sets create db.internal.example.com. \
+  --zone=internal-zone \
+  --type=A \
+  --ttl=300 \
+  --rrdatas=10.10.5.10 \
+  --project=prod-backend-123456
+
+# Add CNAME record
+gcloud dns record-sets create api.internal.example.com. \
+  --zone=internal-zone \
+  --type=CNAME \
+  --ttl=60 \
+  --rrdatas=prod-api-123abc-as.a.run.app. \
+  --project=prod-backend-123456
+
+# Enable DNSSEC on public zone
+gcloud dns managed-zones update prod-public-zone \
+  --dnssec-state=on \
+  --project=prod-backend-123456
+
+# Cloud DNS Response Policy (split-horizon DNS)
+gcloud dns response-policies create corp-policy \
+  --networks=prod-vpc \
+  --description="Split-horizon for corporate domains" \
+  --project=prod-backend-123456</code></pre>
+
+          <h3>Cloud CDN</h3>
+          <pre><code># Enable Cloud CDN on backend service
+gcloud compute backend-services update prod-backend \
+  --enable-cdn \
+  --cache-mode=CACHE_ALL_STATIC \
+  --default-ttl=3600 \
+  --max-ttl=86400 \
+  --client-ttl=3600 \
+  --global --project=prod-backend-123456
+
+# Generate signed URL key for Cloud CDN
+gcloud compute backend-services add-signed-url-key prod-backend \
+  --key-name=cdn-key-v1 \
+  --key-file=cdn-signing.key \
+  --global --project=prod-backend-123456</code></pre>
+
+          <!-- ==================== STORAGE ==================== -->
+          <h2>Storage</h2>
+
+          <h3>Cloud Storage</h3>
+          <pre><code># Create bucket with storage class and versioning
+gcloud storage buckets create gs://prod-app-assets-123456 \
+  --project=prod-backend-123456 \
+  --location=ASIA-SOUTHEAST1 \
+  --storage-class=STANDARD \
+  --uniform-bucket-level-access \
+  --public-access-prevention \
+  --versioning
+
+# Set lifecycle policy (via JSON file)
+gcloud storage buckets update gs://prod-app-assets-123456 \
+  --lifecycle-file=lifecycle.json
+
+# lifecycle.json
+{
+  "lifecycle": {
+    "rule": [
+      {
+        "action": { "type": "SetStorageClass", "storageClass": "NEARLINE" },
+        "condition": { "age": 30 }
+      },
+      {
+        "action": { "type": "SetStorageClass", "storageClass": "COLDLINE" },
+        "condition": { "age": 90 }
+      },
+      {
+        "action": { "type": "SetStorageClass", "storageClass": "ARCHIVE" },
+        "condition": { "age": 365 }
+      },
+      {
+        "action": { "type": "Delete" },
+        "condition": { "age": 2555, "isLive": false }
+      }
+    ]
+  }
+}
+
+# Grant service account access (IAM — not ACL, which is legacy)
+gcloud storage buckets add-iam-policy-binding gs://prod-app-assets-123456 \
+  --member="serviceAccount:prod-app-gsa@prod-backend-123456.iam.gserviceaccount.com" \
+  --role="roles/storage.objectViewer"
+
+# Generate signed URL (1-hour expiry) using service account key
+gcloud storage sign-url gs://prod-app-assets-123456/reports/q4-2025.pdf \
+  --private-key-file=sa-key.json \
+  --duration=1h \
+  --method=GET
+
+# Enable object versioning
+gcloud storage buckets update gs://prod-app-assets-123456 --versioning</code></pre>
+
+          <h3>Cloud SQL</h3>
+          <pre><code># Create Cloud SQL PostgreSQL instance
+gcloud sql instances create prod-db \
+  --project=prod-backend-123456 \
+  --database-version=POSTGRES_15 \
+  --region=asia-southeast1 \
+  --tier=db-custom-4-16384 \
+  --storage-type=SSD \
+  --storage-size=100GB \
+  --storage-auto-increase \
+  --availability-type=REGIONAL \
+  --backup-start-time=02:00 \
+  --retained-backups-count=14 \
+  --retained-transaction-log-days=7 \
+  --database-flags=log_min_duration_statement=1000,log_connections=on \
+  --no-assign-ip \
+  --network=projects/infra-networking/global/networks/prod-vpc \
+  --maintenance-window-day=SUN \
+  --maintenance-window-hour=4 \
+  --maintenance-release-channel=production \
+  --deletion-protection
+
+# Create read replica in another region (cross-region)
+gcloud sql instances create prod-db-replica-us \
+  --project=prod-backend-123456 \
+  --master-instance-name=prod-db \
+  --replica-type=READ \
+  --region=us-central1 \
+  --availability-type=ZONAL
+
+# Create database and user
+gcloud sql databases create appdb --instance=prod-db --project=prod-backend-123456
+
+gcloud sql users create appuser \
+  --instance=prod-db \
+  --password="$(openssl rand -base64 32)" \
+  --project=prod-backend-123456
+
+# Connect via Cloud SQL Auth Proxy (recommended — IAM auth, no firewall rules)
+# Download the proxy binary
+curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.9.0/cloud-sql-proxy.linux.amd64
+chmod +x cloud-sql-proxy
+
+# Start proxy
+./cloud-sql-proxy prod-backend-123456:asia-southeast1:prod-db \
+  --port=5432 \
+  --credentials-file=/path/to/sa-key.json &
+
+# Kubernetes sidecar pattern for Cloud SQL Proxy
+# containers:
+# - name: cloud-sql-proxy
+#   image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.9
+#   args:
+#     - "--structured-logs"
+#     - "--port=5432"
+#     - "prod-backend-123456:asia-southeast1:prod-db"
+#   securityContext:
+#     runAsNonRoot: true
+#   resources:
+#     requests:
+#       memory: "64Mi"
+#       cpu: "100m"</code></pre>
+
+          <h3>Cloud Spanner, Firestore, and Bigtable</h3>
+          <div class="concept-card">
+            <h4>Cloud Spanner</h4>
+            <p>Globally distributed, horizontally scalable relational database with external consistency. Best for applications that need SQL semantics at global scale — financial systems, global inventory, gaming leaderboards. Starts at 1 node ($0.90/hour); use multi-region config for global HA.</p>
+            <pre><code>gcloud spanner instances create prod-spanner \
+  --config=regional-asia-southeast1 \
+  --description="Production Spanner" \
+  --nodes=3 \
+  --project=prod-backend-123456</code></pre>
+          </div>
+
+          <div class="concept-card">
+            <h4>Firestore</h4>
+            <p>Fully managed, serverless NoSQL document database. Ideal for mobile/web apps, user profiles, session data. Native mode supports real-time updates and offline sync. Auto-scales to millions of concurrent users with no operational overhead.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Bigtable</h4>
+            <p>Petabyte-scale, wide-column NoSQL database with single-digit millisecond latency. Use for IoT time series, analytics, financial data, ad tech. Minimum 1 node per cluster; add nodes for linear throughput scaling (~10,000 QPS per node).</p>
+            <pre><code>gcloud bigtable instances create prod-bigtable \
+  --display-name="Production Bigtable" \
+  --cluster=prod-bigtable-c1 \
+  --cluster-zone=asia-southeast1-a \
+  --cluster-num-nodes=3 \
+  --cluster-storage-type=SSD \
+  --project=prod-backend-123456</code></pre>
+          </div>
+
+          <!-- ==================== SECURITY ==================== -->
+          <h2>Security</h2>
+
+          <h3>GCP IAM — Service Accounts and Workload Identity Federation</h3>
+          <pre><code># Create service account with minimal permissions
+gcloud iam service-accounts create prod-app-sa \
+  --display-name="Production Application SA" \
+  --description="Used by prod app to access Cloud Storage and Pub/Sub" \
+  --project=prod-backend-123456
+
+# Grant fine-grained IAM role at resource level
+gcloud storage buckets add-iam-policy-binding gs://prod-app-assets-123456 \
+  --member="serviceAccount:prod-app-sa@prod-backend-123456.iam.gserviceaccount.com" \
+  --role="roles/storage.objectCreator"
+
+# Custom IAM role with minimal permissions
+gcloud iam roles create appRole \
+  --project=prod-backend-123456 \
+  --title="Application Role" \
+  --description="Custom role for prod app" \
+  --permissions="storage.objects.get,storage.objects.list,pubsub.topics.publish,secretmanager.versions.access"
+
+# Workload Identity Federation (keyless auth for GitHub Actions / CI)
+gcloud iam workload-identity-pools create github-pool \
+  --location=global \
+  --display-name="GitHub Actions Pool" \
+  --project=prod-backend-123456
+
+gcloud iam workload-identity-pools providers create-oidc github-provider \
+  --location=global \
+  --workload-identity-pool=github-pool \
+  --display-name="GitHub OIDC Provider" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.actor=assertion.actor" \
+  --issuer-uri="https://token.actions.githubusercontent.com" \
+  --project=prod-backend-123456
+
+# Allow GitHub repo to impersonate service account
+gcloud iam service-accounts add-iam-policy-binding ci-deploy-sa@prod-backend-123456.iam.gserviceaccount.com \
+  --role=roles/iam.workloadIdentityUser \
+  --member="principalSet://iam.googleapis.com/projects/123456789012/locations/global/workloadIdentityPools/github-pool/attribute.repository/myorg/myrepo" \
+  --project=prod-backend-123456</code></pre>
+
+          <h3>Cloud KMS</h3>
+          <pre><code># Create key ring and crypto key
+gcloud kms keyrings create prod-keyring \
+  --location=asia-southeast1 \
+  --project=prod-backend-123456
+
+gcloud kms keys create app-encryption-key \
+  --keyring=prod-keyring \
+  --location=asia-southeast1 \
+  --purpose=encryption \
+  --default-algorithm=GOOGLE_SYMMETRIC_ENCRYPTION \
+  --rotation-period=7776000s \
+  --next-rotation-time=$(date -d "+90 days" --iso-8601=seconds) \
+  --project=prod-backend-123456
+
+# Grant service account permission to use the key
+gcloud kms keys add-iam-policy-binding app-encryption-key \
+  --keyring=prod-keyring \
+  --location=asia-southeast1 \
+  --member="serviceAccount:prod-app-sa@prod-backend-123456.iam.gserviceaccount.com" \
+  --role=roles/cloudkms.cryptoKeyEncrypterDecrypter \
+  --project=prod-backend-123456
+
+# Encrypt data using KMS (envelope encryption pattern)
+gcloud kms encrypt \
+  --key=app-encryption-key \
+  --keyring=prod-keyring \
+  --location=asia-southeast1 \
+  --plaintext-file=plaintext.txt \
+  --ciphertext-file=ciphertext.enc \
+  --project=prod-backend-123456
+
+# Decrypt
+gcloud kms decrypt \
+  --key=app-encryption-key \
+  --keyring=prod-keyring \
+  --location=asia-southeast1 \
+  --ciphertext-file=ciphertext.enc \
+  --plaintext-file=decrypted.txt \
+  --project=prod-backend-123456</code></pre>
+
+          <h3>Secret Manager</h3>
+          <pre><code># Create a secret
+gcloud secrets create prod-db-password \
+  --replication-policy=user-managed \
+  --locations=asia-southeast1 \
+  --labels="environment=prod,managed-by=terraform" \
+  --project=prod-backend-123456
+
+# Add a secret version
+echo -n "MySecureP@ssw0rd123" | \
+  gcloud secrets versions add prod-db-password --data-file=- \
+  --project=prod-backend-123456
+
+# Access the latest version
+gcloud secrets versions access latest \
+  --secret=prod-db-password \
+  --project=prod-backend-123456
+
+# Grant access to service account
+gcloud secrets add-iam-policy-binding prod-db-password \
+  --member="serviceAccount:prod-app-sa@prod-backend-123456.iam.gserviceaccount.com" \
+  --role="roles/secretmanager.secretAccessor" \
+  --project=prod-backend-123456
+
+# Enable automatic rotation with a Cloud Function
+gcloud secrets update prod-db-password \
+  --next-rotation-time=$(date -d "+30 days" --iso-8601=seconds) \
+  --rotation-period=2592000s \
+  --topics=projects/prod-backend-123456/topics/secret-rotation \
+  --project=prod-backend-123456
+
+# Python access pattern in application code
+from google.cloud import secretmanager
+
+def get_secret(secret_id: str, project_id: str, version: str = "latest") -> str:
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version}"
+    response = client.access_secret_version(request={"name": name})
+    return response.payload.data.decode("UTF-8")</code></pre>
+
+          <h3>Security Command Center, Cloud Armor, VPC Service Controls</h3>
+          <pre><code># Enable Security Command Center
+gcloud services enable securitycenter.googleapis.com \
+  --project=prod-backend-123456
+
+# Create Cloud Armor security policy (WAF)
+gcloud compute security-policies create prod-waf-policy \
+  --description="Production WAF policy" \
+  --project=prod-backend-123456
+
+# Enable OWASP Top 10 pre-configured rules
+gcloud compute security-policies rules create 1000 \
+  --security-policy=prod-waf-policy \
+  --expression="evaluatePreconfiguredWaf('sqli-v33-stable', {'sensitivity': 1})" \
+  --action=deny-403 \
+  --project=prod-backend-123456
+
+gcloud compute security-policies rules create 1001 \
+  --security-policy=prod-waf-policy \
+  --expression="evaluatePreconfiguredWaf('xss-v33-stable', {'sensitivity': 1})" \
+  --action=deny-403 \
+  --project=prod-backend-123456
+
+# Rate limiting rule
+gcloud compute security-policies rules create 2000 \
+  --security-policy=prod-waf-policy \
+  --expression="true" \
+  --action=throttle \
+  --rate-limit-threshold-count=1000 \
+  --rate-limit-threshold-interval-sec=60 \
+  --conform-action=allow \
+  --exceed-action=deny-429 \
+  --enforce-on-key=IP \
+  --project=prod-backend-123456
+
+# Attach WAF to backend service
+gcloud compute backend-services update prod-backend \
+  --security-policy=prod-waf-policy \
+  --global --project=prod-backend-123456
+
+# VPC Service Controls — create perimeter to restrict API access
+gcloud access-context-manager perimeters create prod-perimeter \
+  --title="Production Security Perimeter" \
+  --resources="projects/123456789012" \
+  --restricted-services="storage.googleapis.com,bigquery.googleapis.com,sqladmin.googleapis.com" \
+  --policy=accessPolicies/POLICY_ID</code></pre>
+
+          <!-- ==================== MONITORING ==================== -->
+          <h2>Monitoring and Observability</h2>
+
+          <h3>Cloud Monitoring — Alerting Policies</h3>
+          <pre><code># Create alerting policy via YAML
+gcloud monitoring policies create --policy-from-file=alert-policy.yaml \
+  --project=prod-backend-123456
+
+# alert-policy.yaml
+displayName: "High CPU Utilization - Compute Engine"
+combiner: OR
+conditions:
+  - displayName: "CPU > 80% for 5 minutes"
+    conditionThreshold:
+      filter: >
+        resource.type = "gce_instance"
+        AND metric.type = "compute.googleapis.com/instance/cpu/utilization"
+      comparison: COMPARISON_GT
+      thresholdValue: 0.8
+      duration: 300s
+      aggregations:
+        - alignmentPeriod: 60s
+          perSeriesAligner: ALIGN_MEAN
+          crossSeriesReducer: REDUCE_MEAN
+          groupByFields:
+            - resource.labels.instance_id
+notification_channels:
+  - projects/prod-backend-123456/notificationChannels/CHANNEL_ID
+alertStrategy:
+  autoClose: 3600s
+
+# Create notification channel (email)
+gcloud monitoring channels create \
+  --channel-content-from-file=notification-channel.yaml \
+  --project=prod-backend-123456
+
+# notification-channel.yaml
+type: email
+displayName: "Prod Alerts - Platform Team"
+labels:
+  email_address: platform-alerts@example.com
+enabled: true
+
+# Create uptime check
+gcloud monitoring uptime create prod-api-check \
+  --display-name="Production API Health Check" \
+  --resource-type=uptime_url \
+  --hostname=api.example.com \
+  --path=/health \
+  --use-ssl \
+  --port=443 \
+  --check-interval=60 \
+  --project=prod-backend-123456</code></pre>
+
+          <h3>Cloud Logging</h3>
+          <pre><code># Create log sink to BigQuery for analytics
+gcloud logging sinks create prod-bq-sink \
+  bigquery.googleapis.com/projects/prod-backend-123456/datasets/prod_logs \
+  --log-filter='severity >= WARNING' \
+  --project=prod-backend-123456
+
+# Create log sink to Cloud Storage for long-term retention
+gcloud logging sinks create prod-archive-sink \
+  storage.googleapis.com/prod-log-archive-123456 \
+  --log-filter='logName =~ "projects/prod-backend-123456/logs/.*"' \
+  --project=prod-backend-123456
+
+# Create log-based metric for error rate
+gcloud logging metrics create error-rate-metric \
+  --description="Count of ERROR log entries" \
+  --log-filter='severity = ERROR AND resource.type = "k8s_container"' \
+  --project=prod-backend-123456
+
+# Query logs with gcloud (equivalent to Log Explorer)
+gcloud logging read \
+  'resource.type="k8s_container" AND severity>=ERROR' \
+  --limit=50 \
+  --order=desc \
+  --freshness=1h \
+  --format=json \
+  --project=prod-backend-123456</code></pre>
+
+          <div class="success-box">
+            <strong>Cloud Trace and Profiler:</strong> Enable Cloud Trace by adding the Cloud Trace client library (<code>google-cloud-trace</code>) to your application. Cloud Profiler is enabled by adding the Profiler agent to your container image — it collects CPU and heap profiles with near-zero overhead, helping identify performance bottlenecks in production.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

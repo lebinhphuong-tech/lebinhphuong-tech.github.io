@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevSecOps | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Security</a></li>
+        <li class="breadcrumb-item active">DevSecOps</li>
+      </ol>
+    </nav>
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-shield-lock me-2"></i>Security</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="iam.html">IAM &amp; Access Control</a>
+            <a class="nav-link active" href="devsecops.html">DevSecOps</a>
+            <a class="nav-link" href="secrets.html">Secrets Management</a>
+            <a class="nav-link" href="compliance.html">Compliance &amp; Audit</a>
+          </nav>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="content">
+
+          <h1><i class="bi bi-code-slash me-2"></i>DevSecOps</h1>
+
+          <div class="alert-info">
+            <strong><i class="bi bi-info-circle me-2"></i>DevSecOps Philosophy:</strong>
+            DevSecOps integrates security practices into the DevOps workflow, making security a shared responsibility throughout the entire IT lifecycle. The goal is to bridge the gap between development, security, and operations — automating security checks so they run at the speed of CI/CD pipelines without slowing teams down.
+          </div>
+
+          <h2>Shift-Left Security</h2>
+          <p>
+            Shift-left means moving security testing and validation earlier in the Software Development Lifecycle (SDLC). Vulnerabilities found at the code stage cost ~$80 to fix; the same vulnerability found in production can cost $7,600 or more (NIST data). The earlier you catch it, the cheaper and faster the fix.
+          </p>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead><tr><th>SDLC Stage</th><th>Security Gate</th><th>Tools</th><th>Who Owns It</th></tr></thead>
+              <tbody>
+                <tr><td>Plan</td><td>Threat modeling, security requirements</td><td>OWASP Threat Dragon, JIRA security fields</td><td>Security + Dev</td></tr>
+                <tr><td>Code</td><td>IDE linting, pre-commit hooks, peer review</td><td>SonarLint, Semgrep, git-secrets</td><td>Developer</td></tr>
+                <tr><td>Build</td><td>SAST, dependency scan, secret detection</td><td>Semgrep, Snyk, Gitleaks, Trivy</td><td>CI Pipeline</td></tr>
+                <tr><td>Test</td><td>DAST, IAST, fuzz testing</td><td>OWASP ZAP, Burp Suite, AFL++</td><td>QA + Security</td></tr>
+                <tr><td>Deploy</td><td>IaC scan, policy enforcement, image signing</td><td>Checkov, OPA/Kyverno, Cosign</td><td>Platform + CI</td></tr>
+                <tr><td>Operate</td><td>Runtime detection, CSPM, vulnerability mgmt</td><td>Falco, Wiz, Qualys, AWS Inspector</td><td>Platform + SecOps</td></tr>
+                <tr><td>Monitor</td><td>SIEM, threat hunting, anomaly detection</td><td>Splunk, Chronicle, Datadog, GuardDuty</td><td>SecOps</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>SAST — Static Application Security Testing</h2>
+          <p>SAST analyzes source code, bytecode, or binaries for security vulnerabilities without executing the code. It catches issues like SQL injection, hardcoded secrets, insecure deserialization, and buffer overflows at the code level.</p>
+
+          <h3>Key SAST Tools</h3>
+          <ul>
+            <li><strong>Semgrep:</strong> Fast, customizable static analysis supporting 30+ languages. Write custom rules in YAML. Free tier covers most use cases.</li>
+            <li><strong>SonarQube/SonarCloud:</strong> Comprehensive code quality and security platform. Tracks code coverage, complexity, and security hotspots over time.</li>
+            <li><strong>Bandit:</strong> Python-specific SAST tool that checks for common security issues in Python code.</li>
+            <li><strong>gosec:</strong> Go-specific security scanner that inspects source code for security problems.</li>
+            <li><strong>CodeQL:</strong> GitHub's semantic code analysis engine — powerful for detecting complex vulnerability patterns.</li>
+          </ul>
+
+          <h3>Semgrep in GitHub Actions</h3>
+<pre><code>name: SAST - Semgrep
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Semgrep SAST
+        run: |
+          semgrep ci \
+            --config=p/security-audit \
+            --config=p/owasp-top-ten \
+            --config=p/secrets \
+            --sarif \
+            --output=semgrep-results.sarif
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: semgrep-results.sarif
+
+      - name: Fail on high severity findings
+        run: |
+          semgrep ci \
+            --config=p/security-audit \
+            --severity ERROR \
+            --error
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}</code></pre>
+
+          <h3>Bandit for Python</h3>
+<pre><code># Run Bandit locally
+pip install bandit
+bandit -r ./src -ll -ii -f json -o bandit-report.json
+
+# GitHub Actions integration
+- name: Run Bandit (Python SAST)
+  run: |
+    pip install bandit
+    bandit -r ./src \
+      --level HIGH \
+      --confidence HIGH \
+      --format json \
+      --output bandit-report.json || true
+
+- name: Check Bandit results
+  run: |
+    HIGH_ISSUES=$(jq '.results | map(select(.issue_severity == "HIGH")) | length' bandit-report.json)
+    if [ "$HIGH_ISSUES" -gt 0 ]; then
+      echo "Found $HIGH_ISSUES HIGH severity issues"
+      jq '.results[] | select(.issue_severity == "HIGH")' bandit-report.json
+      exit 1
+    fi</code></pre>
+
+          <h2>DAST — Dynamic Application Security Testing</h2>
+          <p>DAST tests running applications from the outside, simulating an attacker. It finds vulnerabilities that only manifest at runtime: XSS, CSRF, authentication flaws, insecure headers, injection vulnerabilities reachable through the API surface.</p>
+
+          <h3>OWASP ZAP in CI/CD</h3>
+<pre><code>name: DAST - OWASP ZAP Scan
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Nightly
+  workflow_dispatch:
+
+jobs:
+  zap-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to staging
+        run: echo "Deploy step here"
+
+      - name: Run OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.11.0
+        with:
+          target: 'https://staging.myapp.example.com'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a -j -l WARN'
+
+      - name: Run OWASP ZAP Full Scan (for scheduled runs)
+        if: github.event_name == 'schedule'
+        uses: zaproxy/action-full-scan@v0.9.0
+        with:
+          target: 'https://staging.myapp.example.com'
+          cmd_options: '-a -j'
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-scan-report
+          path: report_html.html</code></pre>
+
+          <h2>Container Security</h2>
+
+          <h3>Trivy Container Scanning in CI</h3>
+<pre><code>name: Container Security - Trivy
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t myapp:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'myapp:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+
+      - name: Upload Trivy SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Scan filesystem for misconfigurations
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          scanners: 'misconfig,secret'</code></pre>
+
+          <h3>Dockerfile Security Best Practices</h3>
+<pre><code># GOOD: Secure Dockerfile example
+FROM python:3.12-slim AS builder
+WORKDIR /app
+
+# Install dependencies as root in builder stage
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Final stage: minimal runtime image
+FROM gcr.io/distroless/python3-debian12
+
+# Copy only what's needed
+COPY --from=builder /root/.local /root/.local
+COPY --from=builder /app /app
+COPY src/ /app/src/
+
+# Run as non-root user
+USER nonroot:nonroot
+
+# No secrets in ENV, ARGs, or COPY
+# Use runtime secret injection instead
+
+# Read-only filesystem hints
+VOLUME ["/tmp"]
+
+WORKDIR /app
+EXPOSE 8080
+ENTRYPOINT ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
+
+# --- AVOID ---
+# FROM ubuntu:latest          # Too large, outdated
+# RUN apt-get install ...     # Without pinning versions
+# COPY . .                    # Copies everything including .git, secrets
+# ENV SECRET_KEY=abc123       # Never hardcode secrets
+# USER root                   # Don't run as root in production
+# RUN pip install -r req.txt  # Without --no-cache-dir</code></pre>
+
+          <h3>Image Signing with Cosign</h3>
+<pre><code># Generate a key pair for signing (or use keyless with OIDC)
+cosign generate-key-pair
+
+# Sign an image after building and pushing
+cosign sign \
+  --key cosign.key \
+  myregistry.io/myapp:v1.2.3@sha256:abc123...
+
+# Keyless signing using GitHub Actions OIDC (Sigstore)
+- name: Sign container image (keyless)
+  run: |
+    cosign sign \
+      --yes \
+      --rekor-url=https://rekor.sigstore.dev \
+      ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.push.outputs.digest }}
+  env:
+    COSIGN_EXPERIMENTAL: 1
+
+# Verify image signature before deployment
+cosign verify \
+  --key cosign.pub \
+  myregistry.io/myapp:v1.2.3
+
+# Kyverno policy to enforce signed images
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-signed-images
+spec:
+  validationFailureAction: Enforce
+  rules:
+    - name: check-image-signature
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+      verifyImages:
+        - imageReferences:
+            - "myregistry.io/*"
+          attestors:
+            - count: 1
+              entries:
+                - keys:
+                    publicKeys: |-
+                      -----BEGIN PUBLIC KEY-----
+                      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...
+                      -----END PUBLIC KEY-----</code></pre>
+
+          <h2>Software Supply Chain Security</h2>
+
+          <h3>SBOM Generation with Syft and Grype</h3>
+<pre><code># Generate SBOM in SPDX format using Syft
+syft myapp:latest -o spdx-json=sbom.spdx.json
+
+# Generate SBOM in CycloneDX format
+syft myapp:latest -o cyclonedx-json=sbom.cyclonedx.json
+
+# Scan SBOM for vulnerabilities with Grype
+grype sbom:./sbom.spdx.json --fail-on high
+
+# GitHub Actions: Generate and attest SBOM
+- name: Generate SBOM
+  uses: anchore/sbom-action@v0
+  with:
+    image: myregistry.io/myapp:${{ github.sha }}
+    format: spdx-json
+    output-file: sbom.spdx.json
+
+- name: Scan SBOM for vulnerabilities
+  uses: anchore/scan-action@v3
+  with:
+    sbom: sbom.spdx.json
+    fail-build: true
+    severity-cutoff: high
+
+- name: Attach SBOM as release artifact
+  uses: actions/upload-artifact@v4
+  with:
+    name: sbom
+    path: sbom.spdx.json</code></pre>
+
+          <h3>Dependency Scanning with Snyk</h3>
+<pre><code>- name: Snyk dependency scan
+  uses: snyk/actions/python@master
+  env:
+    SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  with:
+    command: test
+    args: --severity-threshold=high --fail-on=all
+
+# npm audit for Node.js projects
+- name: npm audit
+  run: |
+    npm audit --audit-level=high --json | tee npm-audit.json
+    CRITICAL=$(jq '.metadata.vulnerabilities.critical' npm-audit.json)
+    HIGH=$(jq '.metadata.vulnerabilities.high' npm-audit.json)
+    if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
+      echo "Found $CRITICAL critical and $HIGH high vulnerabilities"
+      exit 1
+    fi</code></pre>
+
+          <h2>Infrastructure as Code Security Scanning</h2>
+
+          <h3>Checkov for Terraform</h3>
+<pre><code># Run Checkov on Terraform code
+pip install checkov
+checkov -d ./terraform \
+  --framework terraform \
+  --output sarif \
+  --output-file checkov-results.sarif \
+  --soft-fail-on LOW,MEDIUM
+
+# GitHub Actions
+- name: Checkov IaC Scan
+  uses: bridgecrewio/checkov-action@v12
+  with:
+    directory: terraform/
+    framework: terraform
+    output_format: sarif
+    output_file_path: reports/results.sarif
+    soft_fail_on: LOW,MEDIUM
+    hard_fail_on: HIGH,CRITICAL
+
+- name: Upload Checkov SARIF
+  uses: github/codeql-action/upload-sarif@v3
+  with:
+    sarif_file: reports/results.sarif</code></pre>
+
+          <h3>tfsec for Terraform</h3>
+<pre><code># Install and run tfsec
+brew install tfsec
+tfsec ./terraform \
+  --format sarif \
+  --out tfsec-report.sarif \
+  --minimum-severity HIGH
+
+# Custom tfsec configuration (.tfsec/config.yml)
+exclude:
+  - AVD-AWS-0089  # CloudTrail encryption (handled by org policy)
+minimum_severity: HIGH
+include_passed: false</code></pre>
+
+          <h3>kube-score for Kubernetes Manifests</h3>
+<pre><code># Install kube-score
+brew install kube-score
+
+# Score all manifests
+kube-score score ./k8s/**/*.yaml \
+  --output-format ci \
+  --ignore-test container-security-context-readonlyrootfilesystem
+
+# In CI pipeline
+- name: kube-score
+  run: |
+    curl -L https://github.com/zegl/kube-score/releases/latest/download/kube-score_linux_amd64 -o kube-score
+    chmod +x kube-score
+    find ./k8s -name "*.yaml" | xargs ./kube-score score \
+      --output-format ci \
+      --exit-one-on-warning</code></pre>
+
+          <h3>Pre-commit Hooks for IaC</h3>
+<pre><code># .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.92.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_tflint
+      - id: terraform_checkov
+        args:
+          - --args=--config-file .checkov.yaml
+      - id: terraform_tfsec
+        args:
+          - --args=--minimum-severity HIGH
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: detect-private-key
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace</code></pre>
+
+          <h2>Policy as Code</h2>
+
+          <h3>OPA (Open Policy Agent) for Kubernetes Admission</h3>
+<pre><code># Rego policy: Require non-root containers
+package kubernetes.admission
+
+import future.keywords.in
+
+deny[msg] {
+    input.request.kind.kind == "Pod"
+    container := input.request.object.spec.containers[_]
+    not container.securityContext.runAsNonRoot
+    msg := sprintf("Container '%v' must run as non-root", [container.name])
+}
+
+deny[msg] {
+    input.request.kind.kind == "Pod"
+    container := input.request.object.spec.containers[_]
+    container.securityContext.runAsUser == 0
+    msg := sprintf("Container '%v' cannot run as root (UID 0)", [container.name])
+}
+
+# Rego policy: Require resource limits
+deny[msg] {
+    input.request.kind.kind == "Pod"
+    container := input.request.object.spec.containers[_]
+    not container.resources.limits.memory
+    msg := sprintf("Container '%v' must have memory limits defined", [container.name])
+}
+
+deny[msg] {
+    input.request.kind.kind == "Pod"
+    container := input.request.object.spec.containers[_]
+    not container.resources.limits.cpu
+    msg := sprintf("Container '%v' must have CPU limits defined", [container.name])
+}</code></pre>
+
+          <h3>Kyverno ClusterPolicy Examples</h3>
+<pre><code># Kyverno: Disallow privileged containers
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-privileged-containers
+  annotations:
+    policies.kyverno.io/title: Disallow Privileged Containers
+    policies.kyverno.io/severity: high
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: privileged-containers
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+      validate:
+        message: "Privileged mode is disallowed."
+        pattern:
+          spec:
+            =(initContainers):
+              - =(securityContext):
+                  =(privileged): "false"
+            containers:
+              - =(securityContext):
+                  =(privileged): "false"
+---
+# Kyverno: Require specific labels on all Pods
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-pod-labels
+spec:
+  validationFailureAction: Enforce
+  rules:
+    - name: check-team-label
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+      validate:
+        message: "Pod must have label 'app.kubernetes.io/name' and 'team'"
+        pattern:
+          metadata:
+            labels:
+              app.kubernetes.io/name: "?*"
+              team: "?*"</code></pre>
+
+          <h2>Secret Scanning</h2>
+
+          <h3>Gitleaks Pre-commit Hook</h3>
+<pre><code># .pre-commit-config.yaml (add to existing config)
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks
+        name: Detect hardcoded secrets
+        language: golang
+        entry: gitleaks protect --verbose --redact --staged
+
+# .gitleaks.toml configuration
+[extend]
+useDefault = true
+
+[[rules]]
+id = "custom-api-key"
+description = "Custom API Key pattern"
+regex = '''(?i)(api[_-]?key|apikey)\s*[=:]\s*['"]?([a-zA-Z0-9]{32,64})['"]?'''
+tags = ["secret", "api-key"]
+
+[allowlist]
+commits = ["abcdef1234567890"]  # Known false positive commits
+paths = [".gitleaks.toml", "tests/fixtures/"]
+regexes = ['''EXAMPLE_KEY''', '''PLACEHOLDER''']</code></pre>
+
+          <h3>detect-secrets</h3>
+<pre><code># Install and create baseline
+pip install detect-secrets
+detect-secrets scan > .secrets.baseline
+
+# Add to pre-commit
+repos:
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: package.lock.json
+
+# Audit the baseline (mark false positives)
+detect-secrets audit .secrets.baseline</code></pre>
+
+          <h2>Complete DevSecOps Pipeline</h2>
+
+<pre><code>name: DevSecOps Pipeline
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+  id-token: write  # For OIDC
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ── GATE 1: Secret Scanning ──────────────────────────────────────
+  secret-scan:
+    name: Secret Detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for Gitleaks
+
+      - name: Gitleaks secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── GATE 2: SAST ─────────────────────────────────────────────────
+  sast:
+    name: Static Analysis (SAST)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Semgrep SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/owasp-top-ten
+            p/secrets
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+  # ── GATE 3: Dependency Scanning ──────────────────────────────────
+  dependency-scan:
+    name: Dependency Vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Snyk dependency scan
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+  # ── GATE 4: IaC Scanning ─────────────────────────────────────────
+  iac-scan:
+    name: Infrastructure as Code Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkov IaC scan
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: terraform/
+          framework: terraform,kubernetes,dockerfile
+          soft_fail_on: LOW,MEDIUM
+          hard_fail_on: HIGH,CRITICAL
+
+  # ── GATE 5: Build &amp; Container Scan ───────────────────────────────
+  build-and-scan:
+    name: Build Image &amp; Scan
+    runs-on: ubuntu-latest
+    needs: [secret-scan, sast, dependency-scan]
+    outputs:
+      image-digest: ${{ steps.push.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        id: push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Trivy container scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          exit-code: 1
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: spdx-json
+          output-file: sbom.spdx.json
+
+      - name: Sign image with Cosign
+        run: |
+          cosign sign --yes \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.push.outputs.digest }}
+        env:
+          COSIGN_EXPERIMENTAL: 1
+
+  # ── GATE 6: Policy Check ─────────────────────────────────────────
+  policy-check:
+    name: Policy as Code (OPA/Conftest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Conftest policy check
+        run: |
+          wget https://github.com/open-policy-agent/conftest/releases/latest/download/conftest_Linux_x86_64.tar.gz
+          tar xzf conftest_Linux_x86_64.tar.gz
+          ./conftest test ./k8s/ --policy ./policy/</code></pre>
+
+          <div class="success-box">
+            <strong><i class="bi bi-check-circle me-2"></i>Security Gates to Enforce in Every Pipeline:</strong>
+            <ul class="mb-0">
+              <li><strong>Gate 1 — Secret Detection:</strong> Block any commit containing hardcoded credentials, API keys, or private keys (Gitleaks, detect-secrets)</li>
+              <li><strong>Gate 2 — SAST:</strong> Block on HIGH/CRITICAL static analysis findings (Semgrep, SonarQube)</li>
+              <li><strong>Gate 3 — Dependency CVEs:</strong> Block on HIGH/CRITICAL known CVEs in dependencies (Snyk, pip-audit, npm audit)</li>
+              <li><strong>Gate 4 — IaC Misconfigurations:</strong> Block on HIGH/CRITICAL IaC issues (Checkov, tfsec, kube-score)</li>
+              <li><strong>Gate 5 — Container Vulnerabilities:</strong> Block on CRITICAL CVEs in base images/layers (Trivy)</li>
+              <li><strong>Gate 6 — Policy Compliance:</strong> Block deployments that violate org security policies (OPA/Kyverno)</li>
+              <li><strong>Gate 7 — Image Signing:</strong> Only deploy images with valid signatures (Cosign verification in admission controller)</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

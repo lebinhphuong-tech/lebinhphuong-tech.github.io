@@ -3,476 +3,286 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SSL/TLS Cheatsheet | Quick Reference</title>
-
+  <title>SSL/TLS &amp; OpenSSL Cheatsheet | Lê Bình Phương</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-
   <style>
-    :root {
-      --primary-color: #149ddd;
-      --secondary-color: #173b6c;
-      --text-color: #272829;
-      --bg-light: #f5f8fd;
-      --code-bg: #282c34;
-      --code-text: #abb2bf;
-    }
-
-    body {
-      font-family: 'Open Sans', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-color);
-      line-height: 1.8;
-    }
-
-    .content {
-      background: white;
-      border-radius: 12px;
-      padding: 3rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      color: var(--secondary-color);
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
-
-    h2 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-top: 2.5rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--bg-light);
-    }
-
-    h3 {
-      color: var(--secondary-color);
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
-    }
-
-    code {
-      background: #f8f9fa;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      color: #e83e8c;
-    }
-
-    pre {
-      background: var(--code-bg);
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 1.5rem;
-      overflow-x: auto;
-      margin: 1rem 0;
-    }
-
-    pre code {
-      background: none;
-      padding: 0;
-      color: var(--code-text);
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-    }
-
-    .navbar {
-      background: white;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb {
-      background: transparent;
-      padding: 0;
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb a {
-      color: var(--primary-color);
-      text-decoration: none;
-    }
-    .sidebar {
-      position: sticky;
-      top: 20px;
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      height: fit-content;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h5 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .sidebar .nav-link {
-      color: var(--text-color);
-      padding: 0.5rem 0;
-      border-left: 3px solid transparent;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: block;
-      font-size: 0.9rem;
-    }
-
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active {
-      color: var(--primary-color);
-      border-left-color: var(--primary-color);
-      padding-left: 1rem;
-    }
-    .sidebar {
-      position: sticky;
-      top: 20px;
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      height: fit-content;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h5 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .sidebar .nav-link {
-      color: var(--text-color);
-      padding: 0.5rem 0;
-      border-left: 3px solid transparent;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: block;
-      font-size: 0.9rem;
-    }
-
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active {
-      color: var(--primary-color);
-      border-left-color: var(--primary-color);
-      padding-left: 1rem;
-    }
-
-    .command-section {
-      margin-bottom: 2.5rem;
-    }
-
-    .command-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-
-    .command-card {
-      background: var(--bg-light);
-      border-radius: 8px;
-      padding: 1.5rem;
-      border-left: 4px solid var(--primary-color);
-    }
-
-    .command-card h4 {
-      color: var(--secondary-color);
-      margin-bottom: 1rem;
-      font-size: 1.1rem;
-    }
-
-    .command-item {
-      margin-bottom: 1rem;
-    }
-
-    .command-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .command-syntax {
-      background: white;
-      padding: 0.8rem;
-      border-radius: 6px;
-      border: 1px solid #e9ecef;
-      margin-bottom: 0.5rem;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      color: var(--text-color);
-    }
-
-    .command-desc {
-      color: #666;
-      font-size: 0.9rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .cert-example {
-      background: var(--bg-light);
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-      border-left: 4px solid #28a745;
-    }
-
-    .cert-example h4 {
-      color: #155724;
-      margin-bottom: 1rem;
-    }
-
-    .security-note {
-      background: #fff3cd;
-      border-left: 4px solid #ffc107;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
-
-    .security-note h5 {
-      color: #856404;
-      margin-bottom: 0.5rem;
-    }
-
-    .tool-badge {
-      background: var(--primary-color);
-      color: white;
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      display: inline-block;
-      margin-bottom: 0.5rem;
-    }
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 0.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); font-size: 1.3rem; }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; font-size: 0.88rem; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 6px; font-size: 0.9rem; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 6px; font-size: 0.9rem; }
+    .ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+    .ref-section { background: var(--bg-light); border-radius: 8px; padding: 1.2rem; border-top: 3px solid var(--primary-color); }
+    .ref-section h3 { color: var(--primary-color); font-size: 1rem; margin-top: 0; margin-bottom: 0.8rem; }
+    .ref-section pre { margin: 0; font-size: 0.82rem; }
   </style>
 </head>
 <body>
-
-  <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container-fluid">
-      <div class="container">
-        <a class="navbar-brand" href="../../index.html">
-          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
-        </a>
-      </div>
-    </div>
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
   </nav>
-
   <div class="container">
-
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
         <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
-        <li class="breadcrumb-item"><a href="index.html">Quick Reference</a></li>
-        <li class="breadcrumb-item active">SSL/TLS</li>
+        <li class="breadcrumb-item active">SSL/TLS Cheatsheet</li>
       </ol>
     </nav>
-
-    <!-- Main Content -->
     <div class="content">
-    <div class="row">
+      <h1><i class="bi bi-lock me-2"></i>SSL/TLS &amp; OpenSSL Cheatsheet</h1>
+      <p class="text-muted">Quick reference for OpenSSL, certificate operations, PKI setup, TLS debugging, format conversions, and cert-manager on Kubernetes.</p>
 
-      <!-- Sidebar -->
-      <div class="col-lg-3">
-        <div class="sidebar">
-          <h5><i class="bi bi-book me-2"></i>SSL/TLS</h5>
-          <nav class="nav flex-column">
-            <a class="nav-link active" href="#key-generation">Key Generation</a>
-            <a class="nav-link" href="#certificate-signing-requests">CSRs</a>
-            <a class="nav-link" href="#self-signed-certificates">Self-Signed</a>
-            <a class="nav-link" href="#certificate-authorities">CAs</a>
-            <a class="nav-link" href="#certificate-conversion">Conversion</a>
-            <a class="nav-link" href="#ssl-testing">Testing</a>
-          </nav>
+      <h2>Quick Reference</h2>
+      <div class="ref-grid">
+
+        <div class="ref-section">
+          <h3>Certificate Inspection</h3>
+          <pre><code># View full certificate
+openssl x509 -in cert.pem -text -noout
+
+# View specific fields
+openssl x509 -in cert.pem -subject -noout
+openssl x509 -in cert.pem -issuer -noout
+openssl x509 -in cert.pem -dates -noout
+openssl x509 -in cert.pem -fingerprint -sha256 -noout
+openssl x509 -in cert.pem -modulus -noout | md5sum
+
+# View SANs (Subject Alternative Names)
+openssl x509 -in cert.pem -text -noout \
+  | grep -A1 "Subject Alternative Name"
+
+# Check expiry
+openssl x509 -in cert.pem -noout -enddate
+# Script: check if expires within 30 days
+openssl x509 -checkend 2592000 -noout -in cert.pem
+echo $?   # 0=valid, 1=expires soon</code></pre>
         </div>
-      </div>
 
-      <!-- Main Content -->
-      <div class="col-lg-9">
-        <div class="content">
-    <div class="row">
+        <div class="ref-section">
+          <h3>Generate Keys &amp; CSR</h3>
+          <pre><code># Generate RSA private key
+openssl genrsa -out server.key 4096
+openssl genrsa -aes256 -out server.key 4096   # With passphrase
 
-      <!-- Sidebar -->
-      <div class="col-lg-3">
-        <div class="sidebar">
-          <h5><i class="bi bi-book me-2"></i>SSL/TLS</h5>
-          <nav class="nav flex-column">
-            <a class="nav-link active" href="#key-generation">Key Generation</a>
-            <a class="nav-link" href="#certificate-signing-requests">CSRs</a>
-            <a class="nav-link" href="#self-signed-certificates">Self-Signed</a>
-            <a class="nav-link" href="#certificate-authorities">CAs</a>
-            <a class="nav-link" href="#certificate-conversion">Conversion</a>
-            <a class="nav-link" href="#ssl-testing">Testing</a>
-          </nav>
+# Generate ECDSA private key
+openssl ecparam -name prime256v1 -genkey -noout -out ec.key
+openssl ecparam -name secp384r1 -genkey -noout -out ec.key
+
+# Generate CSR from existing key
+openssl req -new -key server.key -out server.csr
+
+# Generate key + CSR in one command
+openssl req -newkey rsa:4096 -keyout server.key \
+  -out server.csr -nodes \
+  -subj "/C=VN/ST=Hanoi/L=Hanoi/O=MyCompany/CN=example.com"
+
+# View CSR contents
+openssl req -in server.csr -text -noout
+openssl req -in server.csr -verify
+
+# Self-signed certificate (for testing)
+openssl req -x509 -newkey rsa:4096 -keyout key.pem \
+  -out cert.pem -days 365 -nodes \
+  -subj "/CN=localhost"</code></pre>
         </div>
-      </div>
 
-      <!-- Main Content -->
-      <div class="col-lg-9">
-        <div class="content">
-      <h1><i class="bi bi-shield-lock me-2"></i>SSL/TLS Cheatsheet</h1>
+        <div class="ref-section">
+          <h3>Certificate Operations</h3>
+          <pre><code"># Sign CSR with your CA
+openssl x509 -req -in server.csr \
+  -CA ca.crt -CAkey ca.key \
+  -CAcreateserial -out server.crt \
+  -days 365 -sha256 \
+  -extfile v3.ext        # Include extensions
 
-      <p>
-        SSL/TLS (Secure Sockets Layer/Transport Layer Security) provides encryption and authentication for network communications.
-        This cheatsheet covers certificate generation, management, and common SSL/TLS operations using OpenSSL.
-      </p>
+# Convert PEM to DER
+openssl x509 -in cert.pem -outform DER -out cert.der
 
-      <div class="security-note">
-        <h5><i class="bi bi-exclamation-triangle me-2"></i>Security Best Practices</h5>
-        <ul>
-          <li>Always use strong key sizes (2048-bit minimum, prefer 4096-bit)</li>
-          <li>Use certificate pinning for sensitive communications</li>
-          <li>Keep private keys secure and never share them</li>
-          <li>Regularly rotate certificates before expiration</li>
-          <li>Use Certificate Transparency for public certificates</li>
-          <li>Implement HSTS headers for web applications</li>
-        </ul>
-      </div>
+# Convert DER to PEM
+openssl x509 -in cert.der -inform DER -out cert.pem
 
-      <h2 id="key-generation">Key Generation</h2>
+# Convert PEM to PFX/PKCS12
+openssl pkcs12 -export \
+  -out certificate.pfx \
+  -inkey server.key \
+  -in server.crt \
+  -certfile ca-chain.crt
 
-      <h3>RSA Key Generation</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Private Key Generation</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl genrsa -out private.key 2048</div>
-              <div class="command-desc">Generate 2048-bit RSA private key</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl genrsa -out private.key 4096</div>
-              <div class="command-desc">Generate 4096-bit RSA private key (recommended)</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl genrsa -aes256 -out private.key 2048</div>
-              <div class="command-desc">Generate encrypted private key</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl rsa -in private.key -out unencrypted.key</div>
-              <div class="command-desc">Remove passphrase from private key</div>
-            </div>
-          </div>
+# Extract cert from PFX
+openssl pkcs12 -in certificate.pfx -nokeys -out cert.pem
+openssl pkcs12 -in certificate.pfx -nocerts -nodes -out key.pem
 
-          <div class="command-card">
-            <h4>Public Key Extraction</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl rsa -in private.key -pubout -out public.key</div>
-              <div class="command-desc">Extract public key from private key</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl rsa -in private.key -text -noout</div>
-              <div class="command-desc">View private key details</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl rsa -pubin -in public.key -text -noout</div>
-              <div class="command-desc">View public key details</div>
-            </div>
-          </div>
+# Bundle full chain
+cat server.crt intermediate.crt root.crt &gt; fullchain.pem</code></pre>
         </div>
-      </div>
 
-      <h3>ECDSA Key Generation</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>ECDSA Keys</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl ecparam -genkey -name prime256v1 -out ec-private.key</div>
-              <div class="command-desc">Generate ECDSA private key (P-256 curve)</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl ecparam -genkey -name secp384r1 -out ec-private.key</div>
-              <div class="command-desc">Generate ECDSA private key (P-384 curve)</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl ec -in ec-private.key -pubout -out ec-public.key</div>
-              <div class="command-desc">Extract ECDSA public key</div>
-            </div>
-          </div>
+        <div class="ref-section">
+          <h3>Verify &amp; Test</h3>
+          <pre><code"># Verify cert is signed by CA
+openssl verify -CAfile ca.crt server.crt
+openssl verify -CAfile ca-chain.pem server.crt
 
-          <div class="command-card">
-            <h4>Ed25519 Keys</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl genpkey -algorithm ed25519 -out ed25519-private.key</div>
-              <div class="command-desc">Generate Ed25519 private key</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl pkey -in ed25519-private.key -pubout -out ed25519-public.key</div>
-              <div class="command-desc">Extract Ed25519 public key</div>
-            </div>
-          </div>
+# Verify cert matches private key (same modulus)
+openssl x509 -noout -modulus -in server.crt | md5sum
+openssl rsa -noout -modulus -in server.key | md5sum
+# Both must produce same MD5 hash
+
+# Test TLS connection
+openssl s_client -connect example.com:443
+
+# With SNI (Server Name Indication — required for vhosts)
+openssl s_client -connect example.com:443 \
+  -servername example.com
+
+# Show full chain
+openssl s_client -connect example.com:443 \
+  -servername example.com -showcerts
+
+# Test specific TLS version
+openssl s_client -connect example.com:443 -tls1_2
+openssl s_client -connect example.com:443 -tls1_3</code></pre>
         </div>
-      </div>
 
-      <h2 id="certificate-signing-requests-csr">Certificate Signing Requests (CSR)</h2>
+        <div class="ref-section">
+          <h3>Remote Certificate Checks</h3>
+          <pre><code"># Check expiry of remote cert (one-liner)
+echo | openssl s_client -connect example.com:443 \
+  -servername example.com 2&gt;/dev/null \
+  | openssl x509 -noout -dates
 
-      <h3>CSR Generation</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Basic CSR</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl req -new -key private.key -out certificate.csr</div>
-              <div class="command-desc">Generate CSR from existing private key</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl req -new -newkey rsa:2048 -keyout private.key -out certificate.csr</div>
-              <div class="command-desc">Generate new key and CSR simultaneously</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl req -new -key private.key -out certificate.csr -subj "/C=US/ST=State/L=City/O=Organization/CN=example.com"</div>
-              <div class="command-desc">Generate CSR with predefined subject</div>
-            </div>
-          </div>
+# Get cert chain from server
+openssl s_client -connect example.com:443 \
+  -servername example.com \
+  -showcerts 2&gt;/dev/null | grep -E "BEGIN|END CERT"
 
-          <div class="command-card">
-            <h4>CSR Information</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl req -in certificate.csr -text -noout</div>
-              <div class="command-desc">View CSR contents</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl req -in certificate.csr -noout -subject</div>
-              <div class="command-desc">Show CSR subject only</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl req -in certificate.csr -noout -pubkey</div>
-              <div class="command-desc">Extract public key from CSR</div>
-            </div>
-          </div>
+# Download remote cert to file
+echo | openssl s_client \
+  -connect example.com:443 \
+  -servername example.com 2&gt;/dev/null \
+  | openssl x509 &gt; remote.crt
+
+# Test cipher support
+nmap --script ssl-enum-ciphers -p 443 example.com
+
+# Check OCSP stapling
+openssl s_client -connect example.com:443 \
+  -servername example.com -status 2&gt;/dev/null \
+  | grep -A 10 "OCSP response:"</code></pre>
         </div>
+
+        <div class="ref-section">
+          <h3>STARTTLS &amp; Other Protocols</h3>
+          <pre><code"># SMTP STARTTLS
+openssl s_client -connect smtp.gmail.com:587 \
+  -starttls smtp
+
+# IMAP STARTTLS
+openssl s_client -connect mail.example.com:143 \
+  -starttls imap
+
+# LDAP STARTTLS
+openssl s_client -connect ldap.example.com:389 \
+  -starttls ldap
+
+# Test specific cipher
+openssl s_client -connect example.com:443 \
+  -cipher ECDHE-RSA-AES256-GCM-SHA384
+
+# Check if TLS 1.0/1.1 is disabled (should fail)
+openssl s_client -connect example.com:443 -tls1
+openssl s_client -connect example.com:443 -tls1_1
+
+# curl TLS debug
+curl -v --tls-max 1.2 https://example.com
+curl -v --tlsv1.3 https://example.com</code></pre>
+        </div>
+
       </div>
 
-      <h3>Subject Alternative Names (SAN)</h3>
-      <div class="cert-example">
-        <h4>OpenSSL Configuration for SAN</h4>
-        <pre><code># Create openssl.cnf
-[req]
-distinguished_name = req_distinguished_name
-req_extensions = v3_req
-prompt = no
+      <h2>Complete PKI Setup: Root CA → Intermediate CA → Leaf Cert</h2>
+      <div class="tip-box">
+        <strong>Best Practice:</strong> Keep the Root CA offline (air-gapped). Use the Intermediate CA for day-to-day signing. If the Intermediate CA is compromised, revoke it and create a new one — the Root CA remains trusted.
+      </div>
 
-[req_distinguished_name]
-C = US
-ST = State
-L = City
-O = Organization
-CN = example.com
+      <h3>Step 1 — Create Root CA</h3>
+      <pre><code"># Create directory structure
+mkdir -p pki/{root-ca,intermediate-ca,certs}/{certs,crl,newcerts,private}
+chmod 700 pki/root-ca/private pki/intermediate-ca/private
+touch pki/root-ca/index.txt pki/intermediate-ca/index.txt
+echo 1000 &gt; pki/root-ca/serial
+echo 1000 &gt; pki/intermediate-ca/serial
 
-[v3_req]
-keyUsage = keyEncipherment, dataEncipherment
+# Generate Root CA key (4096-bit RSA, passphrase protected)
+openssl genrsa -aes256 -out pki/root-ca/private/ca.key.pem 4096
+chmod 400 pki/root-ca/private/ca.key.pem
+
+# Create Root CA certificate
+openssl req -config pki/openssl-root.cnf \
+  -key pki/root-ca/private/ca.key.pem \
+  -new -x509 -days 7300 -sha256 \
+  -extensions v3_ca \
+  -out pki/root-ca/certs/ca.cert.pem
+
+# openssl-root.cnf [v3_ca] section:
+# subjectKeyIdentifier = hash
+# authorityKeyIdentifier = keyid:always,issuer
+# basicConstraints = critical, CA:true
+# keyUsage = critical, digitalSignature, cRLSign, keyCertSign</code></pre>
+
+      <h3>Step 2 — Create Intermediate CA</h3>
+      <pre><code"># Generate Intermediate CA key
+openssl genrsa -aes256 \
+  -out pki/intermediate-ca/private/intermediate.key.pem 4096
+chmod 400 pki/intermediate-ca/private/intermediate.key.pem
+
+# Create Intermediate CA CSR
+openssl req -config pki/openssl-intermediate.cnf \
+  -new -sha256 \
+  -key pki/intermediate-ca/private/intermediate.key.pem \
+  -out pki/intermediate-ca/csr/intermediate.csr.pem
+
+# Sign with Root CA
+openssl ca -config pki/openssl-root.cnf \
+  -extensions v3_intermediate_ca \
+  -days 3650 -notext -md sha256 \
+  -in pki/intermediate-ca/csr/intermediate.csr.pem \
+  -out pki/intermediate-ca/certs/intermediate.cert.pem
+
+# Create certificate chain bundle
+cat pki/intermediate-ca/certs/intermediate.cert.pem \
+    pki/root-ca/certs/ca.cert.pem \
+    &gt; pki/intermediate-ca/certs/ca-chain.cert.pem
+
+# [v3_intermediate_ca] section in openssl-root.cnf:
+# subjectKeyIdentifier = hash
+# authorityKeyIdentifier = keyid:always,issuer
+# basicConstraints = critical, CA:true, pathlen:0
+# keyUsage = critical, digitalSignature, cRLSign, keyCertSign</code></pre>
+
+      <h3>Step 3 — Issue Leaf (Server) Certificate</h3>
+      <pre><code"># Generate server key
+openssl genrsa \
+  -out pki/certs/example.com.key.pem 2048
+
+# Create v3.ext for SAN (REQUIRED — CN alone is deprecated)
+cat &gt; /tmp/v3.ext &lt;&lt;EOF
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 extendedKeyUsage = serverAuth
 subjectAltName = @alt_names
 
@@ -480,478 +290,190 @@ subjectAltName = @alt_names
 DNS.1 = example.com
 DNS.2 = www.example.com
 DNS.3 = api.example.com
-IP.1 = 192.168.1.100</code></pre>
+IP.1 = 192.168.1.100
+EOF
 
-        <div class="command-syntax" style="margin-top: 1rem;">openssl req -new -key private.key -out certificate.csr -config openssl.cnf</div>
-        <div class="command-desc">Generate CSR with SAN using config file</div>
+# Create CSR
+openssl req -new -sha256 \
+  -key pki/certs/example.com.key.pem \
+  -subj "/C=VN/ST=Hanoi/O=MyCompany/CN=example.com" \
+  -out pki/certs/example.com.csr.pem
+
+# Sign with Intermediate CA
+openssl x509 -req \
+  -in pki/certs/example.com.csr.pem \
+  -CA pki/intermediate-ca/certs/intermediate.cert.pem \
+  -CAkey pki/intermediate-ca/private/intermediate.key.pem \
+  -CAcreateserial \
+  -out pki/certs/example.com.cert.pem \
+  -days 365 -sha256 \
+  -extfile /tmp/v3.ext
+
+# Verify the issued cert
+openssl verify \
+  -CAfile pki/intermediate-ca/certs/ca-chain.cert.pem \
+  pki/certs/example.com.cert.pem</code></pre>
+
+      <h2>Subject Alternative Names (SAN)</h2>
+      <div class="warning-box">
+        <strong>Important:</strong> Modern browsers and clients ignore the Common Name (CN) field and require Subject Alternative Names. Always include SANs — a cert with only CN will fail validation in Chrome, Firefox, and most TLS clients since 2017.
       </div>
+      <pre><code"># openssl.cnf with SAN section
+[req]
+default_bits       = 2048
+prompt             = no
+default_md         = sha256
+req_extensions     = req_ext
+distinguished_name = dn
 
-      <h2 id="self-signed-certificates">Self-Signed Certificates</h2>
+[dn]
+C  = VN
+ST = Hanoi
+L  = Hanoi
+O  = MyCompany
+OU = IT
+CN = example.com
 
-      <h3>Basic Self-Signed Certificate</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Self-Signed Certificate</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl req -x509 -newkey rsa:2048 -keyout private.key -out certificate.crt -days 365</div>
-              <div class="command-desc">Generate self-signed certificate (1 year)</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl req -x509 -key private.key -in certificate.csr -out certificate.crt -days 365</div>
-              <div class="command-desc">Sign CSR to create certificate</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl x509 -req -in certificate.csr -signkey private.key -out certificate.crt -days 365</div>
-              <div class="command-desc">Alternative way to create self-signed cert</div>
-            </div>
-          </div>
+[req_ext]
+subjectAltName = @alt_names
 
-          <div class="command-card">
-            <h4>Certificate Information</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl x509 -in certificate.crt -text -noout</div>
-              <div class="command-desc">View certificate details</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl x509 -in certificate.crt -noout -dates</div>
-              <div class="command-desc">Show certificate validity dates</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl x509 -in certificate.crt -noout -subject</div>
-              <div class="command-desc">Show certificate subject</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl x509 -in certificate.crt -noout -issuer</div>
-              <div class="command-desc">Show certificate issuer</div>
-            </div>
-          </div>
-        </div>
-      </div>
+[alt_names]
+DNS.1   = example.com
+DNS.2   = www.example.com
+DNS.3   = *.example.com       # Wildcard
+IP.1    = 10.0.0.1
+email.1 = admin@example.com
 
-      <h2 id="certificate-authorities">Certificate Authorities</h2>
+# Generate with SAN config
+openssl req -newkey rsa:2048 -nodes \
+  -keyout server.key \
+  -out server.csr \
+  -config openssl.cnf
 
-      <h3>Creating a CA</h3>
-      <div class="cert-example">
-        <h4>Root CA Creation</h4>
-        <pre><code># 1. Generate CA private key
-openssl genrsa -out ca.key 4096
+# Verify SANs in CSR
+openssl req -text -noout -in server.csr | grep -A 5 "Subject Alternative"</code></pre>
 
-# 2. Create CA certificate
-openssl req -x509 -new -key ca.key -sha256 -days 3650 -out ca.crt \
-  -subj "/C=US/ST=State/L=City/O=MyCA/CN=My Root CA"
+      <h2>Certificate Format Conversions</h2>
+      <pre><code"># Format summary:
+# PEM  — Base64 encoded, -----BEGIN CERTIFICATE----- header, most common on Linux
+# DER  — Binary format, used in Java and Windows environments
+# PFX/PKCS12 — Binary, bundles cert + key + chain, used in Windows/IIS
+# PKCS7/P7B  — Bundle of certs (no private key), used in Windows cert import
+# JKS  — Java KeyStore, used in Java applications (Tomcat, etc.)
 
-# 3. Create CA database files
-touch index.txt
-echo '01' > serial.txt
+# PEM &lt;-&gt; DER
+openssl x509 -in cert.pem -outform DER -out cert.der
+openssl x509 -in cert.der -inform DER -outform PEM -out cert.pem
 
-# 4. Create CA configuration
-cat > ca.conf << EOF
-[ ca ]
-default_ca = CA_default
+# PEM -&gt; PFX/PKCS12
+openssl pkcs12 -export \
+  -out bundle.pfx \
+  -inkey server.key \
+  -in server.crt \
+  -certfile ca-chain.crt \
+  -name "My Certificate"
 
-[ CA_default ]
-dir = .
-database = index.txt
-serial = serial.txt
-certificate = ca.crt
-private_key = ca.key
-default_days = 365
-default_md = sha256
-policy = policy_anything
+# PFX/PKCS12 -&gt; PEM
+openssl pkcs12 -in bundle.pfx -nodes -out all.pem          # All in one file
+openssl pkcs12 -in bundle.pfx -nokeys -out cert.pem        # Cert only
+openssl pkcs12 -in bundle.pfx -nocerts -nodes -out key.pem # Key only
+openssl pkcs12 -in bundle.pfx -nokeys -cacerts -out chain.pem  # CA chain only
 
-[ policy_anything ]
-countryName = optional
-stateOrProvinceName = optional
-localityName = optional
-organizationName = optional
-organizationalUnitName = optional
-commonName = supplied
-emailAddress = optional
+# PEM -&gt; PKCS7/P7B
+openssl crl2pkcs7 -nocrl \
+  -certfile server.crt \
+  -certfile ca-chain.crt \
+  -out bundle.p7b
 
-[ req ]
-distinguished_name = req_distinguished_name
-req_extensions = v3_req
+# PKCS7 -&gt; PEM
+openssl pkcs7 -in bundle.p7b -print_certs -out certs.pem
 
-[ req_distinguished_name ]
-commonName = Common Name
+# JKS -&gt; PFX (requires Java keytool)
+keytool -importkeystore \
+  -srckeystore keystore.jks \
+  -destkeystore keystore.pfx \
+  -deststoretype pkcs12
 
-[ v3_req ]
-basicConstraints = CA:FALSE
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-extendedKeyUsage = serverAuth, clientAuth
-EOF</code></pre>
-      </div>
+# PFX -&gt; JKS
+keytool -importkeystore \
+  -srckeystore bundle.pfx -srcstoretype pkcs12 \
+  -destkeystore keystore.jks -deststoretype jks</code></pre>
 
-      <h3>Signing Certificates with CA</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Sign Certificate</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl ca -config ca.conf -in certificate.csr -out certificate.crt</div>
-              <div class="command-desc">Sign CSR with CA certificate</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl ca -config ca.conf -revoke certificate.crt</div>
-              <div class="command-desc">Revoke a certificate</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl ca -config ca.conf -gencrl -out ca.crl</div>
-              <div class="command-desc">Generate Certificate Revocation List</div>
-            </div>
-          </div>
+      <h2>Cipher Suites</h2>
+      <pre><code"># List all available ciphers in OpenSSL
+openssl ciphers -v 'ALL'
 
-          <div class="command-card">
-            <h4>CA Operations</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl crl -in ca.crl -text -noout</div>
-              <div class="command-desc">View CRL contents</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl verify -CAfile ca.crt certificate.crt</div>
-              <div class="command-desc">Verify certificate against CA</div>
-            </div>
-          </div>
-        </div>
-      </div>
+# List strong ciphers only (TLS 1.2+)
+openssl ciphers -v 'ECDHE+AESGCM:ECDHE+CHACHA20:!aNULL:!MD5:!DSS'
 
-      <h2 id="certificate-conversion">Certificate Conversion</h2>
+# List TLS 1.3 ciphersuites
+openssl ciphers -v -tls1_3
 
-      <h3>Format Conversion</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>PEM to DER</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl x509 -in cert.pem -outform der -out cert.der</div>
-              <div class="command-desc">Convert PEM certificate to DER</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl rsa -in key.pem -outform der -out key.der</div>
-              <div class="command-desc">Convert PEM private key to DER</div>
-            </div>
-          </div>
+# Test what ciphers a server supports
+nmap --script ssl-enum-ciphers -p 443 example.com
 
-          <div class="command-card">
-            <h4>DER to PEM</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl x509 -in cert.der -inform der -out cert.pem</div>
-              <div class="command-desc">Convert DER certificate to PEM</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl rsa -in key.der -inform der -out key.pem</div>
-              <div class="command-desc">Convert DER private key to PEM</div>
-            </div>
-          </div>
-        </div>
-      </div>
+# Nginx: restrict to strong ciphers only
+# ssl_protocols TLSv1.2 TLSv1.3;
+# ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;
+# ssl_prefer_server_ciphers off;
 
-      <h3>PKCS#12 (PFX) Conversion</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Create PKCS#12</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl pkcs12 -export -in cert.pem -inkey key.pem -out keystore.p12</div>
-              <div class="command-desc">Create PKCS#12 keystore from PEM files</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl pkcs12 -export -in cert.pem -inkey key.pem -certfile ca.pem -out keystore.p12</div>
-              <div class="command-desc">Include CA certificate chain</div>
-            </div>
-          </div>
+# Apache: restrict ciphers
+# SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
+# SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:...</code></pre>
 
-          <div class="command-card">
-            <h4>Extract from PKCS#12</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl pkcs12 -in keystore.p12 -out cert.pem -clcerts -nokeys</div>
-              <div class="command-desc">Extract certificate from PKCS#12</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl pkcs12 -in keystore.p12 -out key.pem -nocerts -nodes</div>
-              <div class="command-desc">Extract private key from PKCS#12</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <h2>cert-manager on Kubernetes</h2>
+      <pre><code"># List all certificates
+kubectl get certificates -A
+kubectl get cert -A
 
-      <h2 id="ssltls-testing-debugging">SSL/TLS Testing & Debugging</h2>
+# Describe a certificate (check conditions, last renewal)
+kubectl describe certificate myapp-tls -n production
 
-      <h3>Connection Testing</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>SSL/TLS Connection</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl s_client -connect example.com:443</div>
-              <div class="command-desc">Test SSL/TLS connection to server</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl s_client -connect example.com:443 -servername example.com</div>
-              <div class="command-desc">Test with SNI (Server Name Indication)</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl s_client -connect example.com:443 -tls1_3</div>
-              <div class="command-desc">Force TLS 1.3 connection</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl s_client -connect example.com:443 -showcerts</div>
-              <div class="command-desc">Display server certificate chain</div>
-            </div>
-          </div>
+# Check certificate secret
+kubectl get secret myapp-tls -n production -o yaml
+kubectl get secret myapp-tls -n production \
+  -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text -noout
 
-          <div class="command-card">
-            <h4>Cipher Testing</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl s_client -connect example.com:443 -cipher 'HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA'</div>
-              <div class="command-desc">Test with specific cipher suite</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl ciphers -v 'HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA'</div>
-              <div class="command-desc">List available cipher suites</div>
-            </div>
-          </div>
-        </div>
-      </div>
+# Check CertificateRequests
+kubectl get certificaterequests -A
+kubectl describe certificaterequest -n production
 
-      <h3>Certificate Validation</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Certificate Validation</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl verify certificate.crt</div>
-              <div class="command-desc">Verify certificate against default CA store</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl verify -CAfile ca.crt certificate.crt</div>
-              <div class="command-desc">Verify against specific CA certificate</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl verify -CApath /etc/ssl/certs certificate.crt</div>
-              <div class="command-desc">Verify against CA certificate directory</div>
-            </div>
-          </div>
+# Trigger manual renewal
+kubectl annotate certificate myapp-tls \
+  cert-manager.io/issuer-name- \
+  -n production
 
-          <div class="command-card">
-            <h4>Certificate Chain</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl verify -untrusted intermediate.crt -CAfile ca.crt certificate.crt</div>
-              <div class="command-desc">Verify with intermediate certificate</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl x509 -in certificate.crt -noout -fingerprint -sha256</div>
-              <div class="command-desc">Get certificate fingerprint</div>
-            </div>
-          </div>
-        </div>
-      </div>
+# Or use cmctl (cert-manager CLI)
+cmctl renew myapp-tls -n production
+cmctl status certificate myapp-tls -n production
 
-      <h2 id="ssltls-server-testing">SSL/TLS Server Testing</h2>
+# Check ClusterIssuers and Issuers
+kubectl get clusterissuer
+kubectl get issuer -A
+kubectl describe clusterissuer letsencrypt-prod
 
-      <h3>Simple SSL Server</h3>
-      <div class="cert-example">
-        <h4>Test SSL Server Setup</h4>
-        <pre><code># Create test certificates
-openssl req -x509 -newkey rsa:2048 -keyout server.key -out server.crt -days 365 -nodes \
-  -subj "/C=US/ST=Test/L=Test/O=Test/CN=localhost"
+# Example Certificate resource
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: myapp-tls
+#   namespace: production
+# spec:
+#   secretName: myapp-tls
+#   issuerRef:
+#     name: letsencrypt-prod
+#     kind: ClusterIssuer
+#   dnsNames:
+#     - example.com
+#     - www.example.com
+#   duration: 2160h   # 90 days
+#   renewBefore: 360h # Renew 15 days before expiry</code></pre>
 
-# Start simple SSL server
-openssl s_server -cert server.crt -key server.key -accept 8443 -www
-
-# Test the server
-curl -k https://localhost:8443/</code></pre>
-      </div>
-
-      <h3>SSL/TLS Security Testing</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Protocol Testing</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl s_client -connect example.com:443 -tls1</div>
-              <div class="command-desc">Test TLS 1.0 (should fail on modern servers)</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl s_client -connect example.com:443 -tls1_1</div>
-              <div class="command-desc">Test TLS 1.1 (should fail on modern servers)</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl s_client -connect example.com:443 -tls1_2</div>
-              <div class="command-desc">Test TLS 1.2</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl s_client -connect example.com:443 -tls1_3</div>
-              <div class="command-desc">Test TLS 1.3</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Certificate Expiry</h4>
-            <div class="command-item">
-              <div class="command-syntax">openssl x509 -in certificate.crt -noout -checkend 86400</div>
-              <div class="command-desc">Check if certificate expires within 24 hours</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">openssl x509 -in certificate.crt -noout -enddate</div>
-              <div class="command-desc">Show certificate expiry date</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 id="common-ssltls-tools">Common SSL/TLS Tools</h2>
-
-      <h3>SSL Labs Testing</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Online Testing</h4>
-            <div class="command-item">
-              <div class="command-syntax">curl -s https://www.ssllabs.com/ssltest/analyze.html?d=example.com</div>
-              <div class="command-desc">SSL Labs API testing (requires API key)</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">testssl.sh --help</div>
-              <div class="command-desc">testssl.sh tool for comprehensive SSL testing</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Local Testing Tools</h4>
-            <div class="command-item">
-              <div class="command-syntax">sslyze --regular example.com:443</div>
-              <div class="command-desc">SSLyze for SSL/TLS scanning</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sslscan example.com</div>
-              <div class="command-desc">sslscan for basic SSL scanning</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 id="certificate-management-scripts">Certificate Management Scripts</h2>
-
-      <h3>Certificate Expiry Monitoring</h3>
-      <div class="cert-example">
-        <h4>Bash Script for Certificate Monitoring</h4>
-        <pre><code>#!/bin/bash
-
-# Certificate expiry checker
-check_cert_expiry() {
-    local cert_file="$1"
-    local days_warning="${2:-30}"
-
-    if [ ! -f "$cert_file" ]; then
-        echo "Certificate file not found: $cert_file"
-        return 1
-    fi
-
-    local end_date=$(openssl x509 -in "$cert_file" -noout -enddate | cut -d= -f2)
-    local end_epoch=$(date -d "$end_date" +%s)
-    local now_epoch=$(date +%s)
-    local days_left=$(( ($end_epoch - $now_epoch) / 86400 ))
-
-    echo "Certificate: $cert_file"
-    echo "Expiry date: $end_date"
-    echo "Days remaining: $days_left"
-
-    if [ $days_left -le $days_warning ]; then
-        echo "WARNING: Certificate expires in $days_left days!"
-        return 1
-    else
-        echo "Certificate is valid"
-        return 0
-    fi
-}
-
-# Usage
-check_cert_expiry "/etc/ssl/certs/example.crt" 30</code></pre>
-      </div>
-
-      <h3>Automated Certificate Generation</h3>
-      <div class="cert-example">
-        <h4>Automated Self-Signed Certificate Script</h4>
-        <pre><code>#!/bin/bash
-
-# Generate self-signed certificate
-generate_self_signed_cert() {
-    local domain="$1"
-    local days="${2:-365}"
-    local key_file="${domain}.key"
-    local cert_file="${domain}.crt"
-
-    # Generate private key
-    openssl genrsa -out "$key_file" 2048
-
-    # Generate certificate
-    openssl req -new -x509 -key "$key_file" -out "$cert_file" -days "$days" \
-        -subj "/C=US/ST=State/L=City/O=Organization/CN=${domain}" \
-        -addext "subjectAltName = DNS:${domain},DNS:www.${domain}"
-
-    echo "Generated certificate: $cert_file"
-    echo "Generated key: $key_file"
-}
-
-# Usage
-generate_self_signed_cert "example.com" 365</code></pre>
-      </div>
-
-      <h2 id="ssltls-best-practices-summary">SSL/TLS Best Practices Summary</h2>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 2rem 0;">
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">Key Management</h5>
-          <ul style="margin: 0;">
-            <li>Use RSA 2048-bit or ECDSA P-256 minimum</li>
-            <li>Store private keys securely (encrypted)</li>
-            <li>Regular key rotation (annually)</li>
-            <li>Use hardware security modules for production</li>
-          </ul>
-        </div>
-
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">Certificate Practices</h5>
-          <ul style="margin: 0;">
-            <li>Use Subject Alternative Names (SAN)</li>
-            <li>Monitor certificate expiry (automated)</li>
-            <li>Implement certificate pinning</li>
-            <li>Use Certificate Transparency</li>
-          </ul>
-        </div>
-
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">TLS Configuration</h5>
-          <ul style="margin: 0;">
-            <li>Disable SSL/TLS 1.0 and 1.1</li>
-            <li>Use strong cipher suites only</li>
-            <li>Enable HSTS headers</li>
-            <li>Implement proper session resumption</li>
-          </ul>
-        </div>
-
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">Monitoring & Compliance</h5>
-          <ul style="margin: 0;">
-            <li>Regular vulnerability scanning</li>
-            <li>Certificate transparency monitoring</li>
-            <li>Compliance with PCI DSS, HIPAA, etc.</li>
-            <li>Automated alerting for issues</li>
-          </ul>
-        </div>
-      </div>
-
-    </div>
-      </div>
-
-    </div>
-      </div>
-
+      <p class="mt-4 text-muted">
+        <a href="../index.html" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to Documents</a>
+      </p>
     </div>
   </div>
-
   <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

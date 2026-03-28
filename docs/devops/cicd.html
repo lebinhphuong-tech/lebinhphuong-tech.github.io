@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CI/CD Pipelines | DevOps Documentation</title>
+  <title>CI/CD Pipelines | DevOps | Lê Bình Phương</title>
 
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -66,27 +66,9 @@
       margin-bottom: 2rem;
     }
 
-    h1 {
-      color: var(--secondary-color);
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
-
-    h2 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-top: 2.5rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--bg-light);
-    }
-
-    h3 {
-      color: var(--secondary-color);
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
 
     code {
       background: #f8f9fa;
@@ -112,46 +94,13 @@
       font-family: 'Courier New', monospace;
     }
 
-    .navbar {
-      background: white;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
 
-    .breadcrumb {
-      background: transparent;
-      padding: 0;
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb a {
-      color: var(--primary-color);
-      text-decoration: none;
-    }
-
-    .tip-box {
-      background: #e7f3ff;
-      border-left: 4px solid #007bff;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
-
-    .warning-box {
-      background: #fff3cd;
-      border-left: 4px solid #ffc107;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
-
-    .success-box {
-      background: #d4edda;
-      border-left: 4px solid #28a745;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
 
     .strategy-card {
       background: var(--bg-light);
@@ -161,15 +110,11 @@
       border-left: 4px solid var(--primary-color);
     }
 
-    .strategy-card h4 {
-      color: var(--primary-color);
-      margin-bottom: 0.5rem;
-    }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
   </style>
 </head>
 <body>
 
-  <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
       <div class="container">
@@ -182,7 +127,6 @@
 
   <div class="container">
 
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
@@ -194,677 +138,575 @@
 
     <div class="row">
 
-      <!-- Sidebar -->
       <div class="col-lg-3">
         <div class="sidebar">
           <h5><i class="bi bi-code-slash me-2"></i>DevOps</h5>
           <nav class="nav flex-column">
             <a class="nav-link" href="index.html">Overview</a>
             <a class="nav-link active" href="cicd.html">CI/CD Pipelines</a>
-            <a class="nav-link" href="monitoring.html">Monitoring & Logging</a>
-            <a class="nav-link" href="best-practices.html">Best Practices</a>
+            <a class="nav-link" href="monitoring.html">Monitoring &amp; Logging</a>
           </nav>
         </div>
       </div>
 
-      <!-- Main Content -->
       <div class="col-lg-9">
         <div class="content">
           <h1><i class="bi bi-arrow-repeat me-2"></i>CI/CD Pipelines</h1>
 
           <p>
-            Continuous Integration and Continuous Delivery (CI/CD) are fundamental DevOps practices that automate the process of
-            building, testing, and deploying software. This guide covers CI/CD concepts, tools, and implementation patterns.
+            CI/CD (Continuous Integration / Continuous Delivery) automates the process of building, testing,
+            and deploying software. A well-designed pipeline gives developers fast feedback, reduces manual errors,
+            and enables reliable, frequent releases.
           </p>
 
-          <h2>What is CI/CD?</h2>
+          <h2>CI vs CD vs CD</h2>
 
-          <h3>Continuous Integration (CI)</h3>
           <div class="strategy-card">
-            <h4>Automate Build and Test</h4>
-            <p>CI is the practice of frequently integrating code changes into a shared repository. Each integration is automatically
-            built and tested to detect problems early.</p>
-            <ul>
-              <li>✅ Frequent code commits to main branch</li>
-              <li>✅ Automated builds on every commit</li>
-              <li>✅ Automated testing (unit, integration)</li>
-              <li>✅ Fast feedback on code quality</li>
-            </ul>
+            <h4>Continuous Integration (CI)</h4>
+            <p>Developers merge code frequently (multiple times per day). Each merge triggers an automated build and test suite. Goal: catch integration bugs early.</p>
           </div>
 
-          <h3>Continuous Delivery (CD)</h3>
           <div class="strategy-card">
-            <h4>Automate Deployment</h4>
-            <p>CD ensures that code changes are automatically prepared for release to production. Every change that passes CI is
-            deployable to any environment.</p>
-            <ul>
-              <li>✅ Automated deployment to staging</li>
-              <li>✅ Environment parity</li>
-              <li>✅ Manual approval for production</li>
-              <li>✅ Rollback capabilities</li>
-            </ul>
+            <h4>Continuous Delivery (CD)</h4>
+            <p>Every change that passes CI is automatically prepared for release to production. Deployment is a manual, one-click action. Goal: always have a deployable artifact.</p>
           </div>
 
-          <h3>Continuous Deployment</h3>
           <div class="strategy-card">
-            <h4>Fully Automated Production</h4>
-            <p>Every change that passes all stages of the pipeline is automatically deployed to production without human intervention.</p>
-            <ul>
-              <li>✅ No manual production deployments</li>
-              <li>✅ Advanced testing and monitoring</li>
-              <li>✅ Feature flags for gradual rollouts</li>
-              <li>✅ Automated rollback on failures</li>
-            </ul>
+            <h4>Continuous Deployment (CD)</h4>
+            <p>Every change that passes all automated tests is automatically deployed to production — no human intervention. Goal: maximum release velocity.</p>
           </div>
 
-          <h2>CI/CD Pipeline Stages</h2>
+          <h2>GitHub Actions</h2>
 
-          <h3>Source Stage</h3>
-          <pre><code># Git commit triggers pipeline
-git add .
-git commit -m "feat: add user authentication"
-git push origin main
+          <h3>Workflow Structure</h3>
+          <pre><code># .github/workflows/ci.yml
 
-# Webhook triggers CI/CD platform</code></pre>
-
-          <h3>Build Stage</h3>
-          <pre><code># Example build scripts for different languages
-
-# Node.js
-npm ci
-npm run build
-npm test
-
-# Python
-pip install -r requirements.txt
-python -m pytest tests/
-python setup.py sdist
-
-# Java
-./mvnw clean package -DskipTests
-./mvnw test
-
-# Docker
-docker build -t myapp:${GIT_COMMIT} .
-docker push myapp:${GIT_COMMIT}</code></pre>
-
-          <h3>Test Stage</h3>
-          <pre><code># Test types in pipeline
-- Unit tests (fast, isolated)
-- Integration tests (API, database)
-- End-to-end tests (UI, workflows)
-- Security scanning (SAST, DAST)
-- Performance tests (load, stress)
-- Accessibility tests (a11y)</code></pre>
-
-          <h3>Deploy Stage</h3>
-          <pre><code># Deployment strategies
-- Blue-Green Deployment
-- Canary Deployment
-- Rolling Deployment
-- Feature Flags
-
-# Environment progression
-Development → Staging → Production</code></pre>
-
-          <h2>Popular CI/CD Tools</h2>
-
-          <h3>GitHub Actions</h3>
-          <div class="strategy-card">
-            <h4>GitHub-Native CI/CD</h4>
-            <pre><code># .github/workflows/ci.yml
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+  release:
+    types: [published]
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
+  # ...stages defined here</code></pre>
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
+          <h3>Complete CI/CD Workflow</h3>
+          <pre><code"># .github/workflows/ci-cd.yml
 
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Run tests
-      run: npm test
-
-    - name: Build
-      run: npm run build
-
-  build-and-push:
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Log in to registry
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-    - name: Build and push Docker image
-      run: |
-        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
-        VERSION=$(echo ${{ github.sha }} | head -c7)
-        echo IMAGE_ID=$IMAGE_ID
-        echo VERSION=$VERSION
-        docker build -t $IMAGE_ID:$VERSION .
-        docker push $IMAGE_ID:$VERSION</code></pre>
-          </div>
-
-          <h3>GitLab CI/CD</h3>
-          <div class="strategy-card">
-            <h4>Integrated with GitLab</h4>
-            <pre><code># .gitlab-ci.yml
-stages:
-  - test
-  - build
-  - deploy
-
-variables:
-  DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-
-cache:
-  paths:
-    - .npm/
-    - node_modules/
-
-test:
-  stage: test
-  image: node:18
-  before_script:
-    - npm ci
-  script:
-    - npm run lint
-    - npm test
-  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
-
-build:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script:
-    - docker build -t $DOCKER_IMAGE .
-    - docker push $DOCKER_IMAGE
-  only:
-    - main
-
-deploy_staging:
-  stage: deploy
-  script:
-    - echo "Deploy to staging"
-    - kubectl set image deployment/myapp myapp=$DOCKER_IMAGE
-  environment:
-    name: staging
-    url: https://staging.example.com
-  only:
-    - main
-
-deploy_production:
-  stage: deploy
-  script:
-    - echo "Deploy to production"
-    - kubectl set image deployment/myapp myapp=$DOCKER_IMAGE
-  environment:
-    name: production
-    url: https://example.com
-  when: manual
-  only:
-    - main</code></pre>
-          </div>
-
-          <h3>Jenkins Pipeline</h3>
-          <div class="strategy-card">
-            <h4>Declarative Pipeline</h4>
-            <pre><code>// Jenkinsfile
-pipeline {
-    agent any
-
-    environment {
-        DOCKER_IMAGE = 'myapp'
-        DOCKER_TAG = "${env.BUILD_NUMBER}"
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'npm install'
-                sh 'npm test'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'npm run build'
-                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-            }
-        }
-
-        stage('Deploy to Staging') {
-            steps {
-                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:staging"
-                sh "docker push ${DOCKER_IMAGE}:staging"
-                sh 'kubectl set image deployment/staging-app app=myapp:staging'
-            }
-        }
-
-        stage('Integration Tests') {
-            steps {
-                sh 'npm run test:e2e'
-            }
-        }
-
-        stage('Deploy to Production') {
-            steps {
-                input message: 'Deploy to production?', ok: 'Deploy'
-                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:production"
-                sh "docker push ${DOCKER_IMAGE}:production"
-                sh 'kubectl set image deployment/prod-app app=myapp:production'
-            }
-        }
-    }
-
-    post {
-        always {
-            sh 'docker system prune -f'
-            cleanWs()
-        }
-        success {
-            slackSend color: 'good', message: "Build ${env.BUILD_NUMBER} succeeded!"
-        }
-        failure {
-            slackSend color: 'danger', message: "Build ${env.BUILD_NUMBER} failed!"
-        }
-    }
-}</code></pre>
-          </div>
-
-          <h3>Azure DevOps</h3>
-          <div class="strategy-card">
-            <h4>Microsoft's DevOps Platform</h4>
-            <pre><code># azure-pipelines.yml
-trigger:
-- main
-
-pool:
-  vmImage: 'ubuntu-latest'
-
-variables:
-  buildConfiguration: 'Release'
-  dockerRegistry: 'myregistry.azurecr.io'
-  imageName: 'myapp'
-
-stages:
-- stage: Build
-  jobs:
-  - job: BuildAndTest
-    steps:
-    - task: UseNode@1
-      inputs:
-        version: '18.x'
-
-    - script: |
-        npm install
-        npm run lint
-        npm test
-      displayName: 'Install, lint and test'
-
-    - task: Docker@2
-      inputs:
-        containerRegistry: 'myContainerRegistry'
-        repository: $(imageName)
-        command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
-        tags: |
-          $(Build.BuildNumber)
-          latest
-
-- stage: DeployStaging
-  dependsOn: Build
-  jobs:
-  - deployment: DeployStaging
-    environment: 'staging'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: KubernetesManifest@0
-            inputs:
-              action: 'deploy'
-              kubernetesServiceConnection: 'myK8sConnection'
-              manifests: 'k8s/staging-deployment.yml'
-              imagePullSecrets: 'myRegistrySecret'
-              containers: '$(dockerRegistry)/$(imageName):$(Build.BuildNumber)'
-
-- stage: DeployProduction
-  dependsOn: DeployStaging
-  jobs:
-  - deployment: DeployProduction
-    environment: 'production'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: KubernetesManifest@0
-            inputs:
-              action: 'deploy'
-              kubernetesServiceConnection: 'myK8sConnection'
-              manifests: 'k8s/production-deployment.yml'
-              imagePullSecrets: 'myRegistrySecret'
-              containers: '$(dockerRegistry)/$(imageName):$(Build.BuildNumber)'</code></pre>
-          </div>
-
-          <h2>Advanced Pipeline Patterns</h2>
-
-          <h3>Parallel Testing</h3>
-          <div class="strategy-card">
-            <h4>Speed Up Test Execution</h4>
-            <pre><code># GitHub Actions - Parallel jobs
-name: Parallel Tests
-
-on: [push]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test-suite: [unit, integration, e2e]
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    - name: Install dependencies
-      run: npm ci
-    - name: Run ${{ matrix.test-suite }} tests
-      run: npm run test:${{ matrix.test-suite }}
-
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-    - name: Build application
-      run: echo "Building..."</code></pre>
-          </div>
-
-          <h3>Environment-Specific Deployments</h3>
-          <div class="strategy-card">
-            <h4>Manage Multiple Environments</h4>
-            <pre><code># GitHub Actions - Environment matrix
-name: Deploy
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  deploy:
+
+  # ── Stage 1: Lint & Test ───────────────────────────────────────
+  test:
+    name: Lint & Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        environment: [staging, production]
-    environment: ${{ matrix.environment }}
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: testdb
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Deploy to ${{ matrix.environment }}
-      run: |
-        echo "Deploying to ${{ matrix.environment }}"
-        # Add deployment commands here
-      env:
-        API_KEY: ${{ secrets[format('{0}_API_KEY', matrix.environment)] }}
-        DATABASE_URL: ${{ secrets[format('{0}_DATABASE_URL', matrix.environment)] }}</code></pre>
-          </div>
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
 
-          <h3>Artifact Management</h3>
-          <div class="strategy-card">
-            <h4>Store and Version Build Artifacts</h4>
-            <pre><code># GitHub Actions - Upload artifacts
-- name: Build application
-  run: npm run build
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
 
-- name: Upload build artifacts
-  uses: actions/upload-artifact@v3
-  with:
-    name: build-files
-    path: dist/
-    retention-days: 30
+      - name: Lint with flake8
+        run: flake8 src/ tests/
 
-# Download in deploy job
-- name: Download build artifacts
-  uses: actions/download-artifact@v3
-  with:
-    name: build-files
-    path: dist/
+      - name: Type check with mypy
+        run: mypy src/
 
-- name: Deploy
-  run: ./deploy.sh</code></pre>
-          </div>
+      - name: Run unit tests
+        run: pytest tests/unit/ -v --cov=src --cov-report=xml
+        env:
+          DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
 
-          <h2>Pipeline Security</h2>
+      - name: Run integration tests
+        run: pytest tests/integration/ -v
+        env:
+          DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
 
-          <h3>Secret Management</h3>
-          <div class="strategy-card">
-            <h4>Secure Credential Handling</h4>
-            <pre><code># GitHub Actions - Secrets
-# Use secrets for sensitive data
-- name: Deploy
-  run: ./deploy.sh
-  env:
-    DATABASE_URL: ${{ secrets.DATABASE_URL }}
-    API_KEY: ${{ secrets.API_KEY }}
-    SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          file: coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
 
-# Environment-specific secrets
-- name: Deploy to production
-  environment: production
-  run: ./deploy.sh
-  env:
-    API_KEY: ${{ secrets.PROD_API_KEY }}
+  # ── Stage 2: Security Scan ────────────────────────────────────
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: test
 
-# Encrypted secrets in repository
-# .github/encrypted-secrets/
-# └── prod-api-key.enc</code></pre>
-          </div>
+    steps:
+      - uses: actions/checkout@v4
 
-          <h3>Security Scanning</h3>
-          <div class="strategy-card">
-            <h4>Automated Security Checks</h4>
-            <pre><code># GitHub Actions - Security scanning
-- name: Run SAST
-  uses: github/codeql-action/init@v2
-  with:
-    languages: javascript
+      - name: Dependency vulnerability scan
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-- name: Perform CodeQL Analysis
-  uses: github/codeql-action/analyze@v2
+      - name: SAST with Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/python p/security-audit
 
-# Dependency scanning
-- name: Dependency Review
-  uses: actions/dependency-review-action@v3
+  # ── Stage 3: Build & Push Image ───────────────────────────────
+  build:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    if: github.ref == 'refs/heads/main'
 
-# Container scanning
-- name: Scan container image
-  uses: aquasecurity/trivy-action@master
-  with:
-    scan-type: 'image'
-    scan-ref: 'docker.io/myorg/myapp:latest'
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
 
-# Secret scanning
-- name: Secret scanning
-  uses: gitleaks/gitleaks-action@v2</code></pre>
-          </div>
+    steps:
+      - uses: actions/checkout@v4
 
-          <h2>Pipeline Monitoring</h2>
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-          <h3>Metrics and Dashboards</h3>
-          <div class="strategy-card">
-            <h4>Track Pipeline Performance</h4>
-            <pre><code># Prometheus metrics export
-# Jenkins pipeline metrics
-pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {
-                script {
-                    def startTime = System.currentTimeMillis()
-                    // Build steps here
-                    def duration = System.currentTimeMillis() - startTime
-                    // Export to Prometheus
-                }
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=sha,prefix=,suffix=,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Scan image for vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository }}:latest
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+
+  # ── Stage 4: Deploy to Staging ────────────────────────────────
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build
+    environment: staging
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure kubeconfig
+        run: |
+          echo "${{ secrets.STAGING_KUBECONFIG }}" | base64 -d > kubeconfig
+          echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
+
+      - name: Update image in Helm values
+        run: |
+          helm upgrade --install myapp ./helm/myapp \
+            --namespace staging \
+            --create-namespace \
+            --set image.tag=${{ github.sha }} \
+            --set env=staging \
+            --values helm/myapp/values-staging.yaml \
+            --wait --timeout 5m
+
+      - name: Run smoke tests
+        run: |
+          kubectl run smoke-test \
+            --image=curlimages/curl \
+            --restart=Never \
+            --rm -it \
+            -- curl -f http://myapp.staging.svc.cluster.local/health
+
+  # ── Stage 5: Deploy to Production ────────────────────────────
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    environment: production    # Requires manual approval
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure kubeconfig
+        run: echo "${{ secrets.PROD_KUBECONFIG }}" | base64 -d > kubeconfig
+
+      - name: Deploy to production
+        env:
+          KUBECONFIG: ./kubeconfig
+        run: |
+          helm upgrade --install myapp ./helm/myapp \
+            --namespace production \
+            --set image.tag=${{ github.sha }} \
+            --set env=production \
+            --values helm/myapp/values-production.yaml \
+            --wait --timeout 10m
+
+      - name: Notify Slack
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "✅ Deployed myapp ${{ github.sha }} to production"
             }
-        }
-    }
-}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}</code></pre>
 
-# Key metrics to track:
-# - Pipeline execution time
-# - Success/failure rates
-# - Stage-by-stage performance
-# - Deployment frequency
-# - Time to deploy
+          <h2>GitLab CI/CD</h2>
 
-# Grafana dashboard example queries:
-# Pipeline success rate: sum(rate(ci_pipeline_total{status="success"}[5m])) / sum(rate(ci_pipeline_total[5m]))
-# Average deployment time: histogram_quantile(0.95, rate(ci_deployment_duration_bucket[5m]))</code></pre>
+          <h3>Complete .gitlab-ci.yml</h3>
+          <pre><code># .gitlab-ci.yml
+
+stages:
+  - lint
+  - test
+  - build
+  - scan
+  - deploy-staging
+  - deploy-production
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+# ── Lint ──────────────────────────────────────────────────────
+lint:
+  stage: lint
+  image: python:3.11
+  cache:
+    key: pip-$CI_COMMIT_REF_SLUG
+    paths: [.pip/]
+  script:
+    - pip install flake8 mypy --cache-dir .pip/
+    - flake8 src/
+    - mypy src/
+
+# ── Tests ─────────────────────────────────────────────────────
+unit-tests:
+  stage: test
+  image: python:3.11
+  services:
+    - name: postgres:15
+      alias: postgres
+  variables:
+    POSTGRES_DB: testdb
+    POSTGRES_USER: testuser
+    POSTGRES_PASSWORD: testpass
+    DATABASE_URL: postgresql://testuser:testpass@postgres:5432/testdb
+  script:
+    - pip install -r requirements.txt -r requirements-dev.txt
+    - pytest tests/unit/ -v --junitxml=report.xml --cov=src --cov-report=xml
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+
+# ── Build Docker image ────────────────────────────────────────
+build:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest -t $IMAGE_TAG -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $IMAGE_TAG
+    - docker push $CI_REGISTRY_IMAGE:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ── Container scan ────────────────────────────────────────────
+trivy-scan:
+  stage: scan
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - trivy image --exit-code 1 --severity CRITICAL $IMAGE_TAG
+  allow_failure: true
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ── Deploy staging ────────────────────────────────────────────
+deploy-staging:
+  stage: deploy-staging
+  image: alpine/helm:3.14
+  environment:
+    name: staging
+    url: https://staging.myapp.example.com
+  script:
+    - echo "$STAGING_KUBECONFIG" | base64 -d > kubeconfig
+    - export KUBECONFIG=$PWD/kubeconfig
+    - helm upgrade --install myapp ./helm/myapp
+        --namespace staging --create-namespace
+        --set image.tag=$CI_COMMIT_SHORT_SHA
+        --values helm/myapp/values-staging.yaml
+        --wait
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ── Deploy production ─────────────────────────────────────────
+deploy-production:
+  stage: deploy-production
+  image: alpine/helm:3.14
+  environment:
+    name: production
+    url: https://myapp.example.com
+  script:
+    - echo "$PROD_KUBECONFIG" | base64 -d > kubeconfig
+    - export KUBECONFIG=$PWD/kubeconfig
+    - helm upgrade --install myapp ./helm/myapp
+        --namespace production
+        --set image.tag=$CI_COMMIT_SHORT_SHA
+        --values helm/myapp/values-production.yaml
+        --wait --timeout 10m
+  when: manual          # Requires manual trigger
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"</code></pre>
+
+          <h2>Dockerfile Best Practices</h2>
+          <pre><code># ── Multi-stage build for Python application ──────────────────
+
+# Stage 1: Build dependencies
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+
+# Copy and install dependencies first (better layer caching)
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# Stage 2: Production image
+FROM python:3.11-slim AS production
+
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+WORKDIR /app
+
+# Copy installed packages from builder
+COPY --from=builder /root/.local /home/appuser/.local
+
+# Copy application code
+COPY --chown=appuser:appuser src/ ./src/
+
+# Switch to non-root user
+USER appuser
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+EXPOSE 8080
+
+CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]</code></pre>
+
+          <div class="success-box">
+            <strong>✅ Dockerfile Best Practices:</strong>
+            <ul>
+              <li>Use multi-stage builds to keep images small</li>
+              <li>Copy dependency files first to maximize layer cache reuse</li>
+              <li>Run containers as non-root user</li>
+              <li>Use slim or distroless base images</li>
+              <li>Always set a HEALTHCHECK</li>
+              <li>Pin base image versions (avoid <code>:latest</code>)</li>
+            </ul>
           </div>
 
-          <h3>Notification Systems</h3>
-          <div class="strategy-card">
-            <h4>Alert on Pipeline Events</h4>
-            <pre><code># GitHub Actions - Slack notifications
-- name: Notify Slack on failure
-  if: failure()
-  uses: 8398a7/action-slack@v3
-  with:
-    status: failure
-    text: 'Pipeline failed'
-  env:
-    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          <h2>Helm Chart for Kubernetes Deployment</h2>
+          <pre><code"># helm/myapp/values.yaml — default values
 
-# Email notifications
-- name: Send email
-  if: always()
-  uses: dawidd6/action-send-mail@v3
-  with:
-    server_address: smtp.gmail.com
-    server_port: 465
-    username: ${{ secrets.EMAIL_USERNAME }}
-    password: ${{ secrets.EMAIL_PASSWORD }}
-    subject: CI/CD Pipeline ${{ job.status }}
-    body: |
-      Pipeline: ${{ github.workflow }}
-      Status: ${{ job.status }}
-      Commit: ${{ github.sha }}
-      Branch: ${{ github.ref }}
-    to: devops@example.com
-    from: CI/CD Pipeline</code></pre>
-          </div>
+replicaCount: 2
+
+image:
+  repository: ghcr.io/myorg/myapp
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  host: myapp.example.com
+  tls: true
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+env: production
+logLevel: info</code></pre>
+
+          <pre><code"># helm/myapp/values-staging.yaml — override for staging
+
+replicaCount: 1
+ingress:
+  host: myapp.staging.example.com
+  tls: false
+autoscaling:
+  enabled: false
+env: staging
+logLevel: debug</code></pre>
+
+          <h2>ArgoCD — GitOps Deployment</h2>
+          <pre><code"># argocd-app.yaml — ArgoCD Application manifest
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/myorg/myapp-config
+    targetRevision: main
+    path: helm/myapp
+    helm:
+      valueFiles:
+        - values-production.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+
+  syncPolicy:
+    automated:
+      prune: true        # Delete removed resources
+      selfHeal: true     # Auto-fix manual changes
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+
+  # Health checks and rollback
+  revisionHistoryLimit: 5</code></pre>
+
+          <pre><code># ArgoCD CLI commands
+# Install ArgoCD CLI
+brew install argocd
+
+# Login
+argocd login argocd.example.com --username admin --password $ARGOCD_PASSWORD
+
+# List applications
+argocd app list
+
+# Sync an application
+argocd app sync myapp
+
+# Check sync status
+argocd app get myapp
+
+# Manual rollback to previous version
+argocd app rollback myapp
+
+# Set image tag (triggers sync)
+argocd app set myapp --helm-set image.tag=abc1234</code></pre>
 
           <h2>Pipeline Best Practices</h2>
 
           <div class="success-box">
-            <strong>✅ CI/CD Best Practices:</strong>
+            <strong>✅ Do:</strong>
             <ul>
-              <li>Keep pipelines fast (< 10 minutes for CI)</li>
-              <li>Use parallel execution for independent jobs</li>
-              <li>Fail fast on critical issues</li>
-              <li>Cache dependencies between runs</li>
-              <li>Use semantic versioning for releases</li>
-              <li>Implement proper rollback strategies</li>
-              <li>Monitor pipeline performance</li>
-              <li>Secure secrets and credentials</li>
-              <li>Test pipeline changes in isolation</li>
-              <li>Document pipeline processes</li>
+              <li>Keep pipelines <strong>fast</strong> — slow pipelines get bypassed. Target &lt;10 min for CI</li>
+              <li>Run tests in <strong>parallel</strong> to reduce total time</li>
+              <li>Use <strong>caching</strong> for dependencies (pip, npm, Maven)</li>
+              <li>Fail <strong>fast</strong> — run quick checks (lint, unit tests) before slow ones</li>
+              <li>Use <strong>environment protection rules</strong> with required reviewers for production</li>
+              <li>Store all secrets in <strong>CI/CD secret variables</strong>, never in code</li>
+              <li>Use <strong>pinned action versions</strong> (e.g., <code>actions/checkout@v4</code>)</li>
             </ul>
           </div>
 
           <div class="warning-box">
-            <strong>⚠️ Common Pitfalls to Avoid:</strong>
+            <strong>⚠️ Avoid:</strong>
             <ul>
-              <li>Long-running pipelines that slow down development</li>
-              <li>Hardcoded values instead of variables</li>
-              <li>Missing error handling and retries</li>
-              <li>Inadequate testing coverage</li>
-              <li>No rollback procedures</li>
-              <li>Exposing secrets in logs</li>
-              <li>Ignoring security vulnerabilities</li>
-              <li>Not monitoring pipeline health</li>
+              <li>Deploying from developer machines — all deployments must go through the pipeline</li>
+              <li>Skipping tests to "speed up" a hotfix — it always comes back to bite you</li>
+              <li>Using <code>:latest</code> image tags in production manifests — use immutable SHA tags</li>
+              <li>Sharing secrets between environments — each environment has its own secrets</li>
             </ul>
           </div>
 
-          <h2>Troubleshooting Pipelines</h2>
-
-          <h3>Debugging Failed Builds</h3>
-          <pre><code># Enable debug logging
-# GitHub Actions
-- name: Debug
-  run: |
-    echo "GitHub context: ${{ toJson(github) }}"
-    echo "Runner context: ${{ toJson(runner) }}"
-    echo "Environment variables:"
-    env | sort
-
-# Jenkins debug
-pipeline {
-    agent any
-    options {
-        ansiColor('xterm')
-    }
-    stages {
-        stage('Debug') {
-            steps {
-                sh 'printenv | sort'
-                sh 'pwd && ls -la'
-            }
-        }
-    }
-}</code></pre>
-
-          <h3>Common Issues and Solutions</h3>
-          <ul>
-            <li><strong>Slow builds</strong>: Cache dependencies, use faster runners, parallelize tests</li>
-            <li><strong>Flaky tests</strong>: Implement retries, improve test isolation, fix race conditions</li>
-            <li><strong>Environment differences</strong>: Use Docker containers, standardize environments</li>
-            <li><strong>Permission issues</strong>: Configure proper service accounts and permissions</li>
-            <li><strong>Resource constraints</strong>: Optimize resource usage, implement queuing</li>
-          </ul>
-
           <h2>Next Steps</h2>
           <ul>
-            <li><strong><a href="monitoring.html">Monitoring & Logging</a></strong> - Implement observability for your applications</li>
-            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Advanced DevOps patterns and culture</li>
-            <li><strong><a href="index.html">DevOps Overview</a></strong> - Back to fundamentals</li>
+            <li><strong><a href="monitoring.html">Monitoring &amp; Logging</a></strong> — Observe your deployed applications</li>
+            <li><strong><a href="index.html">DevOps Overview</a></strong> — Back to DevOps fundamentals</li>
           </ul>
 
         </div>

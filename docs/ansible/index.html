@@ -188,13 +188,13 @@
       <!-- Sidebar -->
       <div class="col-lg-3">
         <div class="sidebar">
-          <h5><i class="bi bi-gear-fill me-2"></i>Ansible</h5>
+          <h5><i class="bi bi-gear me-2"></i>Ansible</h5>
           <nav class="nav flex-column">
-            <a class="nav-link active" href="index.html">Getting Started</a>
-            <a class="nav-link" href="concepts.html">Core Concepts</a>
-            <a class="nav-link" href="deployment.html">Playbook Guide</a>
-            <a class="nav-link" href="best-practices.html">Best Practices</a>
-            <a class="nav-link" href="#commands">Common Commands</a>
+            <a class="nav-link active" href="index.html">Introduction</a>
+            <a class="nav-link" href="playbooks.html">Playbooks</a>
+            <a class="nav-link" href="roles.html">Roles &amp; Modules</a>
+            <a class="nav-link" href="#install">Installation</a>
+            <a class="nav-link" href="#commands">Ad-hoc Commands</a>
           </nav>
         </div>
       </div>
@@ -202,274 +202,262 @@
       <!-- Main Content -->
       <div class="col-lg-9">
         <div class="content">
-          <h1><i class="bi bi-gear-fill me-2"></i>Ansible Documentation</h1>
+          <h1><i class="bi bi-gear me-2"></i>Ansible Documentation</h1>
 
           <div class="alert alert-info">
             <i class="bi bi-info-circle me-2"></i>
-            <strong>Configuration Management & Automation</strong> - Ansible is an open-source automation tool that simplifies configuration management, application deployment, and task automation.
+            <strong>Configuration Management</strong> - Ansible automates provisioning, configuration management, application deployment, and orchestration using simple YAML-based playbooks.
           </div>
 
           <h2>What is Ansible?</h2>
           <p>
-            Ansible is an open-source software provisioning, configuration management, and application-deployment tool.
-            It runs on many Unix-like systems, and can configure both Unix-like systems as well as Microsoft Windows.
-            It includes its own declarative language to describe system configuration.
+            Ansible is an open-source IT automation tool developed by Red Hat. It uses a simple, human-readable language
+            (YAML) to describe automation jobs called <strong>playbooks</strong>. Unlike other configuration management tools,
+            Ansible is <strong>agentless</strong> — it communicates with remote hosts over SSH (Linux) or WinRM (Windows),
+            requiring no extra software installed on the target machines.
           </p>
 
           <h2>Key Features</h2>
           <ul>
-            <li>🚀 <strong>Agentless</strong> - No agents to install on managed nodes</li>
-            <li>📝 <strong>Declarative</strong> - Describe desired state, not steps to achieve it</li>
-            <li>🔧 <strong>Idempotent</strong> - Safe to run multiple times</li>
-            <li>📚 <strong>Human-readable</strong> - YAML-based playbooks are easy to understand</li>
-            <li>🔌 <strong>Extensible</strong> - Thousands of modules for various tasks</li>
-            <li>🏗️ <strong>Infrastructure as Code</strong> - Version control your infrastructure</li>
+            <li>🚀 <strong>Agentless</strong> - No agent software needed on managed nodes</li>
+            <li>📝 <strong>Simple YAML Syntax</strong> - Human-readable playbooks</li>
+            <li>🔁 <strong>Idempotent</strong> - Running the same playbook multiple times has the same result</li>
+            <li>🔧 <strong>Extensible</strong> - Thousands of built-in modules and community collections</li>
+            <li>🔐 <strong>Secure</strong> - Uses SSH for communication, supports Vault for secrets</li>
+            <li>📦 <strong>Reusable</strong> - Roles allow sharing and reusing automation logic</li>
           </ul>
 
           <h2>Architecture Overview</h2>
 
-          <h3>Control Node</h3>
           <div class="concept-card">
-            <h4>Ansible Core</h4>
-            <p>The main engine that executes playbooks and communicates with managed nodes.</p>
+            <h4>Control Node</h4>
+            <p>The machine where Ansible is installed and playbooks are run from. Can be any Linux/macOS machine. Windows is not supported as a control node.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Managed Nodes</h4>
+            <p>The remote servers or devices that Ansible manages. No Ansible installation required — only Python and SSH access needed.</p>
           </div>
 
           <div class="concept-card">
             <h4>Inventory</h4>
-            <p>Defines the hosts and groups of hosts that Ansible will manage.</p>
+            <p>A list of managed nodes (hosts and groups). Can be a static file (INI or YAML) or dynamically generated from cloud providers, CMDB, etc.</p>
           </div>
 
           <div class="concept-card">
             <h4>Playbooks</h4>
-            <p>YAML files containing a series of tasks to be executed on managed nodes.</p>
-          </div>
-
-          <h3>Managed Nodes</h3>
-          <div class="concept-card">
-            <h4>Target Systems</h4>
-            <p>Remote systems that Ansible manages. Only require SSH and Python.</p>
+            <p>YAML files describing the desired state of managed nodes. Contains a list of plays, each targeting a group of hosts and executing a series of tasks.</p>
           </div>
 
           <div class="concept-card">
             <h4>Modules</h4>
-            <p>Reusable units of code that Ansible executes on managed nodes.</p>
+            <p>Units of code executed by Ansible on managed nodes. Over 3,000 built-in modules cover everything from files and packages to cloud APIs and databases.</p>
           </div>
 
-          <h2>Installation</h2>
+          <div class="concept-card">
+            <h4>Roles</h4>
+            <p>A structured way to organize playbooks, variables, files, templates, and handlers into reusable, shareable units of automation.</p>
+          </div>
 
-          <h3>Install Ansible on Control Node</h3>
+          <h2 id="install">Installation</h2>
 
-          <h4>Linux (Ubuntu/Debian)</h4>
-          <pre><code># Update package index
+          <h3>Install on Ubuntu/Debian</h3>
+          <pre><code># Update apt and add Ansible PPA
 sudo apt update
+sudo apt install -y software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
 
 # Install Ansible
-sudo apt install ansible
+sudo apt install -y ansible
 
 # Verify installation
 ansible --version</code></pre>
 
-          <h4>CentOS/RHEL/Fedora</h4>
-          <pre><code># Install EPEL repository (if not already installed)
-sudo yum install epel-release
+          <h3>Install on RHEL/CentOS/Rocky Linux</h3>
+          <pre><code># Enable EPEL repository
+sudo dnf install -y epel-release
 
 # Install Ansible
-sudo yum install ansible
-
-# Or using dnf on newer systems
-sudo dnf install ansible
+sudo dnf install -y ansible
 
 # Verify installation
 ansible --version</code></pre>
 
-          <h4>macOS</h4>
-          <pre><code># Install using Homebrew
-brew install ansible
+          <h3>Install via pip (All platforms)</h3>
+          <pre><code># Install pip if not present
+sudo apt install -y python3-pip    # Debian/Ubuntu
+sudo dnf install -y python3-pip    # RHEL/CentOS
 
-# Verify installation
-ansible --version</code></pre>
+# Install Ansible via pip
+pip3 install ansible
 
-          <h4>Python pip</h4>
-          <pre><code># Install Ansible via pip
-pip install ansible
+# Install specific version
+pip3 install ansible==8.0.0
 
-# Verify installation
-ansible --version</code></pre>
+# Install Ansible community collections
+ansible-galaxy collection install community.general</code></pre>
 
-          <h3>Setup SSH Key Authentication</h3>
-          <pre><code># Generate SSH key pair (if not exists)
-ssh-keygen -t rsa -b 4096
+          <h3>Verify Installation</h3>
+          <pre><code>ansible --version
+# ansible [core 2.16.x]
+# ...
 
-# Copy public key to managed nodes
-ssh-copy-id user@managed-node
+ansible-playbook --version
+ansible-galaxy --version</code></pre>
 
-# Test connection
-ssh user@managed-node</code></pre>
+          <h2>Inventory Configuration</h2>
 
-          <h2 id="commands">Essential Ansible Commands</h2>
+          <h3>Static Inventory (INI format)</h3>
+          <pre><code># /etc/ansible/hosts  or  ./inventory/hosts
 
-          <h3>Inventory Management</h3>
-          <pre><code># Test connectivity to all hosts
+[webservers]
+web1.example.com
+web2.example.com ansible_user=ubuntu
+
+[dbservers]
+db1.example.com ansible_host=192.168.1.10 ansible_port=22
+db2.example.com
+
+[loadbalancers]
+lb1.example.com
+
+# Group of groups
+[production:children]
+webservers
+dbservers
+loadbalancers
+
+# Variables for a group
+[webservers:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+http_port=80</code></pre>
+
+          <h3>Static Inventory (YAML format)</h3>
+          <pre><code># inventory/hosts.yml
+all:
+  children:
+    webservers:
+      hosts:
+        web1.example.com:
+          ansible_user: ubuntu
+        web2.example.com:
+          ansible_user: ubuntu
+          http_port: 8080
+    dbservers:
+      hosts:
+        db1.example.com:
+          ansible_host: 192.168.1.10
+          ansible_user: postgres
+      vars:
+        db_port: 5432
+    loadbalancers:
+      hosts:
+        lb1.example.com:</code></pre>
+
+          <h3>Test Inventory Connectivity</h3>
+          <pre><code># Ping all hosts
 ansible all -m ping
 
-# Test connectivity to specific host
-ansible target-host -m ping
-
-# Test connectivity to group
+# Ping specific group
 ansible webservers -m ping
 
 # List all hosts in inventory
-ansible all --list-hosts</code></pre>
+ansible all --list-hosts
 
-          <h3>Ad-hoc Commands</h3>
-          <pre><code># Execute shell command on all hosts
-ansible all -m shell -a "uptime"
+# Show inventory in graph format
+ansible-inventory --graph</code></pre>
 
-# Install package on Ubuntu/Debian
-ansible webservers -m apt -a "name=nginx state=present"
+          <h2>Ansible Configuration</h2>
 
-# Install package on CentOS/RHEL
-ansible webservers -m yum -a "name=nginx state=present"
+          <h3>ansible.cfg</h3>
+          <pre><code># ansible.cfg
+[defaults]
+inventory       = ./inventory/hosts.yml
+remote_user     = ubuntu
+private_key_file = ~/.ssh/id_rsa
+host_key_checking = False
+retry_files_enabled = False
+stdout_callback = yaml
+gathering = smart
 
-# Copy file to remote hosts
-ansible webservers -m copy -a "src=/local/file dest=/remote/path"
+# Performance tuning
+forks = 20
+pipelining = True
 
-# Create directory
-ansible webservers -m file -a "path=/opt/myapp state=directory"
+[privilege_escalation]
+become = True
+become_method = sudo
+become_user = root
+become_ask_pass = False
 
-# Restart service
-ansible webservers -m service -a "name=nginx state=restarted"</code></pre>
+[ssh_connection]
+ssh_args = -o ControlMaster=auto -o ControlPersist=60s
+pipelining = True</code></pre>
 
-          <h3>Playbook Execution</h3>
-          <pre><code># Run playbook
-ansible-playbook playbook.yml
+          <h2 id="commands">Ad-hoc Commands</h2>
+          <p>Run single tasks quickly without writing a full playbook:</p>
 
-# Run playbook with verbose output
-ansible-playbook playbook.yml -v
+          <h3>Basic Syntax</h3>
+          <pre><code>ansible &lt;host-pattern&gt; -m &lt;module&gt; -a "&lt;arguments&gt;"</code></pre>
 
-# Run playbook on specific hosts
-ansible-playbook playbook.yml --limit webservers
+          <h3>Common Ad-hoc Commands</h3>
+          <pre><code># Ping all hosts
+ansible all -m ping
 
-# Run playbook with extra variables
-ansible-playbook playbook.yml -e "env=production"
+# Run a shell command
+ansible webservers -m shell -a "uptime"
 
-# Check playbook syntax
-ansible-playbook playbook.yml --syntax-check
+# Get system facts
+ansible web1.example.com -m setup
 
-# Dry run (check mode)
-ansible-playbook playbook.yml --check</code></pre>
+# Copy a file
+ansible webservers -m copy -a "src=/local/file dest=/remote/file"
 
-          <h3>Configuration & Debugging</h3>
-          <pre><code># Show Ansible configuration
-ansible-config dump
+# Install a package (apt)
+ansible webservers -m apt -a "name=nginx state=present" -b
 
-# Show available modules
-ansible-doc -l
+# Install a package (yum/dnf)
+ansible dbservers -m dnf -a "name=postgresql state=present" -b
 
-# Show module documentation
-ansible-doc yum
-ansible-doc apt
+# Start and enable a service
+ansible webservers -m service -a "name=nginx state=started enabled=yes" -b
 
-# Show playbook execution with maximum verbosity
-ansible-playbook playbook.yml -vvv</code></pre>
+# Restart a service
+ansible webservers -m service -a "name=nginx state=restarted" -b
 
-          <h2>Quick Start Example</h2>
-          <p>Install and configure Nginx on web servers:</p>
+# Create a directory
+ansible all -m file -a "path=/opt/myapp state=directory owner=ubuntu mode=0755" -b
 
-          <h3>1. Create Inventory File (hosts.ini)</h3>
-          <pre><code>[webservers]
-web1 ansible_host=192.168.1.10
-web2 ansible_host=192.168.1.11
+# Fetch a file from remote
+ansible web1 -m fetch -a "src=/var/log/nginx/error.log dest=/tmp/logs/"
 
-[webservers:vars]
-ansible_user=ubuntu
-ansible_ssh_private_key_file=~/.ssh/id_rsa</code></pre>
+# Reboot hosts
+ansible production -m reboot -b</code></pre>
 
-          <h3>2. Create Playbook (nginx.yml)</h3>
-          <pre><code>---
-- name: Install and configure Nginx
-  hosts: webservers
-  become: yes
-
-  tasks:
-    - name: Update package cache
-      apt:
-        update_cache: yes
-      when: ansible_os_family == "Debian"
-
-    - name: Install Nginx
-      apt:
-        name: nginx
-        state: present
-      when: ansible_os_family == "Debian"
-
-    - name: Start and enable Nginx
-      service:
-        name: nginx
-        state: started
-        enabled: yes
-
-    - name: Copy custom index.html
-      copy:
-        content: |
-          &lt;h1&gt;Welcome to Nginx&lt;/h1&gt;
-          &lt;p&gt;Configured by Ansible&lt;/p&gt;
-        dest: /var/www/html/index.html</code></pre>
-
-          <h3>3. Run the Playbook</h3>
-          <pre><code>ansible-playbook nginx.yml</code></pre>
-
-          <h2>YAML Playbook Structure</h2>
-
-          <h3>Basic Playbook Anatomy</h3>
-          <pre><code>---
-- name: Play description
-  hosts: target_hosts
-  become: yes/no                    # Run with sudo
-  gather_facts: yes/no             # Gather system info
-
-  vars:                           # Variables
-    package_name: nginx
-    service_name: nginx
-
-  tasks:                          # List of tasks
-    - name: Task description
-      module_name:
-        parameter1: value1
-        parameter2: value2
-      when: condition               # Conditional execution
-      register: result             # Store result
-
-  handlers:                       # Triggered by tasks
-    - name: Restart service
-      service:
-        name: "{{ service_name }}"
-        state: restarted
-      listen: restart_webserver</code></pre>
+          <h2>Core Concepts Summary</h2>
+          <ul>
+            <li><strong>Inventory</strong> - Defines the hosts and groups Ansible manages</li>
+            <li><strong>Playbooks</strong> - YAML automation scripts describing desired state</li>
+            <li><strong>Tasks</strong> - Individual units of work within a play</li>
+            <li><strong>Modules</strong> - Pre-built code blocks for specific operations</li>
+            <li><strong>Variables</strong> - Dynamic values used in playbooks and templates</li>
+            <li><strong>Handlers</strong> - Tasks triggered only when notified by other tasks</li>
+            <li><strong>Templates</strong> - Jinja2-based dynamic configuration files</li>
+            <li><strong>Roles</strong> - Structured, reusable collections of automation logic</li>
+            <li><strong>Vault</strong> - Encrypted storage for secrets and sensitive data</li>
+            <li><strong>Galaxy</strong> - Community hub for sharing roles and collections</li>
+          </ul>
 
           <div class="tip-box">
-            <strong>💡 Tip:</strong> Use <code>ansible-playbook --check</code> to validate playbooks before running them in production.
+            <strong>💡 Tip:</strong> Always use <code>ansible-playbook --check</code> (dry-run) and <code>--diff</code> flags before applying changes in production to preview what will be modified.
           </div>
-
-          <h2>Core Concepts</h2>
-          <p>Understanding key Ansible components:</p>
-          <ul>
-            <li><strong>Inventory</strong> - List of managed hosts and their connection details</li>
-            <li><strong>Playbooks</strong> - YAML files defining automation tasks</li>
-            <li><strong>Tasks</strong> - Individual actions executed by modules</li>
-            <li><strong>Modules</strong> - Reusable code units for specific operations</li>
-            <li><strong>Roles</strong> - Reusable collections of playbooks and related files</li>
-            <li><strong>Variables</strong> - Dynamic data used in playbooks</li>
-            <li><strong>Templates</strong> - Jinja2 templates for configuration files</li>
-            <li><strong>Facts</strong> - Information gathered about managed hosts</li>
-          </ul>
 
           <h2>Next Steps</h2>
           <p>Continue learning with our detailed guides:</p>
           <ul>
-            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Deep dive into Ansible components</li>
-            <li><strong><a href="deployment.html">Playbook Guide</a></strong> - Advanced playbook techniques</li>
-            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Writing maintainable automation</li>
+            <li><strong><a href="playbooks.html">Playbooks</a></strong> - Write powerful automation scripts with tasks, variables, and handlers</li>
+            <li><strong><a href="roles.html">Roles &amp; Modules</a></strong> - Organize and reuse automation with roles and built-in modules</li>
           </ul>
 
         </div>

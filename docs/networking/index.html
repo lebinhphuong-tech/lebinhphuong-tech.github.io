@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Networking Fundamentals | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container py-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Networking</a></li>
+        <li class="breadcrumb-item active">Overview</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5><i class="bi bi-diagram-3 me-2"></i>Networking</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Overview</a>
+            <a class="nav-link" href="vpc.html">VPC Design</a>
+            <a class="nav-link" href="dns-lb.html">DNS &amp; Load Balancing</a>
+            <a class="nav-link" href="vpn-bgp.html">VPN &amp; BGP</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-diagram-3 me-3"></i>Networking Fundamentals</h1>
+          <p class="lead">Core networking concepts for cloud infrastructure engineers — from OSI layers and TCP/IP internals to SDN, overlay networks, and real-world troubleshooting tools.</p>
+
+          <!-- OSI MODEL -->
+          <h2>OSI Model — Cloud &amp; DevOps Perspective</h2>
+          <p>The OSI model provides a layered framework for understanding where issues occur. In cloud environments, most problems live at layers 3–7, but lower layers surface in on-prem/hybrid scenarios.</p>
+
+          <div class="concept-card">
+            <h4>Layer 1 — Physical</h4>
+            <p><strong>Cloud relevance:</strong> Fiber optic links, transceiver types, cable specs for Direct Connect / Interconnect. Rarely visible in cloud but critical for colocation and dedicated connectivity.</p>
+            <p><strong>What breaks here:</strong> Bad SFP modules, fiber bends, attenuation. <strong>Tools:</strong> Physical inspection, optical power meters, vendor NOC tickets.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Layer 2 — Data Link</h4>
+            <p><strong>Cloud relevance:</strong> MAC addressing, VLANs, 802.1Q tagging (used in Direct Connect VIFs, Interconnect VLAN attachments), ARP, spanning tree (STP).</p>
+            <p><strong>What breaks here:</strong> ARP storms, duplicate MACs, VLAN misconfiguration. <strong>Tools:</strong> <code>arp -n</code>, <code>arping</code>, <code>tcpdump</code>, switch port analysis.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Layer 3 — Network</h4>
+            <p><strong>Cloud relevance:</strong> IP routing, CIDR blocks, route tables, security groups (IP-level), BGP, OSPF. The most critical layer for cloud networking — VPC route tables operate here.</p>
+            <p><strong>What breaks here:</strong> Route table misconfigurations, missing routes, blackhole routes, MTU mismatches causing fragmentation. <strong>Tools:</strong> <code>ping</code>, <code>traceroute</code>, <code>ip route</code>, <code>mtr</code>.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Layer 4 — Transport</h4>
+            <p><strong>Cloud relevance:</strong> TCP/UDP port filtering (security groups, NACLs, firewall rules), connection tracking, TCP state management, health checks (TCP-based NLB). Load balancers operate at L4 (NLB) or L7 (ALB).</p>
+            <p><strong>What breaks here:</strong> Port blocked by security group, TIME_WAIT exhaustion, SYN floods, asymmetric routing breaking stateful connections. <strong>Tools:</strong> <code>netstat</code>, <code>ss</code>, <code>tcpdump</code>, <code>nmap</code>.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Layer 5 — Session</h4>
+            <p><strong>Cloud relevance:</strong> TLS session establishment, session resumption (TLS tickets/session IDs), SSH sessions. Less distinctly modeled in modern stacks — often merged with L4/L6.</p>
+            <p><strong>What breaks here:</strong> Session timeouts, TLS session cache mismatches. <strong>Tools:</strong> <code>openssl s_client</code>, application logs.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Layer 6 — Presentation</h4>
+            <p><strong>Cloud relevance:</strong> TLS encryption/decryption (SSL termination at ALB/GCP HTTPS LB), data encoding (JSON, Protobuf), compression (gzip, Brotli). SSL/TLS offloading happens at this layer.</p>
+            <p><strong>What breaks here:</strong> Certificate errors, cipher mismatch, encoding bugs. <strong>Tools:</strong> <code>openssl s_client -connect host:443</code>, <code>curl -v</code>.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Layer 7 — Application</h4>
+            <p><strong>Cloud relevance:</strong> HTTP/HTTPS routing (ALB rules, GCP URL maps), DNS, gRPC, WebSocket, API Gateway. WAF rules (AWS WAF, Cloud Armor) inspect at this layer.</p>
+            <p><strong>What breaks here:</strong> HTTP 4xx/5xx errors, incorrect Host headers, broken API routing, WAF false positives. <strong>Tools:</strong> <code>curl -v</code>, browser DevTools, application logs, WAF logs.</p>
+          </div>
+
+          <!-- TCP/IP -->
+          <h2>TCP/IP Stack</h2>
+
+          <h3>TCP vs UDP</h3>
+          <table>
+            <tr><th>Feature</th><th>TCP</th><th>UDP</th></tr>
+            <tr><td>Connection</td><td>Connection-oriented (3-way handshake)</td><td>Connectionless</td></tr>
+            <tr><td>Reliability</td><td>Guaranteed delivery, ordering, retransmission</td><td>Best-effort, no guarantee</td></tr>
+            <tr><td>Overhead</td><td>Higher (headers, ACKs, state)</td><td>Lower (8-byte header)</td></tr>
+            <tr><td>Use cases</td><td>HTTP, HTTPS, SSH, databases, file transfer</td><td>DNS, NTP, video streaming, gaming, VoIP, QUIC</td></tr>
+            <tr><td>Cloud examples</td><td>ALB, RDS, SSH bastion, HTTPS APIs</td><td>NLB (UDP mode), Route 53, CloudFront UDP</td></tr>
+          </table>
+
+          <h3>TCP Three-Way Handshake</h3>
+          <pre><code># TCP connection establishment
+Client                          Server
+  |                               |
+  |--- SYN (seq=x) ------------->|   Client initiates
+  |                               |
+  |&lt;-- SYN-ACK (seq=y, ack=x+1) -|   Server acknowledges + its own SYN
+  |                               |
+  |--- ACK (ack=y+1) ----------->|   Client acknowledges server
+  |                               |
+  |=== DATA TRANSFER ============|
+
+# Connection teardown (4-way)
+Client                          Server
+  |--- FIN ---------------------->|
+  |&lt;-- ACK ----------------------|
+  |&lt;-- FIN ----------------------|
+  |--- ACK ---------------------->|</code></pre>
+
+          <h3>TCP Connection States</h3>
+          <table>
+            <tr><th>State</th><th>Description</th><th>Troubleshooting note</th></tr>
+            <tr><td><code>LISTEN</code></td><td>Server waiting for incoming connections</td><td>Service is up and bound to port</td></tr>
+            <tr><td><code>SYN_SENT</code></td><td>Client sent SYN, waiting for SYN-ACK</td><td>Many here = connectivity/firewall issue</td></tr>
+            <tr><td><code>SYN_RECV</code></td><td>Server received SYN, sent SYN-ACK</td><td>SYN flood if excessive</td></tr>
+            <tr><td><code>ESTABLISHED</code></td><td>Connection is active and data flowing</td><td>Normal active connections</td></tr>
+            <tr><td><code>FIN_WAIT_1/2</code></td><td>Active close initiated</td><td>Closing connection</td></tr>
+            <tr><td><code>TIME_WAIT</code></td><td>2*MSL wait after close (typically 60s)</td><td>High count = port exhaustion risk</td></tr>
+            <tr><td><code>CLOSE_WAIT</code></td><td>Remote side closed, local hasn't</td><td>Application not calling close() — likely a bug</td></tr>
+          </table>
+
+          <div class="warning-box">
+            <strong>TIME_WAIT exhaustion:</strong> Under high connection churn (microservices, short-lived HTTP), <code>TIME_WAIT</code> can exhaust ephemeral ports (default: 32768–60999). Fix with <code>net.ipv4.tcp_tw_reuse=1</code> or persistent connections / connection pooling.
+          </div>
+
+          <pre><code># Check TCP states
+ss -s
+netstat -an | awk '/tcp/ {print $6}' | sort | uniq -c | sort -rn
+
+# Tune TIME_WAIT behavior (Linux)
+sysctl net.ipv4.tcp_tw_reuse          # allow reuse for outgoing connections
+sysctl net.ipv4.ip_local_port_range   # view ephemeral port range
+# Set in /etc/sysctl.conf:
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.ip_local_port_range = 1024 65535</code></pre>
+
+          <!-- IP ADDRESSING -->
+          <h2>IP Addressing</h2>
+
+          <h3>CIDR Notation &amp; Subnetting</h3>
+          <table>
+            <tr><th>CIDR</th><th>Subnet Mask</th><th>Hosts</th><th>Common Use</th></tr>
+            <tr><td>/8</td><td>255.0.0.0</td><td>16,777,214</td><td>Class A (10.0.0.0/8)</td></tr>
+            <tr><td>/16</td><td>255.255.0.0</td><td>65,534</td><td>VPC CIDR block</td></tr>
+            <tr><td>/20</td><td>255.255.240.0</td><td>4,094</td><td>Large subnet</td></tr>
+            <tr><td>/24</td><td>255.255.255.0</td><td>254</td><td>Standard subnet per AZ</td></tr>
+            <tr><td>/28</td><td>255.255.255.240</td><td>14</td><td>AWS PrivateLink endpoints</td></tr>
+            <tr><td>/32</td><td>255.255.255.255</td><td>1</td><td>Host route / security group reference</td></tr>
+          </table>
+
+          <h3>RFC 1918 Private Ranges</h3>
+          <pre><code>10.0.0.0/8       # 10.x.x.x — Class A private (16M addresses) — preferred for VPCs
+172.16.0.0/12    # 172.16.x.x to 172.31.x.x — Class B private
+192.168.0.0/16   # 192.168.x.x — Class C private (home/small office)
+
+# Loopback
+127.0.0.0/8      # localhost
+
+# Link-local (APIPA)
+169.254.0.0/16   # AWS metadata: 169.254.169.254, GCP metadata: 169.254.169.254
+
+# AWS VPC recommended planning:
+# - 10.0.0.0/8 split into /16 per environment
+# - 10.0.0.0/16  → production
+# - 10.1.0.0/16  → staging
+# - 10.2.0.0/16  → development
+# - 10.100.0.0/16 → shared services / hub</code></pre>
+
+          <h3>IPv6 Overview &amp; Dual-Stack</h3>
+          <pre><code># IPv6 address format: 8 groups of 4 hex digits
+2001:0db8:85a3:0000:0000:8a2e:0370:7334
+2001:db8:85a3::8a2e:370:7334  # compressed (:: = consecutive zero groups)
+
+# Special addresses
+::1              # loopback (equivalent to 127.0.0.1)
+fe80::/10        # link-local (equivalent to 169.254.x.x)
+2001:db8::/32    # documentation range (RFC 5737)
+::/0             # default route (all IPv6)
+
+# AWS dual-stack VPC
+# Assign /56 IPv6 CIDR to VPC, /64 to each subnet
+# Enable "Assign IPv6 address on creation" per subnet
+# Update route tables: ::/0 via IGW
+
+# GCP dual-stack
+gcloud compute networks subnets create my-subnet \
+  --stack-type=IPV4_IPV6 \
+  --ipv6-access-type=EXTERNAL \
+  --region=us-central1</code></pre>
+
+          <!-- KEY PROTOCOLS -->
+          <h2>Key Protocols</h2>
+
+          <h3>DNS</h3>
+          <div class="concept-card">
+            <h4>Resolution Flow</h4>
+            <p><strong>Recursive resolver</strong> (ISP/8.8.8.8) queries on behalf of client, caches results. <strong>Authoritative nameserver</strong> holds the actual zone records and returns definitive answers.</p>
+          </div>
+          <pre><code># DNS resolution chain for api.example.com:
+Client → Recursive Resolver (e.g. 8.8.8.8)
+  → Root nameservers (13 root clusters, anycast)
+  → TLD nameservers (.com)
+  → Authoritative NS for example.com (Route 53 / Cloud DNS)
+  → Returns A record (e.g. 203.0.113.45)
+
+# Inspect DNS resolution
+dig api.example.com +trace          # full resolution trace
+dig @8.8.8.8 api.example.com A      # query specific resolver
+dig api.example.com ANY             # all record types
+nslookup -type=MX example.com       # MX records
+host -t TXT example.com             # TXT records
+
+# TTL: Time To Live (seconds)
+# Low TTL (60s)  → fast failover, more DNS queries, higher cost
+# High TTL (3600s+) → cached longer, slower propagation
+# Best practice: lower TTL 24h before any migration</code></pre>
+
+          <h3>HTTP/HTTPS Methods, Status Codes &amp; Headers</h3>
+          <pre><code># Common HTTP methods
+GET     # Retrieve resource — safe, idempotent
+POST    # Create resource — not idempotent
+PUT     # Replace resource — idempotent
+PATCH   # Partial update
+DELETE  # Remove resource — idempotent
+HEAD    # Headers only (no body) — used by health checks
+OPTIONS # CORS preflight
+
+# Status code families
+1xx: Informational  (100 Continue, 101 Switching Protocols)
+2xx: Success        (200 OK, 201 Created, 204 No Content)
+3xx: Redirect       (301 Moved, 302 Found, 304 Not Modified)
+4xx: Client Error   (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 429 Too Many Requests)
+5xx: Server Error   (500 Internal, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout)
+
+# Key request headers
+Host: api.example.com
+Authorization: Bearer eyJhbGci...
+Content-Type: application/json
+Accept: application/json
+X-Forwarded-For: 203.0.113.10    # original client IP (set by LB)
+X-Request-ID: uuid-here
+
+# Key response headers
+Content-Type: application/json
+Cache-Control: max-age=3600, public
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+Access-Control-Allow-Origin: https://app.example.com</code></pre>
+
+          <h3>TLS Handshake</h3>
+          <pre><code># TLS 1.3 Handshake (simplified)
+Client                              Server
+  |--- ClientHello ----------------->|  (supported ciphers, TLS version, key share)
+  |&lt;-- ServerHello + Certificate ----|  (chosen cipher, cert, key share)
+  |&lt;-- EncryptedExtensions ----------|
+  |&lt;-- Finished ---------------------|
+  |--- Finished ---------------------|  (session keys derived)
+  |=== Encrypted Application Data ===|
+
+# Verify TLS certificate and chain
+openssl s_client -connect api.example.com:443 -servername api.example.com
+openssl s_client -connect api.example.com:443 | openssl x509 -noout -dates -subject
+# Check cipher and protocol version
+openssl s_client -connect api.example.com:443 -tls1_3
+# Test with curl
+curl -v --tlsv1.3 https://api.example.com/health 2&gt;&amp;1 | grep -E 'SSL|TLS|certificate'</code></pre>
+
+          <h3>ICMP &amp; ARP</h3>
+          <pre><code># ICMP - Internet Control Message Protocol
+# Type 0: Echo Reply (ping response)
+# Type 3: Destination Unreachable (network/host/port unreachable)
+# Type 8: Echo Request (ping)
+# Type 11: Time Exceeded (TTL=0, used by traceroute)
+
+ping -c 4 -s 1472 10.0.1.10    # test with specific packet size (MTU check)
+ping -f -s 8972 10.0.1.10      # flood ping with jumbo frames
+
+# ARP - Address Resolution Protocol (L2 → L3 mapping)
+arp -n                          # show ARP cache
+arping -I eth0 10.0.1.1        # ARP ping (find MAC for IP)
+ip neigh show                   # modern ARP cache display
+
+# Gratuitous ARP: host announcing its own IP→MAC mapping
+# Used by: virtual IP failover (keepalived, VRRP), VM migration</code></pre>
+
+          <!-- TROUBLESHOOTING TOOLKIT -->
+          <h2>Network Troubleshooting Toolkit</h2>
+
+          <h3>Connectivity &amp; Path Analysis</h3>
+          <pre><code># ping — basic reachability, latency, packet loss
+ping -c 10 8.8.8.8
+ping -c 5 -s 1400 10.0.1.10   # test specific packet size
+
+# traceroute — path and per-hop latency (uses TTL increment + ICMP Time Exceeded)
+traceroute 8.8.8.8
+traceroute -T -p 443 api.example.com   # TCP traceroute on port 443 (bypass ICMP blocks)
+tracepath 8.8.8.8                       # similar, no root needed
+
+# mtr — continuous traceroute with statistics (best for identifying intermittent loss)
+mtr --report --report-cycles 20 8.8.8.8
+mtr -T -P 443 api.example.com           # TCP mode for firewalled paths
+# KEY: Look for packet loss that persists at a hop AND all subsequent hops</code></pre>
+
+          <h3>Port Scanning &amp; Service Discovery</h3>
+          <pre><code># nmap — port scanning and service fingerprinting
+nmap -p 22,80,443 10.0.1.0/24           # scan specific ports on subnet
+nmap -sV -p 443 api.example.com         # version detection
+nmap -sn 10.0.1.0/24                    # ping sweep (host discovery only)
+nmap --open -p 0-1024 10.0.1.10        # show only open ports
+
+# nc (netcat) — lightweight port testing
+nc -zv 10.0.1.10 443           # test if port is open
+nc -zv -w 3 10.0.1.10 5432     # with 3s timeout (PostgreSQL)
+echo "GET / HTTP/1.0" | nc api.example.com 80</code></pre>
+
+          <h3>Packet Capture</h3>
+          <pre><code># tcpdump — packet capture and analysis
+tcpdump -i eth0 -n                          # capture all traffic on eth0
+tcpdump -i any host 10.0.1.10              # traffic to/from specific host
+tcpdump -i eth0 port 443                   # HTTPS traffic
+tcpdump -i eth0 'tcp[tcpflags] & tcp-syn != 0'  # SYN packets only
+tcpdump -i eth0 -w /tmp/capture.pcap       # write to file for Wireshark
+tcpdump -r /tmp/capture.pcap -n            # read capture file
+
+# Practical: capture HTTP requests
+tcpdump -i eth0 -A -s 0 'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)&lt;&lt;2)) - ((tcp[12]&0xf0)&gt;&gt;2)) != 0)'
+
+# Wireshark display filters (when analyzing .pcap)
+# http.response.code == 500   → filter 500 errors
+# tcp.analysis.retransmission → retransmissions
+# dns.flags.rcode != 0        → DNS errors</code></pre>
+
+          <h3>Socket &amp; Connection Inspection</h3>
+          <pre><code># netstat (legacy, widely available)
+netstat -tlnp          # listening TCP sockets with PID
+netstat -an            # all connections with numeric addresses
+netstat -s             # protocol statistics
+
+# ss (modern replacement for netstat)
+ss -tlnp               # listening TCP sockets with PID
+ss -tnp state established  # established connections
+ss -s                  # summary statistics
+ss -tnp 'dport = :443' # connections to port 443
+
+# Check what's listening on a port
+lsof -i :443
+fuser 443/tcp</code></pre>
+
+          <h3>HTTP &amp; TLS Debugging</h3>
+          <pre><code># curl — versatile HTTP debugging
+curl -v https://api.example.com/health           # verbose with TLS details
+curl -sk https://api.example.com/health          # skip cert verification
+curl -H "Host: api.example.com" http://10.0.1.10/  # override Host header
+curl -w "\n\ntime_namelookup: %{time_namelookup}\ntime_connect: %{time_connect}\ntime_starttransfer: %{time_starttransfer}\ntotal: %{time_total}\n" \
+     -o /dev/null -s https://api.example.com/health   # timing breakdown
+
+# openssl s_client — TLS inspection
+openssl s_client -connect api.example.com:443 -servername api.example.com
+openssl s_client -connect api.example.com:443 &lt; /dev/null 2&gt;&amp;1 | grep -E 'subject|issuer|expire|verify'
+openssl s_client -connect api.example.com:443 -showcerts   # show full chain</code></pre>
+
+          <!-- CLOUD NETWORKING -->
+          <h2>Cloud Networking Fundamentals</h2>
+
+          <h3>Software-Defined Networking (SDN)</h3>
+          <p>Cloud networks are fully software-defined: the physical underlay carries traffic, while a virtual overlay provides tenant isolation and programmable topology.</p>
+          <div class="concept-card">
+            <h4>Control Plane vs Data Plane</h4>
+            <p><strong>Control plane:</strong> Makes routing decisions. In cloud: the hypervisor/SDN controller programs virtual switch rules. Examples: AWS VPC route tables, GCP Cloud Router.</p>
+            <p><strong>Data plane:</strong> Forwards packets based on programmed rules. Happens in hardware (ASICs/FPGAs) or software (OVS). AWS uses Nitro system; GCP uses Andromeda SDN.</p>
+          </div>
+
+          <h3>Overlay Networks — VXLAN &amp; Geneve</h3>
+          <pre><code># VXLAN (Virtual Extensible LAN) — RFC 7348
+# Encapsulates L2 frames in UDP/IP (port 4789)
+# 24-bit VNI (VXLAN Network Identifier) = 16M segments
+# Used by: Kubernetes (Flannel, Calico), OpenStack, AWS EKS
+
+# Geneve (Generic Network Virtualization Encapsulation)
+# More flexible than VXLAN — variable-length options header
+# Used by: AWS Nitro (GRE-like), GCP Andromeda
+# AWS Gateway Load Balancer uses Geneve port 6081
+
+# VXLAN header structure:
+# Outer: Ethernet | IP | UDP (4789) | VXLAN Header (VNI) | Inner: Ethernet | IP | Payload
+
+# Inspect VXLAN traffic
+tcpdump -i eth0 port 4789
+# Show VXLAN interfaces
+ip -d link show type vxlan</code></pre>
+
+          <h3>East-West vs North-South Traffic</h3>
+          <table>
+            <tr><th>Traffic Type</th><th>Direction</th><th>Examples</th><th>Security consideration</th></tr>
+            <tr><td>North-South</td><td>Client ↔ Internet / on-prem</td><td>User → ALB → App, VPN tunnel</td><td>Internet-facing, perimeter security, WAF</td></tr>
+            <tr><td>East-West</td><td>Service ↔ Service (within cloud)</td><td>App → DB, microservice → microservice</td><td>Lateral movement risk — micro-segmentation critical</td></tr>
+          </table>
+
+          <!-- NETWORK PERFORMANCE -->
+          <h2>Network Performance</h2>
+
+          <h3>Bandwidth, Latency &amp; Throughput</h3>
+          <div class="concept-card">
+            <h4>Key Metrics Defined</h4>
+            <p><strong>Bandwidth:</strong> Maximum data rate (Gbps). Like the width of a pipe.<br>
+            <strong>Latency:</strong> Time for a packet to travel source → destination (ms). Round-trip time (RTT) = 2× one-way latency.<br>
+            <strong>Throughput:</strong> Actual data transferred per second. Limited by min(bandwidth, TCP_window/RTT).<br>
+            <strong>BDP (Bandwidth-Delay Product):</strong> bandwidth × RTT = bytes in flight. TCP buffer must be at least BDP for full utilization.</p>
+          </div>
+
+          <h3>MTU &amp; Jumbo Frames</h3>
+          <pre><code># Standard Ethernet MTU: 1500 bytes
+# Jumbo frames: 9000 bytes (common in AWS, GCP)
+# VXLAN overhead: ~50 bytes → effective MTU 1450 for overlay
+
+# Test MTU with ping (no-fragment flag)
+ping -c 3 -M do -s 1472 10.0.1.10   # 1472 + 28 ICMP header = 1500 MTU
+ping -c 3 -M do -s 8972 10.0.1.10   # test jumbo frames
+
+# Show interface MTU
+ip link show eth0
+# Set MTU
+ip link set eth0 mtu 9000
+
+# AWS: Enable jumbo frames on Nitro instances (up to 9001 bytes)
+# GCP: Default MTU 1460, configurable up to 8896 (VPC setting)</code></pre>
+
+          <h3>TCP Window Scaling &amp; Connection Pooling</h3>
+          <pre><code># TCP window scaling (RFC 1323) — critical for high-BDP paths
+sysctl net.ipv4.tcp_window_scaling    # should be 1 (enabled)
+sysctl net.core.rmem_max              # max receive buffer
+sysctl net.core.wmem_max              # max send buffer
+
+# Recommended for high-throughput cloud workloads:
+net.core.rmem_max = 134217728
+net.core.wmem_max = 134217728
+net.ipv4.tcp_rmem = 4096 87380 134217728
+net.ipv4.tcp_wmem = 4096 65536 134217728
+
+# Connection pooling: reuse TCP connections instead of opening new ones
+# Benefits: eliminates handshake latency, reduces TIME_WAIT, reduces file descriptor usage
+# Implementation: database connection pools (PgBouncer for PostgreSQL, ProxySQL for MySQL)
+# HTTP: keep-alive connections, HTTP/2 multiplexing</code></pre>
+
+          <!-- SECURITY -->
+          <h2>Network Security</h2>
+
+          <h3>Stateful vs Stateless Firewall Inspection</h3>
+          <table>
+            <tr><th>Feature</th><th>Stateful (e.g. SG, iptables conntrack)</th><th>Stateless (e.g. NACL, ACL)</th></tr>
+            <tr><td>Connection tracking</td><td>Yes — tracks state, allows return traffic automatically</td><td>No — each packet evaluated independently</td></tr>
+            <tr><td>Performance</td><td>Slightly higher CPU (state table lookup)</td><td>Faster, but must explicitly allow return traffic</td></tr>
+            <tr><td>Ephemeral ports</td><td>Handled automatically</td><td>Must explicitly allow 1024-65535 for return traffic</td></tr>
+            <tr><td>AWS equivalent</td><td>Security Groups</td><td>Network ACLs</td></tr>
+          </table>
+
+          <h3>Network Segmentation &amp; Micro-Segmentation</h3>
+          <div class="tip-box">
+            <strong>Defense in depth for cloud networks:</strong>
+            <ul class="mb-0 mt-2">
+              <li><strong>Perimeter:</strong> Internet Gateway, NAT, WAF (AWS WAF / Cloud Armor) for north-south</li>
+              <li><strong>Segment:</strong> VPC isolation per environment; private subnets for data tier</li>
+              <li><strong>Host:</strong> Security groups / firewall rules scoped to minimum required ports</li>
+              <li><strong>Micro-segmentation:</strong> Kubernetes NetworkPolicy, service mesh (Istio mTLS) for east-west</li>
+              <li><strong>Zero Trust:</strong> No implicit trust based on network location — authenticate every request</li>
+            </ul>
+          </div>
+
+          <pre><code># iptables — Linux host firewall (foundation of cloud security groups)
+iptables -L -n -v                    # list all rules with stats
+iptables -L INPUT -n --line-numbers  # INPUT chain with rule numbers
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT   # allow HTTPS
+iptables -A INPUT -s 10.0.0.0/8 -j ACCEPT        # allow from private range
+iptables -P INPUT DROP               # default deny
+
+# nftables (modern replacement)
+nft list ruleset
+nft add rule ip filter input tcp dport 443 accept</code></pre>
+
+          <div class="success-box">
+            <strong>Quick reference — Layer-by-Layer troubleshooting:</strong><br>
+            L1/L2: Can you ARP? → <code>arping</code><br>
+            L3: Can you ping? → <code>ping</code>, <code>ip route get &lt;dst&gt;</code><br>
+            L4: Can you connect to port? → <code>nc -zv host port</code>, <code>ss -tlnp</code><br>
+            L7: Is the application responding? → <code>curl -v</code>, <code>openssl s_client</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

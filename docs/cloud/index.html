@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Overview | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light px-4">
+    <a class="navbar-brand fw-bold" style="color: var(--secondary-color);" href="../../index.html">
+      <i class="bi bi-person-circle me-2" style="color: var(--primary-color);"></i>Lê Bình Phương
+    </a>
+    <div class="ms-auto">
+      <a href="../../index.html" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-house me-1"></i>Home
+      </a>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Cloud</a></li>
+        <li class="breadcrumb-item active">Overview</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5><i class="bi bi-cloud me-2"></i>Cloud</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html"><i class="bi bi-house-door me-2"></i>Overview</a>
+            <a class="nav-link" href="aws.html"><i class="bi bi-cloud-fill me-2"></i>AWS</a>
+            <a class="nav-link" href="gcp.html"><i class="bi bi-google me-2"></i>GCP</a>
+            <a class="nav-link" href="architecture.html"><i class="bi bi-diagram-3 me-2"></i>Architecture</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-cloud me-2"></i>Cloud Overview</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Cloud infrastructure</strong> — design for scalability, security, and cost efficiency.
+            Build systems that grow with demand, protect data at every layer, and eliminate waste.
+          </div>
+
+          <h2>What is Cloud Computing?</h2>
+          <p>Cloud computing delivers on-demand IT resources over the internet with pay-as-you-go pricing. Instead of buying and maintaining physical data centers, you access technology services from a cloud provider. The primary service models differ in how much of the stack is managed for you.</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Full Name</th>
+                <th>You Manage</th>
+                <th>Provider Manages</th>
+                <th>Examples</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>IaaS</strong></td>
+                <td>Infrastructure as a Service</td>
+                <td>OS, runtime, data, apps</td>
+                <td>Servers, storage, networking, virtualization</td>
+                <td>AWS EC2, GCP Compute Engine, Azure VMs</td>
+              </tr>
+              <tr>
+                <td><strong>PaaS</strong></td>
+                <td>Platform as a Service</td>
+                <td>Data and apps</td>
+                <td>OS, runtime, middleware, servers, storage</td>
+                <td>AWS Elastic Beanstalk, GCP App Engine, Heroku</td>
+              </tr>
+              <tr>
+                <td><strong>SaaS</strong></td>
+                <td>Software as a Service</td>
+                <td>Configuration and data input</td>
+                <td>Everything</td>
+                <td>Gmail, Salesforce, Slack, Datadog</td>
+              </tr>
+              <tr>
+                <td><strong>FaaS</strong></td>
+                <td>Function as a Service</td>
+                <td>Code logic only</td>
+                <td>Infrastructure, scaling, OS, runtime</td>
+                <td>AWS Lambda, GCP Cloud Functions, Azure Functions</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Multi-Cloud vs Hybrid Cloud</h2>
+
+          <h3>Multi-Cloud Strategy</h3>
+          <p>Multi-cloud uses services from two or more public cloud providers (e.g., AWS + GCP) simultaneously for different workloads or as redundancy.</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="success-box">
+                <strong>Pros:</strong>
+                <ul class="mb-0 mt-2">
+                  <li>Avoid vendor lock-in</li>
+                  <li>Use best-of-breed services per cloud</li>
+                  <li>Geographic redundancy and compliance</li>
+                  <li>Leverage competitive pricing</li>
+                  <li>Resilience against cloud provider outages</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="warning-box">
+                <strong>Cons:</strong>
+                <ul class="mb-0 mt-2">
+                  <li>Operational complexity increases significantly</li>
+                  <li>Skill requirements multiply</li>
+                  <li>Data egress costs between clouds</li>
+                  <li>Inconsistent tooling and APIs</li>
+                  <li>Harder to optimize costs holistically</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3>Hybrid Cloud Strategy</h3>
+          <p>Hybrid cloud connects on-premises infrastructure with one or more public clouds, enabling data and applications to move between environments.</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="success-box">
+                <strong>Use Cases:</strong>
+                <ul class="mb-0 mt-2">
+                  <li>Regulatory compliance (data residency)</li>
+                  <li>Legacy systems modernization</li>
+                  <li>Burst capacity for peak demand</li>
+                  <li>Disaster recovery to cloud</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="warning-box">
+                <strong>Anti-Patterns:</strong>
+                <ul class="mb-0 mt-2">
+                  <li>Treating cloud as "just another data center"</li>
+                  <li>Lift-and-shift without optimization</li>
+                  <li>Ignoring cloud-native services</li>
+                  <li>No unified identity management</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h2>AWS Well-Architected Framework — 6 Pillars</h2>
+          <p>The AWS Well-Architected Framework provides architectural best practices across six pillars. Each pillar includes design principles, questions, and best practices to help evaluate and improve cloud architectures.</p>
+
+          <div class="concept-card">
+            <h4><i class="bi bi-gear me-2"></i>1. Operational Excellence</h4>
+            <p>Focus on running and monitoring systems to deliver business value and continually improve processes. Key practices include performing operations as code (IaC), annotating documentation, making frequent small reversible changes, refining operations procedures frequently, and anticipating failure.</p>
+            <p><strong>Key services:</strong> AWS CloudFormation, Systems Manager, CloudWatch, X-Ray, CodePipeline</p>
+          </div>
+
+          <div class="concept-card">
+            <h4><i class="bi bi-shield-lock me-2"></i>2. Security</h4>
+            <p>Protect information, systems, and assets while delivering business value through risk assessments and mitigation strategies. Apply security at all layers, enable traceability, implement least-privilege access, secure data in transit and at rest, and automate security best practices.</p>
+            <p><strong>Key services:</strong> IAM, KMS, CloudTrail, Config, GuardDuty, Security Hub, WAF, Shield</p>
+          </div>
+
+          <div class="concept-card">
+            <h4><i class="bi bi-arrow-repeat me-2"></i>3. Reliability</h4>
+            <p>Ensure a workload performs its intended function correctly and consistently when expected. Recover from failures automatically, scale horizontally to increase aggregate workload availability, stop guessing capacity, manage change with automation.</p>
+            <p><strong>Key services:</strong> Route 53, ELB, Auto Scaling, CloudWatch, S3, Glacier</p>
+          </div>
+
+          <div class="concept-card">
+            <h4><i class="bi bi-speedometer2 me-2"></i>4. Performance Efficiency</h4>
+            <p>Use IT and computing resources efficiently to meet system requirements, and maintain that efficiency as demand changes and technologies evolve. Democratize advanced technologies, go global in minutes, use serverless architectures, experiment more often.</p>
+            <p><strong>Key services:</strong> EC2 (right-sizing), ElastiCache, CloudFront, Lambda, EKS</p>
+          </div>
+
+          <div class="concept-card">
+            <h4><i class="bi bi-currency-dollar me-2"></i>5. Cost Optimization</h4>
+            <p>Run systems to deliver business value at the lowest price point. Adopt a consumption model, measure overall efficiency, stop spending money on undifferentiated heavy lifting, and analyze and attribute expenditure.</p>
+            <p><strong>Key services:</strong> Cost Explorer, Budgets, Trusted Advisor, Reserved Instances, Savings Plans, Spot Instances</p>
+          </div>
+
+          <div class="concept-card">
+            <h4><i class="bi bi-leaf me-2"></i>6. Sustainability</h4>
+            <p>Minimize the environmental impact of running cloud workloads. Understand your impact, establish sustainability goals, maximize utilization, anticipate and adopt new hardware/software, use managed services, and reduce the downstream impact of your cloud workloads.</p>
+            <p><strong>Key services:</strong> Compute Optimizer, Graviton instances, Lambda, Fargate</p>
+          </div>
+
+          <h2>GCP Architecture Framework — Pillar Mapping</h2>
+          <p>GCP's Architecture Framework aligns closely with AWS's model, providing the same 6 categories adapted to Google's ecosystem.</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Pillar</th>
+                <th>AWS WA Equivalent</th>
+                <th>Key GCP Services</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Operational Excellence</strong></td>
+                <td>Operational Excellence</td>
+                <td>Cloud Deployment Manager, Cloud Build, Cloud Monitoring, Error Reporting</td>
+              </tr>
+              <tr>
+                <td><strong>Security, Privacy, Compliance</strong></td>
+                <td>Security</td>
+                <td>IAM, Cloud KMS, Security Command Center, Cloud Armor, VPC Service Controls</td>
+              </tr>
+              <tr>
+                <td><strong>Reliability</strong></td>
+                <td>Reliability</td>
+                <td>Cloud Load Balancing, Cloud DNS, Cloud Storage, Spanner (global), GKE Autopilot</td>
+              </tr>
+              <tr>
+                <td><strong>Performance Optimization</strong></td>
+                <td>Performance Efficiency</td>
+                <td>Cloud CDN, Memorystore, Bigtable, BigQuery, Cloud Trace, Profiler</td>
+              </tr>
+              <tr>
+                <td><strong>Cost Optimization</strong></td>
+                <td>Cost Optimization</td>
+                <td>Billing Reports, Recommender, Committed Use Discounts, Spot VMs, Budgets</td>
+              </tr>
+              <tr>
+                <td><strong>Sustainability</strong></td>
+                <td>Sustainability</td>
+                <td>Carbon Footprint dashboard, Tau T2D (ARM), serverless products, region selection</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Cloud Design Patterns</h2>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Active-Active Multi-AZ</h4>
+                <p>Traffic is distributed across multiple availability zones simultaneously. All instances serve production traffic. Failure of one AZ does not cause downtime — load balancers automatically route to healthy AZs. Best for high-throughput, low-latency applications.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Active-Passive Failover</h4>
+                <p>Primary AZ/region handles all traffic; secondary stands by in a warm or hot standby state. On failure, DNS failover or a load balancer health check promotes the passive to active. Simpler and cheaper than active-active but has a failover lag (typically 30–120 seconds for DNS TTL).</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Multi-Region Deployment</h4>
+                <p>Application and data are replicated across geographically separate cloud regions. Serves users from the nearest region for latency reduction. Critical for global compliance, data residency requirements, and ultra-high availability (SLA &gt; 99.99%).</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Blue-Green Deployment</h4>
+                <p>Two identical production environments run in parallel (blue = current, green = new). Deploy the new version to green, validate, then switch traffic via DNS or load balancer. Zero-downtime deployments with instant rollback by switching traffic back to blue.</p>
+              </div>
+            </div>
+          </div>
+
+          <h2>Cloud Migration Strategies — The 6 Rs</h2>
+          <p>When moving workloads to the cloud, choose the migration strategy based on business goals, time constraints, and technical complexity.</p>
+
+          <div class="concept-card">
+            <h4>1. Rehost (Lift and Shift)</h4>
+            <p>Move applications to the cloud without changes — same OS, same configuration. Fast and low-risk but misses cloud-native benefits. Use for quick migrations under deadline pressure or for legacy apps that can't be easily modified.</p>
+            <p><em>Example: Move an on-premises RHEL MySQL server to an AWS EC2 instance with the same configuration using VM Import/Export.</em></p>
+          </div>
+
+          <div class="concept-card">
+            <h4>2. Replatform (Lift, Tinker, and Shift)</h4>
+            <p>Make a few cloud optimizations without changing core architecture. Examples: migrate MySQL to Amazon RDS, move app server to Elastic Beanstalk, use managed container services instead of self-managed containers.</p>
+            <p><em>Example: Move a self-managed PostgreSQL server to Cloud SQL (GCP) with automated backups and HA.</em></p>
+          </div>
+
+          <div class="concept-card">
+            <h4>3. Repurchase (Drop and Shop)</h4>
+            <p>Replace existing application with a different product, usually a SaaS solution. Common for CRM, ERP, email systems where the cloud SaaS equivalent is more cost-effective and feature-rich.</p>
+            <p><em>Example: Replace on-premises Exchange with Microsoft 365 or replace Jira Data Center with Jira Cloud.</em></p>
+          </div>
+
+          <div class="concept-card">
+            <h4>4. Refactor / Re-architect</h4>
+            <p>Redesign the application using cloud-native capabilities. Decompose monolith into microservices, adopt serverless, event-driven architecture, or containerization. Highest effort but greatest long-term benefit.</p>
+            <p><em>Example: Break a monolithic e-commerce app into services — order service (Lambda), product catalog (DynamoDB + API Gateway), authentication (Cognito).</em></p>
+          </div>
+
+          <div class="concept-card">
+            <h4>5. Retire</h4>
+            <p>Decommission applications that are no longer needed or are redundant after evaluating the portfolio. Reduces cost and complexity of managing unnecessary workloads.</p>
+            <p><em>Example: Identify 20% of the application portfolio as rarely used during assessment and shut them down post-migration.</em></p>
+          </div>
+
+          <div class="concept-card">
+            <h4>6. Retain</h4>
+            <p>Keep applications on-premises or in current state if migration doesn't make business sense yet. Usually for apps with upcoming major version updates, pending compliance approvals, or too costly to migrate at this time.</p>
+            <p><em>Example: Retain a legacy COBOL mainframe application that will be replaced by a SaaS vendor in 18 months.</em></p>
+          </div>
+
+          <h2>Landing Zone Concept</h2>
+          <p>A Landing Zone is a pre-configured, secure, multi-account cloud environment based on best practices. It provides the foundation upon which all cloud workloads are deployed.</p>
+
+          <h3>Account / Project Structure</h3>
+          <pre><code># AWS Organization Structure
+Root (Management Account)
+├── Security OU
+│   ├── Audit Account        # CloudTrail, Config aggregation
+│   └── Log Archive Account  # Centralized logging (S3)
+├── Infrastructure OU
+│   ├── Network Account      # Transit Gateway, Direct Connect
+│   └── Shared Services      # Active Directory, DNS, AMI catalog
+├── Workloads OU
+│   ├── Production OU
+│   │   ├── Prod-AppA Account
+│   │   └── Prod-AppB Account
+│   ├── Staging OU
+│   │   └── Staging-AppA Account
+│   └── Dev OU
+│       └── Dev-Sandbox Account
+└── Sandbox OU
+    └── Individual developer sandboxes</code></pre>
+
+          <h3>Network Topology</h3>
+          <pre><code># Hub-and-Spoke with Transit Gateway (AWS)
+Network Account (Hub)
+  ├── Transit Gateway
+  ├── Shared VPC (10.0.0.0/16)
+  │   ├── VPN / Direct Connect endpoints
+  │   └── Centralized Egress (NAT Gateway)
+  └── DNS VPC (Route 53 Resolver)
+
+Spoke VPCs (per workload account)
+  ├── Prod VPC: 10.10.0.0/16 → TGW attachment
+  ├── Staging VPC: 10.20.0.0/16 → TGW attachment
+  └── Dev VPC: 10.30.0.0/16 → TGW attachment
+
+# GCP Shared VPC equivalent
+Host Project (VPC host)
+  └── Shared VPC → subnets delegated to service projects
+Service Project A (prod workloads) → uses shared subnets
+Service Project B (dev workloads) → uses shared subnets</code></pre>
+
+          <h3>IAM Hierarchy</h3>
+          <pre><code># AWS IAM hierarchy via Organizations
+- SCPs (Service Control Policies) at OU level: deny guardrails
+- Permission Boundaries: limit max IAM permissions per role
+- Role: specific task roles (Developer, ReadOnly, Admin)
+- IAM Identity Center (SSO): federated access across accounts
+
+# GCP IAM hierarchy
+Organization → Folders → Projects → Resources
+- Org Policies: constraints applied top-down
+- IAM bindings at each level (inherited downward)
+- Service Accounts: workload identity at resource level
+- Workload Identity Federation: keyless auth for CI/CD</code></pre>
+
+          <h2>FinOps Integration — Cost from Day 1</h2>
+
+          <div class="tip-box">
+            <strong>Principle:</strong> Cost visibility and optimization should be embedded from the architecture design phase, not bolted on after deployment.
+          </div>
+
+          <h3>Tagging Strategy</h3>
+          <pre><code># Required tags for every resource (enforce via SCPs / Org Policies)
+Environment:    prod | staging | dev | sandbox
+Owner:          team-platform | team-backend | team-data
+Project:        project-name or cost-center-code
+Application:    app-name
+ManagedBy:      terraform | manual | cloudformation
+CostCenter:     CC-12345
+
+# AWS Tag Policy example (JSON)
+{
+  "tags": {
+    "Environment": {
+      "tag_key": { "@@assign": "Environment" },
+      "tag_value": {
+        "@@assign": ["prod", "staging", "dev", "sandbox"]
+      },
+      "enforced_for": {
+        "@@assign": ["ec2:instance", "rds:db", "s3:bucket"]
+      }
+    }
+  }
+}
+
+# Terraform tagging (locals block)
+locals {
+  common_tags = {
+    Environment = var.environment
+    Owner       = var.team
+    Project     = var.project
+    ManagedBy   = "terraform"
+    CostCenter  = var.cost_center
+  }
+}</code></pre>
+
+          <h2>Key Tooling Ecosystem</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Category</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Terraform</strong></td>
+                <td>IaC</td>
+                <td>Provision and manage cloud infrastructure declaratively across AWS, GCP, Azure</td>
+              </tr>
+              <tr>
+                <td><strong>Ansible</strong></td>
+                <td>Configuration Management</td>
+                <td>Configure OS, install packages, manage files on cloud VMs and on-premises servers</td>
+              </tr>
+              <tr>
+                <td><strong>Helm</strong></td>
+                <td>Package Manager</td>
+                <td>Deploy and manage Kubernetes applications using versioned charts</td>
+              </tr>
+              <tr>
+                <td><strong>ArgoCD</strong></td>
+                <td>GitOps / CD</td>
+                <td>Continuous delivery for Kubernetes — sync cluster state with Git repository</td>
+              </tr>
+              <tr>
+                <td><strong>Prometheus</strong></td>
+                <td>Monitoring</td>
+                <td>Metrics collection and alerting for cloud-native and Kubernetes workloads</td>
+              </tr>
+              <tr>
+                <td><strong>CloudWatch</strong></td>
+                <td>Monitoring (AWS)</td>
+                <td>AWS-native metrics, logs, alarms, dashboards, and tracing (X-Ray integration)</td>
+              </tr>
+              <tr>
+                <td><strong>Cloud Monitoring</strong></td>
+                <td>Monitoring (GCP)</td>
+                <td>GCP-native metrics collection, alerting policies, and uptime checks</td>
+              </tr>
+              <tr>
+                <td><strong>Grafana</strong></td>
+                <td>Visualization</td>
+                <td>Unified dashboards for Prometheus, CloudWatch, and Cloud Monitoring data sources</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="success-box">
+            <strong>Next Steps:</strong> Dive deeper into each cloud provider:
+            <ul class="mb-0 mt-2">
+              <li><a href="aws.html" style="color: var(--primary-color);">AWS Deep Dive</a> — EC2, EKS, VPC, IAM, S3, CloudWatch</li>
+              <li><a href="gcp.html" style="color: var(--primary-color);">GCP Deep Dive</a> — GKE, Compute Engine, VPC, Cloud SQL, Monitoring</li>
+              <li><a href="architecture.html" style="color: var(--primary-color);">Architecture Patterns</a> — HA, DR, multi-region, microservices, serverless</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

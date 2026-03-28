@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IAM &amp; Access Control | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Security</a></li>
+        <li class="breadcrumb-item active">IAM &amp; Access Control</li>
+      </ol>
+    </nav>
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-shield-lock me-2"></i>Security</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link active" href="iam.html">IAM &amp; Access Control</a>
+            <a class="nav-link" href="devsecops.html">DevSecOps</a>
+            <a class="nav-link" href="secrets.html">Secrets Management</a>
+            <a class="nav-link" href="compliance.html">Compliance &amp; Audit</a>
+          </nav>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="content">
+
+          <h1><i class="bi bi-person-lock me-2"></i>IAM &amp; Access Control</h1>
+
+          <div class="warning-box">
+            <strong><i class="bi bi-exclamation-triangle me-2"></i>Golden Rule:</strong>
+            Never use root/owner accounts for daily operations. Create individual IAM users or use federated identities with the minimum required permissions. Root accounts should only be used for initial setup and break-glass scenarios, with hardware MFA enforced.
+          </div>
+
+          <h2>IAM Core Concepts</h2>
+
+          <h3>Authentication vs Authorization</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead><tr><th>Concept</th><th>Question It Answers</th><th>Mechanisms</th><th>Examples</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><strong>Authentication (AuthN)</strong></td>
+                  <td>"Who are you?"</td>
+                  <td>Passwords, MFA, certificates, biometrics, hardware keys</td>
+                  <td>SAML SSO, OIDC login, mTLS client certificates</td>
+                </tr>
+                <tr>
+                  <td><strong>Authorization (AuthZ)</strong></td>
+                  <td>"What can you do?"</td>
+                  <td>RBAC, ABAC, ACL, policy engines</td>
+                  <td>IAM policies, Kubernetes RBAC, OPA decisions</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Identity Providers &amp; Federation</h3>
+          <p>Modern environments use federated identity to allow users to authenticate once and access multiple systems (Single Sign-On). Key protocols:</p>
+          <ul>
+            <li><strong>SAML 2.0</strong> (Security Assertion Markup Language): XML-based standard used for enterprise SSO. IdP (Okta, ADFS) issues assertions consumed by SPs. Used for AWS IAM Identity Center, GCP Workforce Identity Federation.</li>
+            <li><strong>OIDC</strong> (OpenID Connect): OAuth 2.0 extension using JWT tokens. Widely used for modern web/mobile apps. Used for Kubernetes OIDC, GitHub Actions OIDC, GCP Workload Identity.</li>
+            <li><strong>OAuth 2.0</strong>: Authorization framework (not authentication). Grants scoped access tokens to third-party applications without exposing credentials.</li>
+          </ul>
+          <div class="concept-card">
+            <h4>Federation Flow (OIDC)</h4>
+            <ol>
+              <li>User/workload presents identity to IdP (e.g., GitHub Actions, Okta)</li>
+              <li>IdP issues a short-lived JWT token signed with its private key</li>
+              <li>Cloud provider (AWS/GCP) validates the token against the IdP's public JWKS endpoint</li>
+              <li>Cloud provider issues temporary credentials based on configured trust policy</li>
+              <li>Workload uses temporary credentials — no long-lived keys stored anywhere</li>
+            </ol>
+          </div>
+
+          <h2>Access Control Models</h2>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr><th>Model</th><th>Full Name</th><th>How It Works</th><th>Best For</th><th>Examples</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>RBAC</strong></td>
+                  <td>Role-Based Access Control</td>
+                  <td>Permissions assigned to roles; users assigned to roles</td>
+                  <td>Enterprise environments with well-defined job functions</td>
+                  <td>Kubernetes RBAC, AWS IAM roles, database roles</td>
+                </tr>
+                <tr>
+                  <td><strong>ABAC</strong></td>
+                  <td>Attribute-Based Access Control</td>
+                  <td>Access decisions based on attributes of user, resource, environment</td>
+                  <td>Fine-grained, dynamic access control; multi-tenancy</td>
+                  <td>AWS IAM Conditions, OPA policies, XACML</td>
+                </tr>
+                <tr>
+                  <td><strong>ReBAC</strong></td>
+                  <td>Relationship-Based Access Control</td>
+                  <td>Access based on relationships between entities in a graph</td>
+                  <td>Social platforms, document sharing, hierarchical resources</td>
+                  <td>Google Zanzibar, SpiceDB, Ory Keto</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>AWS IAM Deep Dive</h2>
+
+          <h3>IAM Building Blocks</h3>
+          <ul>
+            <li><strong>Users:</strong> Long-term credentials for humans or applications (legacy). Prefer federation and roles.</li>
+            <li><strong>Groups:</strong> Collections of users. Attach policies to groups, not individual users.</li>
+            <li><strong>Roles:</strong> Short-term credentials assumed by users, services, or cross-account principals. Preferred method for workloads.</li>
+            <li><strong>Policies:</strong> JSON documents defining allow/deny actions on resources. Evaluation order: explicit deny &gt; explicit allow &gt; implicit deny.</li>
+          </ul>
+
+          <h3>Policy Types</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead><tr><th>Type</th><th>Scope</th><th>Use Case</th></tr></thead>
+              <tbody>
+                <tr><td>AWS Managed Policy</td><td>Account</td><td>Common use cases provided by AWS (ReadOnlyAccess, AdministratorAccess)</td></tr>
+                <tr><td>Customer Managed Policy</td><td>Account</td><td>Custom policies reusable across multiple principals</td></tr>
+                <tr><td>Inline Policy</td><td>Single principal</td><td>Tightly coupled policy for one-off permissions — avoid for maintainability</td></tr>
+                <tr><td>Service Control Policy (SCP)</td><td>AWS Organization</td><td>Guardrails across all accounts in an OU — cannot grant permissions, only restrict</td></tr>
+                <tr><td>Permission Boundary</td><td>IAM entity</td><td>Maximum permission ceiling for a user/role — used to delegate IAM administration safely</td></tr>
+                <tr><td>Resource-based Policy</td><td>Resource</td><td>Attached to S3 buckets, SQS queues, KMS keys — grants cross-account access</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Least-Privilege S3 Policy Example</h3>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowListBucket",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": "arn:aws:s3:::my-app-data-bucket",
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": ["app-data/${aws:PrincipalTag/Environment}/*"]
+        }
+      }
+    },
+    {
+      "Sid": "AllowObjectOperations",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::my-app-data-bucket/app-data/${aws:PrincipalTag/Environment}/*"
+    },
+    {
+      "Sid": "DenyUnencryptedUploads",
+      "Effect": "Deny",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::my-app-data-bucket/*",
+      "Condition": {
+        "StringNotEquals": {
+          "s3:x-amz-server-side-encryption": "aws:kms"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+          <h3>EC2 IAM Role with Least Privilege (SSM + CloudWatch)</h3>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SSMCoreAccess",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:UpdateInstanceInformation",
+        "ssmmessages:CreateControlChannel",
+        "ssmmessages:CreateDataChannel",
+        "ssmmessages:OpenControlChannel",
+        "ssmmessages:OpenDataChannel",
+        "ec2messages:AcknowledgeMessage",
+        "ec2messages:DeleteMessage",
+        "ec2messages:FailMessage",
+        "ec2messages:GetEndpoint",
+        "ec2messages:GetMessages",
+        "ec2messages:SendReply"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudWatchLogs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+      ],
+      "Resource": "arn:aws:logs:ap-southeast-1:123456789012:log-group:/app/*"
+    }
+  ]
+}</code></pre>
+
+          <h3>Trust Policy for Cross-Account Role Assumption</h3>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::111122223333:role/ci-cd-role"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "StringEquals": {
+          "sts:ExternalId": "unique-external-id-abc123"
+        },
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+          <h3>Service Control Policy — Deny Non-Approved Regions</h3>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyNonApprovedRegions",
+      "Effect": "Deny",
+      "NotAction": [
+        "iam:*",
+        "organizations:*",
+        "support:*",
+        "sts:GetCallerIdentity"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": ["ap-southeast-1", "us-east-1"]
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+          <h2>GCP IAM Deep Dive</h2>
+
+          <h3>Resource Hierarchy</h3>
+          <p>GCP IAM policies are inherited down the hierarchy. A binding at a higher level grants access to all resources below it:</p>
+          <pre><code>Organization (example.com)
+  └── Folder (Production)
+        └── Folder (Engineering)
+              └── Project (my-app-prod)
+                    └── Resource (Cloud Storage bucket, GKE cluster, etc.)</code></pre>
+
+          <h3>Role Types</h3>
+          <ul>
+            <li><strong>Primitive roles:</strong> Owner, Editor, Viewer — overly broad, avoid in production</li>
+            <li><strong>Predefined roles:</strong> Fine-grained roles managed by Google (e.g., <code>roles/container.developer</code>, <code>roles/storage.objectViewer</code>)</li>
+            <li><strong>Custom roles:</strong> User-defined with specific permissions — use when predefined roles are too broad</li>
+          </ul>
+
+          <h3>GCP IAM Binding Examples</h3>
+<pre><code># Grant a service account viewer access to a specific bucket
+gcloud storage buckets add-iam-policy-binding gs://my-prod-bucket \
+  --member="serviceAccount:app-sa@my-project.iam.gserviceaccount.com" \
+  --role="roles/storage.objectViewer"
+
+# Grant a group access to deploy to Cloud Run in a specific project
+gcloud projects add-iam-policy-binding my-app-prod \
+  --member="group:devs@example.com" \
+  --role="roles/run.developer"
+
+# Create a custom role with minimal permissions
+gcloud iam roles create AppDeployer \
+  --project=my-app-prod \
+  --title="App Deployer" \
+  --permissions="run.services.update,run.services.get" \
+  --stage=GENERAL_AVAILABILITY</code></pre>
+
+          <h3>Workload Identity Federation (GCP)</h3>
+          <p>Allows workloads outside GCP (GitHub Actions, AWS, on-prem) to authenticate as GCP service accounts without key files:</p>
+<pre><code># Configure Workload Identity Pool for GitHub Actions
+gcloud iam workload-identity-pools create "github-pool" \
+  --project="my-project" \
+  --location="global" \
+  --display-name="GitHub Actions Pool"
+
+gcloud iam workload-identity-pools providers create-oidc "github-provider" \
+  --project="my-project" \
+  --location="global" \
+  --workload-identity-pool="github-pool" \
+  --display-name="GitHub Provider" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
+  --issuer-uri="https://token.actions.githubusercontent.com"
+
+# Bind the pool to a service account
+gcloud iam service-accounts add-iam-policy-binding \
+  deploy-sa@my-project.iam.gserviceaccount.com \
+  --project="my-project" \
+  --role="roles/iam.workloadIdentityUser" \
+  --member="principalSet://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-pool/attribute.repository/my-org/my-repo"</code></pre>
+
+          <h2>Kubernetes RBAC</h2>
+
+          <h3>Core RBAC Resources</h3>
+          <ul>
+            <li><strong>Role:</strong> Namespace-scoped permissions</li>
+            <li><strong>ClusterRole:</strong> Cluster-wide permissions (or for non-namespaced resources)</li>
+            <li><strong>RoleBinding:</strong> Binds a Role to subjects within a namespace</li>
+            <li><strong>ClusterRoleBinding:</strong> Binds a ClusterRole to subjects cluster-wide</li>
+          </ul>
+
+          <h3>Developer Role (Namespace-Scoped)</h3>
+<pre><code>apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: developer
+  namespace: my-app
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "services", "configmaps"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/portforward", "pods/exec"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer-binding
+  namespace: my-app
+subjects:
+  - kind: Group
+    name: "developers"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: developer
+  apiGroup: rbac.authorization.k8s.io</code></pre>
+
+          <h3>Platform Ops ClusterRole</h3>
+<pre><code>apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: platform-ops
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "persistentvolumes", "namespaces"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "daemonsets", "statefulsets"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "networkpolicies"]
+    verbs: ["*"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["roles", "rolebindings"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: platform-ops-binding
+subjects:
+  - kind: Group
+    name: "platform-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: platform-ops
+  apiGroup: rbac.authorization.k8s.io</code></pre>
+
+          <h2>MFA Enforcement</h2>
+
+          <h3>AWS: Enforce MFA via IAM Policy</h3>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowViewAccountInfo",
+      "Effect": "Allow",
+      "Action": ["iam:GetAccountPasswordPolicy", "iam:ListVirtualMFADevices"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowManageOwnMFA",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateVirtualMFADevice",
+        "iam:EnableMFADevice",
+        "iam:GetUser",
+        "iam:ListMFADevices",
+        "iam:ResyncMFADevice"
+      ],
+      "Resource": [
+        "arn:aws:iam::*:mfa/${aws:username}",
+        "arn:aws:iam::*:user/${aws:username}"
+      ]
+    },
+    {
+      "Sid": "DenyAllExceptAllowedIfNoMFA",
+      "Effect": "Deny",
+      "NotAction": [
+        "iam:CreateVirtualMFADevice",
+        "iam:EnableMFADevice",
+        "iam:GetUser",
+        "iam:ListMFADevices",
+        "iam:ResyncMFADevice",
+        "sts:GetSessionToken"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "false"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+          <h3>GCP: Enforce MFA via Org Policy</h3>
+<pre><code># Require 2-step verification for all users in the organization
+# In Google Admin Console: Security > 2-Step Verification > Allow users to turn on 2-Step Verification
+# Then enforce: Enforcement > Turn on enforcement
+
+# For GCP API access, use org policy to require OS Login with 2FA
+gcloud resource-manager org-policies set-policy \
+  --organization=123456789 \
+  os_login_2fa_policy.yaml
+
+# os_login_2fa_policy.yaml
+constraint: constraints/compute.requireOsLoginTwoFactor
+booleanPolicy:
+  enforced: true</code></pre>
+
+          <h3>Hardware Keys &amp; TOTP</h3>
+          <ul>
+            <li><strong>YubiKey (FIDO2/WebAuthn):</strong> Hardware security key — phishing-resistant, supports AWS, GCP, GitHub, Okta. Recommended for privileged users.</li>
+            <li><strong>TOTP apps:</strong> Google Authenticator, Authy, 1Password — time-based one-time passwords. Good baseline but susceptible to real-time phishing.</li>
+            <li><strong>Push-based MFA:</strong> Duo, Okta Verify — convenient but vulnerable to MFA fatigue attacks (deny all unexpected push requests).</li>
+          </ul>
+
+          <h2>Service Account Best Practices</h2>
+
+          <div class="concept-card">
+            <h4>Rules for Service Accounts</h4>
+            <ul>
+              <li><strong>No shared accounts:</strong> One service account per application/service. Never share credentials between workloads.</li>
+              <li><strong>Workload Identity over key files:</strong> On Kubernetes/GKE, use Workload Identity to map K8s service accounts to cloud IAM — no JSON key files.</li>
+              <li><strong>Rotate keys automatically:</strong> If key files are unavoidable, automate rotation and store in a secrets manager.</li>
+              <li><strong>Audit regularly:</strong> Review service account permissions quarterly. Delete unused accounts and keys.</li>
+              <li><strong>Scope tightly:</strong> Grant only the specific permissions the service needs, scoped to specific resources.</li>
+            </ul>
+          </div>
+
+<pre><code># Enable Workload Identity on a GKE cluster
+gcloud container clusters update my-cluster \
+  --workload-pool=my-project.svc.id.goog \
+  --region=asia-southeast1
+
+# Annotate Kubernetes Service Account to bind to GCP SA
+kubectl annotate serviceaccount my-app-ksa \
+  --namespace=production \
+  iam.gke.io/gcp-service-account=my-app-sa@my-project.iam.gserviceaccount.com
+
+# Allow the KSA to impersonate the GCP SA
+gcloud iam service-accounts add-iam-policy-binding \
+  my-app-sa@my-project.iam.gserviceaccount.com \
+  --role=roles/iam.workloadIdentityUser \
+  --member="serviceAccount:my-project.svc.id.goog[production/my-app-ksa]"</code></pre>
+
+          <h2>Privileged Access Management (PAM)</h2>
+
+          <h3>Just-In-Time (JIT) Access</h3>
+          <p>
+            JIT access eliminates standing privileges. Users request elevated access for a specific time window, it is approved, granted, used, and automatically revoked. This dramatically reduces the blast radius if credentials are compromised.
+          </p>
+          <div class="concept-card">
+            <h4>JIT Access Workflow</h4>
+            <ol>
+              <li>Engineer submits access request with justification and time window (e.g., "need prod DB access for incident investigation, 2 hours")</li>
+              <li>Request goes through approval (manager, security team, automated for low-risk)</li>
+              <li>Temporary role/permission is granted via automation (AWS IAM role assumption, GCP IAM Conditions with expiry)</li>
+              <li>All session activity is recorded (session recording via BeyondTrust, Teleport, AWS Session Manager)</li>
+              <li>Access is automatically revoked after the time window expires</li>
+            </ol>
+          </div>
+
+          <h3>Break-Glass Procedures</h3>
+          <p>Break-glass accounts are emergency access accounts used when normal access paths are unavailable (IdP outage, major incident). They must be:</p>
+          <ul>
+            <li>Stored in a physical safe or offline vault, not in a digital secrets manager that might be unavailable</li>
+            <li>Protected by hardware MFA (YubiKey)</li>
+            <li>Monitored with real-time alerting on any use</li>
+            <li>Audited and credentials rotated after each use</li>
+            <li>Tested quarterly to ensure they work when needed</li>
+          </ul>
+
+          <h3>Session Recording with AWS Session Manager</h3>
+<pre><code># Start a session with session recording enabled
+aws ssm start-session \
+  --target i-0abc1234def567890 \
+  --document-name AWS-StartInteractiveCommand \
+  --region ap-southeast-1
+
+# SSM Document for session recording to S3
+{
+  "schemaVersion": "1.0",
+  "description": "Session recording configuration",
+  "sessionType": "Standard_Stream",
+  "inputs": {
+    "s3BucketName": "my-session-logs-bucket",
+    "s3KeyPrefix": "ssm-sessions/",
+    "s3EncryptionEnabled": true,
+    "cloudWatchLogGroupName": "/aws/ssm/sessions",
+    "cloudWatchEncryptionEnabled": true,
+    "idleSessionTimeout": "20",
+    "maxSessionDuration": "60",
+    "runAsEnabled": true,
+    "runAsDefaultUser": ""
+  }
+}</code></pre>
+
+          <div class="tip-box">
+            <strong><i class="bi bi-lightbulb me-2"></i>Tip:</strong>
+            Use <strong>IAM Access Analyzer</strong> (AWS) or <strong>Policy Analyzer</strong> (GCP) to continuously scan for overly permissive policies, public resource access, and cross-account access paths you may not have intended. Run these checks as part of your weekly security review and integrate findings into your ticketing system.
+          </div>
+
+          <h2>IAM Audit &amp; Governance</h2>
+<pre><code># AWS: Find all IAM users with console access but no MFA
+aws iam generate-credential-report
+aws iam get-credential-report --query 'Content' --output text | base64 -d | \
+  awk -F',' '$4 == "true" &amp;&amp; $8 == "false" {print $1, "has console access but no MFA"}'
+
+# AWS: List all roles and their last used date
+aws iam get-account-authorization-details \
+  --filter Role \
+  --query 'RoleDetailList[*].[RoleName,RoleLastUsed.LastUsedDate]' \
+  --output table
+
+# GCP: Find service account keys older than 90 days
+gcloud iam service-accounts list --format="value(email)" | while read SA; do
+  gcloud iam service-accounts keys list \
+    --iam-account="$SA" \
+    --managed-by=user \
+    --format="table(name,validAfterTime)"
+done
+
+# Kubernetes: Find all ClusterRoleBindings to cluster-admin
+kubectl get clusterrolebindings -o json | jq '
+  .items[] |
+  select(.roleRef.name == "cluster-admin") |
+  {name: .metadata.name, subjects: .subjects}'</code></pre>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

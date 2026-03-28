@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DevOps Documentation | Lê Bình Phương</title>
+  <title>DevOps Overview | Lê Bình Phương</title>
 
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -157,6 +157,44 @@
       color: var(--primary-color);
       margin-bottom: 0.5rem;
     }
+
+    .pillar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .pillar-card {
+      background: white;
+      border: 2px solid var(--bg-light);
+      border-radius: 10px;
+      padding: 1.2rem;
+      text-align: center;
+      transition: border-color 0.3s;
+    }
+
+    .pillar-card:hover {
+      border-color: var(--primary-color);
+    }
+
+    .pillar-card .pillar-icon {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .pillar-card h5 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .pillar-card p {
+      font-size: 0.85rem;
+      color: #666;
+      margin: 0;
+    }
   </style>
 </head>
 <body>
@@ -192,9 +230,9 @@
           <nav class="nav flex-column">
             <a class="nav-link active" href="index.html">Overview</a>
             <a class="nav-link" href="cicd.html">CI/CD Pipelines</a>
-            <a class="nav-link" href="monitoring.html">Monitoring & Logging</a>
-            <a class="nav-link" href="best-practices.html">Best Practices</a>
-            <a class="nav-link" href="#tools">DevOps Tools</a>
+            <a class="nav-link" href="monitoring.html">Monitoring &amp; Logging</a>
+            <a class="nav-link" href="#lifecycle">DevOps Lifecycle</a>
+            <a class="nav-link" href="#tools">Toolchain</a>
           </nav>
         </div>
       </div>
@@ -202,250 +240,218 @@
       <!-- Main Content -->
       <div class="col-lg-9">
         <div class="content">
-          <h1><i class="bi bi-code-slash me-2"></i>DevOps Documentation</h1>
+          <h1><i class="bi bi-code-slash me-2"></i>DevOps Overview</h1>
 
           <div class="alert alert-info">
             <i class="bi bi-info-circle me-2"></i>
-            <strong>Culture, Practices & Tools</strong> - DevOps combines software development (Dev) and IT operations (Ops) to shorten the development lifecycle and provide continuous delivery of high-quality software.
+            <strong>DevOps</strong> bridges development and operations — combining culture, practices, and tools to deliver software faster, more reliably, and at scale.
           </div>
 
           <h2>What is DevOps?</h2>
           <p>
-            DevOps is a set of practices that combines software development and IT operations. It aims to shorten the systems development life cycle
-            and provide continuous delivery with high software quality. DevOps is complementary with Agile software development; several DevOps aspects
-            came from Agile methodology.
+            DevOps is a set of practices that combines software development (Dev) and IT operations (Ops) to shorten
+            the systems development lifecycle and deliver high-quality software continuously. It emphasizes
+            collaboration, automation, measurement, and sharing (CAMS framework).
+          </p>
+          <p>
+            At its core, DevOps breaks down the silos between development, QA, and operations teams — enabling
+            organizations to build, test, and release software faster and more reliably.
           </p>
 
-          <h2>Core Principles</h2>
-          <ul>
-            <li>🏗️ <strong>Automation</strong> - Automate everything possible to reduce manual errors</li>
-            <li>📊 <strong>Monitoring</strong> - Continuous monitoring of applications and infrastructure</li>
-            <li>🔄 <strong>Continuous Integration</strong> - Frequent code integration and testing</li>
-            <li>🚀 <strong>Continuous Delivery</strong> - Automated deployment to production</li>
-            <li>🤝 <strong>Collaboration</strong> - Break down silos between development and operations</li>
-            <li>📈 <strong>Continuous Improvement</strong> - Learn from failures and improve processes</li>
-          </ul>
+          <h2>The CAMS Framework</h2>
 
-          <h2>DevOps Culture</h2>
-
-          <h3>The Three Ways</h3>
           <div class="concept-card">
-            <h4>First Way: Flow</h4>
-            <p>Focus on the flow of work from development to operations to the customer. Eliminate bottlenecks and improve feedback loops.</p>
+            <h4><i class="bi bi-people me-2"></i>Culture</h4>
+            <p>Shared responsibility, collaboration, and trust between Dev and Ops. Everyone owns the product — from code to production.</p>
           </div>
 
           <div class="concept-card">
-            <h4>Second Way: Feedback</h4>
-            <p>Create feedback loops to understand how systems perform in production and how to improve them.</p>
+            <h4><i class="bi bi-robot me-2"></i>Automation</h4>
+            <p>Automate repetitive tasks: builds, tests, deployments, infrastructure provisioning, and configuration management.</p>
           </div>
 
           <div class="concept-card">
-            <h4>Third Way: Continual Learning</h4>
-            <p>Create a culture of innovation and risk-taking. Encourage experimentation and learning from failures.</p>
+            <h4><i class="bi bi-graph-up me-2"></i>Measurement</h4>
+            <p>Measure everything: deployment frequency, lead time, MTTR, change failure rate. Data drives decisions.</p>
           </div>
 
-          <h2>DevOps Lifecycle</h2>
-
-          <h3>Plan</h3>
           <div class="concept-card">
-            <p>Planning phase includes requirement gathering, design, and backlog management using tools like Jira, Azure DevOps, or GitHub Issues.</p>
+            <h4><i class="bi bi-share me-2"></i>Sharing</h4>
+            <p>Share knowledge, tools, processes, and post-mortems across teams. Build a learning culture.</p>
           </div>
 
-          <h3>Code</h3>
+          <h2 id="lifecycle">DevOps Lifecycle</h2>
+
+          <div class="pillar-grid">
+            <div class="pillar-card">
+              <div class="pillar-icon"><i class="bi bi-pencil-square"></i></div>
+              <h5>Plan</h5>
+              <p>Define features, user stories, and sprint goals</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon"><i class="bi bi-code-slash"></i></div>
+              <h5>Code</h5>
+              <p>Write, review, and version-control source code</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon"><i class="bi bi-hammer"></i></div>
+              <h5>Build</h5>
+              <p>Compile, package, and create artifacts</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon"><i class="bi bi-check2-circle"></i></div>
+              <h5>Test</h5>
+              <p>Unit, integration, security, and performance tests</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon"><i class="bi bi-rocket-takeoff"></i></div>
+              <h5>Release</h5>
+              <p>Approve, package, and prepare for deployment</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon"><i class="bi bi-cloud-upload"></i></div>
+              <h5>Deploy</h5>
+              <p>Push to staging and production environments</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon"><i class="bi bi-activity"></i></div>
+              <h5>Operate</h5>
+              <p>Manage infrastructure, scaling, and incidents</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon"><i class="bi bi-eye"></i></div>
+              <h5>Monitor</h5>
+              <p>Observe metrics, logs, traces, and alerts</p>
+            </div>
+          </div>
+
+          <h2>Key DevOps Metrics (DORA)</h2>
+          <p>The <strong>DORA</strong> (DevOps Research and Assessment) metrics measure software delivery performance:</p>
+
           <div class="concept-card">
-            <p>Version control systems like Git, collaborative coding practices, and code reviews ensure quality and maintainability.</p>
+            <h4>Deployment Frequency</h4>
+            <p>How often do you deploy to production? Elite teams deploy multiple times per day. Aim for: <strong>on-demand</strong>.</p>
           </div>
 
-          <h3>Build</h3>
           <div class="concept-card">
-            <p>Automated building of applications using tools like Maven, Gradle, npm, or Docker for containerization.</p>
+            <h4>Lead Time for Changes</h4>
+            <p>Time from code commit to running in production. Elite teams achieve &lt;1 hour. Aim for: <strong>hours, not weeks</strong>.</p>
           </div>
 
-          <h3>Test</h3>
           <div class="concept-card">
-            <p>Automated testing including unit tests, integration tests, and acceptance tests using frameworks like JUnit, Selenium, or Cypress.</p>
+            <h4>Mean Time to Restore (MTTR)</h4>
+            <p>How long to recover from a production failure. Elite teams recover in &lt;1 hour. Aim for: <strong>&lt;1 hour</strong>.</p>
           </div>
 
-          <h3>Release</h3>
           <div class="concept-card">
-            <p>Automated release management and deployment preparation with artifact repositories and release pipelines.</p>
+            <h4>Change Failure Rate</h4>
+            <p>Percentage of deployments causing production failures. Elite teams see &lt;5%. Aim for: <strong>0–5%</strong>.</p>
           </div>
 
-          <h3>Deploy</h3>
-          <div class="concept-card">
-            <p>Automated deployment to various environments using infrastructure as code and configuration management tools.</p>
-          </div>
-
-          <h3>Operate</h3>
-          <div class="concept-card">
-            <p>System administration, monitoring, and maintenance of production environments.</p>
-          </div>
-
-          <h3>Monitor</h3>
-          <div class="concept-card">
-            <p>Continuous monitoring, logging, and alerting to ensure system health and performance.</p>
-          </div>
-
-          <h2 id="tools">Essential DevOps Tools</h2>
+          <h2 id="tools">DevOps Toolchain</h2>
 
           <h3>Version Control</h3>
-          <pre><code># Git basic workflow
-git init                    # Initialize repository
-git add .                   # Stage changes
-git commit -m "message"     # Commit changes
-git push origin main        # Push to remote
-
-# Branching strategy
-git checkout -b feature/new-feature  # Create feature branch
-git checkout main                   # Switch to main
-git merge feature/new-feature       # Merge feature
-git branch -d feature/new-feature   # Delete branch</code></pre>
-
-          <h3>CI/CD Tools</h3>
           <ul>
-            <li><strong>Jenkins</strong> - Open-source automation server</li>
-            <li><strong>GitHub Actions</strong> - CI/CD integrated with GitHub</li>
-            <li><strong>GitLab CI/CD</strong> - Built-in CI/CD with GitLab</li>
-            <li><strong>Azure DevOps</strong> - Microsoft's DevOps platform</li>
-            <li><strong>CircleCI</strong> - Cloud-based CI/CD platform</li>
+            <li><strong>Git</strong> — Distributed version control (industry standard)</li>
+            <li><strong>GitHub / GitLab / Bitbucket</strong> — Hosted Git with CI/CD integration</li>
           </ul>
 
-          <h3>Configuration Management</h3>
+          <h3>CI/CD</h3>
           <ul>
-            <li><strong>Ansible</strong> - Agentless automation tool</li>
-            <li><strong>Puppet</strong> - Configuration management tool</li>
-            <li><strong>Chef</strong> - Infrastructure as code platform</li>
-            <li><strong>Terraform</strong> - Infrastructure provisioning</li>
+            <li><strong>GitHub Actions</strong> — Native CI/CD for GitHub repositories</li>
+            <li><strong>GitLab CI</strong> — Built-in CI/CD with powerful pipeline features</li>
+            <li><strong>Jenkins</strong> — Highly extensible open-source CI/CD server</li>
+            <li><strong>ArgoCD</strong> — GitOps-based continuous delivery for Kubernetes</li>
+            <li><strong>Tekton</strong> — Cloud-native Kubernetes-native CI/CD framework</li>
+          </ul>
+
+          <h3>Infrastructure as Code</h3>
+          <ul>
+            <li><strong>Terraform</strong> — Declarative IaC for multi-cloud provisioning</li>
+            <li><strong>Ansible</strong> — Agentless configuration management and automation</li>
+            <li><strong>Pulumi</strong> — IaC using general-purpose programming languages</li>
           </ul>
 
           <h3>Containerization & Orchestration</h3>
           <ul>
-            <li><strong>Docker</strong> - Container platform</li>
-            <li><strong>Kubernetes</strong> - Container orchestration</li>
-            <li><strong>Docker Compose</strong> - Multi-container applications</li>
-            <li><strong>Helm</strong> - Kubernetes package manager</li>
+            <li><strong>Docker</strong> — Build and run containerized applications</li>
+            <li><strong>Kubernetes</strong> — Container orchestration at scale</li>
+            <li><strong>Helm</strong> — Kubernetes package manager</li>
           </ul>
 
-          <h3>Monitoring & Logging</h3>
+          <h3>Monitoring & Observability</h3>
           <ul>
-            <li><strong>Prometheus</strong> - Monitoring and alerting toolkit</li>
-            <li><strong>Grafana</strong> - Analytics and monitoring dashboard</li>
-            <li><strong>ELK Stack</strong> - Elasticsearch, Logstash, Kibana</li>
-            <li><strong>Datadog</strong> - Cloud monitoring platform</li>
-            <li><strong>New Relic</strong> - Application performance monitoring</li>
+            <li><strong>Prometheus</strong> — Metrics collection and alerting</li>
+            <li><strong>Grafana</strong> — Metrics visualization and dashboards</li>
+            <li><strong>ELK Stack</strong> — Elasticsearch, Logstash, Kibana for log management</li>
+            <li><strong>Datadog / New Relic</strong> — Full-stack observability SaaS platforms</li>
+            <li><strong>Jaeger / Zipkin</strong> — Distributed tracing</li>
           </ul>
 
-          <h2>Getting Started with DevOps</h2>
-
-          <h3>1. Set Up Version Control</h3>
-          <pre><code># Initialize Git repository
-mkdir my-devops-project
-cd my-devops-project
-git init
-
-# Create initial structure
-mkdir -p src tests docs ci
-echo "# My DevOps Project" > README.md
-git add .
-git commit -m "Initial commit"</code></pre>
-
-          <h3>2. Choose Your CI/CD Platform</h3>
-          <p>Start with GitHub Actions for simplicity:</p>
-          <pre><code># .github/workflows/ci.yml
-name: CI Pipeline
-
-on: [push, pull_request]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Run tests
-      run: echo "Running tests..."</code></pre>
-
-          <h3>3. Implement Infrastructure as Code</h3>
-          <pre><code># Example Terraform configuration
-# main.tf
-provider "aws" {
-  region = "us-east-1"
-}
-
-resource "aws_instance" "web" {
-  ami           = "ami-0c55b159cbfafe1d0"
-  instance_type = "t2.micro"
-
-  tags = {
-    Name = "DevOps-WebServer"
-  }
-}</code></pre>
-
-          <h3>4. Set Up Monitoring</h3>
-          <pre><code># docker-compose.yml for ELK stack
-version: '3.7'
-services:
-  elasticsearch:
-    image: elasticsearch:7.10.0
-    ports:
-      - "9200:9200"
-
-  logstash:
-    image: logstash:7.10.0
-    ports:
-      - "5044:5044"
-
-  kibana:
-    image: kibana:7.10.0
-    ports:
-      - "5601:5601"</code></pre>
-
-          <div class="tip-box">
-            <strong>💡 Pro Tip:</strong> Start small and focus on automating one process at a time. Begin with version control and CI/CD, then gradually add more tools and practices.
-          </div>
-
-          <h2>Common DevOps Challenges</h2>
-
-          <h3>Cultural Resistance</h3>
-          <p>Breaking down silos between development and operations teams requires cultural change and leadership support.</p>
-
-          <h3>Tool Overload</h3>
-          <p>Don't try to implement every DevOps tool at once. Start with tools that solve your immediate problems.</p>
-
-          <h3>Security Concerns</h3>
-          <p>DevOps practices must include security (DevSecOps) from the beginning, not as an afterthought.</p>
-
-          <h3>Skill Gaps</h3>
-          <p>Training and upskilling teams is crucial for successful DevOps adoption.</p>
-
-          <h2>Measuring DevOps Success</h2>
-
-          <h3>Key Metrics</h3>
+          <h3>Security (DevSecOps)</h3>
           <ul>
-            <li><strong>Deployment Frequency</strong> - How often you deploy to production</li>
-            <li><strong>Lead Time for Changes</strong> - Time from commit to production</li>
-            <li><strong>Change Failure Rate</strong> - Percentage of deployments that fail</li>
-            <li><strong>Time to Restore Service</strong> - How quickly you recover from incidents</li>
+            <li><strong>Trivy / Snyk</strong> — Container and dependency vulnerability scanning</li>
+            <li><strong>SOPS / Vault</strong> — Secrets management</li>
+            <li><strong>OPA / Kyverno</strong> — Policy enforcement</li>
+            <li><strong>SonarQube</strong> — Static code analysis and quality gates</li>
           </ul>
 
-          <h3>DORA Metrics</h3>
-          <p>The DevOps Research and Assessment (DORA) team identified four key metrics for measuring DevOps performance:</p>
+          <h2>GitOps</h2>
+          <p>
+            GitOps is a modern operational framework that takes DevOps best practices for application development
+            and applies them to infrastructure automation. The core principle: <strong>Git is the single source of truth</strong>.
+          </p>
 
           <div class="concept-card">
-            <h4>Elite Performers vs. Low Performers</h4>
+            <h4>GitOps Principles</h4>
             <ul>
-              <li><strong>Deployment Frequency</strong>: Multiple times per day vs. Once every 6 months</li>
-              <li><strong>Lead Time</strong>: Less than 1 hour vs. 1-6 months</li>
-              <li><strong>Change Failure Rate</strong>: 0-15% vs. 31-45%</li>
-              <li><strong>Time to Restore</strong>: Less than 1 hour vs. 1 week to 1 month</li>
+              <li>The entire system is described declaratively in Git</li>
+              <li>Git is the single source of truth for desired state</li>
+              <li>Approved changes are automatically applied to the system</li>
+              <li>Agents ensure correctness and alert on divergence</li>
             </ul>
           </div>
 
-          <h2>Next Steps</h2>
-          <p>Continue learning with our detailed guides:</p>
+          <pre><code># GitOps workflow with ArgoCD
+
+# 1. Developer pushes code
+git commit -m "feat: add new endpoint"
+git push origin main
+
+# 2. CI pipeline builds and pushes image
+# GitHub Actions / GitLab CI automatically:
+#   - Runs tests
+#   - Builds Docker image
+#   - Pushes to container registry
+#   - Updates image tag in Helm values / Kustomize overlay
+
+# 3. ArgoCD detects drift and syncs
+# ArgoCD watches the Git repo and applies changes to K8s
+
+# Manual sync
+argocd app sync myapp
+
+# Check sync status
+argocd app get myapp</code></pre>
+
+          <h2>Infrastructure as Code (IaC) Principles</h2>
           <ul>
-            <li><strong><a href="cicd.html">CI/CD Pipelines</a></strong> - Build automated delivery pipelines</li>
-            <li><strong><a href="monitoring.html">Monitoring & Logging</a></strong> - Implement observability</li>
-            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Advanced DevOps patterns</li>
+            <li>✅ <strong>Declarative</strong> — Define desired state, not step-by-step instructions</li>
+            <li>✅ <strong>Idempotent</strong> — Running the same code multiple times yields the same result</li>
+            <li>✅ <strong>Version-controlled</strong> — All infrastructure changes tracked in Git</li>
+            <li>✅ <strong>Tested</strong> — Infrastructure code has automated tests (Terratest, Molecule)</li>
+            <li>✅ <strong>Modular</strong> — Reusable modules and roles for common patterns</li>
+            <li>✅ <strong>Self-documenting</strong> — Code and comments explain intent</li>
+          </ul>
+
+          <div class="tip-box">
+            <strong>💡 Golden Rule:</strong> If you did it manually, you did it wrong. Automate everything — from infrastructure provisioning to application deployment to runbook execution.
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="cicd.html">CI/CD Pipelines</a></strong> — Build automated pipelines with GitHub Actions and GitLab CI</li>
+            <li><strong><a href="monitoring.html">Monitoring &amp; Logging</a></strong> — Set up observability with Prometheus, Grafana, and ELK</li>
           </ul>
 
         </div>

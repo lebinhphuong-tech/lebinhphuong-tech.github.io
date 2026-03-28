@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Architecture Patterns | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light px-4">
+    <a class="navbar-brand fw-bold" style="color: var(--secondary-color);" href="../../index.html">
+      <i class="bi bi-person-circle me-2" style="color: var(--primary-color);"></i>Lê Bình Phương
+    </a>
+    <div class="ms-auto">
+      <a href="../../index.html" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-house me-1"></i>Home
+      </a>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Cloud</a></li>
+        <li class="breadcrumb-item active">Architecture</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5><i class="bi bi-cloud me-2"></i>Cloud</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html"><i class="bi bi-house-door me-2"></i>Overview</a>
+            <a class="nav-link" href="aws.html"><i class="bi bi-cloud-fill me-2"></i>AWS</a>
+            <a class="nav-link" href="gcp.html"><i class="bi bi-google me-2"></i>GCP</a>
+            <a class="nav-link active" href="architecture.html"><i class="bi bi-diagram-3 me-2"></i>Architecture</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-diagram-3 me-2"></i>Cloud Architecture Patterns</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Architecture is about trade-offs. Every pattern has a cost — in complexity, latency, or dollars. Choose patterns that match your actual reliability, scalability, and recovery requirements, not theoretical maximums.
+          </div>
+
+          <!-- ==================== HIGH AVAILABILITY ==================== -->
+          <h2>High Availability (HA) Patterns</h2>
+          <p>High availability design targets continuous operation by eliminating single points of failure. In cloud environments, HA is achieved through redundancy across Availability Zones — independent data centers within a region with separate power, cooling, and networking.</p>
+
+          <h3>Active-Active Multi-AZ</h3>
+          <p>All instances across all AZs simultaneously serve production traffic. A load balancer distributes requests and performs health checks. When an AZ becomes unavailable, the load balancer automatically stops routing to unhealthy targets — with no human intervention required.</p>
+
+          <pre><code># Terraform: Active-Active ALB across 3 AZs (AWS)
+resource "aws_lb" "prod_alb" {
+  name               = "prod-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb.id]
+  subnets            = [
+    aws_subnet.public_1a.id,
+    aws_subnet.public_1b.id,
+    aws_subnet.public_1c.id
+  ]
+
+  enable_deletion_protection = true
+  enable_http2               = true
+  idle_timeout               = 60
+
+  access_logs {
+    bucket  = aws_s3_bucket.logs.id
+    prefix  = "alb"
+    enabled = true
+  }
+}
+
+resource "aws_lb_target_group" "app" {
+  name        = "prod-app-tg"
+  port        = 8080
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.prod.id
+  target_type = "ip"
+
+  health_check {
+    enabled             = true
+    path                = "/health"
+    interval            = 15
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+    matcher             = "200"
+  }
+
+  deregistration_delay = 30
+
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = 86400
+    enabled         = false
+  }
+}
+
+resource "aws_autoscaling_group" "app" {
+  name                = "prod-app-asg"
+  vpc_zone_identifier = [
+    aws_subnet.private_1a.id,
+    aws_subnet.private_1b.id,
+    aws_subnet.private_1c.id
+  ]
+  min_size            = 3
+  max_size            = 30
+  desired_capacity    = 3
+  health_check_type   = "ELB"
+  health_check_grace_period = 300
+
+  launch_template {
+    id      = aws_launch_template.app.id
+    version = "$Latest"
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 90
+    }
+  }
+}
+
+resource "aws_autoscaling_policy" "scale_out" {
+  name                   = "scale-out"
+  autoscaling_group_name = aws_autoscaling_group.app.name
+  policy_type            = "TargetTrackingScaling"
+
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+    target_value = 70.0
+  }
+}</code></pre>
+
+          <div class="tip-box">
+            <strong>Health check design:</strong> Your <code>/health</code> endpoint must respond within the timeout window and should check actual application health (database connectivity, cache, critical dependencies) — not just return HTTP 200 unconditionally.
+          </div>
+
+          <!-- ==================== DISASTER RECOVERY ==================== -->
+          <h2>Disaster Recovery (DR)</h2>
+
+          <h3>RTO and RPO Definitions</h3>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>RTO — Recovery Time Objective</h4>
+                <p>The maximum acceptable time for restoring a system after a disaster. Measured from the moment of failure to the moment the system is operational again. An RTO of 4 hours means the business can tolerate up to 4 hours of downtime.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>RPO — Recovery Point Objective</h4>
+                <p>The maximum acceptable amount of data loss measured in time. An RPO of 1 hour means the business can tolerate losing up to 1 hour of data. Drives your backup frequency and replication strategy.</p>
+              </div>
+            </div>
+          </div>
+
+          <h3>4 DR Strategies — Cost vs Recovery Time</h3>
+          <table>
+            <thead>
+              <tr><th>Strategy</th><th>RTO</th><th>RPO</th><th>Relative Cost</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Backup and Restore</strong></td>
+                <td>Hours – Days</td>
+                <td>Hours – Days</td>
+                <td>$ (Lowest)</td>
+                <td>Periodic backups stored in durable storage. Restore from backup when disaster strikes. No standby infrastructure.</td>
+              </tr>
+              <tr>
+                <td><strong>Pilot Light</strong></td>
+                <td>30 min – 2 hrs</td>
+                <td>Minutes</td>
+                <td>$$</td>
+                <td>Core components (DB) running in DR region at minimal scale. App tier is off. Start it and scale on failover.</td>
+              </tr>
+              <tr>
+                <td><strong>Warm Standby</strong></td>
+                <td>Minutes</td>
+                <td>Seconds – Minutes</td>
+                <td>$$$</td>
+                <td>Scaled-down but fully functional copy always running in DR region. Scale up and switch DNS on failover.</td>
+              </tr>
+              <tr>
+                <td><strong>Multi-Site Active-Active</strong></td>
+                <td>Near zero</td>
+                <td>Near zero</td>
+                <td>$$$$ (Highest)</td>
+                <td>Full capacity in multiple regions simultaneously. Traffic always distributed. Failure of one region handled transparently.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Pilot Light — Implementation Example</h3>
+          <pre><code># Pilot Light: DR region has RDS read replica (always on)
+# App servers are off; AMI is pre-built and ready
+
+# Primary region (ap-southeast-1): full stack running
+# DR region (us-east-1): only RDS read replica + pre-built AMI
+
+# Step 1: RDS read replica in DR region (cross-region)
+resource "aws_db_instance" "dr_replica" {
+  provider                = aws.us_east_1
+  identifier              = "prod-db-dr-replica"
+  replicate_source_db     = "arn:aws:rds:ap-southeast-1:123456789012:db:prod-db"
+  instance_class          = "db.t3.medium"  # Small — scale up on failover
+  publicly_accessible     = false
+  auto_minor_version_upgrade = true
+  skip_final_snapshot     = false
+}
+
+# Step 2: On failover — promote replica to standalone
+aws rds promote-read-replica \
+  --db-instance-identifier prod-db-dr-replica \
+  --region us-east-1
+
+# Step 3: Launch ASG with pre-built AMI pointing to new DB endpoint
+aws autoscaling update-auto-scaling-group \
+  --auto-scaling-group-name dr-app-asg \
+  --min-size 3 --max-size 20 --desired-capacity 3 \
+  --region us-east-1
+
+# Step 4: Update Route 53 to point to DR region ALB
+aws route53 change-resource-record-sets \
+  --hosted-zone-id Z1234ABCD \
+  --change-batch '{
+    "Changes": [{
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "api.example.com",
+        "Type": "A",
+        "AliasTarget": {
+          "HostedZoneId": "Z35SXDOTRQ7X7K",
+          "DNSName": "dr-alb-us-east-1.elb.amazonaws.com",
+          "EvaluateTargetHealth": true
+        }
+      }
+    }]
+  }'</code></pre>
+
+          <!-- ==================== MULTI-REGION ==================== -->
+          <h2>Multi-Region Architecture</h2>
+
+          <h3>Data Replication: Synchronous vs Asynchronous</h3>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Synchronous Replication</h4>
+                <p><strong>Guarantee:</strong> Write is not acknowledged until committed in all regions. Zero data loss (RPO = 0). <br><strong>Cost:</strong> Write latency increases by network round-trip between regions (typically 50–200ms cross-region). <br><strong>Use for:</strong> Financial transactions, inventory, anything requiring strong consistency. <br><strong>Examples:</strong> Cloud Spanner (global), Aurora Global Database with synchronous writes.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Asynchronous Replication</h4>
+                <p><strong>Guarantee:</strong> Write acknowledged at primary immediately; replicated to secondary in the background. Small data loss window (RPO = seconds to minutes). <br><strong>Cost:</strong> No write latency penalty. <br><strong>Use for:</strong> Read replicas for reporting, log archival, analytics, non-critical data. <br><strong>Examples:</strong> RDS cross-region read replicas, S3 cross-region replication.</p>
+              </div>
+            </div>
+          </div>
+
+          <h3>Traffic Routing — Route 53 Failover</h3>
+          <pre><code># Active-Passive failover with health checks
+# Primary: ap-southeast-1; Secondary: us-east-1 (failover target)
+
+# Create health check for primary
+aws route53 create-health-check \
+  --caller-reference $(date +%s)-primary \
+  --health-check-config '{
+    "Type": "HTTPS",
+    "FullyQualifiedDomainName": "primary-alb.ap-southeast-1.elb.amazonaws.com",
+    "Port": 443,
+    "ResourcePath": "/health",
+    "RequestInterval": 30,
+    "FailureThreshold": 3,
+    "MeasureLatency": true,
+    "Regions": ["ap-southeast-1", "us-east-1", "eu-west-1"]
+  }'
+
+# Primary record (Failover = PRIMARY)
+aws route53 change-resource-record-sets \
+  --hosted-zone-id Z1234ABCD \
+  --change-batch '{
+    "Changes": [
+      {
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "api.example.com",
+          "Type": "A",
+          "SetIdentifier": "Primary-SGP",
+          "Failover": "PRIMARY",
+          "HealthCheckId": "abc-health-check-id",
+          "AliasTarget": {
+            "HostedZoneId": "Z35SXDOTRQ7X7K",
+            "DNSName": "primary-alb.ap-southeast-1.elb.amazonaws.com",
+            "EvaluateTargetHealth": true
+          }
+        }
+      },
+      {
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "api.example.com",
+          "Type": "A",
+          "SetIdentifier": "Secondary-USE1",
+          "Failover": "SECONDARY",
+          "AliasTarget": {
+            "HostedZoneId": "Z35SXDOTRQ7X7K",
+            "DNSName": "secondary-alb.us-east-1.elb.amazonaws.com",
+            "EvaluateTargetHealth": true
+          }
+        }
+      }
+    ]
+  }'</code></pre>
+
+          <!-- ==================== MICROSERVICES ==================== -->
+          <h2>Microservices vs Monolith</h2>
+
+          <h3>When to Use Each</h3>
+          <table>
+            <thead>
+              <tr><th>Factor</th><th>Monolith</th><th>Microservices</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Team size</td><td>Small (1–8 engineers)</td><td>Large (multiple autonomous teams)</td></tr>
+              <tr><td>Domain clarity</td><td>Not yet defined</td><td>Well-defined bounded contexts</td></tr>
+              <tr><td>Deployment frequency</td><td>Weekly or less</td><td>Multiple times per day per service</td></tr>
+              <tr><td>Scaling requirements</td><td>Uniform across app</td><td>Independent per service</td></tr>
+              <tr><td>Technology diversity</td><td>Single stack</td><td>Best tool per service</td></tr>
+              <tr><td>Operational maturity</td><td>Low overhead</td><td>Requires service mesh, observability, CI/CD per service</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Decomposition Patterns</h3>
+          <div class="concept-card">
+            <h4>Decompose by Domain (Domain-Driven Design)</h4>
+            <p>Identify bounded contexts using DDD. Each bounded context becomes a service with its own data store and API. Example: a retail system decomposes into Order, Inventory, Catalog, Customer, Payment, Notification services.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Decompose by Team (Conway's Law)</h4>
+            <p>Align service boundaries with team boundaries. Each team owns one or more services end-to-end — from code to deployment to on-call. Avoids inter-team coordination overhead for routine changes.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Decompose by Data</h4>
+            <p>Services that need to scale independently or have different data consistency requirements get their own database. Avoids shared databases that create tight coupling and deployment dependencies between services.</p>
+          </div>
+
+          <!-- ==================== EVENT-DRIVEN ==================== -->
+          <h2>Event-Driven Architecture</h2>
+          <p>Event-driven architecture decouples producers from consumers through an event broker. Producers publish events without knowing who will consume them. Consumers subscribe to event types and process them independently.</p>
+
+          <pre><code># AWS SQS + SNS Fan-out pattern
+# SNS topic → multiple SQS queues (fan-out)
+# Each queue → Lambda (or EKS pod) for processing
+
+# Create SNS topic
+aws sns create-topic --name prod-order-events
+
+# Create SQS queues for different consumers
+aws sqs create-queue --queue-name order-fulfillment-queue \
+  --attributes '{
+    "VisibilityTimeout": "300",
+    "MessageRetentionPeriod": "86400",
+    "ReceiveMessageWaitTimeSeconds": "20",
+    "RedrivePolicy": "{\"deadLetterTargetArn\":\"arn:aws:sqs:ap-southeast-1:123456789012:order-fulfillment-dlq\",\"maxReceiveCount\":\"3\"}"
+  }'
+
+aws sqs create-queue --queue-name order-notification-queue
+
+# Subscribe queues to SNS topic (fan-out)
+aws sns subscribe \
+  --topic-arn arn:aws:sns:ap-southeast-1:123456789012:prod-order-events \
+  --protocol sqs \
+  --notification-endpoint arn:aws:sqs:ap-southeast-1:123456789012:order-fulfillment-queue \
+  --attributes '{"FilterPolicy":"{\"event_type\":[\"order_created\",\"order_updated\"]}"}'
+
+# GCP Pub/Sub equivalent
+gcloud pubsub topics create prod-order-events \
+  --project=prod-backend-123456
+
+gcloud pubsub subscriptions create order-fulfillment-sub \
+  --topic=prod-order-events \
+  --ack-deadline=300 \
+  --message-retention-duration=86400s \
+  --dead-letter-topic=projects/prod-backend-123456/topics/order-events-dlq \
+  --max-delivery-attempts=5 \
+  --filter='attributes.event_type = "order_created"' \
+  --project=prod-backend-123456</code></pre>
+
+          <h3>Event Sourcing and CQRS</h3>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Event Sourcing</h4>
+                <p>Store all changes to application state as a sequence of immutable events, rather than just the current state. The current state is derived by replaying the event log. Provides a complete audit trail, enables time-travel debugging, and supports event replay for building new projections.</p>
+                <p><strong>Example stores:</strong> EventStoreDB, Kafka (as log), DynamoDB Streams, GCP Firestore with event collection.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>CQRS — Command Query Responsibility Segregation</h4>
+                <p>Separate the write model (Commands) from the read model (Queries). Commands mutate state; queries read from an optimized read store. Allows independent scaling and optimization of reads and writes. Often combined with Event Sourcing — events update multiple read models.</p>
+                <p><strong>Example:</strong> Write to PostgreSQL (normalized); publish event; consumer updates Elasticsearch for search queries and Redis for dashboard queries.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== SERVERLESS ==================== -->
+          <h2>Serverless Architecture</h2>
+          <p>Serverless shifts operational responsibility — you provide code, the cloud manages execution, scaling, and infrastructure. True serverless means pay-per-invocation with automatic scaling from zero to thousands of concurrent executions.</p>
+
+          <h3>Cold Start Mitigation</h3>
+          <pre><code># AWS Lambda — provisioned concurrency eliminates cold starts
+aws lambda put-provisioned-concurrency-config \
+  --function-name prod-api-handler \
+  --qualifier prod \
+  --provisioned-concurrent-executions 20
+
+# Lambda SnapStart (Java functions only — near-zero cold starts)
+aws lambda update-function-configuration \
+  --function-name prod-java-handler \
+  --snap-start ApplyOn=PublishedVersions
+
+# Minimize cold start time:
+# 1. Use smaller deployment packages (only necessary dependencies)
+# 2. Prefer interpreted runtimes (Node.js, Python) over JVM for latency-sensitive
+# 3. Initialize SDK clients OUTSIDE the handler (reused across warm invocations)
+# 4. Use Lambda layers for shared dependencies
+
+# Example: good Lambda handler structure
+import boto3
+import os
+
+# Initialize outside handler — reused across warm invocations
+s3_client = boto3.client("s3")
+SECRET_VALUE = os.environ.get("SECRET_VALUE")  # set via Secrets Manager Lambda extension
+
+def handler(event, context):
+    # Business logic only — no SDK init, no secrets fetch
+    bucket = event["bucket"]
+    key = event["key"]
+    obj = s3_client.get_object(Bucket=bucket, Key=key)
+    return obj["Body"].read().decode("utf-8")</code></pre>
+
+          <h3>EventBridge — Event Bus for Serverless Orchestration</h3>
+          <pre><code># Create EventBridge rule to trigger Lambda on schedule
+aws events put-rule \
+  --name prod-daily-report \
+  --schedule-expression "cron(0 2 * * ? *)" \
+  --state ENABLED \
+  --description "Trigger daily report generation at 02:00 UTC"
+
+aws events put-targets \
+  --rule prod-daily-report \
+  --targets '[{
+    "Id": "report-lambda",
+    "Arn": "arn:aws:lambda:ap-southeast-1:123456789012:function:generate-report",
+    "Input": "{\"type\":\"daily\",\"format\":\"pdf\"}"
+  }]'
+
+# Pattern-based rule (react to specific events)
+aws events put-rule \
+  --name on-ec2-state-change \
+  --event-pattern '{
+    "source": ["aws.ec2"],
+    "detail-type": ["EC2 Instance State-change Notification"],
+    "detail": { "state": ["terminated"] }
+  }' \
+  --state ENABLED</code></pre>
+
+          <!-- ==================== CONTAINER ARCHITECTURE ==================== -->
+          <h2>Container Architecture Patterns</h2>
+
+          <h3>Sidecar Pattern</h3>
+          <pre><code># Sidecar: auxiliary container that extends main container without changing it
+# Example: Envoy proxy sidecar for mTLS, observability, traffic management
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-with-envoy-sidecar
+  annotations:
+    sidecar.istio.io/inject: "true"
+spec:
+  containers:
+  - name: app
+    image: myapp:v1.2.3
+    ports:
+    - containerPort: 8080
+    resources:
+      requests: { cpu: "250m", memory: "256Mi" }
+      limits:   { cpu: "500m", memory: "512Mi" }
+  - name: log-shipper          # Sidecar for log forwarding
+    image: fluent/fluent-bit:latest
+    volumeMounts:
+    - name: app-logs
+      mountPath: /var/log/app
+    env:
+    - name: FLUENTBIT_OUTPUT_HOST
+      value: "loki.monitoring.svc.cluster.local"
+  volumes:
+  - name: app-logs
+    emptyDir: {}</code></pre>
+
+          <h3>Ambassador Pattern</h3>
+          <pre><code># Ambassador: proxy that handles network concerns on behalf of the main container
+# Useful for: connection pooling, circuit breaking, retry logic, protocol translation
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-with-ambassador
+spec:
+  containers:
+  - name: app
+    image: myapp:v1.2.3
+    # App connects to localhost:5432 — ambassador handles the real connection
+    env:
+    - name: DB_HOST
+      value: "localhost"
+    - name: DB_PORT
+      value: "5432"
+  - name: cloud-sql-proxy      # Ambassador to Cloud SQL
+    image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.9
+    args:
+    - "--structured-logs"
+    - "--port=5432"
+    - "prod-project:asia-southeast1:prod-db"
+    securityContext:
+      runAsNonRoot: true
+    resources:
+      requests: { cpu: "100m", memory: "64Mi" }
+      limits:   { cpu: "200m", memory: "128Mi" }</code></pre>
+
+          <h3>Adapter Pattern</h3>
+          <pre><code># Adapter: transforms output of main container to a standard interface
+# Example: legacy app emits logs in custom format; adapter normalizes to JSON
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-with-adapter
+spec:
+  initContainers: []
+  containers:
+  - name: legacy-app
+    image: legacy-app:v2
+    # Writes logs to /var/log/app/app.log in proprietary format
+    volumeMounts:
+    - name: log-volume
+      mountPath: /var/log/app
+  - name: log-adapter           # Adapter: transforms log format
+    image: log-normalizer:latest
+    # Reads proprietary format, writes JSON to stdout for Fluentbit
+    command: ["/bin/sh", "-c"]
+    args: ["tail -f /var/log/app/app.log | ./normalize-to-json"]
+    volumeMounts:
+    - name: log-volume
+      mountPath: /var/log/app
+      readOnly: true
+  volumes:
+  - name: log-volume
+    emptyDir: {}</code></pre>
+
+          <!-- ==================== 12-FACTOR ==================== -->
+          <h2>12-Factor App Methodology</h2>
+          <p>The 12-Factor App provides a methodology for building scalable, maintainable software-as-a-service applications. Each factor maps directly to cloud-native deployment practices.</p>
+
+          <table>
+            <thead>
+              <tr><th>#</th><th>Factor</th><th>Cloud Mapping</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td><strong>Codebase</strong> — One codebase tracked in VCS, many deploys</td><td>Git repository; different branches/tags → different environments</td></tr>
+              <tr><td>2</td><td><strong>Dependencies</strong> — Explicitly declared, isolated</td><td>Dockerfile with pinned package versions; no system-level dependencies assumed</td></tr>
+              <tr><td>3</td><td><strong>Config</strong> — Stored in environment, not code</td><td>Kubernetes ConfigMaps/Secrets; AWS Parameter Store; GCP Secret Manager; never commit secrets</td></tr>
+              <tr><td>4</td><td><strong>Backing Services</strong> — Treated as attached resources</td><td>DB URL in env var; swap RDS for Aurora by changing a variable with no code change</td></tr>
+              <tr><td>5</td><td><strong>Build, Release, Run</strong> — Strict separation</td><td>CI builds image; CD creates release (image + config); Kubernetes runs it</td></tr>
+              <tr><td>6</td><td><strong>Processes</strong> — Stateless, share-nothing</td><td>Containers are ephemeral; state goes to RDS/Redis/S3 — never local disk</td></tr>
+              <tr><td>7</td><td><strong>Port Binding</strong> — Self-contained via port binding</td><td>Container exposes port 8080; Kubernetes Service routes traffic to it</td></tr>
+              <tr><td>8</td><td><strong>Concurrency</strong> — Scale out via process model</td><td>Horizontal Pod Autoscaler; ASG; Cloud Run max-instances</td></tr>
+              <tr><td>9</td><td><strong>Disposability</strong> — Fast startup, graceful shutdown</td><td>Containers start in &lt;5s; handle SIGTERM with connection draining; preStop lifecycle hooks</td></tr>
+              <tr><td>10</td><td><strong>Dev/Prod Parity</strong> — Keep environments similar</td><td>Same Docker image from dev → staging → prod; Terraform workspaces for environment configs</td></tr>
+              <tr><td>11</td><td><strong>Logs</strong> — Treat as event streams</td><td>Write to stdout/stderr; Fluentbit/Fluentd ships to CloudWatch Logs / Cloud Logging</td></tr>
+              <tr><td>12</td><td><strong>Admin Processes</strong> — Run as one-off processes</td><td>Kubernetes Jobs for DB migrations; <code>kubectl exec</code> or Cloud Run Jobs for admin tasks</td></tr>
+            </tbody>
+          </table>
+
+          <!-- ==================== WELL-ARCHITECTED REVIEW ==================== -->
+          <h2>Well-Architected Review Process</h2>
+          <p>A Well-Architected Review (WAR) is a structured assessment of your workload against proven architectural best practices. Conduct reviews at key lifecycle points: before go-live, after significant changes, and annually for production systems.</p>
+
+          <h3>AWS Well-Architected Tool</h3>
+          <pre><code># Create a workload in AWS Well-Architected Tool
+aws wellarchitected create-workload \
+  --workload-name "prod-payment-service" \
+  --description "Production payment processing microservice" \
+  --environment PRODUCTION \
+  --aws-regions ap-southeast-1 \
+  --account-ids 123456789012 \
+  --lenses "wellarchitected" "serverless" \
+  --review-owner "platform-team@example.com" \
+  --architectural-design "https://confluence.example.com/arch/payment"
+
+# List workloads
+aws wellarchitected list-workloads --query 'WorkloadSummaries[*].[WorkloadName,WorkloadId,RiskCounts]'
+
+# Get lens review and high-risk items
+aws wellarchitected get-lens-review \
+  --workload-id abc123def456 \
+  --lens-alias wellarchitected</code></pre>
+
+          <h3>Review Checklist</h3>
+          <div class="concept-card">
+            <h4>Operational Excellence</h4>
+            <ul>
+              <li>Is infrastructure defined as code? (Terraform / CloudFormation)</li>
+              <li>Are deployments automated with CI/CD pipelines?</li>
+              <li>Are runbooks documented for common operational tasks?</li>
+              <li>Is there a defined and tested process for rollbacks?</li>
+            </ul>
+          </div>
+          <div class="concept-card">
+            <h4>Security</h4>
+            <ul>
+              <li>Is least-privilege applied to all IAM roles and service accounts?</li>
+              <li>Is data encrypted at rest and in transit?</li>
+              <li>Are secrets managed centrally (Secrets Manager / Secret Manager)?</li>
+              <li>Is CloudTrail / Cloud Audit Logs enabled and centrally aggregated?</li>
+              <li>Is a WAF in front of public-facing endpoints?</li>
+            </ul>
+          </div>
+          <div class="concept-card">
+            <h4>Reliability</h4>
+            <ul>
+              <li>Is there no single point of failure? (Multi-AZ for all stateful services)</li>
+              <li>Are auto-scaling policies defined and tested?</li>
+              <li>Has a DR test been performed within the last 6 months?</li>
+              <li>Are RTO and RPO defined, documented, and achievable?</li>
+            </ul>
+          </div>
+          <div class="concept-card">
+            <h4>Cost Optimization</h4>
+            <ul>
+              <li>Are all resources tagged with cost allocation tags?</li>
+              <li>Are right-sizing recommendations from Compute Optimizer / Recommender applied?</li>
+              <li>Are Reserved Instances or Committed Use Discounts in place for stable workloads?</li>
+              <li>Are lifecycle policies configured for S3 / Cloud Storage?</li>
+            </ul>
+          </div>
+
+          <!-- ==================== TERRAFORM MULTI-AZ VPC ==================== -->
+          <h2>Terraform: Multi-AZ VPC — AWS and GCP</h2>
+
+          <h3>AWS Multi-AZ VPC with Public/Private Subnets</h3>
+          <pre><code># variables.tf
+variable "aws_region"    { default = "ap-southeast-1" }
+variable "vpc_cidr"      { default = "10.10.0.0/16" }
+variable "environment"   { default = "prod" }
+variable "project_name"  { default = "myapp" }
+
+# main.tf
+terraform {
+  required_providers {
+    aws = { source = "hashicorp/aws", version = "~> 5.0" }
+  }
+  backend "s3" {
+    bucket = "terraform-state-123456789012"
+    key    = "prod/vpc/terraform.tfstate"
+    region = "ap-southeast-1"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:ap-southeast-1:123456789012:key/abc123"
+    dynamodb_table = "terraform-state-lock"
+  }
+}
+
+provider "aws" { region = var.aws_region }
+
+data "aws_availability_zones" "available" { state = "available" }
+
+locals {
+  azs = slice(data.aws_availability_zones.available.names, 0, 3)
+  common_tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "terraform"
+  }
+}
+
+resource "aws_vpc" "main" {
+  cidr_block           = var.vpc_cidr
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+  tags = merge(local.common_tags, { Name = "${var.project_name}-${var.environment}-vpc" })
+}
+
+# Public subnets — one per AZ
+resource "aws_subnet" "public" {
+  count                   = 3
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = cidrsubnet(var.vpc_cidr, 8, count.index + 1)
+  availability_zone       = local.azs[count.index]
+  map_public_ip_on_launch = false
+  tags = merge(local.common_tags, {
+    Name = "${var.project_name}-public-${local.azs[count.index]}"
+    Type = "public"
+    "kubernetes.io/role/elb" = "1"
+  })
+}
+
+# Private subnets — one per AZ
+resource "aws_subnet" "private" {
+  count             = 3
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 11)
+  availability_zone = local.azs[count.index]
+  tags = merge(local.common_tags, {
+    Name = "${var.project_name}-private-${local.azs[count.index]}"
+    Type = "private"
+    "kubernetes.io/role/internal-elb" = "1"
+  })
+}
+
+# Isolated subnets (databases — no internet route)
+resource "aws_subnet" "isolated" {
+  count             = 3
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 21)
+  availability_zone = local.azs[count.index]
+  tags = merge(local.common_tags, {
+    Name = "${var.project_name}-isolated-${local.azs[count.index]}"
+    Type = "isolated"
+  })
+}
+
+# Internet Gateway
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+  tags   = merge(local.common_tags, { Name = "${var.project_name}-igw" })
+}
+
+# Elastic IPs for NAT Gateways
+resource "aws_eip" "nat" {
+  count  = 3
+  domain = "vpc"
+  tags   = merge(local.common_tags, { Name = "${var.project_name}-nat-eip-${count.index + 1}" })
+}
+
+# NAT Gateways — one per AZ for HA
+resource "aws_nat_gateway" "main" {
+  count         = 3
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
+  depends_on    = [aws_internet_gateway.main]
+  tags          = merge(local.common_tags, { Name = "${var.project_name}-nat-${local.azs[count.index]}" })
+}
+
+# Route tables
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+  tags = merge(local.common_tags, { Name = "${var.project_name}-public-rt" })
+}
+
+resource "aws_route_table" "private" {
+  count  = 3
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main[count.index].id
+  }
+  tags = merge(local.common_tags, { Name = "${var.project_name}-private-rt-${count.index + 1}" })
+}
+
+resource "aws_route_table" "isolated" {
+  vpc_id = aws_vpc.main.id
+  # No routes to internet — isolated
+  tags = merge(local.common_tags, { Name = "${var.project_name}-isolated-rt" })
+}
+
+# Route table associations
+resource "aws_route_table_association" "public" {
+  count          = 3
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table_association" "private" {
+  count          = 3
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private[count.index].id
+}
+
+resource "aws_route_table_association" "isolated" {
+  count          = 3
+  subnet_id      = aws_subnet.isolated[count.index].id
+  route_table_id = aws_route_table.isolated.id
+}
+
+# VPC Endpoints — S3 and DynamoDB (free Gateway type)
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${var.aws_region}.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = concat(
+    [aws_route_table.public.id],
+    aws_route_table.private[*].id
+  )
+  tags = merge(local.common_tags, { Name = "${var.project_name}-s3-endpoint" })
+}
+
+# outputs.tf
+output "vpc_id"              { value = aws_vpc.main.id }
+output "public_subnet_ids"   { value = aws_subnet.public[*].id }
+output "private_subnet_ids"  { value = aws_subnet.private[*].id }
+output "isolated_subnet_ids" { value = aws_subnet.isolated[*].id }
+output "nat_gateway_ips"     { value = aws_eip.nat[*].public_ip }</code></pre>
+
+          <h3>GCP Multi-AZ (Multi-Zone) VPC with Public/Private Subnets</h3>
+          <pre><code># GCP Terraform — custom VPC with regional subnets
+# Note: GCP subnets are regional; VM placement into zones is done at VM level
+
+terraform {
+  required_providers {
+    google = { source = "hashicorp/google", version = "~> 5.0" }
+  }
+  backend "gcs" {
+    bucket = "terraform-state-prod-123456"
+    prefix = "prod/vpc"
+  }
+}
+
+variable "project_id"   { default = "prod-backend-123456" }
+variable "region"       { default = "asia-southeast1" }
+variable "environment"  { default = "prod" }
+
+provider "google" {
+  project = var.project_id
+  region  = var.region
+}
+
+resource "google_compute_network" "main" {
+  name                    = "${var.environment}-vpc"
+  auto_create_subnetworks = false
+  mtu                     = 1460
+  routing_mode            = "REGIONAL"
+  project                 = var.project_id
+}
+
+# Public subnet (for GKE, Cloud NAT, load balancers)
+resource "google_compute_subnetwork" "public" {
+  name                     = "${var.environment}-public-subnet"
+  network                  = google_compute_network.main.id
+  region                   = var.region
+  ip_cidr_range            = "10.10.0.0/20"
+  private_ip_google_access = true
+  project                  = var.project_id
+
+  log_config {
+    aggregation_interval = "INTERVAL_5_SEC"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }
+}
+
+# Private subnet for GKE with secondary ranges for pods/services
+resource "google_compute_subnetwork" "private_gke" {
+  name                     = "${var.environment}-gke-subnet"
+  network                  = google_compute_network.main.id
+  region                   = var.region
+  ip_cidr_range            = "10.10.16.0/20"
+  private_ip_google_access = true
+  project                  = var.project_id
+
+  secondary_ip_range {
+    range_name    = "gke-pods"
+    ip_cidr_range = "10.20.0.0/16"
+  }
+  secondary_ip_range {
+    range_name    = "gke-services"
+    ip_cidr_range = "10.30.0.0/20"
+  }
+
+  log_config {
+    aggregation_interval = "INTERVAL_5_SEC"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }
+}
+
+# Isolated subnet for Cloud SQL (private services)
+resource "google_compute_subnetwork" "isolated" {
+  name                     = "${var.environment}-isolated-subnet"
+  network                  = google_compute_network.main.id
+  region                   = var.region
+  ip_cidr_range            = "10.10.32.0/24"
+  private_ip_google_access = true
+  project                  = var.project_id
+}
+
+# Cloud Router and Cloud NAT (outbound internet for private VMs)
+resource "google_compute_router" "main" {
+  name    = "${var.environment}-router"
+  network = google_compute_network.main.id
+  region  = var.region
+  project = var.project_id
+}
+
+resource "google_compute_router_nat" "main" {
+  name                               = "${var.environment}-nat"
+  router                             = google_compute_router.main.name
+  region                             = var.region
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
+  project                            = var.project_id
+
+  subnetwork {
+    name                    = google_compute_subnetwork.private_gke.id
+    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  }
+
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
+  }
+}
+
+# Firewall rules — deny all by default, allow selectively
+resource "google_compute_firewall" "deny_all_ingress" {
+  name      = "${var.environment}-deny-all-ingress"
+  network   = google_compute_network.main.id
+  project   = var.project_id
+  direction = "INGRESS"
+  priority  = 65534
+
+  deny { protocol = "all" }
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_firewall" "allow_internal" {
+  name      = "${var.environment}-allow-internal"
+  network   = google_compute_network.main.id
+  project   = var.project_id
+  direction = "INGRESS"
+  priority  = 1000
+
+  allow { protocol = "tcp" }
+  allow { protocol = "udp" }
+  allow { protocol = "icmp" }
+  source_ranges = ["10.10.0.0/16", "10.20.0.0/16", "10.30.0.0/20"]
+}
+
+resource "google_compute_firewall" "allow_iap_ssh" {
+  name      = "${var.environment}-allow-iap-ssh"
+  network   = google_compute_network.main.id
+  project   = var.project_id
+  direction = "INGRESS"
+  priority  = 1000
+
+  allow { protocol = "tcp"; ports = ["22"] }
+  # IAP's IP range — allow SSH only through Identity-Aware Proxy
+  source_ranges = ["35.235.240.0/20"]
+}
+
+output "vpc_id"                { value = google_compute_network.main.id }
+output "public_subnet_id"      { value = google_compute_subnetwork.public.id }
+output "private_gke_subnet_id" { value = google_compute_subnetwork.private_gke.id }
+output "nat_ip"                { value = google_compute_router_nat.main.name }</code></pre>
+
+          <div class="success-box">
+            <strong>Architecture Review reminder:</strong> Run <code>terraform plan</code> with output reviewed before every <code>apply</code> in production. Use separate state files per environment and per component (VPC, EKS, apps). Enable state locking with DynamoDB (AWS) or GCS (GCP) to prevent concurrent modifications.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

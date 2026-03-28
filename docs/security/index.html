@@ -3,511 +3,427 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cybersecurity & Cloud Security | Documentation</title>
-
+  <title>Security Overview | Lê Bình Phương</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-
   <style>
-    :root {
-      --primary-color: #149ddd;
-      --secondary-color: #173b6c;
-      --text-color: #272829;
-      --bg-light: #f5f8fd;
-      --code-bg: #282c34;
-      --code-text: #abb2bf;
-    }
-
-    body {
-      font-family: 'Open Sans', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-color);
-      line-height: 1.8;
-    }
-
-    .sidebar {
-      position: sticky;
-      top: 20px;
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      height: fit-content;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h5 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .sidebar .nav-link {
-      color: var(--text-color);
-      padding: 0.5rem 0;
-      border-left: 3px solid transparent;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: block;
-    }
-
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active {
-      color: var(--primary-color);
-      border-left-color: var(--primary-color);
-      padding-left: 1rem;
-    }
-
-    .content {
-      background: white;
-      border-radius: 12px;
-      padding: 3rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      color: var(--secondary-color);
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
-
-    h2 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-top: 2.5rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--bg-light);
-    }
-
-    h3 {
-      color: var(--secondary-color);
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    code {
-      background: #f8f9fa;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      color: #e83e8c;
-    }
-
-    pre {
-      background: var(--code-bg);
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 1.5rem;
-      overflow-x: auto;
-      margin: 1.5rem 0;
-    }
-
-    pre code {
-      background: none;
-      padding: 0;
-      color: var(--code-text);
-      font-family: 'Courier New', monospace;
-    }
-
-    .navbar {
-      background: white;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb {
-      background: transparent;
-      padding: 0;
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb a {
-      color: var(--primary-color);
-      text-decoration: none;
-    }
-
-    .alert-info {
-      background: #e7f3ff;
-      border-left: 4px solid var(--primary-color);
-      padding: 1rem 1.5rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-    }
-
-    .tip-box {
-      background: #e7f3ff;
-      border-left: 4px solid #007bff;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
-
-    .concept-card {
-      background: var(--bg-light);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1rem 0;
-      border-left: 4px solid var(--primary-color);
-    }
-
-    .concept-card h4 {
-      color: var(--primary-color);
-      margin-bottom: 0.5rem;
-    }
-
-    .security-pillar {
-      background: linear-gradient(135deg, var(--bg-light) 0%, white 100%);
-      border-radius: 12px;
-      padding: 2rem;
-      margin: 2rem 0;
-      border-left: 4px solid var(--primary-color);
-      position: relative;
-    }
-
-    .security-pillar::before {
-      content: "🛡️";
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 2rem;
-    }
-
-    .security-pillar h4 {
-      color: var(--primary-color);
-      margin-bottom: 1rem;
-      font-size: 1.3rem;
-    }
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    .pillar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .pillar-card { background: var(--bg-light); border-radius: 8px; padding: 1.2rem; text-align: center; border-top: 4px solid var(--primary-color); }
+    .pillar-card i { font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem; display: block; }
+    .pillar-card h5 { color: var(--secondary-color); font-weight: 600; margin-bottom: 0.5rem; }
+    .layer-item { display: flex; align-items: center; padding: 0.8rem 1.2rem; border-radius: 6px; margin: 0.4rem 0; }
+    .link-card { background: var(--bg-light); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 0.8rem 0; border-left: 4px solid var(--primary-color); transition: all 0.3s; }
+    .link-card:hover { transform: translateX(4px); box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+    .link-card a { color: var(--primary-color); text-decoration: none; font-weight: 600; font-size: 1.05rem; }
+    .link-card p { margin: 0.3rem 0 0; color: #6c757d; font-size: 0.92rem; }
   </style>
 </head>
 <body>
-
-  <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container-fluid">
-      <div class="container">
-        <a class="navbar-brand" href="../../index.html">
-          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
-        </a>
-      </div>
-    </div>
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
   </nav>
-
   <div class="container">
-
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
         <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
-        <li class="breadcrumb-item active">Security</li>
+        <li class="breadcrumb-item"><a href="index.html">Security</a></li>
+        <li class="breadcrumb-item active">Overview</li>
       </ol>
     </nav>
-
     <div class="row">
-
-      <!-- Sidebar -->
       <div class="col-lg-3">
         <div class="sidebar">
-          <h5><i class="bi bi-shield-check me-2"></i>Security</h5>
+          <h5><i class="bi bi-shield-lock me-2"></i>Security</h5>
           <nav class="nav flex-column">
             <a class="nav-link active" href="index.html">Overview</a>
-            <a class="nav-link" href="concepts.html">Core Concepts</a>
-            <a class="nav-link" href="cloud-security.html">Cloud Security</a>
-            <a class="nav-link" href="tools.html">Security Tools</a>
-            <a class="nav-link" href="best-practices.html">Best Practices</a>
-            <a class="nav-link" href="#frameworks">Frameworks</a>
+            <a class="nav-link" href="iam.html">IAM &amp; Access Control</a>
+            <a class="nav-link" href="devsecops.html">DevSecOps</a>
+            <a class="nav-link" href="secrets.html">Secrets Management</a>
+            <a class="nav-link" href="compliance.html">Compliance &amp; Audit</a>
           </nav>
         </div>
       </div>
-
-      <!-- Main Content -->
       <div class="col-lg-9">
         <div class="content">
-          <h1><i class="bi bi-shield-check me-2"></i>Cybersecurity & Cloud Security</h1>
 
-          <div class="alert alert-info">
-            <i class="bi bi-info-circle me-2"></i>
-            <strong>Comprehensive Security Framework</strong> - Essential cybersecurity principles, cloud security best practices, compliance frameworks, and practical implementation guides for protecting modern infrastructure.
-          </div>
+          <h1><i class="bi bi-shield-lock me-2"></i>Security Overview</h1>
 
-          <h2>The CIA Triad</h2>
-
-          <div class="security-pillar">
-            <h4>🔒 Confidentiality</h4>
-            <p>Ensuring that sensitive information is only accessible to authorized individuals.</p>
-            <ul>
-              <li><strong>Encryption</strong> - Data at rest and in transit</li>
-              <li><strong>Access Controls</strong> - Role-based and attribute-based access</li>
-              <li><strong>Authentication</strong> - Multi-factor authentication (MFA)</li>
-              <li><strong>Data Classification</strong> - Proper labeling of sensitive data</li>
-            </ul>
-          </div>
-
-          <div class="security-pillar">
-            <h4>✅ Integrity</h4>
-            <p>Maintaining the accuracy and completeness of data throughout its lifecycle.</p>
-            <ul>
-              <li><strong>Data Validation</strong> - Input validation and sanitization</li>
-              <li><strong>Hashing</strong> - Ensuring data hasn't been tampered with</li>
-              <li><strong>Digital Signatures</strong> - Verifying authenticity and integrity</li>
-              <li><strong>Backup Integrity</strong> - Regular integrity checks on backups</li>
-            </ul>
-          </div>
-
-          <div class="security-pillar">
-            <h4>📈 Availability</h4>
-            <p>Ensuring systems and data are available when needed by authorized users.</p>
-            <ul>
-              <li><strong>Redundancy</strong> - Multiple systems and data copies</li>
-              <li><strong>Disaster Recovery</strong> - Business continuity planning</li>
-              <li><strong>DDoS Protection</strong> - Traffic filtering and rate limiting</li>
-              <li><strong>Monitoring</strong> - Proactive system health monitoring</li>
-            </ul>
-          </div>
-
-          <h2>Security Domains</h2>
-
-          <h3>Application Security</h3>
-          <div class="concept-card">
-            <h4>Secure Software Development</h4>
-            <p>Building security into the software development lifecycle from design to deployment.</p>
-            <ul>
-              <li>🔍 <strong>Secure Coding</strong> - OWASP Top 10 prevention</li>
-              <li>🧪 <strong>Security Testing</strong> - SAST, DAST, penetration testing</li>
-              <li>📦 <strong>Dependency Management</strong> - Vulnerability scanning</li>
-              <li>🔐 <strong>API Security</strong> - Authentication, authorization, rate limiting</li>
-            </ul>
-          </div>
-
-          <h3>Network Security</h3>
-          <div class="concept-card">
-            <h4>Protecting Network Infrastructure</h4>
-            <p>Securing network communications and preventing unauthorized access to network resources.</p>
-            <ul>
-              <li>🛡️ <strong>Firewalls</strong> - Network and application layer protection</li>
-              <li>🔒 <strong>VPN & Zero Trust</strong> - Secure remote access</li>
-              <li>📡 <strong>IDS/IPS</strong> - Intrusion detection and prevention</li>
-              <li>🌐 <strong>Network Segmentation</strong> - Isolating sensitive systems</li>
-            </ul>
-          </div>
-
-          <h3>Cloud Security</h3>
-          <div class="concept-card">
-            <h4>Securing Cloud Infrastructure</h4>
-            <p>Implementing security controls specific to cloud environments and shared responsibility models.</p>
-            <ul>
-              <li>🏗️ <strong>Infrastructure Security</strong> - Secure configuration, hardening</li>
-              <li>🔑 <strong>Identity Management</strong> - IAM, least privilege</li>
-              <li>📊 <strong>Data Protection</strong> - Encryption, key management</li>
-              <li>🔍 <strong>Compliance</strong> - Meeting regulatory requirements</li>
-            </ul>
-          </div>
-
-          <h3>Operational Security (OpSec)</h3>
-          <div class="concept-card">
-            <h4>Security Operations</h4>
-            <p>Managing security incidents, monitoring, and maintaining security posture.</p>
-            <ul>
-              <li>👁️ <strong>SIEM</strong> - Security information and event management</li>
-              <li>🚨 <strong>Incident Response</strong> - Rapid threat containment</li>
-              <li>📈 <strong>Threat Hunting</strong> - Proactive threat detection</li>
-              <li>📋 <strong>Compliance Monitoring</strong> - Continuous compliance checks</li>
-            </ul>
-          </div>
-
-          <h2 id="frameworks">Security Frameworks & Standards</h2>
-
-          <h3>NIST Cybersecurity Framework</h3>
-          <div class="concept-card">
-            <h4>Identify → Protect → Detect → Respond → Recover</h4>
-            <p>A comprehensive framework for improving cybersecurity posture and risk management.</p>
-            <ul>
-              <li><strong>Identify</strong> - Asset management, risk assessment</li>
-              <li><strong>Protect</strong> - Access control, data security, awareness</li>
-              <li><strong>Detect</strong> - Continuous monitoring, anomaly detection</li>
-              <li><strong>Respond</strong> - Incident response planning and execution</li>
-              <li><strong>Recover</strong> - Disaster recovery and business continuity</li>
-            </ul>
-          </div>
-
-          <h3>ISO 27001</h3>
-          <div class="concept-card">
-            <h4>Information Security Management System</h4>
-            <p>International standard for information security management systems (ISMS).</p>
-            <ul>
-              <li><strong>Risk Management</strong> - Systematic approach to security risks</li>
-              <li><strong>Security Controls</strong> - Technical, organizational, and physical controls</li>
-              <li><strong>Continuous Improvement</strong> - Regular audits and assessments</li>
-              <li><strong>Certification</strong> - Independent verification of compliance</li>
-            </ul>
-          </div>
-
-          <h3>Cloud Security Alliance (CSA)</h3>
-          <div class="concept-card">
-            <h4>Cloud Security Best Practices</h4>
-            <p>Industry-leading guidance for securing cloud computing environments.</p>
-            <ul>
-              <li><strong>Cloud Controls Matrix</strong> - Security controls for cloud providers</li>
-              <li><strong>Security Guidance</strong> - Domain-specific security recommendations</li>
-              <li><strong>Research</strong> - Latest cloud security threats and trends</li>
-              <li><strong>Training</strong> - Cloud security education and certification</li>
-            </ul>
-          </div>
-
-          <h2>Compliance & Regulations</h2>
-
-          <h3>GDPR (Europe)</h3>
-          <div class="concept-card">
-            <h4>General Data Protection Regulation</h4>
-            <p>Comprehensive data protection law affecting any organization handling EU citizen data.</p>
-            <ul>
-              <li><strong>Data Subject Rights</strong> - Access, rectification, erasure rights</li>
-              <li><strong>Data Protection Officer</strong> - Required for certain organizations</li>
-              <li><strong>Breach Notification</strong> - 72-hour reporting requirement</li>
-              <li><strong>Privacy by Design</strong> - Security built into systems from the start</li>
-            </ul>
-          </div>
-
-          <h3>HIPAA (Healthcare)</h3>
-          <div class="concept-card">
-            <h4>Health Insurance Portability and Accountability Act</h4>
-            <p>US regulation for protecting patient health information (PHI).</p>
-            <ul>
-              <li><strong>Protected Health Information</strong> - Definition and scope</li>
-              <li><strong>Business Associate Agreements</strong> - Third-party compliance</li>
-              <li><strong>Security Rule</strong> - Technical safeguards and risk analysis</li>
-              <li><strong>Privacy Rule</strong> - Patient rights and data usage</li>
-            </ul>
-          </div>
-
-          <h3>PCI DSS (Payment Card)</h3>
-          <div class="concept-card">
-            <h4>Payment Card Industry Data Security Standard</h4>
-            <p>Security standard for organizations handling credit card information.</p>
-            <ul>
-              <li><strong>Network Security</strong> - Firewalls and network segmentation</li>
-              <li><strong>Data Protection</strong> - Encryption and masking requirements</li>
-              <li><strong>Access Control</strong> - Authentication and authorization</li>
-              <li><strong>Monitoring</strong> - Logging and regular testing</li>
-            </ul>
-          </div>
-
-          <h2>Threat Landscape</h2>
-
-          <h3>Common Attack Vectors</h3>
-          <ul>
-            <li>🎣 <strong>Phishing</strong> - Social engineering attacks via email</li>
-            <li>💉 <strong>Malware</strong> - Viruses, ransomware, trojans</li>
-            <li>🔓 <strong>Weak Authentication</strong> - Password attacks, credential stuffing</li>
-            <li>🌐 <strong>DDoS Attacks</strong> - Overwhelming systems with traffic</li>
-            <li>💀 <strong>Zero-Day Exploits</strong> - Unknown vulnerabilities</li>
-            <li>🔗 <strong>Supply Chain Attacks</strong> - Compromising third-party dependencies</li>
-          </ul>
-
-          <h3>Cloud-Specific Threats</h3>
-          <ul>
-            <li>☁️ <strong>Misconfigured Resources</strong> - Exposed storage buckets, open ports</li>
-            <li>🔑 <strong>Identity Compromise</strong> - Stolen API keys and credentials</li>
-            <li>🏢 <strong>Insider Threats</strong> - Authorized users abusing privileges</li>
-            <li>📊 <strong>Data Breaches</strong> - Unauthorized data access and exfiltration</li>
-            <li>⚡ <strong>Advanced Persistent Threats</strong> - Long-term network infiltration</li>
-            <li>🔄 <strong>Shared Responsibility Confusion</strong> - Misunderstanding cloud security boundaries</li>
-          </ul>
-
-          <h2>Getting Started with Security</h2>
-
-          <h3>1. Assess Your Current State</h3>
-          <pre><code># Security posture assessment
-- Map your data and systems
-- Identify critical assets
-- Review current security controls
-- Perform risk assessment
-- Benchmark against industry standards</code></pre>
-
-          <h3>2. Implement Basic Security Controls</h3>
-          <pre><code># Essential security measures
-- Enable multi-factor authentication (MFA)
-- Use strong, unique passwords
-- Keep software and systems updated
-- Implement least privilege access
-- Enable encryption for data at rest and in transit</code></pre>
-
-          <h3>3. Monitor and Respond</h3>
-          <pre><code># Continuous security monitoring
-- Set up logging and alerting
-- Monitor for suspicious activity
-- Create incident response plan
-- Regular security assessments
-- Employee security awareness training</code></pre>
-
-          <h3>4. Cloud Security Fundamentals</h3>
-          <pre><code># AWS Security Basics
-# Enable CloudTrail for API logging
-aws cloudtrail create-trail \
-  --name my-security-trail \
-  --s3-bucket-name my-security-logs \
-  --is-multi-region-trail
-
-# Configure VPC security groups
-aws ec2 authorize-security-group-ingress \
-  --group-id sg-12345678 \
-  --protocol tcp \
-  --port 22 \
-  --cidr 192.168.1.0/24
-
-# Enable AWS Config for compliance monitoring
-aws configservice put-configuration-recorder \
-  --configuration-recorder name=my-recorder,roleARN=arn:aws:iam::123456789012:role/ConfigRole</code></pre>
-
-          <div class="tip-box">
-            <strong>💡 Security Success Tips:</strong>
-            <ul>
-              <li>Start with the basics - MFA, strong passwords, regular updates</li>
-              <li>Implement defense in depth - multiple layers of security</li>
-              <li>Security is everyone's responsibility, not just the security team</li>
-              <li>Regular training and awareness programs are essential</li>
-              <li>Monitor, measure, and continuously improve your security posture</li>
-              <li>Don't wait for a breach to happen - be proactive</li>
-              <li>Balance security with usability and business needs</li>
-            </ul>
+          <div class="alert-info">
+            <strong><i class="bi bi-info-circle me-2"></i>Core Principle:</strong>
+            Security is everyone's responsibility — shift-left from code to cloud. Every engineer, platform team member, and operator shares accountability for building and maintaining a secure system. Security cannot be bolted on at the end; it must be woven into every stage of the software delivery lifecycle.
           </div>
 
           <h2>Zero Trust Architecture</h2>
+          <p>
+            Zero Trust is a security paradigm built on the principle of <strong>"Never trust, always verify."</strong> Unlike traditional perimeter-based security (castle-and-moat), Zero Trust assumes that threats exist both inside and outside the network boundary. Every access request must be authenticated, authorized, and continuously validated regardless of where it originates.
+          </p>
+          <p>The core tenet: <em>no implicit trust is granted to any asset or user account based solely on physical or network location.</em></p>
+
+          <h3>The Five Pillars of Zero Trust</h3>
+          <div class="pillar-grid">
+            <div class="pillar-card">
+              <i class="bi bi-person-badge"></i>
+              <h5>Identity</h5>
+              <p>Strong authentication (MFA), identity federation, continuous session validation. IdPs: Okta, Azure AD, Google Workspace.</p>
+            </div>
+            <div class="pillar-card">
+              <i class="bi bi-laptop"></i>
+              <h5>Device</h5>
+              <p>Device health attestation, MDM enrollment, endpoint compliance checks before granting access.</p>
+            </div>
+            <div class="pillar-card">
+              <i class="bi bi-diagram-3"></i>
+              <h5>Network</h5>
+              <p>Micro-segmentation, software-defined perimeters, encrypted east-west traffic (mTLS), no implicit LAN trust.</p>
+            </div>
+            <div class="pillar-card">
+              <i class="bi bi-code-slash"></i>
+              <h5>Application</h5>
+              <p>Application-layer access controls, WAF, API gateways, per-request authorization checks.</p>
+            </div>
+            <div class="pillar-card">
+              <i class="bi bi-database-lock"></i>
+              <h5>Data</h5>
+              <p>Data classification, encryption at rest and in transit, DLP, data access logging and anomaly detection.</p>
+            </div>
+          </div>
 
           <div class="concept-card">
-            <h4>Never Trust, Always Verify</h4>
-            <p>A security model that assumes no user or device is trustworthy by default, requiring verification at every access attempt.</p>
+            <h4>Zero Trust Implementation Steps</h4>
+            <ol>
+              <li><strong>Know your traffic:</strong> Identify all users, devices, applications, and data flows</li>
+              <li><strong>Map the transaction flows:</strong> Understand how data moves across your environment</li>
+              <li><strong>Architect a Zero Trust network:</strong> Define micro-perimeters (protect surfaces)</li>
+              <li><strong>Create the Zero Trust policy:</strong> Who, what, when, where, why, how for each resource</li>
+              <li><strong>Monitor and maintain:</strong> Continuous inspection, logging, and adaptive policy enforcement</li>
+            </ol>
+          </div>
 
-            <h4>Core Principles:</h4>
-            <ul>
-              <li><strong>Verify Explicitly</strong> - Always authenticate and authorize</li>
-              <li><strong>Least Privilege Access</strong> - Grant minimum required permissions</li>
-              <li><strong>Assume Breach</strong> - Design for compromised systems</li>
-              <li><strong>Micro-Segmentation</strong> - Network segmentation at granular level</li>
-              <li><strong>Continuous Monitoring</strong> - Real-time security monitoring</li>
-              <li><strong>Automation</strong> - Automated security responses and remediation</li>
-            </ul>
+          <h2>Threat Modeling</h2>
+          <p>
+            Threat modeling is a structured approach to identifying, quantifying, and addressing security risks early in the design phase. It answers the question: <em>"What can go wrong?"</em>
+          </p>
+
+          <h3>STRIDE Threat Model</h3>
+          <p>STRIDE is a mnemonic for six categories of security threats, developed by Microsoft:</p>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Threat</th>
+                  <th>Description</th>
+                  <th>Violated Property</th>
+                  <th>Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>S</strong>poofing</td>
+                  <td>Impersonating another user or system</td>
+                  <td>Authentication</td>
+                  <td>Forged JWT tokens, ARP spoofing</td>
+                </tr>
+                <tr>
+                  <td><strong>T</strong>ampering</td>
+                  <td>Unauthorized modification of data</td>
+                  <td>Integrity</td>
+                  <td>SQL injection, MITM data modification</td>
+                </tr>
+                <tr>
+                  <td><strong>R</strong>epudiation</td>
+                  <td>Denying performing an action</td>
+                  <td>Non-repudiation</td>
+                  <td>Deleting audit logs, unsigned API calls</td>
+                </tr>
+                <tr>
+                  <td><strong>I</strong>nformation Disclosure</td>
+                  <td>Exposing data to unauthorized parties</td>
+                  <td>Confidentiality</td>
+                  <td>Misconfigured S3 buckets, verbose errors</td>
+                </tr>
+                <tr>
+                  <td><strong>D</strong>enial of Service</td>
+                  <td>Disrupting service availability</td>
+                  <td>Availability</td>
+                  <td>DDoS attacks, resource exhaustion</td>
+                </tr>
+                <tr>
+                  <td><strong>E</strong>levation of Privilege</td>
+                  <td>Gaining unauthorized elevated permissions</td>
+                  <td>Authorization</td>
+                  <td>Container escape, SSRF to IMDS</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Attack Surface Analysis</h3>
+          <p>Every exposed interface is a potential attack vector. Key attack surfaces in cloud-native environments:</p>
+          <ul>
+            <li><strong>External APIs &amp; endpoints:</strong> Public-facing REST/gRPC APIs, load balancers, ingress controllers</li>
+            <li><strong>Container images:</strong> Vulnerable OS packages, application dependencies, secrets baked into layers</li>
+            <li><strong>IAM configurations:</strong> Overly permissive roles, unused credentials, unrotated keys</li>
+            <li><strong>Infrastructure code:</strong> Terraform modules, Helm charts, Kubernetes manifests with misconfigurations</li>
+            <li><strong>CI/CD pipelines:</strong> Third-party actions, build environment secrets, artifact integrity</li>
+            <li><strong>Supply chain:</strong> Open-source dependencies, container base images, third-party SDKs</li>
+            <li><strong>Metadata services:</strong> AWS IMDS, GCP metadata server — accessible from any EC2/GCE workload</li>
+          </ul>
+
+          <h3>Threat Actors</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr><th>Actor</th><th>Motivation</th><th>Capability</th><th>Primary Threats</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Nation-state APT</td><td>Espionage, disruption</td><td>Very high</td><td>Supply chain compromise, zero-days</td></tr>
+                <tr><td>Cybercriminal</td><td>Financial gain</td><td>High</td><td>Ransomware, data theft, cryptomining</td></tr>
+                <tr><td>Insider threat</td><td>Sabotage, personal gain</td><td>Medium</td><td>Data exfiltration, privilege abuse</td></tr>
+                <tr><td>Hacktivist</td><td>Ideological</td><td>Medium</td><td>DDoS, defacement, data leaks</td></tr>
+                <tr><td>Script kiddie</td><td>Recognition, fun</td><td>Low</td><td>Known CVE exploitation, scanning</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Security Frameworks Overview</h2>
+
+          <h3>NIST Cybersecurity Framework (CSF)</h3>
+          <p>The NIST CSF provides a policy framework of computer security guidance for organizations. It is organized around five core functions:</p>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4><i class="bi bi-search me-2"></i>Identify</h4>
+                <p>Understand the organizational context, assets, risks. Asset management, risk assessment, governance.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4><i class="bi bi-shield-check me-2"></i>Protect</h4>
+                <p>Implement safeguards: access control, data security, protective technology, training.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4><i class="bi bi-eye me-2"></i>Detect</h4>
+                <p>Identify cybersecurity events: anomalies, continuous monitoring, detection processes.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4><i class="bi bi-lightning me-2"></i>Respond</h4>
+                <p>Take action on detected events: response planning, communications, analysis, mitigation.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4><i class="bi bi-arrow-repeat me-2"></i>Recover</h4>
+                <p>Maintain resilience and restore capabilities: recovery planning, improvements, communications.</p>
+              </div>
+            </div>
+          </div>
+
+          <h3>CIS Controls v8</h3>
+          <p>The CIS Controls (Center for Internet Security) are a prioritized set of 18 actions to protect against cyber attacks. They are grouped into three implementation groups (IG1, IG2, IG3) based on organizational maturity:</p>
+          <ul>
+            <li><strong>IG1 (Basic Cyber Hygiene):</strong> Controls 1–6: Inventory, software inventory, data protection, secure configuration, account management, access control management</li>
+            <li><strong>IG2 (Foundational):</strong> Controls 7–16: Continuous vulnerability management, audit log management, email/browser protections, malware defense, network monitoring, network infrastructure, security awareness, service provider management, application software security, incident response</li>
+            <li><strong>IG3 (Organizational):</strong> Controls 17–18: Penetration testing, security awareness training program</li>
+          </ul>
+
+          <h3>ISO 27001 Key Domains</h3>
+          <p>ISO/IEC 27001 is the international standard for Information Security Management Systems (ISMS). Annex A contains 93 controls organized into 4 themes:</p>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead><tr><th>Theme</th><th>Controls Count</th><th>Key Areas</th></tr></thead>
+              <tbody>
+                <tr><td>Organizational</td><td>37</td><td>Policies, threat intelligence, IS in project management, supplier relationships, incident management</td></tr>
+                <tr><td>People</td><td>8</td><td>Screening, terms of employment, training, disciplinary process, remote working</td></tr>
+                <tr><td>Physical</td><td>14</td><td>Physical security perimeters, clear desk, equipment security, secure disposal</td></tr>
+                <tr><td>Technological</td><td>34</td><td>Access control, authentication, key management, network security, SIEM, vulnerability management</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Cloud Security Shared Responsibility Model</h2>
+          <p>
+            In cloud computing, security responsibilities are shared between the cloud provider and the customer. Understanding this boundary is critical — misconfiguration of customer-managed components is the leading cause of cloud security incidents.
+          </p>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Layer</th>
+                  <th>AWS</th>
+                  <th>GCP</th>
+                  <th>Azure</th>
+                  <th>Responsible Party</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Physical infrastructure</td><td>Provider</td><td>Provider</td><td>Provider</td><td>Cloud Provider</td></tr>
+                <tr><td>Hypervisor / virtualization</td><td>Provider</td><td>Provider</td><td>Provider</td><td>Cloud Provider</td></tr>
+                <tr><td>Network infrastructure</td><td>Provider</td><td>Provider</td><td>Provider</td><td>Cloud Provider</td></tr>
+                <tr><td>Managed service security (RDS, GKE, etc.)</td><td>Shared</td><td>Shared</td><td>Shared</td><td>Shared</td></tr>
+                <tr><td>Operating system (IaaS)</td><td>Customer</td><td>Customer</td><td>Customer</td><td>Customer</td></tr>
+                <tr><td>Network &amp; firewall configuration</td><td>Customer</td><td>Customer</td><td>Customer</td><td>Customer</td></tr>
+                <tr><td>IAM &amp; access management</td><td>Customer</td><td>Customer</td><td>Customer</td><td>Customer</td></tr>
+                <tr><td>Data encryption &amp; integrity</td><td>Customer</td><td>Customer</td><td>Customer</td><td>Customer</td></tr>
+                <tr><td>Application code &amp; config</td><td>Customer</td><td>Customer</td><td>Customer</td><td>Customer</td></tr>
+                <tr><td>Data classification &amp; DLP</td><td>Customer</td><td>Customer</td><td>Customer</td><td>Customer</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="warning-box">
+            <strong><i class="bi bi-exclamation-triangle me-2"></i>Common Misconception:</strong>
+            Moving to the cloud does not mean the cloud provider secures your workloads. Misconfigured S3 buckets, overly permissive IAM roles, and unencrypted databases are customer responsibilities — and among the top causes of cloud data breaches.
+          </div>
+
+          <h2>Defense in Depth — Security Layers</h2>
+          <p>
+            Defense in Depth is a layered security strategy where multiple independent security controls are applied at different levels. If one layer fails, others continue to provide protection. This is analogous to a medieval castle with a moat, walls, towers, and guards — no single point of failure.
+          </p>
+
+          <div class="concept-card">
+            <h4>Security Layers (Outermost to Innermost)</h4>
+            <div class="layer-item" style="background:#fff3cd; border-left: 3px solid #ffc107;">
+              <i class="bi bi-globe me-3" style="color:#ffc107; font-size:1.3rem;"></i>
+              <div><strong>Perimeter</strong> — DDoS protection, WAF, DNS filtering, edge firewalls, CDN with geo-blocking</div>
+            </div>
+            <div class="layer-item" style="background:#cfe2ff; border-left: 3px solid #0d6efd;">
+              <i class="bi bi-diagram-3 me-3" style="color:#0d6efd; font-size:1.3rem;"></i>
+              <div><strong>Network</strong> — VPCs, security groups, NACLs, private subnets, VPN/PrivateLink, network flow logs, IDS/IPS</div>
+            </div>
+            <div class="layer-item" style="background:#d1ecf1; border-left: 3px solid #17a2b8;">
+              <i class="bi bi-server me-3" style="color:#17a2b8; font-size:1.3rem;"></i>
+              <div><strong>Host</strong> — Hardened OS, CIS benchmarks, host-based firewall, EDR/AV, patch management, integrity monitoring</div>
+            </div>
+            <div class="layer-item" style="background:#d4edda; border-left: 3px solid #28a745;">
+              <i class="bi bi-code-slash me-3" style="color:#28a745; font-size:1.3rem;"></i>
+              <div><strong>Application</strong> — SAST/DAST, dependency scanning, input validation, WAF rules, authentication, authorization, secrets management</div>
+            </div>
+            <div class="layer-item" style="background:#f8d7da; border-left: 3px solid #dc3545;">
+              <i class="bi bi-database-lock me-3" style="color:#dc3545; font-size:1.3rem;"></i>
+              <div><strong>Data</strong> — Encryption at rest (AES-256), encryption in transit (TLS 1.2+), RBAC on data stores, DLP, backup encryption, key management</div>
+            </div>
+          </div>
+
+          <h2>Key Security Principles</h2>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4><i class="bi bi-person-lock me-2"></i>Least Privilege</h4>
+                <p>Grant only the minimum permissions required to perform a task. Review and revoke unnecessary access regularly. Apply to users, service accounts, and applications alike.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4><i class="bi bi-eye-slash me-2"></i>Need-to-Know</h4>
+                <p>Access to sensitive data is granted only to those who need it to perform their job function. Data classification and compartmentalization enforce this principle.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4><i class="bi bi-people me-2"></i>Separation of Duties</h4>
+                <p>No single person should control all aspects of a critical process. Require multi-party approval for sensitive operations (deployments, key ceremonies, access approvals).</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4><i class="bi bi-shield-x me-2"></i>Fail Secure</h4>
+                <p>When a system or component fails, it should default to a secure state. Deny by default; deny if uncertain. Never fall back to plaintext or unauthenticated access on error.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4><i class="bi bi-tools me-2"></i>Security by Design</h4>
+                <p>Build security in from the start, not as an afterthought. Threat model during design, apply secure coding standards, and enforce security requirements as acceptance criteria.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4><i class="bi bi-arrow-left-right me-2"></i>Defense in Depth</h4>
+                <p>Never rely on a single security control. Layer multiple independent mechanisms so that the failure of one does not result in a system breach.</p>
+              </div>
+            </div>
+          </div>
+
+          <h2>DevSecOps: Shift-Left Security</h2>
+          <p>
+            Shift-left means integrating security testing and controls as early as possible in the software development lifecycle — moving it "left" on the timeline from production back to design and coding. The cost of fixing a vulnerability found in production is 6–100x higher than finding it at the code level.
+          </p>
+
+          <div class="concept-card">
+            <h4>Security Integration at Each SDLC Stage</h4>
+            <div class="table-responsive">
+              <table class="table table-sm mb-0">
+                <thead><tr><th>Stage</th><th>Security Activity</th><th>Tools</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Plan</strong></td><td>Threat modeling, security requirements</td><td>OWASP Threat Dragon, Microsoft TMT</td></tr>
+                  <tr><td><strong>Code</strong></td><td>Secure coding, IDE plugins, pre-commit hooks</td><td>SonarLint, Semgrep, git-secrets</td></tr>
+                  <tr><td><strong>Build</strong></td><td>SAST, dependency scanning, secret detection</td><td>Semgrep, Trivy, Gitleaks, Snyk</td></tr>
+                  <tr><td><strong>Test</strong></td><td>DAST, IAST, container scanning</td><td>OWASP ZAP, Burp Suite, Trivy</td></tr>
+                  <tr><td><strong>Deploy</strong></td><td>IaC scanning, policy-as-code, signing</td><td>Checkov, OPA/Kyverno, Cosign</td></tr>
+                  <tr><td><strong>Operate</strong></td><td>Runtime security, CSPM, SIEM</td><td>Falco, AWS Security Hub, Wiz</td></tr>
+                  <tr><td><strong>Monitor</strong></td><td>Threat detection, anomaly detection</td><td>GuardDuty, Chronicle, Datadog SIEM</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <h2>Next Steps</h2>
-          <p>Continue learning with our detailed guides:</p>
-          <ul>
-            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Deep dive into cybersecurity principles</li>
-            <li><strong><a href="cloud-security.html">Cloud Security</a></strong> - Cloud-specific security practices</li>
-            <li><strong><a href="tools.html">Security Tools</a></strong> - Essential security tools and platforms</li>
-            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Implementation strategies and compliance</li>
-          </ul>
+          <p>Explore the detailed topics in this Security section:</p>
+
+          <div class="link-card">
+            <a href="iam.html"><i class="bi bi-person-lock me-2"></i>IAM &amp; Access Control</a>
+            <p>Identity management, RBAC/ABAC, AWS/GCP IAM deep dives, Kubernetes RBAC, MFA enforcement, and Privileged Access Management.</p>
+          </div>
+          <div class="link-card">
+            <a href="devsecops.html"><i class="bi bi-code-slash me-2"></i>DevSecOps</a>
+            <p>SAST, DAST, container security, supply chain security, IaC scanning, policy-as-code, and complete CI/CD security pipelines.</p>
+          </div>
+          <div class="link-card">
+            <a href="secrets.html"><i class="bi bi-key me-2"></i>Secrets Management</a>
+            <p>HashiCorp Vault, SOPS, AWS Secrets Manager, GCP Secret Manager, Kubernetes External Secrets Operator, and rotation patterns.</p>
+          </div>
+          <div class="link-card">
+            <a href="compliance.html"><i class="bi bi-clipboard-check me-2"></i>Compliance &amp; Audit</a>
+            <p>SOC 2 Type II, ISO 27001, CIS Benchmarks, PCI DSS, cloud compliance tools, audit logging, and compliance as code.</p>
+          </div>
 
         </div>
       </div>
     </div>
   </div>
-
   <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

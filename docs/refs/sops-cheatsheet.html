@@ -3,860 +3,564 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SOPS Cheatsheet | Quick Reference</title>
-
+  <title>SOPS (Secrets Operations) Cheatsheet | Lê Bình Phương</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-
   <style>
-    :root {
-      --primary-color: #149ddd;
-      --secondary-color: #173b6c;
-      --text-color: #272829;
-      --bg-light: #f5f8fd;
-      --code-bg: #282c34;
-      --code-text: #abb2bf;
-    }
-
-    body {
-      font-family: 'Open Sans', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-color);
-      line-height: 1.8;
-    }
-
-    .content {
-      background: white;
-      border-radius: 12px;
-      padding: 3rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      color: var(--secondary-color);
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
-
-    h2 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-top: 2.5rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--bg-light);
-    }
-
-    h3 {
-      color: var(--secondary-color);
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
-    }
-
-    code {
-      background: #f8f9fa;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      color: #e83e8c;
-    }
-
-    pre {
-      background: var(--code-bg);
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 1.5rem;
-      overflow-x: auto;
-      margin: 1rem 0;
-    }
-
-    pre code {
-      background: none;
-      padding: 0;
-      color: var(--code-text);
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-    }
-
-    .navbar {
-      background: white;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb {
-      background: transparent;
-      padding: 0;
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb a {
-      color: var(--primary-color);
-      text-decoration: none;
-    }
-    .sidebar {
-      position: sticky;
-      top: 20px;
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      height: fit-content;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h5 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .sidebar .nav-link {
-      color: var(--text-color);
-      padding: 0.5rem 0;
-      border-left: 3px solid transparent;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: block;
-      font-size: 0.9rem;
-    }
-
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active {
-      color: var(--primary-color);
-      border-left-color: var(--primary-color);
-      padding-left: 1rem;
-    }
-    .sidebar {
-      position: sticky;
-      top: 20px;
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      height: fit-content;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h5 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .sidebar .nav-link {
-      color: var(--text-color);
-      padding: 0.5rem 0;
-      border-left: 3px solid transparent;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: block;
-      font-size: 0.9rem;
-    }
-
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active {
-      color: var(--primary-color);
-      border-left-color: var(--primary-color);
-      padding-left: 1rem;
-    }
-
-    .command-section {
-      margin-bottom: 2.5rem;
-    }
-
-    .command-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-
-    .command-card {
-      background: var(--bg-light);
-      border-radius: 8px;
-      padding: 1.5rem;
-      border-left: 4px solid var(--primary-color);
-    }
-
-    .command-card h4 {
-      color: var(--secondary-color);
-      margin-bottom: 1rem;
-      font-size: 1.1rem;
-    }
-
-    .command-item {
-      margin-bottom: 1rem;
-    }
-
-    .command-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .command-syntax {
-      background: white;
-      padding: 0.8rem;
-      border-radius: 6px;
-      border: 1px solid #e9ecef;
-      margin-bottom: 0.5rem;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      color: var(--text-color);
-    }
-
-    .command-desc {
-      color: #666;
-      font-size: 0.9rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .config-example {
-      background: var(--bg-light);
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-      border-left: 4px solid #28a745;
-    }
-
-    .config-example h4 {
-      color: #155724;
-      margin-bottom: 1rem;
-    }
-
-    .security-note {
-      background: #fff3cd;
-      border-left: 4px solid #ffc107;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
-
-    .security-note h5 {
-      color: #856404;
-      margin-bottom: 0.5rem;
-    }
-
-    .tool-badge {
-      background: var(--primary-color);
-      color: white;
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      display: inline-block;
-      margin-bottom: 0.5rem;
-    }
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 0.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); font-size: 1.3rem; }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; font-size: 0.88rem; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 6px; font-size: 0.9rem; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 6px; font-size: 0.9rem; }
+    .ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+    .ref-section { background: var(--bg-light); border-radius: 8px; padding: 1.2rem; border-top: 3px solid var(--primary-color); }
+    .ref-section h3 { color: var(--primary-color); font-size: 1rem; margin-top: 0; margin-bottom: 0.8rem; }
+    .ref-section pre { margin: 0; font-size: 0.82rem; }
   </style>
 </head>
 <body>
-
-  <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container-fluid">
-      <div class="container">
-        <a class="navbar-brand" href="../../index.html">
-          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
-        </a>
-      </div>
-    </div>
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
   </nav>
-
   <div class="container">
-
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
         <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
-        <li class="breadcrumb-item"><a href="index.html">Quick Reference</a></li>
-        <li class="breadcrumb-item active">SOPS</li>
+        <li class="breadcrumb-item active">SOPS Cheatsheet</li>
       </ol>
     </nav>
-
-    <!-- Main Content -->
     <div class="content">
-    <div class="row">
+      <h1><i class="bi bi-file-earmark-lock me-2"></i>SOPS (Secrets Operations) Cheatsheet</h1>
+      <p class="text-muted">Quick reference for SOPS — encrypt secrets in Git using AWS KMS, GCP KMS, age, or PGP. Covers basic operations, CI/CD integration, Helm, Terraform, and key rotation.</p>
 
-      <!-- Sidebar -->
-      <div class="col-lg-3">
-        <div class="sidebar">
-          <h5><i class="bi bi-book me-2"></i>SOPS</h5>
-          <nav class="nav flex-column">
-            <a class="nav-link active" href="#installation">Installation</a>
-            <a class="nav-link" href="#basic-operations">Operations</a>
-            <a class="nav-link" href="#key-management">Key Management</a>
-            <a class="nav-link" href="#configuration-files">Configuration</a>
-            <a class="nav-link" href="#advanced-operations">Advanced</a>
-            <a class="nav-link" href="#integration-examples">Integration</a>
-          </nav>
-        </div>
-      </div>
+      <h2>Quick Reference</h2>
+      <div class="ref-grid">
 
-      <!-- Main Content -->
-      <div class="col-lg-9">
-        <div class="content">
-    <div class="row">
+        <div class="ref-section">
+          <h3>Basic Operations</h3>
+          <pre><code"># Install SOPS
+brew install sops
+# or download binary from https://github.com/getsops/sops/releases
 
-      <!-- Sidebar -->
-      <div class="col-lg-3">
-        <div class="sidebar">
-          <h5><i class="bi bi-book me-2"></i>SOPS</h5>
-          <nav class="nav flex-column">
-            <a class="nav-link active" href="#installation">Installation</a>
-            <a class="nav-link" href="#basic-operations">Operations</a>
-            <a class="nav-link" href="#key-management">Key Management</a>
-            <a class="nav-link" href="#configuration-files">Configuration</a>
-            <a class="nav-link" href="#advanced-operations">Advanced</a>
-            <a class="nav-link" href="#integration-examples">Integration</a>
-          </nav>
-        </div>
-      </div>
+# Encrypt a file
+sops --encrypt secrets.yaml &gt; secrets.enc.yaml
+sops -e secrets.yaml &gt; secrets.enc.yaml
 
-      <!-- Main Content -->
-      <div class="col-lg-9">
-        <div class="content">
-      <h1><i class="bi bi-lock me-2"></i>SOPS Cheatsheet</h1>
-
-      <p>
-        SOPS (Secrets OPerationS) is an editor of encrypted files that supports YAML, JSON, ENV, INI and BINARY formats.
-        It encrypts/decrypts secrets using AWS KMS, GCP KMS, Azure Key Vault, age, and PGP.
-      </p>
-
-      <div class="security-note">
-        <h5><i class="bi bi-shield-check me-2"></i>Security Best Practices</h5>
-        <ul>
-          <li>Use strong encryption keys (KMS, age, PGP)</li>
-          <li>Never commit decrypted secrets to version control</li>
-          <li>Rotate encryption keys regularly</li>
-          <li>Use separate keys for different environments</li>
-          <li>Implement proper key management and access controls</li>
-        </ul>
-      </div>
-
-      <h2 id="installation">Installation</h2>
-
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Linux/macOS</h4>
-            <div class="command-item">
-              <div class="command-syntax">curl -LO https://github.com/mozilla/sops/releases/latest/download/sops-linux</div>
-              <div class="command-desc">Download SOPS binary for Linux</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">chmod +x sops-linux && sudo mv sops-linux /usr/local/bin/sops</div>
-              <div class="command-desc">Make executable and move to PATH</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>macOS with Homebrew</h4>
-            <div class="command-item">
-              <div class="command-syntax">brew install sops</div>
-              <div class="command-desc">Install via Homebrew</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops --version</div>
-              <div class="command-desc">Verify installation</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 id="basic-operations">Basic Operations</h2>
-
-      <h3>Encrypting Files</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Basic Encryption</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops -e secrets.yaml > secrets.enc.yaml</div>
-              <div class="command-desc">Encrypt YAML file</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops -e --input-type json secrets.json > secrets.enc.json</div>
-              <div class="command-desc">Encrypt JSON file with explicit type</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops -e secrets.env > secrets.enc.env</div>
-              <div class="command-desc">Encrypt environment file</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>In-place Encryption</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops -e -i secrets.yaml</div>
-              <div class="command-desc">Encrypt file in-place</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops --encrypt --in-place secrets.json</div>
-              <div class="command-desc">Long form in-place encryption</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h3>Decrypting Files</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Basic Decryption</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops -d secrets.enc.yaml</div>
-              <div class="command-desc">Decrypt YAML file to stdout</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops -d secrets.enc.yaml > secrets.decrypted.yaml</div>
-              <div class="command-desc">Decrypt and save to file</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops --decrypt secrets.enc.json</div>
-              <div class="command-desc">Long form decryption</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>View Encrypted Files</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops secrets.enc.yaml</div>
-              <div class="command-desc">View encrypted file (decrypts automatically)</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">cat secrets.enc.yaml | sops -d -</div>
-              <div class="command-desc">Decrypt from stdin</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 id="key-management">Key Management</h2>
-
-      <h3>AWS KMS</h3>
-      <div class="config-example">
-        <h4>Using AWS KMS for Encryption</h4>
-        <pre><code># Create KMS key
-aws kms create-key --description "SOPS encryption key"
-
-# Get key ARN (replace with actual ARN)
-KEY_ARN="arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
-
-# Encrypt with KMS
-sops -e --kms $KEY_ARN secrets.yaml > secrets.enc.yaml
-
-# For multiple KMS keys (production + development)
-PROD_KEY="arn:aws:kms:us-east-1:123456789012:key/prod-key"
-DEV_KEY="arn:aws:kms:us-east-1:123456789012:key/dev-key"
-
-sops -e --kms $PROD_KEY --kms $DEV_KEY secrets.yaml > secrets.enc.yaml</code></pre>
-      </div>
-
-      <h3>GCP KMS</h3>
-      <div class="config-example">
-        <h4>Using Google Cloud KMS</h4>
-        <pre><code># Create KMS key
-gcloud kms keyrings create sops --location global
-gcloud kms keys create sops-key --location global --keyring sops --purpose encryption
-
-# Get key resource name
-KEY_RESOURCE="projects/myproject/locations/global/keyRings/sops/cryptoKeys/sops-key"
-
-# Encrypt with GCP KMS
-sops -e --gcp-kms $KEY_RESOURCE secrets.yaml > secrets.enc.yaml</code></pre>
-      </div>
-
-      <h3>Azure Key Vault</h3>
-      <div class="config-example">
-        <h4>Using Azure Key Vault</h4>
-        <pre><code># Create Key Vault and key
-az keyvault create --name mykeyvault --resource-group mygroup --location eastus
-az keyvault key create --vault-name mykeyvault --name sops-key --protection software
-
-# Get key URL
-KEY_URL="https://mykeyvault.vault.azure.net/keys/sops-key"
-
-# Encrypt with Azure Key Vault
-sops -e --azure-kv $KEY_URL secrets.yaml > secrets.enc.yaml</code></pre>
-      </div>
-
-      <h3>Age Encryption</h3>
-      <div class="config-example">
-        <h4>Using Age for Encryption</h4>
-        <pre><code># Generate age key pair
-age-keygen -o key.txt
-
-# Key file content (example):
-# # created: 2023-01-01T00:00:00+00:00
-# # public key: age1xyz...
-# AGE-SECRET-KEY-1XYZ...
-
-# Extract public key
-PUBLIC_KEY=$(age-keygen -y key.txt)
-
-# Encrypt with age
-sops -e --age $PUBLIC_KEY secrets.yaml > secrets.enc.yaml
-
-# For multiple recipients
-sops -e --age $PUBLIC_KEY1 --age $PUBLIC_KEY2 secrets.yaml > secrets.enc.yaml</code></pre>
-      </div>
-
-      <h3>PGP/GPG</h3>
-      <div class="config-example">
-        <h4>Using PGP/GPG Keys</h4>
-        <pre><code># Generate GPG key (or use existing)
-gpg --gen-key
-
-# List keys to get key ID
-gpg --list-keys
-
-# Get key fingerprint
-KEY_FP=$(gpg --list-keys --with-colons user@example.com | grep '^fpr' | cut -d: -f10)
-
-# Encrypt with PGP
-sops -e --pgp $KEY_FP secrets.yaml > secrets.enc.yaml
-
-# For multiple PGP keys
-sops -e --pgp $KEY_FP1 --pgp $KEY_FP2 secrets.yaml > secrets.enc.yaml</code></pre>
-      </div>
-
-      <h2 id="configuration-files">Configuration Files</h2>
-
-      <h3>SOPS Configuration (.sops.yaml)</h3>
-      <div class="config-example">
-        <h4>Sample .sops.yaml Configuration</h4>
-        <pre><code>creation_rules:
-  # Encrypt everything by default
-  - path_regex: .*
-    kms: 'arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012'
-    pgp: '1234567890ABCDEF1234567890ABCDEF12345678'
-
-  # Specific rules for different environments
-  - path_regex: .*prod.*
-    kms: 'arn:aws:kms:us-east-1:123456789012:key/prod-key-arn'
-    gcp_kms: 'projects/myproject/locations/global/keyRings/prod/cryptoKeys/prod-key'
-
-  - path_regex: .*dev.*
-    age: 'age1xyz...'
-
-  # Exclude certain files or keys
-  - path_regex: .*test.*
-    encrypted_regex: '^(password|secret)$'
-
-# Key groups for multiple encryption keys
-key_groups:
-  - kms:
-      - arn: arn:aws:kms:us-east-1:123456789012:key/key1
-      - arn: arn:aws:kms:us-west-2:123456789012:key/key2
-    pgp:
-      - 1234567890ABCDEF1234567890ABCDEF12345678
-      - 9876543210FEDCBA9876543210FEDCBA98765432</code></pre>
-      </div>
-
-      <h3>Selective Encryption</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Encrypt Specific Keys</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops -e --encrypted-regex '^(password|secret)$' secrets.yaml</div>
-              <div class="command-desc">Encrypt only password and secret keys</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops -e --unencrypted-regex '^public_' secrets.yaml</div>
-              <div class="command-desc">Leave public_ prefixed keys unencrypted</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Key Patterns</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops -e --encrypted-regex 'db.*' secrets.yaml</div>
-              <div class="command-desc">Encrypt all keys starting with 'db'</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops -e --encrypted-regex '.*_password$' secrets.yaml</div>
-              <div class="command-desc">Encrypt all keys ending with '_password'</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 id="advanced-operations">Advanced Operations</h2>
-
-      <h3>Editing Encrypted Files</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Edit Commands</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops secrets.enc.yaml</div>
-              <div class="command-desc">Edit encrypted file with default editor</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">EDITOR=vim sops secrets.enc.yaml</div>
-              <div class="command-desc">Edit with specific editor</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">SOPS_EDITOR=nano sops secrets.enc.yaml</div>
-              <div class="command-desc">Set editor via environment variable</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Edit Options</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops --set '["app"]["database"]["password"]' 'newpassword' secrets.enc.yaml</div>
-              <div class="command-desc">Set value without opening editor</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops --set '["newkey"]' 'newvalue' secrets.enc.yaml</div>
-              <div class="command-desc">Add new encrypted key</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h3>Rotation & Key Management</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Key Rotation</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops --rotate --kms new-key-arn secrets.enc.yaml</div>
-              <div class="command-desc">Rotate to new KMS key</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops --rotate --in-place secrets.enc.yaml</div>
-              <div class="command-desc">Rotate keys in-place</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Key Information</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops -i secrets.enc.yaml</div>
-              <div class="command-desc">Show encryption information</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops --show-master-keys secrets.enc.yaml</div>
-              <div class="command-desc">Display master keys used for encryption</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 id="integration-examples">Integration Examples</h2>
-
-      <h3>Kubernetes Integration</h3>
-      <div class="config-example">
-        <h4>Using SOPS with Kubernetes</h4>
-        <pre><code># Encrypt secrets file
-sops -e secrets.yaml > secrets.enc.yaml
-
-# View decrypted content
+# Decrypt a file
+sops --decrypt secrets.enc.yaml
 sops -d secrets.enc.yaml
 
-# Use in Kubernetes with KSOPS or similar
-kubectl apply -f <(sops -d secrets.enc.yaml)
+# Encrypt in-place (overwrites original)
+sops --encrypt --in-place secrets.yaml
+sops -e -i secrets.yaml
 
-# Or use kustomize with sops
-# Create kustomization.yaml
-cat > kustomization.yaml << EOF
-secretGenerator:
-- name: mysecret
-  literals:
-  - username=admin
-  - password=secret
-  generators:
-  - sops:
-      file: secrets.enc.yaml
-EOF
+# Decrypt in-place
+sops --decrypt --in-place secrets.enc.yaml
+sops -d -i secrets.enc.yaml
 
-kubectl apply -k .</code></pre>
+# Edit encrypted file (decrypts, opens $EDITOR, re-encrypts)
+sops secrets.enc.yaml
+EDITOR=vim sops secrets.enc.yaml
+
+# Re-encrypt with current .sops.yaml keys
+sops updatekeys secrets.enc.yaml</code></pre>
+        </div>
+
+        <div class="ref-section">
+          <h3>AWS KMS</h3>
+          <pre><code"># Encrypt with AWS KMS key
+sops --kms arn:aws:kms:us-east-1:123456789012:key/mrk-abc123 \
+  --encrypt secrets.yaml &gt; secrets.enc.yaml
+
+# Use AWS profile / region
+export AWS_PROFILE=production
+export AWS_REGION=us-east-1
+sops -e secrets.yaml &gt; secrets.enc.yaml
+
+# Decrypt (uses credentials from environment)
+sops -d secrets.enc.yaml
+
+# Use with assume-role
+aws sts assume-role \
+  --role-arn arn:aws:iam::123456789012:role/sops-role \
+  --role-session-name sops-session \
+  | jq -r '.Credentials | "export AWS_ACCESS_KEY_ID=\(.AccessKeyId)\nexport AWS_SECRET_ACCESS_KEY=\(.SecretAccessKey)\nexport AWS_SESSION_TOKEN=\(.SessionToken)"' \
+  | source /dev/stdin
+sops -d secrets.enc.yaml
+
+# Create KMS key for SOPS
+aws kms create-key --description "SOPS encryption key"
+aws kms create-alias \
+  --alias-name alias/sops-key \
+  --target-key-id KEY_ID</code></pre>
+        </div>
+
+        <div class="ref-section">
+          <h3>GCP KMS</h3>
+          <pre><code"># Encrypt with GCP KMS
+sops --gcp-kms \
+  projects/my-project/locations/global/keyRings/sops-keyring/cryptoKeys/sops-key \
+  --encrypt secrets.yaml &gt; secrets.enc.yaml
+
+# Set credentials
+export GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa-key.json
+# or use ADC (Application Default Credentials)
+gcloud auth application-default login
+
+# Create KMS resources for SOPS
+gcloud kms keyrings create sops-keyring --location=global
+gcloud kms keys create sops-key \
+  --location=global \
+  --keyring=sops-keyring \
+  --purpose=encryption
+
+# Grant access to a service account
+gcloud kms keys add-iam-policy-binding sops-key \
+  --location=global \
+  --keyring=sops-keyring \
+  --member="serviceAccount:ci@my-project.iam.gserviceaccount.com" \
+  --role="roles/cloudkms.cryptoKeyEncrypterDecrypter"</code></pre>
+        </div>
+
+        <div class="ref-section">
+          <h3>age Encryption</h3>
+          <pre><code"># Install age
+brew install age
+
+# Generate a key pair
+age-keygen -o ~/.config/sops/age/keys.txt
+# Output shows public key: age1ql3z7hjy54pw3hyww5ayyfg7zqgvc7w3j2elw8zmrj2kg5sfn9aqmcac8p
+
+# Set age keys file location
+export SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt
+
+# Encrypt with age recipient (public key)
+sops --age age1ql3z7hjy54pw3hyww5ayyfg7zqgvc7w3j2elw8zmrj2kg5sfn9aqmcac8p \
+  --encrypt secrets.yaml &gt; secrets.enc.yaml
+
+# Decrypt (reads private key from SOPS_AGE_KEY_FILE)
+sops --decrypt secrets.enc.yaml
+
+# Multiple age recipients (any can decrypt)
+sops --age age1abc...,age1def... \
+  --encrypt secrets.yaml &gt; secrets.enc.yaml
+
+# age key file format (~/.config/sops/age/keys.txt)
+# # created: 2026-01-01T00:00:00+07:00
+# # public key: age1ql3z7hjy...
+# AGE-SECRET-KEY-1QJQKUQZ...</code></pre>
+        </div>
+
+        <div class="ref-section">
+          <h3>PGP (Legacy)</h3>
+          <pre><code"># Generate GPG key (for legacy systems)
+gpg --full-generate-key
+
+# List keys
+gpg --list-keys
+gpg --list-secret-keys
+
+# Get key fingerprint
+gpg --fingerprint user@example.com
+
+# Encrypt with PGP fingerprint
+sops --pgp FINGERPRINT1,FINGERPRINT2 \
+  --encrypt secrets.yaml &gt; secrets.enc.yaml
+
+# Import a collaborator's public key
+gpg --import colleague.pub.gpg
+gpg --trust-model always --import colleague.pub.gpg
+
+# Export your public key (share with team)
+gpg --export --armor user@example.com &gt; mykey.pub.gpg
+
+# Trust a key (required before encryption with it)
+gpg --edit-key FINGERPRINT
+gpg&gt; trust
+gpg&gt; 5    # Ultimate trust
+gpg&gt; quit</code></pre>
+        </div>
+
+        <div class="ref-section">
+          <h3>Partial Encryption</h3>
+          <pre><code"># Encrypt only fields ending with _secret or _password
+sops --encrypted-suffix "_secret" \
+  --encrypt config.yaml &gt; config.enc.yaml
+
+# Encrypt only fields NOT ending with _unencrypted
+sops --unencrypted-suffix "_unencrypted" \
+  --encrypt config.yaml &gt; config.enc.yaml
+
+# Encrypt only matching fields (regex)
+sops --encrypted-regex "^(password|secret|token|key)$" \
+  --encrypt config.yaml &gt; config.enc.yaml
+
+# Example input YAML:
+# database:
+#   host: db.example.com       # NOT encrypted (string)
+#   password: supersecret      # Encrypted (matches regex)
+# api_key: abc123              # Encrypted (matches regex)
+# log_level: info              # NOT encrypted
+
+# View which fields are encrypted (keys are visible)
+sops -d config.enc.yaml | head -20</code></pre>
+        </div>
+
       </div>
 
-      <h3>CI/CD Integration</h3>
-      <div class="config-example">
-        <h4>GitHub Actions with SOPS</h4>
-        <pre><code># .github/workflows/deploy.yml
-name: Deploy
-on: push
+      <h2>.sops.yaml Configuration File</h2>
+      <div class="tip-box">
+        <strong>Tip:</strong> Place <code>.sops.yaml</code> at the repository root. SOPS auto-discovers it by searching parent directories from the file being encrypted. This means you don't need to pass <code>--kms</code> flags manually.
+      </div>
+      <pre><code"># .sops.yaml — repository root
+creation_rules:
+  # Production secrets: require AWS KMS (multi-region for HA) + age fallback
+  - path_regex: environments/production/.*\.yaml$
+    kms:
+      - arn: arn:aws:kms:us-east-1:123456789012:key/mrk-prod-key-1
+        aws_profile: production
+        role: arn:aws:iam::123456789012:role/sops-prod-role
+      - arn: arn:aws:kms:eu-west-1:123456789012:key/mrk-prod-key-2
+        aws_profile: production
+        role: arn:aws:iam::123456789012:role/sops-prod-role
+    gcp_kms: projects/my-project/locations/global/keyRings/prod/cryptoKeys/sops
+    age: age1ql3z7hjy54pw3hyww5ayyfg7zqgvc7w3j2elw8zmrj2kg5sfn9aqmcac8p
+
+  # Staging secrets: single KMS key is fine
+  - path_regex: environments/staging/.*\.yaml$
+    kms:
+      - arn: arn:aws:kms:us-east-1:123456789012:key/mrk-staging-key
+        aws_profile: staging
+    age: age1staging...
+
+  # Developer secrets: age only (no cloud credentials needed locally)
+  - path_regex: environments/dev/.*\.yaml$
+    age: >-
+      age1dev1...,
+      age1dev2...
+
+  # Shamir Secret Sharing: require 2 of 3 keys to decrypt
+  - path_regex: secrets/critical/.*\.yaml$
+    key_groups:
+      - kms:
+          - arn: arn:aws:kms:us-east-1:123456789012:key/key-a
+        age:
+          - age1key-a...
+      - kms:
+          - arn: arn:aws:kms:us-east-1:123456789012:key/key-b
+        age:
+          - age1key-b...
+      - pgp:
+          - FINGERPRINT_C
+    shamir_threshold: 2   # Require 2 of 3 groups</code></pre>
+
+      <h2>Helm + SOPS (helm-secrets plugin)</h2>
+      <pre><code"># Install helm-secrets plugin
+helm plugin install https://github.com/jkroepke/helm-secrets
+
+# Verify installation
+helm secrets version
+
+# Encrypt a values file
+helm secrets encrypt values/production/secrets.yaml
+
+# Decrypt for inspection (outputs to stdout)
+helm secrets decrypt values/production/secrets.yaml
+
+# Install/upgrade using encrypted values
+helm secrets upgrade --install myapp ./chart \
+  -f values/base.yaml \
+  -f secrets://values/production/secrets.yaml \
+  --namespace production
+
+# List secrets in a directory
+helm secrets dec values/production/
+
+# Edit encrypted values
+helm secrets edit values/production/secrets.yaml
+
+# Helmfile integration with helm-secrets
+# helmfile.yaml:
+releases:
+  - name: myapp
+    chart: ./charts/myapp
+    values:
+      - values/base.yaml
+      - values/{{ .Environment.Name }}/values.yaml
+    secrets:
+      - values/{{ .Environment.Name }}/secrets.yaml  # Auto-decrypted
+
+# Run helmfile with secrets
+helmfile -e production sync
+helmfile -e production diff</code></pre>
+
+      <h2>Ansible + SOPS</h2>
+      <pre><code"># Install community.sops Ansible collection
+ansible-galaxy collection install community.sops
+
+# ansible.cfg
+[defaults]
+collections_paths = ./collections
+
+# Use sops-encrypted vars file in a play
+# playbook.yaml
+- hosts: webservers
+  vars_files:
+    - vars/common.yaml
+    - vars/secrets.enc.yaml    # Ansible will detect SOPS encryption
+  tasks:
+    - name: Deploy app with secrets
+      template:
+        src: app.conf.j2
+        dest: /etc/app/app.conf
+
+# Use sops lookup in tasks
+- name: Get secret from encrypted file
+  vars:
+    db_password: "{{ lookup('community.sops.sops', 'secrets/db.enc.yaml') | from_yaml | json_query('db.password') }}"
+  debug:
+    msg: "DB password is set"
+
+# Ansible-vault vs SOPS comparison:
+# ansible-vault: encrypts entire file, single password, no KMS
+# sops: encrypts per-value, supports KMS/age/PGP, auditable (keys visible), Git-diff friendly</code></pre>
+
+      <h2>Terraform + SOPS</h2>
+      <pre><code"># Install the community sops provider
+# versions.tf
+terraform {
+  required_providers {
+    sops = {
+      source  = "carlpett/sops"
+      version = "~&gt; 1.0"
+    }
+  }
+}
+
+provider "sops" {}
+
+# Use sops_file data source to read encrypted files
+# main.tf
+data "sops_file" "secrets" {
+  source_file = "secrets/production.enc.yaml"
+}
+
+resource "aws_db_instance" "main" {
+  identifier        = "myapp-db"
+  engine            = "postgres"
+  instance_class    = "db.t3.medium"
+  allocated_storage = 20
+  db_name           = "myapp"
+  username          = data.sops_file.secrets.data["db_username"]
+  password          = data.sops_file.secrets.data["db_password"]
+
+  # Mark as sensitive to hide in plan output
+  lifecycle {
+    ignore_changes = [password]
+  }
+}
+
+# Access nested YAML keys
+locals {
+  api_keys = yamldecode(data.sops_file.secrets.raw)
+}
+
+output "api_endpoint" {
+  value     = local.api_keys.api.endpoint
+  sensitive = false
+}
+
+# Run terraform with SOPS (credentials must be available)
+AWS_PROFILE=production terraform plan
+AWS_PROFILE=production terraform apply</code></pre>
+
+      <h2>CI/CD Integration</h2>
+      <h3>GitHub Actions with SOPS</h3>
+      <pre><code"># .github/workflows/deploy.yaml
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write   # Required for OIDC
+  contents: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-    - name: Setup SOPS
-      uses: mdgreenwald/mozilla-sops-action@v1
+      # Configure AWS credentials via OIDC (no long-lived keys)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/github-actions-sops
+          aws-region: us-east-1
 
-    - name: Decrypt secrets
-      run: sops -d secrets.enc.yaml > secrets.yaml
+      # Configure GCP credentials via OIDC
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/123/locations/global/workloadIdentityPools/github/providers/github
+          service_account: ci@my-project.iam.gserviceaccount.com
 
-    - name: Deploy
-      run: ./deploy.sh
-      env:
-        SECRET_KEY: ${{ secrets.SOPS_AGE_KEY }}</code></pre>
+      # Install SOPS
+      - name: Install SOPS
+        run: |
+          SOPS_VERSION=$(curl -s https://api.github.com/repos/getsops/sops/releases/latest | jq -r .tag_name)
+          curl -LO https://github.com/getsops/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.amd64
+          sudo mv sops-${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops
+          sudo chmod +x /usr/local/bin/sops
+
+      # Decrypt secrets and use them
+      - name: Deploy with decrypted secrets
+        run: |
+          # Decrypt secrets file
+          sops -d environments/production/secrets.enc.yaml &gt; /tmp/secrets.yaml
+
+          # Install with helm-secrets
+          helm secrets upgrade --install myapp ./chart \
+            -f environments/production/values.yaml \
+            -f /tmp/secrets.yaml \
+            --namespace production \
+            --atomic --timeout 5m
+
+          # Cleanup
+          rm -f /tmp/secrets.yaml</code></pre>
+
+      <h3>GitLab CI with SOPS</h3>
+      <pre><code"># .gitlab-ci.yml
+deploy:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl jq
+    - |
+      SOPS_VERSION=$(curl -s https://api.github.com/repos/getsops/sops/releases/latest | jq -r .tag_name)
+      curl -Lo /usr/local/bin/sops https://github.com/getsops/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.amd64
+      chmod +x /usr/local/bin/sops
+  script:
+    - sops -d secrets/production.enc.yaml | helm upgrade --install myapp ./chart -f -
+  environment:
+    name: production
+  variables:
+    AWS_ACCESS_KEY_ID: $CI_AWS_KEY_ID          # From GitLab CI/CD variables
+    AWS_SECRET_ACCESS_KEY: $CI_AWS_SECRET_KEY  # Mark as "Masked"
+    AWS_REGION: us-east-1
+  only:
+    - main</code></pre>
+
+      <h2>Key Rotation</h2>
+      <div class="warning-box">
+        <strong>Important:</strong> When a KMS key is rotated or a team member with an age key leaves, you must re-encrypt all SOPS files with the new key set. Simply changing <code>.sops.yaml</code> is not enough — existing files still use the old keys until re-encrypted.
+      </div>
+      <pre><code"># === Workflow: Adding a new key (e.g., new team member) ===
+
+# 1. Add new age public key to .sops.yaml
+# 2. Run updatekeys on all encrypted files
+find . -name "*.enc.yaml" -exec sops updatekeys {} \;
+
+# Or for specific files
+sops updatekeys environments/production/secrets.enc.yaml
+sops updatekeys environments/staging/secrets.enc.yaml
+
+# === Workflow: Removing a key (team member leaving) ===
+
+# 1. Remove the key from .sops.yaml
+# 2. Re-encrypt all files (updatekeys re-encrypts DEK with remaining keys)
+find . -name "*.enc.yaml" | xargs -I{} sops updatekeys -y {}
+# -y flag auto-confirms without prompting
+
+# === Workflow: AWS KMS key rotation ===
+
+# 1. Create new KMS key
+aws kms create-key --description "SOPS key v2"
+NEW_KEY_ARN="arn:aws:kms:us-east-1:123456789012:key/new-key-id"
+
+# 2. Update .sops.yaml with new key ARN
+# 3. Re-encrypt all files
+for f in $(find . -name "*.enc.yaml"); do
+    echo "Updating: $f"
+    sops updatekeys -y "$f"
+done
+
+# 4. Schedule old key for deletion (after all files are re-encrypted)
+aws kms schedule-key-deletion \
+  --key-id OLD_KEY_ID \
+  --pending-window-in-days 30
+
+# === Emergency access (break-glass) ===
+# Keep a separate age key in a secure vault (HSM, password manager)
+# Add it to .sops.yaml as a fallback — never remove it
+# Document: "Break glass key: contact security@company.com"</code></pre>
+
+      <h2>Best Practices</h2>
+      <div class="warning-box">
+        <strong>Common Mistakes to Avoid:</strong>
+        <ul class="mb-0 mt-1">
+          <li>Committing unencrypted secrets to Git — use <code>git-secrets</code> or pre-commit hooks to prevent this.</li>
+          <li>Using a single KMS key in one region — creates a single point of failure. Use multi-region keys or multiple key ARNs in <code>.sops.yaml</code>.</li>
+          <li>Sharing the age private key — each team member should have their own age key. Use key groups to require multiple approvals for critical secrets.</li>
+          <li>Forgetting to run <code>updatekeys</code> after adding/removing team members — existing files retain old keys until explicitly re-encrypted.</li>
+          <li>Storing age private keys in CI/CD environment variables unmasked — always mark secret variables as masked/protected.</li>
+        </ul>
+      </div>
+      <div class="tip-box">
+        <strong>Team Workflow Tips:</strong>
+        <ul class="mb-0 mt-1">
+          <li>Use <code>.sops.yaml</code> with <code>path_regex</code> to automatically apply the right keys based on file location — no manual <code>--kms</code> flags needed.</li>
+          <li>Pair SOPS with a pre-commit hook: <code>detect-secrets</code> or a custom script that checks for plaintext secrets before <code>git push</code>.</li>
+          <li>In Kubernetes, prefer External Secrets Operator (ESO) or Sealed Secrets for runtime secret injection rather than decrypting in CI and pushing to the cluster.</li>
+          <li>Document which key belongs to whom in a team wiki. When someone leaves, you know exactly which age/PGP key to remove and which files to <code>updatekeys</code>.</li>
+          <li>Test decryption in CI as part of your pipeline validation — ensures keys are correctly configured before deploy time.</li>
+        </ul>
       </div>
 
-      <h3>Terraform Integration</h3>
-      <div class="config-example">
-        <h4>Using SOPS with Terraform</h4>
-        <pre><code># Encrypt Terraform variables
-sops -e terraform.tfvars > terraform.enc.tfvars
+      <h3>Pre-commit Hook to Prevent Plaintext Secret Commits</h3>
+      <pre><code"># .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: '\.enc\.yaml$'   # Exclude already-encrypted SOPS files
 
-# Decrypt for terraform apply
-sops -d terraform.enc.tfvars > terraform.tfvars
+  # Custom hook: ensure all secrets files are SOPS-encrypted
+  - repo: local
+    hooks:
+      - id: check-sops-encryption
+        name: Check SOPS encryption
+        entry: bash -c 'for f in "$@"; do if ! grep -q "sops:" "$f"; then echo "ERROR: $f is not SOPS encrypted!"; exit 1; fi; done'
+        language: system
+        files: 'environments/.*secrets.*\.yaml$'
 
-# Or use terraform-sops provider
-terraform {
-  required_providers {
-    sops = {
-      source = "carlpett/sops"
-      version = "~> 0.7"
-    }
-  }
-}
+# Install pre-commit
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files  # Test</code></pre>
 
-data "sops_file" "secrets" {
-  source_file = "secrets.enc.yaml"
-}
-
-output "database_password" {
-  value = data.sops_file.secrets.data["database.password"]
-  sensitive = true
-}</code></pre>
-      </div>
-
-      <h2 id="troubleshooting">Troubleshooting</h2>
-
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Common Issues</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops --verbose secrets.enc.yaml</div>
-              <div class="command-desc">Enable verbose output for debugging</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops --debug secrets.enc.yaml</div>
-              <div class="command-desc">Show debug information</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">SOPS_LOG_LEVEL=debug sops secrets.enc.yaml</div>
-              <div class="command-desc">Set debug level via environment</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Key Issues</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops --show-master-keys secrets.enc.yaml</div>
-              <div class="command-desc">Check which keys are used for encryption</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops --ignore-mac secrets.enc.yaml</div>
-              <div class="command-desc">Ignore MAC verification (dangerous)</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 id="best-practices">Best Practices</h2>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 2rem 0;">
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">Key Management</h5>
-          <ul style="margin: 0;">
-            <li>Use separate keys for each environment</li>
-            <li>Regular key rotation (quarterly/annually)</li>
-            <li>Backup encryption keys securely</li>
-            <li>Implement proper access controls for keys</li>
-            <li>Use KMS over local keys when possible</li>
-          </ul>
-        </div>
-
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">File Organization</h5>
-          <ul style="margin: 0;">
-            <li>Use consistent file naming (.enc.yaml)</li>
-            <li>Keep .sops.yaml in repository root</li>
-            <li>Separate secrets by environment</li>
-            <li>Document decryption requirements</li>
-            <li>Exclude encrypted files from git if needed</li>
-          </ul>
-        </div>
-
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">CI/CD Integration</h5>
-          <ul style="margin: 0;">
-            <li>Decrypt secrets at runtime, not build time</li>
-            <li>Use environment-specific keys</li>
-            <li>Implement secret scanning in CI</li>
-            <li>Automate key rotation in pipelines</li>
-            <li>Monitor secret access and usage</li>
-          </ul>
-        </div>
-
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">Security Practices</h5>
-          <ul style="margin: 0;">
-            <li>Never commit decrypted secrets</li>
-            <li>Use strong encryption keys</li>
-            <li>Implement audit logging</li>
-            <li>Regular security assessments</li>
-            <li>Follow principle of least privilege</li>
-          </ul>
-        </div>
-      </div>
-
-      <h2 id="performance-tips">Performance & Tips</h2>
-
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Performance Optimization</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops --input-type yaml --output-type yaml secrets.enc.yaml</div>
-              <div class="command-desc">Specify input/output types for better performance</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops --shamir-secret-sharing-threshold 2 secrets.yaml</div>
-              <div class="command-desc">Use Shamir's secret sharing for key recovery</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Useful Tips</h4>
-            <div class="command-item">
-              <div class="command-syntax">sops --extract '["database"]["password"]' secrets.enc.yaml</div>
-              <div class="command-desc">Extract specific values from encrypted files</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">sops --show-master-keys --show-private-keys secrets.enc.yaml</div>
-              <div class="command-desc">Show private key information (for debugging)</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-      </div>
-
-    </div>
-      </div>
-
+      <p class="mt-4 text-muted">
+        <a href="../index.html" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to Documents</a>
+      </p>
     </div>
   </div>
-
   <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SRE Overview | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .signal-card { border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border: 2px solid; }
+    .signal-latency { border-color: #149ddd; background: #e7f3ff; }
+    .signal-traffic { border-color: #28a745; background: #d4edda; }
+    .signal-errors { border-color: #dc3545; background: #f8d7da; }
+    .signal-saturation { border-color: #ffc107; background: #fff3cd; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">SRE</a></li>
+        <li class="breadcrumb-item active">Overview</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-shield-check me-2"></i>SRE</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Overview</a>
+            <a class="nav-link" href="reliability.html">Reliability</a>
+            <a class="nav-link" href="incident.html">Incident Management</a>
+            <a class="nav-link" href="chaos.html">Chaos Engineering</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-shield-check me-2"></i>Site Reliability Engineering</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>SRE applies software engineering principles to infrastructure and operations</strong> — treating reliability as a feature, not an afterthought. SREs write code to automate operational tasks, define measurable reliability targets, and use data to make risk decisions.
+          </div>
+
+          <h2>What is SRE?</h2>
+          <p>
+            Site Reliability Engineering (SRE) was created at Google in 2003 by Ben Treynor Sloss, who defined it as "what happens when you ask a software engineer to design an operations function." SRE is a concrete implementation of DevOps philosophy, applying software engineering practices to operations challenges.
+          </p>
+          <p>
+            The core insight of SRE is that traditional operations — run by teams focused on manual processes, change avoidance, and stability above all — does not scale. As systems grow in complexity, purely manual operations becomes a bottleneck. SRE solves this by automating operations work, setting explicit reliability targets (SLOs), and creating a healthy engineering relationship between development velocity and system stability.
+          </p>
+
+          <h2>SRE vs DevOps</h2>
+          <p>SRE and DevOps are complementary, not competing philosophies. DevOps describes the desired outcomes and culture; SRE provides a concrete, opinionated implementation of how to achieve those outcomes.</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>DevOps Philosophy</h4>
+                <ul>
+                  <li>Break down silos between Dev and Ops</li>
+                  <li>Shared ownership of production systems</li>
+                  <li>Continuous delivery and deployment</li>
+                  <li>Feedback loops and learning culture</li>
+                  <li>"You build it, you run it"</li>
+                </ul>
+                <p><em>DevOps defines the "what" — the culture and goals</em></p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>SRE Implementation</h4>
+                <ul>
+                  <li>SLOs and error budgets quantify reliability</li>
+                  <li>Toil reduction through automation</li>
+                  <li>Blameless post-mortems build learning culture</li>
+                  <li>Capacity planning and load testing</li>
+                  <li>On-call rotations with formal runbooks</li>
+                </ul>
+                <p><em>SRE defines the "how" — specific practices and mechanisms</em></p>
+              </div>
+            </div>
+          </div>
+
+          <h2>Core SRE Principles (Google SRE Book)</h2>
+
+          <div class="strategy-card">
+            <h4>1. Embracing Risk</h4>
+            <p>100% reliability is neither achievable nor desirable. Every nine of availability (99.9% vs 99.99%) has an exponentially higher cost in engineering time, architectural complexity, and restricted deployment velocity. SRE sets explicit reliability targets (SLOs) and accepts calculated risk within the error budget.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>2. Service Level Objectives (SLOs)</h4>
+            <p>SLOs are the heart of SRE. They define what "reliable enough" means for each service. Every reliability decision — whether to deploy a risky change, whether to add redundancy, whether to invest in automation — flows from the SLO and the error budget derived from it.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>3. Eliminating Toil</h4>
+            <p>Toil is manual, repetitive, automatable, devoid of long-term value, and scales linearly with service growth. SRE principle: no more than 50% of an SRE's time should be spent on toil. The rest must be engineering work — automation, tooling, process improvement.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>4. Monitoring Distributed Systems</h4>
+            <p>SRE uses structured monitoring with alerting on symptoms (user-visible impact) rather than causes (internal signals). The Four Golden Signals (latency, traffic, errors, saturation) provide a universal monitoring framework applicable to any service.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>5. Automation</h4>
+            <p>Automation is how SRE escapes the linear scaling trap. Every manual operational procedure is a candidate for automation. The hierarchy: (1) Don't do it, (2) Do it manually, (3) Automate it, (4) Self-healing systems that prevent the need for action.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>6. Release Engineering</h4>
+            <p>Reliable releases require automated build systems, hermetic builds, rigorous change management, staged rollouts with automatic rollback, and canary deployments. Release engineering is a first-class SRE concern.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>7. Simplicity</h4>
+            <p>Complexity is the enemy of reliability. Every additional component, integration, or feature adds failure modes. SREs actively push back on unnecessary complexity and advocate for the simplest architecture that meets reliability requirements.</p>
+          </div>
+
+          <h2>SLI / SLO / SLA — Definitions</h2>
+
+          <h3>Service Level Indicator (SLI)</h3>
+          <p>
+            An SLI is a specific, measurable metric that quantifies one aspect of your service's reliability. It is always a ratio: the number of "good" events divided by total events over a time window.
+          </p>
+          <pre><code># SLI examples
+Availability SLI = successful_requests / total_requests
+Latency SLI      = requests_completed_under_threshold / total_requests
+Error Rate SLI   = successful_requests / total_requests  (1 - error_rate)
+Durability SLI   = objects_readable_when_requested / total_objects
+
+# Prometheus examples
+# Availability SLI for HTTP service
+(sum(rate(http_requests_total{job="my-service", code!~"5.."}[5m]))
+  / sum(rate(http_requests_total{job="my-service"}[5m]))) * 100
+
+# Latency SLI: % of requests completing in under 300ms
+(sum(rate(http_request_duration_seconds_bucket{job="my-service", le="0.3"}[5m]))
+  / sum(rate(http_request_duration_seconds_count{job="my-service"}[5m]))) * 100
+</code></pre>
+
+          <h3>Service Level Objective (SLO)</h3>
+          <p>
+            An SLO is the target value for an SLI over a rolling time window. It defines what "reliable enough" means for your service and its users. SLOs are internal targets — they exist to guide engineering decisions.
+          </p>
+
+          <table class="table table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>Service Type</th>
+                <th>SLI</th>
+                <th>SLO Target</th>
+                <th>Window</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Payment API</td>
+                <td>Success rate (non-5xx)</td>
+                <td>99.95%</td>
+                <td>30 days</td>
+              </tr>
+              <tr>
+                <td>Payment API</td>
+                <td>Latency p99 &lt; 500ms</td>
+                <td>99.9%</td>
+                <td>30 days</td>
+              </tr>
+              <tr>
+                <td>User Auth Service</td>
+                <td>Success rate</td>
+                <td>99.99%</td>
+                <td>30 days</td>
+              </tr>
+              <tr>
+                <td>Search Service</td>
+                <td>Latency p95 &lt; 200ms</td>
+                <td>99.5%</td>
+                <td>28 days</td>
+              </tr>
+              <tr>
+                <td>Object Storage</td>
+                <td>Durability (read success)</td>
+                <td>99.9999%</td>
+                <td>30 days</td>
+              </tr>
+              <tr>
+                <td>Notification Service</td>
+                <td>Delivery within 60s</td>
+                <td>99.5%</td>
+                <td>7 days</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Service Level Agreement (SLA)</h3>
+          <p>
+            An SLA is a contractual commitment to customers with defined consequences (financial credits, termination rights) if violated. SLAs are always looser than your internal SLOs — if your SLO is 99.9%, your SLA might be 99.5%. The gap between SLO and SLA is your safety margin.
+          </p>
+
+          <div class="warning-box">
+            <strong>SLA vs SLO relationship:</strong> Never set your SLA at the same level as your SLO. Your SLO can be missed briefly due to infrastructure issues, measurement gaps, or incidents under investigation. Your SLA is the legal floor. The gap protects you from breach during normal SRE operations.
+          </div>
+
+          <h2>Error Budgets</h2>
+          <p>The error budget is the most powerful concept in SRE. It is the maximum allowable unreliability for a service over a given time window — derived directly from the SLO.</p>
+
+          <pre><code># Error Budget Calculation
+# SLO = 99.9% availability over 30 days
+
+total_minutes   = 30 * 24 * 60  = 43,200 minutes
+error_budget    = (1 - 0.999) × 43,200 = 43.2 minutes of allowed downtime
+
+# Equivalently in requests:
+# If your service handles 10M requests/month:
+allowed_errors  = 10,000,000 × 0.001 = 10,000 allowed failures
+
+# Error Budget Burn Rate (alerting)
+# If you burn your monthly budget in 1 hour, that's a SEV1
+# Burn rate = (error rate / (1 - SLO))
+# Example: SLO = 99.9%, current error rate = 5%
+burn_rate = 0.05 / 0.001 = 50x  (burning budget 50x faster than allowed)
+
+# Time to exhaustion at current burn rate:
+time_to_exhaustion = 43.2 minutes / 50 = 0.86 minutes ≈ 52 seconds → PAGE IMMEDIATELY
+</code></pre>
+
+          <h3>Error Budget Policy</h3>
+          <p>An error budget policy defines what happens when the budget is consumed. Without a policy, the error budget is just a number. With a policy, it governs real engineering decisions:</p>
+
+          <ul>
+            <li><strong>Budget &gt;50% remaining:</strong> Normal operations. Full deployment velocity. Feature work and reliability work proceed in parallel.</li>
+            <li><strong>Budget 25–50% remaining:</strong> Caution. Defer risky deployments. Prioritize reliability improvements. Begin root cause analysis of recent incidents.</li>
+            <li><strong>Budget &lt;25% remaining:</strong> Feature freeze. No non-emergency deployments. All engineering capacity redirected to reliability. SRE team has veto power.</li>
+            <li><strong>Budget exhausted:</strong> Emergency mode. Rollback recent changes. All hands on reliability. Executive escalation. Incident review required before any deployment.</li>
+          </ul>
+
+          <h2>The Four Golden Signals</h2>
+          <p>Defined in the Google SRE book, these four signals cover every aspect of user-visible service health. If you can only monitor four things, monitor these:</p>
+
+          <div class="signal-card signal-latency">
+            <h4><i class="bi bi-clock me-2"></i>1. Latency</h4>
+            <p>The time it takes to service a request. Crucially, track latency for both successful and failed requests separately — fast failures can mask high error rates. Use percentiles (p50, p95, p99, p99.9), not averages.</p>
+            <pre><code># PromQL: p99 latency for successful requests
+histogram_quantile(0.99,
+  sum(rate(http_request_duration_seconds_bucket{
+    job="my-service", code!~"5.."}[5m])) by (le)
+)</code></pre>
+          </div>
+
+          <div class="signal-card signal-traffic">
+            <h4><i class="bi bi-arrow-left-right me-2"></i>2. Traffic</h4>
+            <p>The amount of demand on your system, measured in requests per second, concurrent users, transactions per second, or queries per second. Traffic provides context for all other signals — a high error rate at 100 RPS is very different from the same rate at 10,000 RPS.</p>
+            <pre><code># PromQL: requests per second by service
+sum(rate(http_requests_total{job="my-service"}[5m])) by (service, method)
+
+# For message queues: messages processed per second
+sum(rate(kafka_consumer_records_consumed_total{group="my-consumer"}[5m]))</code></pre>
+          </div>
+
+          <div class="signal-card signal-errors">
+            <h4><i class="bi bi-exclamation-triangle me-2"></i>3. Errors</h4>
+            <p>The rate of requests that fail. Include both explicit failures (HTTP 5xx, gRPC error codes) and implicit failures (HTTP 200 with wrong content, requests that time out). Error rate is often the most direct signal of user impact.</p>
+            <pre><code># PromQL: error rate as percentage
+(sum(rate(http_requests_total{job="my-service", code=~"5.."}[5m]))
+  / sum(rate(http_requests_total{job="my-service"}[5m]))) * 100
+
+# Alert rule: error rate > 1% for 5 minutes
+- alert: HighErrorRate
+  expr: |
+    (sum(rate(http_requests_total{code=~"5.."}[5m]))
+      / sum(rate(http_requests_total[5m]))) > 0.01
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "Error rate {{ $value | humanizePercentage }} on {{ $labels.service }}"</code></pre>
+          </div>
+
+          <div class="signal-card signal-saturation">
+            <h4><i class="bi bi-battery-half me-2"></i>4. Saturation</h4>
+            <p>How "full" your service is. Saturation measures the most constrained resource — CPU, memory, disk I/O, network bandwidth, thread pool, connection pool. Saturation is a leading indicator: it predicts degradation before users feel it.</p>
+            <pre><code># PromQL: CPU saturation
+100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+# Memory saturation
+(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)
+  / node_memory_MemTotal_bytes * 100
+
+# Database connection pool saturation
+hikaricp_connections_active / hikaricp_connections_max * 100</code></pre>
+          </div>
+
+          <h2>Toil — Definition and Measurement</h2>
+          <p>
+            Toil is the kind of work tied to running a production service that tends to be: manual, repetitive, automatable, tactical rather than strategic, devoid of enduring value, and that scales linearly with service growth.
+          </p>
+
+          <h3>Examples of Toil</h3>
+          <ul>
+            <li>Manually restarting a service when it runs out of memory (should be auto-healed)</li>
+            <li>Manually rotating credentials on a schedule (should be automated)</li>
+            <li>Clicking through the console to provision new environments (should be Terraform)</li>
+            <li>Copy-pasting incident data between tools (should be automated notification)</li>
+            <li>Running the same runbook steps for the same alert every week (should be auto-remediation)</li>
+          </ul>
+
+          <h3>Toil Budget</h3>
+          <p>Google's SRE principle: SREs should spend no more than 50% of their time on toil. Track it quarterly:</p>
+
+          <pre><code"># Toil tracking — weekly time log template
+# Each SRE tracks time in these categories:
+
+| Category        | Hours | % of Total |
+|-----------------|-------|------------|
+| Toil — On-call  |    8  |    20%     |
+| Toil — Manual   |    4  |    10%     |
+| Engineering     |   16  |    40%     |
+| Project Work    |    8  |    20%     |
+| Training/Docs   |    4  |    10%     |
+| TOTAL           |   40  |   100%     |
+
+# Toil: 12h / 40h = 30%  ✓ Under 50% budget
+# If toil > 50%: escalate to engineering manager, identify automation targets
+
+# Track toil sources in a spreadsheet or Jira:
+# - Alert name, frequency per week, time to resolve, automation potential (Y/N/Partial)
+# - Prioritize high-frequency + high-time + automatable items
+</code></pre>
+
+          <h2>SRE Team Structure</h2>
+
+          <h3>Embedded vs Centralized SRE</h3>
+          <table class="table table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>Model</th>
+                <th>Structure</th>
+                <th>Pros</th>
+                <th>Cons</th>
+                <th>Best for</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Embedded</strong></td>
+                <td>SREs sit within product teams</td>
+                <td>Deep product context; strong team ownership; faster feedback loop</td>
+                <td>Risk of "going native"; SREs may drift to feature work; no economies of scale in tooling</td>
+                <td>Large orgs with distinct services; mature engineering culture</td>
+              </tr>
+              <tr>
+                <td><strong>Centralized</strong></td>
+                <td>SRE team serves all product teams</td>
+                <td>Shared tooling; consistent standards; economies of scale; SRE identity preserved</td>
+                <td>Less product context; potential bottleneck; communication overhead</td>
+                <td>Smaller orgs; early-stage SRE programs; strong platform engineering</td>
+              </tr>
+              <tr>
+                <td><strong>Hybrid</strong></td>
+                <td>Central platform SRE + embedded reliability engineers</td>
+                <td>Best of both; central tooling + local ownership</td>
+                <td>Complex org design; coordination overhead</td>
+                <td>Mid-to-large orgs; recommended for most</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>On-Call Rotation Design</h3>
+          <ul>
+            <li><strong>Minimum 8 engineers per rotation</strong> — ensures each person is on call no more than 1 week per 2 months</li>
+            <li><strong>Shadow rotations</strong> — new engineers shadow experienced on-callers for 4 weeks before taking primary</li>
+            <li><strong>Primary + Secondary + Escalation</strong> — three tiers. Secondary covers if primary is unreachable. Escalation goes to team lead or manager.</li>
+            <li><strong>Alert fatigue limit:</strong> No more than 2 significant alerts per on-call shift. More than that means your alerting needs tuning, not a stronger SRE.</li>
+            <li><strong>Compensation:</strong> On-call time is work time. Engineers should not be expected to resolve alerts at 2AM and be in a 9AM meeting. Follow-the-sun rotations across time zones reduce off-hours burden.</li>
+          </ul>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><a href="reliability.html"><strong>Reliability Engineering</strong></a> — Reliability patterns, capacity planning, performance testing, auto-scaling, and SLO dashboards</li>
+            <li><a href="incident.html"><strong>Incident Management</strong></a> — Severity levels, incident commander role, blameless post-mortems, PagerDuty integration</li>
+            <li><a href="chaos.html"><strong>Chaos Engineering</strong></a> — Chaos Mesh, AWS FIS, LitmusChaos, GameDay planning, building a chaos culture</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VPN &amp; BGP | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+    .provider-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; }
+    .aws-badge { background: #ff9900; color: white; }
+    .gcp-badge { background: #4285f4; color: white; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container py-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Networking</a></li>
+        <li class="breadcrumb-item active">VPN &amp; BGP</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5><i class="bi bi-diagram-3 me-2"></i>Networking</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="vpc.html">VPC Design</a>
+            <a class="nav-link" href="dns-lb.html">DNS &amp; Load Balancing</a>
+            <a class="nav-link active" href="vpn-bgp.html">VPN &amp; BGP</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-shield-lock me-3"></i>VPN &amp; BGP &amp; Connectivity</h1>
+          <p class="lead">Site-to-site VPN with IPsec, BGP path selection and route manipulation, dedicated connectivity with Direct Connect and Cloud Interconnect, and hybrid network security patterns.</p>
+
+          <!-- =========================================================
+               SITE-TO-SITE VPN
+               ========================================================= -->
+          <h2>Site-to-Site VPN</h2>
+
+          <h3>IPsec Fundamentals</h3>
+          <div class="concept-card">
+            <h4>IPsec Protocol Suite</h4>
+            <p><strong>ESP (Encapsulating Security Payload):</strong> Provides encryption, authentication, and integrity. The standard choice — use ESP in tunnel mode for site-to-site VPN.</p>
+            <p><strong>AH (Authentication Header):</strong> Authentication and integrity only, no encryption. Rarely used in modern deployments; incompatible with NAT traversal.</p>
+            <p><strong>Tunnel mode:</strong> Entire original IP packet (header + payload) is encrypted and encapsulated. Used for site-to-site VPN — the VPN gateway encrypts the original packet.</p>
+            <p><strong>Transport mode:</strong> Only payload encrypted, original IP header preserved. Used for host-to-host IPsec (e.g. server-to-server inside a network).</p>
+          </div>
+
+          <h3>IKEv1 vs IKEv2</h3>
+          <table>
+            <tr><th>Feature</th><th>IKEv1</th><th>IKEv2</th></tr>
+            <tr><td>RFC</td><td>RFC 2409 (1998)</td><td>RFC 7296 (2014)</td></tr>
+            <tr><td>Handshake messages</td><td>9 messages (Main Mode) or 6 (Aggressive Mode)</td><td>4 messages (always)</td></tr>
+            <tr><td>NAT traversal</td><td>Extension (RFC 3947)</td><td>Built-in</td></tr>
+            <tr><td>EAP auth</td><td>Not supported natively</td><td>Native (MFA integration)</td></tr>
+            <tr><td>MOBIKE</td><td>No</td><td>Yes (mobile client IP changes)</td></tr>
+            <tr><td>Dead Peer Detection</td><td>Extension</td><td>Built-in liveness check</td></tr>
+            <tr><td>Recommendation</td><td>Legacy — use only when forced</td><td>Always prefer IKEv2</td></tr>
+          </table>
+
+          <h3>IPsec Phase 1 &amp; Phase 2</h3>
+          <pre><code># Phase 1 (IKE SA / ISAKMP) — establishes secure control channel
+# Negotiates: encryption algorithm, hash, DH group, lifetime, auth method (PSK or certs)
+# Typical config:
+#   Encryption: AES-256
+#   Hash:       SHA-256 or SHA-384
+#   DH Group:   14 (2048-bit) or 19 (256-bit ECDH) — prefer 19+
+#   Lifetime:   28800 seconds (8 hours)
+#   Auth:       Pre-shared key (PSK) or RSA/ECDSA certificates
+
+# Phase 2 (IPsec SA) — establishes data tunnel using Phase 1 as protection
+# Negotiates: ESP encryption/hash, PFS group, lifetime, traffic selectors (interesting traffic)
+# Typical config:
+#   Protocol:   ESP
+#   Encryption: AES-256-GCM (AEAD — no separate hash needed)
+#   PFS:        Group 14 or 19 (Perfect Forward Secrecy — new DH exchange per SA)
+#   Lifetime:   3600 seconds (1 hour)
+#   Traffic:    10.0.0.0/16 &lt;→ 192.168.0.0/16
+
+# Quick troubleshooting
+# Show IKE SAs (Phase 1)
+show crypto isakmp sa              # Cisco IOS
+ip xfrm state                     # Linux (StrongSwan/Libreswan)
+strongswan statusall               # StrongSwan
+
+# Show IPsec SAs (Phase 2)
+show crypto ipsec sa               # Cisco
+ip xfrm policy                     # Linux</code></pre>
+
+          <!-- AWS VPN -->
+          <h2><span class="provider-badge aws-badge">AWS</span> Site-to-Site VPN</h2>
+
+          <pre><code># AWS Site-to-Site VPN components:
+# Virtual Private Gateway (VGW) — AWS-side VPN endpoint, attached to VPC
+# Customer Gateway (CGW) — represents your on-prem device
+# VPN Connection — 2 tunnels (different public IPs/AZs) per connection for HA
+
+# Terraform — AWS VPN with BGP
+resource "aws_customer_gateway" "onprem" {
+  bgp_asn    = 65000          # your on-prem ASN
+  ip_address = "203.0.113.1"  # on-prem router public IP
+  type       = "ipsec.1"
+  tags = { Name = "onprem-cgw" }
+}
+
+resource "aws_vpn_gateway" "vgw" {
+  vpc_id          = aws_vpc.prod.id
+  amazon_side_asn = 64512     # AWS private ASN
+  tags = { Name = "prod-vgw" }
+}
+
+resource "aws_vpn_connection" "main" {
+  vpn_gateway_id      = aws_vpn_gateway.vgw.id
+  customer_gateway_id = aws_customer_gateway.onprem.id
+  type                = "ipsec.1"
+  static_routes_only  = false   # false = use BGP
+
+  # Tunnel 1 configuration
+  tunnel1_inside_cidr   = "169.254.10.0/30"
+  tunnel1_preshared_key = var.vpn_psk_1
+
+  # Phase 1
+  tunnel1_ike_versions             = ["ikev2"]
+  tunnel1_phase1_encryption_algorithms = ["AES256"]
+  tunnel1_phase1_integrity_algorithms  = ["SHA2-256"]
+  tunnel1_phase1_dh_group_numbers      = [14, 19]
+  tunnel1_phase1_lifetime_seconds      = 28800
+
+  # Phase 2
+  tunnel1_phase2_encryption_algorithms = ["AES256-GCM-16"]
+  tunnel1_phase2_integrity_algorithms  = ["AEAD-AES-256-GCM-16"]
+  tunnel1_phase2_dh_group_numbers      = [14, 19]
+  tunnel1_phase2_lifetime_seconds      = 3600
+
+  tags = { Name = "prod-vpn-to-onprem" }
+}
+
+# Enable route propagation from VGW to route tables
+resource "aws_vpn_gateway_route_propagation" "private" {
+  route_table_id = aws_route_table.private_app[0].id
+  vpn_gateway_id = aws_vpn_gateway.vgw.id
+}
+</code></pre>
+
+          <!-- GCP VPN -->
+          <h2><span class="provider-badge gcp-badge">GCP</span> Cloud VPN</h2>
+
+          <div class="concept-card">
+            <h4>Classic VPN vs HA VPN</h4>
+            <p><strong>Classic VPN:</strong> Single interface, single tunnel, 99.9% SLA. Not recommended for production — single point of failure. Does not support dynamic routing with BGP if using policy-based routes.</p>
+            <p><strong>HA VPN:</strong> Two interfaces, two tunnels to two on-prem devices (or two interfaces of same device), 99.99% SLA. Requires BGP. The recommended production option.</p>
+          </div>
+
+          <pre><code># HA VPN with BGP — full redundancy
+gcloud compute vpn-gateways create prod-ha-vpn \
+  --network=prod-vpc \
+  --region=us-central1
+
+# On-prem peer gateway (represents your device — 2 interfaces for redundancy)
+gcloud compute external-vpn-gateways create onprem-gw \
+  --interfaces 0=203.0.113.1,1=203.0.113.2
+
+# Cloud Router for BGP
+gcloud compute routers create prod-vpn-router \
+  --network=prod-vpc \
+  --region=us-central1 \
+  --asn=65001    # GCP side ASN
+
+# VPN Tunnels (2 tunnels for HA — one to each peer interface)
+gcloud compute vpn-tunnels create tunnel-1 \
+  --region=us-central1 \
+  --vpn-gateway=prod-ha-vpn \
+  --vpn-gateway-interface=0 \
+  --peer-external-gateway=onprem-gw \
+  --peer-external-gateway-interface=0 \
+  --shared-secret=$PSK_1 \
+  --router=prod-vpn-router \
+  --ike-version=2
+
+gcloud compute vpn-tunnels create tunnel-2 \
+  --region=us-central1 \
+  --vpn-gateway=prod-ha-vpn \
+  --vpn-gateway-interface=1 \
+  --peer-external-gateway=onprem-gw \
+  --peer-external-gateway-interface=1 \
+  --shared-secret=$PSK_2 \
+  --router=prod-vpn-router \
+  --ike-version=2
+
+# BGP sessions on Cloud Router (one per tunnel)
+gcloud compute routers add-bgp-peer prod-vpn-router \
+  --region=us-central1 \
+  --peer-name=onprem-peer-1 \
+  --interface=if-tunnel-1 \
+  --peer-ip-address=169.254.10.1 \
+  --peer-asn=65000 \
+  --advertised-route-priority=100
+
+gcloud compute routers add-bgp-peer prod-vpn-router \
+  --region=us-central1 \
+  --peer-name=onprem-peer-2 \
+  --interface=if-tunnel-2 \
+  --peer-ip-address=169.254.10.5 \
+  --peer-asn=65000 \
+  --advertised-route-priority=100
+
+# Check BGP status
+gcloud compute routers get-status prod-vpn-router --region=us-central1</code></pre>
+
+          <h3>OpenVPN Configuration</h3>
+          <pre><code># OpenVPN server config (/etc/openvpn/server.conf)
+port 1194
+proto udp
+dev tun
+ca   /etc/openvpn/pki/ca.crt
+cert /etc/openvpn/pki/issued/server.crt
+key  /etc/openvpn/pki/private/server.key
+dh   /etc/openvpn/pki/dh.pem
+tls-auth /etc/openvpn/ta.key 0
+
+server 10.8.0.0 255.255.255.0         # VPN client IP pool
+push "route 10.0.0.0 255.255.0.0"    # push VPC route to clients
+push "dhcp-option DNS 10.0.0.2"      # push VPC DNS
+keepalive 10 120
+cipher AES-256-GCM
+auth SHA256
+tls-version-min 1.2
+tls-cipher TLS-ECDHE-RSA-WITH-AES-256-GCM-SHA384
+
+# MFA with Google Authenticator (PAM plugin)
+plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so openvpn
+verify-client-cert none
+username-as-common-name
+auth-user-pass-verify /etc/openvpn/auth-script.sh via-env
+
+user  nobody
+group nogroup
+persist-key
+persist-tun
+status  /var/log/openvpn/status.log
+verb 3
+
+# Client config (.ovpn)
+client
+dev tun
+proto udp
+remote vpn.example.com 1194
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+remote-cert-tls server
+cipher AES-256-GCM
+auth SHA256
+auth-user-pass        # prompt for username + OTP
+verb 3
+&lt;ca&gt;
+-----BEGIN CERTIFICATE-----
+... CA certificate ...
+-----END CERTIFICATE-----
+&lt;/ca&gt;</code></pre>
+
+          <h3>WireGuard</h3>
+          <pre><code># WireGuard: modern, minimal VPN (Linux kernel 5.6+)
+# Uses: Curve25519 (key exchange), ChaCha20-Poly1305 (encryption), BLAKE2s (hash)
+# ~4,000 lines of code vs OpenVPN's ~100,000 — dramatically reduced attack surface
+
+# Generate key pair
+wg genkey | tee server_private.key | wg pubkey &gt; server_public.key
+wg genkey | tee client_private.key | wg pubkey &gt; client_public.key
+
+# Server config (/etc/wireguard/wg0.conf)
+[Interface]
+Address    = 10.200.0.1/24
+ListenPort = 51820
+PrivateKey = &lt;server_private_key&gt;
+PostUp     = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+PostDown   = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+
+[Peer]
+# Remote office
+PublicKey  = &lt;client_public_key&gt;
+AllowedIPs = 10.200.0.2/32, 192.168.1.0/24   # client IP + remote subnet
+
+# Client config
+[Interface]
+Address    = 10.200.0.2/24
+PrivateKey = &lt;client_private_key&gt;
+DNS        = 10.0.0.2
+
+[Peer]
+PublicKey  = &lt;server_public_key&gt;
+Endpoint   = vpn.example.com:51820
+AllowedIPs = 10.0.0.0/16, 10.200.0.1/32   # route VPC + server through tunnel
+PersistentKeepalive = 25
+
+# Manage WireGuard
+wg-quick up wg0
+wg show               # status, peer handshakes, transfer stats
+systemctl enable wg-quick@wg0
+
+# Performance comparison (1 Gbps test, AWS c5n.2xlarge):
+# WireGuard:  ~950 Mbps  CPU ~15%
+# OpenVPN:    ~200 Mbps  CPU ~100%
+# IPsec/StrongSwan: ~700 Mbps CPU ~40%</code></pre>
+
+          <!-- BGP -->
+          <h2>BGP — Border Gateway Protocol</h2>
+
+          <h3>BGP Fundamentals</h3>
+          <div class="concept-card">
+            <h4>iBGP vs eBGP</h4>
+            <p><strong>eBGP (external BGP):</strong> Between routers in different Autonomous Systems (ASNs). Direct peering (TTL=1 by default). Used between cloud and on-premises, between ISPs.</p>
+            <p><strong>iBGP (internal BGP):</strong> Between routers in the same AS. Full mesh or route reflectors required. Used internally — e.g. between Cloud Routers in GCP, between Direct Connect gateways.</p>
+          </div>
+
+          <pre><code># ASN ranges
+# Public ASNs (IANA assigned): 1–64495
+# Private ASNs (RFC 6996): 64512–65534 (2-byte), 4200000000–4294967294 (4-byte)
+# AWS uses:          64512 by default for VGW/TGW (configurable)
+# GCP Cloud Router:  64512–65534 (your choice)
+# Your on-prem:      any private ASN (e.g. 65000)
+
+# Key BGP attributes (in path selection order):
+# WEIGHT       — Cisco proprietary, local to router, higher preferred
+# LOCAL_PREF   — iBGP, higher preferred (inbound traffic control)
+# ORIGINATE    — locally originated routes preferred over learned
+# AS_PATH      — shorter preferred (hop count); manipulated for traffic engineering
+# ORIGIN       — IGP (i) &gt; EGP (e) &gt; Incomplete (?)
+# MED          — Multi-Exit Discriminator; lower preferred (outbound traffic control)
+# eBGP over iBGP — routes learned via eBGP preferred
+# IGP metric   — lower cost to next-hop preferred
+# Router ID    — lowest router ID (tiebreaker)</code></pre>
+
+          <h3>BGP Path Selection Step-by-Step</h3>
+          <pre><code># BGP best path selection algorithm (Cisco IOS order):
+# 1.  Highest WEIGHT (Cisco proprietary — local to router)
+# 2.  Highest LOCAL_PREF (set within iBGP domain — controls inbound preference)
+# 3.  Locally originated routes (network statement or redistribute)
+# 4.  Shortest AS_PATH length (fewer hops = preferred)
+# 5.  Lowest ORIGIN code (IGP=0 &gt; EGP=1 &gt; Incomplete=2)
+# 6.  Lowest MED (when multiple paths from same neighboring AS)
+# 7.  eBGP over iBGP learned routes
+# 8.  Lowest IGP metric to BGP next-hop
+# 9.  Oldest eBGP route (stability preference)
+# 10. Lowest BGP Router ID (ultimate tiebreaker)
+
+# Memory aid: "We Love Original Short Memories Even If It Hurts"
+# W - Weight
+# L - Local Pref
+# O - Originate (local)
+# S - Shortest AS path
+# M - Minimum Origin code
+# E - External (eBGP over iBGP)
+# I - Interior (IGP metric)
+# I - ID (Router ID)</code></pre>
+
+          <h3>BGP Route Manipulation</h3>
+          <pre><code># AS_PATH Prepending — make a path look longer (less preferred)
+# Use case: route traffic away from a specific link (e.g. backup ISP)
+
+route-map PREPEND_BACKUP permit 10
+  set as-path prepend 65000 65000 65000   # prepend your own ASN 3 times
+!
+neighbor 203.0.113.2 route-map PREPEND_BACKUP out
+
+# LOCAL_PREF — influence inbound traffic (which link traffic enters your AS)
+# Set higher LOCAL_PREF for preferred path
+route-map PREFER_PRIMARY permit 10
+  match ip address prefix-list ALL
+  set local-preference 200          # default is 100; higher = preferred
+!
+neighbor 10.1.1.1 route-map PREFER_PRIMARY in
+
+# MED — influence outbound traffic from a neighboring AS
+# Lower MED = preferred (neighboring AS will prefer this path to reach you)
+route-map SET_MED permit 10
+  set metric 100    # lower MED for primary link
+!
+neighbor 203.0.113.1 route-map SET_MED out
+
+# BGP Communities — tag routes for policy application downstream
+# Well-known communities:
+# NO_EXPORT   (65535:65281) — don't advertise outside AS
+# NO_ADVERTISE(65535:65282) — don't advertise to any peer
+# Custom: 65000:100 = high priority, 65000:200 = backup
+
+route-map TAG_WITH_COMMUNITY permit 10
+  set community 65000:100 additive</code></pre>
+
+          <h3><span class="provider-badge aws-badge">AWS</span> BGP with Direct Connect &amp; Transit Gateway</h3>
+          <pre><code># AWS Direct Connect BGP:
+# - AWS side ASN: 7224 (fixed for DX, or 64512 on VGW/TGW)
+# - Customer ASN: any public or private
+# - MD5 auth supported for BGP session security
+# - BFD (Bidirectional Forwarding Detection) enabled by default
+
+# Direct Connect BGP route control:
+# Use LOCAL_PREF on your router to prefer DX over VPN backup
+# Use BGP communities on what you advertise to control AWS routing:
+#   7224:9100 — LOCAL_PREF 100 (standard)
+#   7224:7100 — LOCAL_PREF 100 on all routers in that region
+#   7224:8100 — LOCAL_PREF 100 on all AWS routers
+
+# Transit Gateway route table BGP propagation
+resource "aws_ec2_transit_gateway_route_table" "prod" {
+  transit_gateway_id = aws_ec2_transit_gateway.main.id
+  tags = { Name = "prod-tgw-rt" }
+}
+
+resource "aws_ec2_transit_gateway_route_table_propagation" "dx" {
+  transit_gateway_attachment_id  = aws_dx_transit_virtual_interface.main.id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.prod.id
+}
+
+# Static route on TGW (override BGP for specific prefix)
+resource "aws_ec2_transit_gateway_route" "onprem_specific" {
+  destination_cidr_block         = "192.168.100.0/24"
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.prod.id
+  transit_gateway_attachment_id  = aws_dx_transit_virtual_interface.main.id
+}</code></pre>
+
+          <h3><span class="provider-badge gcp-badge">GCP</span> Cloud Router &amp; BGP</h3>
+          <pre><code># Cloud Router: GCP's managed BGP speaker — used with HA VPN and Cloud Interconnect
+# Advertises VPC subnet routes and custom prefixes via BGP
+
+# Custom route advertisement (advertise additional CIDRs beyond subnets)
+gcloud compute routers update prod-vpn-router \
+  --region=us-central1 \
+  --advertisement-mode=custom \
+  --set-advertisement-groups=ALL_SUBNETS \
+  --set-advertisement-ranges=10.0.0.0/16,10.100.0.0/16
+
+# Update BGP peer with custom MED (to influence return path from on-prem)
+gcloud compute routers update-bgp-peer prod-vpn-router \
+  --region=us-central1 \
+  --peer-name=onprem-peer-1 \
+  --advertised-route-priority=100    # MED value sent to peer
+
+# Check BGP session details
+gcloud compute routers get-status prod-vpn-router \
+  --region=us-central1 \
+  --format='json(result.bgpPeerStatus)'
+
+# Learned routes from BGP peer
+gcloud compute routers get-status prod-vpn-router \
+  --region=us-central1 \
+  --format='json(result.bgpPeerStatus[].advertisedRoutes)'</code></pre>
+
+          <h3>BGP Security</h3>
+          <div class="warning-box">
+            <strong>BGP route hijacking is a real threat.</strong> In 2010, China Telecom hijacked ~15% of internet traffic for 18 minutes via BGP misconfiguration. In 2022, multiple BGP hijack incidents targeted crypto exchanges. RPKI and strict prefix filtering are essential.
+          </div>
+          <pre><code># RPKI (Resource Public Key Infrastructure) — cryptographically validates route origins
+# ROA (Route Origin Authorization): signed record saying "ASN X is authorized to originate prefix Y/len"
+
+# Check RPKI validity of a prefix
+curl -s "https://stat.ripe.net/data/rpki-validation/data.json?resource=AS65000&prefix=192.0.2.0/24"
+
+# BGP prefix filtering — whitelist only expected prefixes from peers
+# On Cisco IOS:
+ip prefix-list ALLOWED_FROM_ONPREM seq 10 permit 192.168.0.0/16 le 24
+ip prefix-list ALLOWED_FROM_ONPREM seq 20 permit 10.200.0.0/16 le 24
+!
+route-map INBOUND_FILTER permit 10
+  match ip address prefix-list ALLOWED_FROM_ONPREM
+!
+neighbor 203.0.113.1 route-map INBOUND_FILTER in
+neighbor 203.0.113.1 maximum-prefix 100 90  # alert at 90%, drop session at 100
+
+# MD5 authentication for BGP session
+neighbor 203.0.113.1 password 0 your-md5-secret
+
+# AWS Direct Connect BGP MD5 auth (set in CGW config):
+resource "aws_customer_gateway" "main" {
+  bgp_asn    = 65000
+  ip_address = "203.0.113.1"
+  type       = "ipsec.1"
+  # BGP auth key set in VPN connection or DX virtual interface
+}</code></pre>
+
+          <!-- DEDICATED CONNECTIVITY -->
+          <h2>Dedicated Connectivity</h2>
+
+          <h3><span class="provider-badge aws-badge">AWS</span> Direct Connect</h3>
+          <div class="concept-card">
+            <h4>Direct Connect Architecture</h4>
+            <p><strong>Dedicated connection:</strong> 1G, 10G, or 100G port directly at an AWS DX location. Your equipment or colocation provider connects here.</p>
+            <p><strong>Hosted connection:</strong> Sub-1G to 10G via an AWS Partner. Faster to provision, more flexible bandwidth. No control over physical redundancy.</p>
+            <p><strong>VIF types:</strong> Private VIF (connects to VGW/TGW — reaches private IPs), Public VIF (reaches AWS public services like S3, not VPC), Transit VIF (connects to Direct Connect Gateway → Transit Gateway).</p>
+          </div>
+
+          <pre><code># Direct Connect Gateway: allows one DX connection to reach VPCs in multiple regions
+# (unlike VGW which is VPC/region specific)
+
+resource "aws_dx_gateway" "main" {
+  name            = "prod-dxgw"
+  amazon_side_asn = 64512
+}
+
+resource "aws_dx_transit_virtual_interface" "prod" {
+  connection_id    = var.dx_connection_id   # physical DX connection ID
+  name             = "prod-transit-vif"
+  vlan             = 100                    # 802.1Q VLAN tag
+  address_family   = "ipv4"
+  bgp_asn          = 65000
+  amazon_address   = "169.254.100.1/30"    # AWS-side BGP link address
+  customer_address = "169.254.100.2/30"    # customer-side BGP link address
+  bgp_auth_key     = var.bgp_md5_key
+  dx_gateway_id    = aws_dx_gateway.main.id
+}
+
+resource "aws_dx_gateway_association" "tgw" {
+  dx_gateway_id         = aws_dx_gateway.main.id
+  associated_gateway_id = aws_ec2_transit_gateway.main.id
+  allowed_prefixes = [
+    "10.0.0.0/8",
+    "172.16.0.0/12",
+  ]
+}
+
+# LAG (Link Aggregation Group) — bundle multiple DX ports for bandwidth + redundancy
+resource "aws_dx_lag" "prod" {
+  name                  = "prod-dx-lag"
+  connections_bandwidth = "10Gbps"
+  location              = "EqDC2"   # DX location code
+  force_destroy         = false
+}
+</code></pre>
+
+          <h3><span class="provider-badge gcp-badge">GCP</span> Cloud Interconnect</h3>
+          <table>
+            <tr><th>Option</th><th>Speed</th><th>SLA</th><th>Use Case</th></tr>
+            <tr><td>Dedicated Interconnect</td><td>10G or 100G per circuit</td><td>99.99% (4 circuits)</td><td>High bandwidth, colocation at Google facility</td></tr>
+            <tr><td>Partner Interconnect</td><td>50 Mbps – 10 Gbps</td><td>99.99% (via partner)</td><td>Not colocated, use service provider</td></tr>
+          </table>
+
+          <pre><code># Dedicated Interconnect — 4-circuit redundancy for 99.99% SLA
+# 2 metro locations × 2 circuits each
+
+gcloud compute interconnects create prod-interconnect-1 \
+  --interconnect-type=DEDICATED \
+  --link-type=LINK_TYPE_ETHERNET_10G_LR \
+  --requested-link-count=2 \
+  --location=equinix-sv1 \
+  --admin-enabled
+
+# VLAN attachments connect Interconnect to Cloud Router
+gcloud compute interconnects attachments dedicated create vlan-attach-1 \
+  --interconnect=prod-interconnect-1 \
+  --router=prod-interconnect-router \
+  --region=us-central1 \
+  --vlan=100 \
+  --bandwidth=BPS_10G \
+  --candidate-subnets=169.254.0.0/29
+
+gcloud compute interconnects attachments dedicated create vlan-attach-2 \
+  --interconnect=prod-interconnect-2 \
+  --router=prod-interconnect-router \
+  --region=us-central1 \
+  --vlan=101 \
+  --bandwidth=BPS_10G \
+  --candidate-subnets=169.254.0.8/29
+
+# Check Interconnect operational status
+gcloud compute interconnects describe prod-interconnect-1 \
+  --format='value(operationalStatus,circuitInfos)'</code></pre>
+
+          <h3>Connectivity Comparison</h3>
+          <table>
+            <tr><th>Factor</th><th>VPN (IPsec)</th><th>Direct Connect / Cloud Interconnect</th></tr>
+            <tr><td>Setup time</td><td>Minutes to hours</td><td>Weeks to months (physical provisioning)</td></tr>
+            <tr><td>Bandwidth</td><td>Up to ~1.25 Gbps per tunnel</td><td>Up to 100 Gbps per circuit</td></tr>
+            <tr><td>Latency</td><td>Variable (public internet path + encryption overhead)</td><td>Consistent low latency (dedicated path)</td></tr>
+            <tr><td>Reliability</td><td>Depends on internet</td><td>SLA-backed 99.9–99.99%</td></tr>
+            <tr><td>Cost</td><td>Low (hourly + data transfer)</td><td>High (port + VLAN + data transfer)</td></tr>
+            <tr><td>Encryption</td><td>Built-in (IPsec)</td><td>Not encrypted by default — add MACsec or IPsec over DX</td></tr>
+          </table>
+
+          <h3>Hybrid Connectivity Patterns</h3>
+          <div class="strategy-card">
+            <h4>Pattern 1: Primary DX + VPN Backup</h4>
+            <p>Most common pattern. Direct Connect as primary path (high bandwidth, low latency). VPN over internet as automatic failover. BGP preferred over DX via LOCAL_PREF; VPN routes learned with lower LOCAL_PREF. When DX fails, BGP converges to VPN within seconds.</p>
+          </div>
+          <pre><code># BGP config for DX primary + VPN backup
+# On your on-prem router:
+
+# DX BGP neighbor — high LOCAL_PREF
+route-map DX_INBOUND permit 10
+  set local-preference 200
+!
+neighbor 169.254.100.1 route-map DX_INBOUND in
+
+# VPN BGP neighbor — lower LOCAL_PREF (backup)
+route-map VPN_INBOUND permit 10
+  set local-preference 100    # lower = less preferred
+!
+neighbor 169.254.200.1 route-map VPN_INBOUND in
+</code></pre>
+
+          <div class="strategy-card">
+            <h4>Pattern 2: Dual Direct Connect (Maximum Redundancy)</h4>
+            <p>Two separate DX connections at two different DX locations (different physical facilities). AWS recommends for mission-critical workloads. Can also add VPN as tertiary backup. Use AWS Direct Connect SiteLink for inter-region DX routing.</p>
+          </div>
+
+          <!-- NETWORK SECURITY -->
+          <h2>Network Security</h2>
+
+          <h3><span class="provider-badge aws-badge">AWS</span> Network Firewall</h3>
+          <pre><code># AWS Network Firewall: stateful L3-L7 inspection, deployed in VPC subnets
+# Uses Suricata-compatible rules for IPS/IDS capabilities
+
+resource "aws_networkfirewall_firewall" "prod" {
+  name                = "prod-network-firewall"
+  firewall_policy_arn = aws_networkfirewall_firewall_policy.prod.arn
+  vpc_id              = aws_vpc.prod.id
+
+  subnet_mapping {
+    subnet_id = aws_subnet.firewall[0].id
+  }
+  subnet_mapping {
+    subnet_id = aws_subnet.firewall[1].id
+  }
+}
+
+resource "aws_networkfirewall_rule_group" "stateful_rules" {
+  capacity = 100
+  name     = "prod-stateful-rules"
+  type     = "STATEFUL"
+
+  rule_group {
+    rules_source {
+      rules_string = &lt;&lt;-EOT
+        # Block known malicious domains
+        drop dns $HOME_NET any -&gt; any 53 (msg:"Block malware domain"; dns.query; content:"malware-c2.example.com"; nocase; sid:1000001; rev:1;)
+
+        # Allow HTTPS to known good destinations only
+        pass tls $HOME_NET any -&gt; $EXTERNAL_NET 443 (msg:"Allow HTTPS"; tls.sni; content:"api.partner.com"; nocase; sid:1000002; rev:1;)
+
+        # Block SSH to internet
+        drop tcp $HOME_NET any -&gt; $EXTERNAL_NET 22 (msg:"Block outbound SSH"; flow:to_server,established; sid:1000003; rev:1;)
+      EOT
+    }
+    stateful_rule_options {
+      rule_order = "STRICT_ORDER"
+    }
+  }
+}
+</code></pre>
+
+          <h3><span class="provider-badge gcp-badge">GCP</span> Cloud Armor</h3>
+          <pre><code># Cloud Armor: WAF + DDoS protection, integrated with Global HTTPS LB
+resource "google_compute_security_policy" "waf" {
+  name = "prod-waf-policy"
+
+  # OWASP Top 10 pre-configured rules
+  rule {
+    action   = "deny(403)"
+    priority = 1000
+    match {
+      expr {
+        expression = "evaluatePreconfiguredExpr('xss-v33-stable')"
+      }
+    }
+    description = "Block XSS attacks"
+  }
+
+  rule {
+    action   = "deny(403)"
+    priority = 1001
+    match {
+      expr {
+        expression = "evaluatePreconfiguredExpr('sqli-v33-stable')"
+      }
+    }
+    description = "Block SQL injection"
+  }
+
+  # Rate limiting — 1000 req/min per IP
+  rule {
+    action   = "throttle"
+    priority = 2000
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config { src_ip_ranges = ["*"] }
+    }
+    rate_limit_options {
+      rate_limit_threshold {
+        count        = 1000
+        interval_sec = 60
+      }
+      conform_action = "allow"
+      exceed_action  = "deny(429)"
+      enforce_on_key = "IP"
+    }
+  }
+
+  # Geo-blocking — block specific countries
+  rule {
+    action   = "deny(403)"
+    priority = 3000
+    match {
+      expr {
+        expression = "origin.region_code == 'KP' || origin.region_code == 'IR'"
+      }
+    }
+    description = "Block specific country codes"
+  }
+
+  # Default allow rule (required)
+  rule {
+    action   = "allow"
+    priority = 2147483647
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config { src_ip_ranges = ["*"] }
+    }
+    description = "Default allow"
+  }
+
+  # Adaptive Protection (ML-based DDoS detection)
+  adaptive_protection_config {
+    layer_7_ddos_defense_config {
+      enable = true
+      rule_visibility = "STANDARD"
+    }
+  }
+}
+</code></pre>
+
+          <h3>VPC Flow Logs &amp; Traffic Monitoring</h3>
+          <pre><code># AWS VPC Flow Logs — capture metadata for all traffic (not payload)
+# Fields: version, account-id, interface-id, srcaddr, dstaddr, srcport, dstport,
+#         protocol, packets, bytes, start, end, action (ACCEPT/REJECT), log-status
+
+resource "aws_flow_log" "vpc" {
+  vpc_id          = aws_vpc.prod.id
+  traffic_type    = "ALL"
+  iam_role_arn    = aws_iam_role.flow_log.arn
+  log_destination = aws_cloudwatch_log_group.flow.arn
+
+  # Custom format for better analysis
+  log_format = "$${version} $${account-id} $${interface-id} $${srcaddr} $${dstaddr} $${srcport} $${dstport} $${protocol} $${packets} $${bytes} $${start} $${end} $${action} $${flow-direction} $${traffic-path}"
+}
+
+# Athena query for rejected traffic analysis
+# SELECT srcaddr, dstaddr, dstport, COUNT(*) as count
+# FROM vpc_flow_logs
+# WHERE action = 'REJECT'
+#   AND year = '2026' AND month = '03'
+# GROUP BY srcaddr, dstaddr, dstport
+# ORDER BY count DESC
+# LIMIT 50;
+
+# GCP VPC Flow Logs
+resource "google_compute_subnetwork" "app" {
+  name          = "app-us-central1"
+  ip_cidr_range = "10.0.0.0/20"
+  region        = "us-central1"
+  network       = google_compute_network.prod.id
+
+  log_config {
+    aggregation_interval = "INTERVAL_5_SEC"
+    flow_sampling        = 0.5    # sample 50% of flows (1.0 = all)
+    metadata             = "INCLUDE_ALL_METADATA"
+  }
+}
+
+# AWS Traffic Mirroring (full packet capture to inspection appliance)
+resource "aws_ec2_traffic_mirror_session" "prod" {
+  description              = "Mirror web tier traffic for IDS"
+  network_interface_id     = aws_instance.web.primary_network_interface_id
+  traffic_mirror_filter_id = aws_ec2_traffic_mirror_filter.web.id
+  traffic_mirror_target_id = aws_ec2_traffic_mirror_target.ids.id
+  session_number           = 1
+  virtual_network_id       = 7777   # VXLAN VNI to identify session
+}</code></pre>
+
+          <div class="success-box">
+            <strong>Hybrid Connectivity Checklist:</strong>
+            <ul class="mb-0 mt-2">
+              <li>Always deploy HA VPN (GCP) or dual-tunnel VPN (AWS) — single tunnel = single point of failure</li>
+              <li>Use BGP over static routing for automatic failover and route propagation</li>
+              <li>Set BFD (Bidirectional Forwarding Detection) for sub-second failure detection on DX/Interconnect</li>
+              <li>Encrypt Direct Connect / Cloud Interconnect traffic with MACsec or IPsec overlay</li>
+              <li>Implement RPKI ROA for your public prefixes to prevent route hijacking</li>
+              <li>Filter BGP prefixes with max-prefix limits to protect against route leaks</li>
+              <li>Enable VPC Flow Logs on all subnets — essential for security investigation and traffic analysis</li>
+              <li>Deploy Network Firewall (AWS) or Cloud Armor (GCP) for east-west and north-south inspection</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

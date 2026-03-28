@@ -3,207 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FinOps Core Concepts | FinOps & Cloud Cost Optimization</title>
-
+  <title>FinOps Concepts | Lê Bình Phương</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-
   <style>
-    :root {
-      --primary-color: #149ddd;
-      --secondary-color: #173b6c;
-      --text-color: #272829;
-      --bg-light: #f5f8fd;
-      --code-bg: #282c34;
-      --code-text: #abb2bf;
-    }
-
-    body {
-      font-family: 'Open Sans', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-color);
-      line-height: 1.8;
-    }
-
-    .sidebar {
-      position: sticky;
-      top: 20px;
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      height: fit-content;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h5 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .sidebar .nav-link {
-      color: var(--text-color);
-      padding: 0.5rem 0;
-      border-left: 3px solid transparent;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: block;
-    }
-
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active {
-      color: var(--primary-color);
-      border-left-color: var(--primary-color);
-      padding-left: 1rem;
-    }
-
-    .content {
-      background: white;
-      border-radius: 12px;
-      padding: 3rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      color: var(--secondary-color);
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
-
-    h2 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-top: 2.5rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--bg-light);
-    }
-
-    h3 {
-      color: var(--secondary-color);
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    code {
-      background: #f8f9fa;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      color: #e83e8c;
-    }
-
-    pre {
-      background: var(--code-bg);
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 1.5rem;
-      overflow-x: auto;
-      margin: 1.5rem 0;
-    }
-
-    pre code {
-      background: none;
-      padding: 0;
-      color: var(--code-text);
-      font-family: 'Courier New', monospace;
-    }
-
-    .navbar {
-      background: white;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb {
-      background: transparent;
-      padding: 0;
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb a {
-      color: var(--primary-color);
-      text-decoration: none;
-    }
-
-    .concept-card {
-      background: var(--bg-light);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1.5rem 0;
-      border-left: 4px solid var(--primary-color);
-    }
-
-    .concept-card h3 {
-      color: var(--primary-color);
-      margin-top: 0;
-      margin-bottom: 1rem;
-    }
-
-    .tip-box {
-      background: #e7f3ff;
-      border-left: 4px solid #007bff;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
-
-    .warning-box {
-      background: #fff3cd;
-      border-left: 4px solid #ffc107;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
-
-    .strategy-card {
-      background: var(--bg-light);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1rem 0;
-      border-left: 4px solid var(--primary-color);
-    }
-
-    .strategy-card h4 {
-      color: var(--primary-color);
-      margin-bottom: 0.5rem;
-    }
-
-    .comparison-table {
-      margin: 2rem 0;
-      overflow-x: auto;
-    }
-
-    .comparison-table table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .comparison-table th,
-    .comparison-table td {
-      padding: 1rem;
-      border: 1px solid #e9ecef;
-      text-align: left;
-    }
-
-    .comparison-table th {
-      background: var(--secondary-color);
-      color: white;
-    }
-
-    .comparison-table tr:nth-child(even) {
-      background: var(--bg-light);
-    }
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .tag-badge { display: inline-block; background: var(--primary-color); color: white; padding: 0.3rem 0.7rem; border-radius: 20px; font-size: 0.82rem; margin: 0.2rem; font-family: 'Courier New', monospace; }
+    .comparison-table th { background: var(--secondary-color); color: white; }
   </style>
 </head>
 <body>
 
-  <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
       <div class="container">
@@ -215,494 +49,617 @@
   </nav>
 
   <div class="container">
-
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
         <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
         <li class="breadcrumb-item"><a href="index.html">FinOps</a></li>
-        <li class="breadcrumb-item active">Core Concepts</li>
+        <li class="breadcrumb-item active">Concepts</li>
       </ol>
     </nav>
 
     <div class="row">
-
-      <!-- Sidebar -->
       <div class="col-lg-3">
         <div class="sidebar">
-          <h5><i class="bi bi-cash-stack me-2"></i>FinOps</h5>
+          <h5><i class="bi bi-cash-coin me-2"></i>FinOps</h5>
           <nav class="nav flex-column">
             <a class="nav-link" href="index.html">Overview</a>
-            <a class="nav-link active" href="concepts.html">Core Concepts</a>
+            <a class="nav-link active" href="concepts.html">Concepts</a>
             <a class="nav-link" href="best-practices.html">Best Practices</a>
-            <a class="nav-link" href="tools.html">Tools & Platforms</a>
           </nav>
         </div>
       </div>
 
-      <!-- Main Content -->
       <div class="col-lg-9">
         <div class="content">
-          <h1><i class="bi bi-diagram-3 me-2"></i>FinOps Core Concepts</h1>
+          <h1><i class="bi bi-diagram-3 me-2"></i>FinOps Concepts</h1>
 
-          <p>
-            Understanding FinOps core concepts is essential for implementing effective cloud cost management.
-            This guide covers the fundamental principles, terminology, and frameworks that form the foundation of FinOps practices.
-          </p>
-
-          <h2>Cost Allocation & Attribution</h2>
-
-          <h3>Resource Tagging Strategy</h3>
-          <div class="concept-card">
-            <h3>What is Resource Tagging?</h3>
-            <p>
-              Resource tagging is the process of assigning metadata to cloud resources to enable cost tracking,
-              resource management, and cost allocation. Tags act as labels that help categorize and organize resources.
-            </p>
-
-            <h4>Required Tags</h4>
-            <ul>
-              <li><strong>Environment</strong>: dev, staging, prod, test</li>
-              <li><strong>Team/Owner</strong>: engineering, marketing, finance, team@company.com</li>
-              <li><strong>Project</strong>: project-name, application-name</li>
-              <li><strong>Cost-Center</strong>: finance code or department identifier</li>
-            </ul>
-
-            <h4>Optional Tags</h4>
-            <ul>
-              <li><strong>Application</strong>: specific application or service name</li>
-              <li><strong>Version</strong>: software version or release tag</li>
-              <li><strong>Backup</strong>: backup frequency (daily, weekly, monthly)</li>
-              <li><strong>Compliance</strong>: regulatory requirements (PCI, HIPAA, GDPR)</li>
-            </ul>
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Foundation concepts:</strong> Cost allocation, tagging, showback/chargeback, unit economics, billing models, and anomaly detection are the building blocks of every FinOps practice. Understand these deeply before optimizing.
           </div>
 
-          <h3>Cost Allocation Methods</h3>
-          <div class="comparison-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Method</th>
-                  <th>Description</th>
-                  <th>Use Case</th>
-                  <th>Pros</th>
-                  <th>Cons</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Direct Attribution</strong></td>
-                  <td>Costs directly tied to specific teams/projects</td>
-                  <td>Dedicated resources per team</td>
-                  <td>Clear ownership, accurate allocation</td>
-                  <td>Requires strict resource separation</td>
-                </tr>
-                <tr>
-                  <td><strong>Proportional Allocation</strong></td>
-                  <td>Shared costs distributed by usage metrics</td>
-                  <td>Shared infrastructure (networking, monitoring)</td>
-                  <td>Handles shared resources well</td>
-                  <td>Complex to calculate accurately</td>
-                </tr>
-                <tr>
-                  <td><strong>Fixed Allocation</strong></td>
-                  <td>Costs split evenly or by predetermined ratios</td>
-                  <td>Small teams, simple environments</td>
-                  <td>Simple to implement</td>
-                  <td>Not reflective of actual usage</td>
-                </tr>
-                <tr>
-                  <td><strong>Chargeback</strong></td>
-                  <td>Teams billed for actual cloud usage</td>
-                  <td>Large organizations with multiple business units</td>
-                  <td>Creates cost awareness</td>
-                  <td>Can create internal conflicts</td>
-                </tr>
-                <tr>
-                  <td><strong>Showback</strong></td>
-                  <td>Costs reported but not charged to teams</td>
-                  <td>Building cost awareness culture</td>
-                  <td>Educational, less confrontational</td>
-                  <td>No financial accountability</td>
-                </tr>
-              </tbody>
-            </table>
+          <h2>Cost Allocation</h2>
+          <p>
+            Cost allocation is the process of distributing cloud costs to the business entities that consumed them — teams, projects, environments, products, or cost centers. Without cost allocation, cloud spend is a black box: the bill arrives and no one knows whose workloads drove which charges.
+          </p>
+          <p>
+            Cost allocation has two primary mechanisms: <strong>tagging</strong> (attach metadata to resources) and <strong>account/project structure</strong> (use separate cloud accounts or GCP projects per team/environment). Best practice is to use both in combination.
+          </p>
+
+          <h3>Cost Center Hierarchy Design</h3>
+          <p>Design your cost allocation hierarchy to mirror your organizational structure. A well-designed hierarchy enables rollup reporting at any level:</p>
+          <pre><code>Organization
+├── Engineering Division
+│   ├── Platform Team (AWS Account: 123456789)
+│   │   ├── Production environment
+│   │   └── Staging environment
+│   ├── Backend Team (AWS Account: 234567890)
+│   └── Frontend Team (AWS Account: 345678901)
+├── Data &amp; Analytics Division
+│   ├── Data Engineering (GCP Project: data-eng-prod)
+│   └── ML Platform (GCP Project: ml-platform-prod)
+└── Shared Services
+    ├── Security (AWS Account: 456789012)
+    └── Networking / Transit (AWS Account: 567890123)</code></pre>
+
+          <div class="tip-box">
+            <strong>Best practice:</strong> Use separate cloud accounts/projects as the primary isolation boundary. Tags provide the secondary, fine-grained allocation layer. Account separation gives you hard cost boundaries; tags give you flexibility within those boundaries.
+          </div>
+
+          <h2>Tagging Strategy</h2>
+          <p>
+            Tags are key-value metadata attached to cloud resources. They are the foundation of cost allocation, automation, compliance, and governance. A poorly designed tagging strategy results in unallocated spend, inaccurate showback, and failed automation.
+          </p>
+
+          <h3>Mandatory Tags (Minimum Viable Taxonomy)</h3>
+          <p>Every resource in your cloud environment should have these tags at minimum:</p>
+
+          <div class="row mb-3">
+            <div class="col-12">
+              <span class="tag-badge">Environment: prod | staging | dev | sandbox</span>
+              <span class="tag-badge">Team: platform | backend | frontend | data</span>
+              <span class="tag-badge">Project: my-saas-app | internal-tools</span>
+              <span class="tag-badge">CostCenter: CC-1234</span>
+              <span class="tag-badge">Owner: user@company.com</span>
+              <span class="tag-badge">ManagedBy: terraform | manual</span>
+            </div>
+          </div>
+
+          <h3>Tag Governance with AWS Config</h3>
+          <p>AWS Config rules can enforce required tags across your account. Non-compliant resources can be auto-remediated or flagged for cleanup:</p>
+
+          <pre><code># AWS Config Rule for required tags (Terraform)
+resource "aws_config_config_rule" "required_tags" {
+  name = "required-tags"
+
+  source {
+    owner             = "AWS"
+    source_identifier = "REQUIRED_TAGS"
+  }
+
+  input_parameters = jsonencode({
+    tag1Key   = "Environment"
+    tag2Key   = "Team"
+    tag3Key   = "Project"
+    tag4Key   = "CostCenter"
+    tag5Key   = "Owner"
+  })
+
+  scope {
+    compliance_resource_types = [
+      "AWS::EC2::Instance",
+      "AWS::RDS::DBInstance",
+      "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "AWS::EKS::Cluster",
+      "AWS::S3::Bucket",
+    ]
+  }
+}
+
+# Auto-remediation: notify on non-compliant resources
+resource "aws_config_remediation_configuration" "tag_noncompliant" {
+  config_rule_name = aws_config_config_rule.required_tags.name
+  target_type      = "SSM_DOCUMENT"
+  target_id        = "AWS-PublishSNSNotification"
+
+  parameter {
+    name         = "TopicArn"
+    static_value = aws_sns_topic.finops_alerts.arn
+  }
+}
+</code></pre>
+
+          <h3>Tag Enforcement with GCP Organization Policy</h3>
+          <pre><code># GCP Organization Policy to require labels on all resources
+# Apply via gcloud or Terraform
+
+resource "google_organization_policy" "require_labels" {
+  org_id     = var.org_id
+  constraint = "constraints/compute.requireLabels"
+
+  list_policy {
+    allow {
+      values = [
+        "environment",
+        "team",
+        "project_name",
+        "cost_center",
+        "owner",
+      ]
+    }
+  }
+}
+
+# GCP Tag Binding example (newer Tags API)
+resource "google_tags_tag_binding" "environment_tag" {
+  parent    = "//compute.googleapis.com/projects/${var.project}/zones/${var.zone}/instances/${google_compute_instance.app.name}"
+  tag_value = google_tags_tag_value.environment_prod.id
+}
+
+# Enforce tags in GCP via gcloud
+gcloud resource-manager tags bindings create \
+  --tag-value=tagValues/281478310072663 \
+  --parent=//cloudresourcemanager.googleapis.com/projects/my-project \
+  --location=global
+</code></pre>
+
+          <h3>Reusable Terraform Tag Module</h3>
+          <pre><code># modules/tags/main.tf
+variable "environment" { type = string }
+variable "team"        { type = string }
+variable "project"     { type = string }
+variable "cost_center" { type = string }
+variable "owner"       { type = string }
+variable "extra_tags"  { type = map(string); default = {} }
+
+locals {
+  common_tags = {
+    Environment = var.environment
+    Team        = var.team
+    Project     = var.project
+    CostCenter  = var.cost_center
+    Owner       = var.owner
+    ManagedBy   = "terraform"
+    CreatedAt   = timestamp()
+  }
+  all_tags = merge(local.common_tags, var.extra_tags)
+}
+
+output "tags" { value = local.all_tags }
+
+# Usage in root module:
+module "tags" {
+  source      = "./modules/tags"
+  environment = "prod"
+  team        = "platform"
+  project     = "my-saas-app"
+  cost_center = "CC-1234"
+  owner       = "platform-team@company.com"
+}
+
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.medium"
+  tags          = module.tags.tags
+}
+</code></pre>
+
+          <h2>Showback vs Chargeback</h2>
+          <p>These two models represent progressively mature approaches to internal cost accountability:</p>
+
+          <table class="table table-bordered comparison-table">
+            <thead>
+              <tr>
+                <th>Dimension</th>
+                <th>Showback</th>
+                <th>Chargeback</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Definition</strong></td>
+                <td>Show teams their cloud costs — informational only</td>
+                <td>Bill cloud costs back to teams or business units via internal invoicing</td>
+              </tr>
+              <tr>
+                <td><strong>Financial impact</strong></td>
+                <td>No real money movement; costs stay in central IT budget</td>
+                <td>Real budget transfers; teams' P&amp;L is directly affected</td>
+              </tr>
+              <tr>
+                <td><strong>Maturity level</strong></td>
+                <td>Crawl → Walk</td>
+                <td>Run</td>
+              </tr>
+              <tr>
+                <td><strong>Behavioral change</strong></td>
+                <td>Raises awareness; some teams may ignore</td>
+                <td>Strong incentive to optimize; teams feel real financial pain</td>
+              </tr>
+              <tr>
+                <td><strong>Requirements</strong></td>
+                <td>Tagging + dashboards</td>
+                <td>Tagging + dashboards + finance system integration + allocation methodology agreement</td>
+              </tr>
+              <tr>
+                <td><strong>Complexity</strong></td>
+                <td>Low</td>
+                <td>High — shared service allocation, untagged spend handling, dispute resolution</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="tip-box">
+            <strong>Recommendation:</strong> Start with showback (it builds trust and shared understanding), then graduate to chargeback once your tagging coverage exceeds 90% and teams have had 2+ quarters of visibility into their costs. Charging back for costs teams cannot see or control will destroy FinOps culture.
           </div>
 
           <h2>Unit Economics</h2>
+          <p>Unit economics connects cloud infrastructure costs to business outcomes. This is the most powerful FinOps concept for engineering and product alignment.</p>
 
-          <h3>Cost per Unit Metrics</h3>
+          <h3>Calculating Cost per API Call</h3>
+          <pre><code>## Example: Calculate cost per API call for a backend service
+
+# Step 1: Get total cloud cost for the service (from cost allocation tags)
+# Service: payment-api | Environment: prod | Month: February
+total_monthly_cost = $8,432.50
+
+# Step 2: Get usage metric from your observability platform
+total_api_calls = 47,200,000  # from Prometheus or CloudWatch
+
+# Step 3: Calculate unit cost
+cost_per_api_call = total_monthly_cost / total_api_calls
+                  = $8,432.50 / 47,200,000
+                  = $0.0001787 per API call
+                  ≈ $0.18 per 1,000 API calls
+
+# Track this over time:
+# Feb: $0.000179/call
+# Mar: $0.000167/call  (12% improvement — performance work paid off)
+# Apr: $0.000155/call  (continuing improvement from DB query optimization)
+</code></pre>
+
+          <h3>Cost per User Calculation (SaaS Model)</h3>
+          <pre><code">## Python script to calculate unit economics from AWS CUR and metrics
+
+import boto3
+import json
+from datetime import datetime, timedelta
+
+def get_monthly_cost_by_tag(tag_key, tag_value, start_date, end_date):
+    ce = boto3.client('ce', region_name='us-east-1')
+
+    response = ce.get_cost_and_usage(
+        TimePeriod={
+            'Start': start_date.strftime('%Y-%m-%d'),
+            'End': end_date.strftime('%Y-%m-%d'),
+        },
+        Granularity='MONTHLY',
+        Filter={
+            'Tags': {
+                'Key': tag_key,
+                'Values': [tag_value],
+                'MatchOptions': ['EQUALS']
+            }
+        },
+        Metrics=['UnblendedCost'],
+    )
+
+    total_cost = sum(
+        float(result['Total']['UnblendedCost']['Amount'])
+        for result in response['ResultsByTime']
+    )
+    return total_cost
+
+def calculate_unit_economics(service_tag, mau_count):
+    end = datetime.today().replace(day=1)
+    start = (end - timedelta(days=1)).replace(day=1)
+
+    monthly_cost = get_monthly_cost_by_tag('Project', service_tag, start, end)
+    cost_per_mau = monthly_cost / mau_count
+
+    print(f"Service: {service_tag}")
+    print(f"Period: {start.strftime('%B %Y')}")
+    print(f"Total Cloud Cost: ${monthly_cost:,.2f}")
+    print(f"Monthly Active Users: {mau_count:,}")
+    print(f"Cost per MAU: ${cost_per_mau:.4f}")
+
+    return {'cost': monthly_cost, 'mau': mau_count, 'cost_per_mau': cost_per_mau}
+
+# Run the analysis
+result = calculate_unit_economics('my-saas-app', mau_count=42500)
+</code></pre>
+
+          <h2>Cloud Billing Models</h2>
+          <p>Understanding cloud billing models is essential for choosing the right purchasing strategy for each workload type:</p>
+
           <div class="concept-card">
-            <h3>Understanding Unit Costs</h3>
-            <p>
-              Unit economics help you understand the cost efficiency of your cloud infrastructure by measuring
-              costs per unit of business value or technical output.
-            </p>
-
-            <h4>Technical Unit Costs</h4>
-            <ul>
-              <li><strong>Cost per vCPU Hour</strong> - Compute costs per virtual CPU hour</li>
-              <li><strong>Cost per GB RAM</strong> - Memory costs per gigabyte</li>
-              <li><strong>Cost per GB Storage</strong> - Storage costs per gigabyte</li>
-              <li><strong>Cost per GB Data Transfer</strong> - Network costs per gigabyte</li>
-            </ul>
-
-            <h4>Business Unit Costs</h4>
-            <ul>
-              <li><strong>Cost per Customer</strong> - Total cloud costs divided by customer count</li>
-              <li><strong>Cost per Transaction</strong> - Cloud costs per business transaction</li>
-              <li><strong>Cost per Active User</strong> - Costs per monthly active user</li>
-              <li><strong>Cost per Order</strong> - E-commerce costs per order processed</li>
-            </ul>
-          </div>
-
-          <h3>Cost Optimization Levers</h3>
-          <div class="strategy-card">
-            <h4>Right-Sizing Resources</h4>
-            <p>Match resource capacity to actual workload requirements.</p>
-            <pre><code># AWS Instance Types by Use Case
-# CPU-intensive workloads
-c5.large, c5.xlarge, c5.2xlarge
-
-# Memory-intensive workloads
-r5.large, r5.xlarge, r5.2xlarge
-
-# Storage-intensive workloads
-i3.large, i3.xlarge, i3.2xlarge
-
-# General purpose
-t3.medium, t3.large, t3.xlarge</code></pre>
-          </div>
-
-          <div class="strategy-card">
-            <h4>Reserved Instances & Savings Plans</h4>
-            <p>Commit to long-term usage for significant cost savings.</p>
-            <pre><code># AWS Savings Plans vs Reserved Instances
-Savings Plans:
-- Flexible instance family and region
-- Up to 72% savings
-- Automatic application
-
-Reserved Instances:
-- Specific instance type and region
-- Up to 75% savings
-- Manual management required</code></pre>
-          </div>
-
-          <div class="strategy-card">
-            <h4>Storage Tier Optimization</h4>
-            <p>Use appropriate storage classes based on access patterns.</p>
-            <pre><code># AWS S3 Storage Classes
-STANDARD:           $0.023/GB    # Frequently accessed
-INTELLIGENT_TIERING: $0.023/GB   # Unknown access patterns
-STANDARD_IA:        $0.0125/GB   # Infrequently accessed
-GLACIER:            $0.004/GB    # Archive storage
-DEEP_ARCHIVE:       $0.00099/GB  # Long-term archive</code></pre>
-          </div>
-
-          <h2>Cost Management Frameworks</h2>
-
-          <h3>The Three Phases of FinOps</h3>
-          <div class="concept-card">
-            <h3>Phase 1: Inform (Visibility)</h3>
-            <p>
-              Establish cost transparency and data collection. Focus on understanding current spending patterns
-              and identifying cost drivers.
-            </p>
-            <ul>
-              <li>Implement comprehensive tagging strategy</li>
-              <li>Set up cost monitoring and alerting</li>
-              <li>Create cost allocation reports</li>
-              <li>Establish cost baselines and budgets</li>
-            </ul>
+            <h4>On-Demand</h4>
+            <p><strong>Price:</strong> List price, no commitment. <strong>Best for:</strong> Unpredictable workloads, new projects, short-lived environments, spiky traffic. <strong>Discount:</strong> 0% (baseline). Use this as the fallback — never as your primary compute purchasing strategy for stable workloads.</p>
           </div>
 
           <div class="concept-card">
-            <h3>Phase 2: Optimize (Efficiency)</h3>
-            <p>
-              Implement cost optimization measures based on insights from the Inform phase.
-              Focus on reducing waste and improving efficiency.
-            </p>
-            <ul>
-              <li>Right-size compute resources</li>
-              <li>Implement auto-scaling</li>
-              <li>Use reserved instances and savings plans</li>
-              <li>Optimize storage and data transfer costs</li>
-              <li>Implement scheduled shutdowns for non-production</li>
-            </ul>
+            <h4>Reserved Instances / Committed Use Discounts (CUDs)</h4>
+            <p><strong>Price:</strong> Up to 72% discount vs on-demand for 3-year, all-upfront commitment. <strong>Best for:</strong> Stable, predictable baseline workloads running 24/7. RIs require you to commit to a specific instance type (Standard) or just a compute footprint (Convertible). GCP CUDs provide similar discounts for Compute Engine and Cloud SQL.</p>
           </div>
 
           <div class="concept-card">
-            <h3>Phase 3: Operate (Control)</h3>
-            <p>
-              Establish ongoing processes to maintain cost optimization and enable
-              sustainable cloud cost management.
-            </p>
-            <ul>
-              <li>Implement governance and guardrails</li>
-              <li>Establish FinOps processes and workflows</li>
-              <li>Create cost-aware culture and training</li>
-              <li>Implement continuous cost monitoring</li>
-              <li>Regular cost optimization reviews</li>
-            </ul>
+            <h4>Savings Plans (AWS)</h4>
+            <p><strong>Types:</strong> Compute Savings Plans (most flexible, applies across EC2, Fargate, Lambda), EC2 Instance Savings Plans (specific family), SageMaker Savings Plans. <strong>Discount:</strong> Up to 66% for Compute, higher for EC2 Instance Plans. Commit to a $/hour spend level, not specific instances — this is easier to manage than RIs.</p>
           </div>
 
-          <h2>Cost Analysis Techniques</h2>
-
-          <h3>Cost Anomaly Detection</h3>
-          <div class="strategy-card">
-            <h4>Identifying Cost Spikes</h4>
-            <p>Use statistical methods and machine learning to detect unusual spending patterns.</p>
-            <pre><code># Cost Anomaly Detection Methods
-1. Threshold-based alerts
-   - Daily spend > $X
-   - Hourly spend increase > Y%
-
-2. Statistical process control
-   - Control limits (μ ± 3σ)
-   - Moving averages and trends
-
-3. Machine learning approaches
-   - Isolation forests for outlier detection
-   - Time series forecasting
-   - Seasonal decomposition</code></pre>
-          </div>
-
-          <h3>Cost Forecasting</h3>
-          <div class="strategy-card">
-            <h4>Predicting Future Costs</h4>
-            <p>Use historical data and business metrics to forecast cloud spending.</p>
-            <pre><code># Forecasting Techniques
-1. Trend analysis
-   - Linear regression on historical data
-   - Seasonal adjustments
-
-2. Business-driven forecasting
-   - User growth projections
-   - Feature release schedules
-   - Infrastructure scaling plans
-
-3. Statistical methods
-   - ARIMA models
-   - Exponential smoothing
-   - Monte Carlo simulations</code></pre>
-          </div>
-
-          <h2>Financial Accountability</h2>
-
-          <h3>Budget Management</h3>
           <div class="concept-card">
-            <h3>Types of Budgets</h3>
-
-            <h4>Hard Budgets</h4>
-            <p>Strict spending limits that cannot be exceeded. Often used in highly regulated environments.</p>
-
-            <h4>Soft Budgets</h4>
-            <p>Target spending levels with some flexibility. Used when innovation is prioritized over strict cost control.</p>
-
-            <h4>Zero-Based Budgeting</h4>
-            <p>Every expense must be justified from scratch each budget cycle. Forces regular cost reviews.</p>
+            <h4>Spot Instances / Preemptible VMs</h4>
+            <p><strong>Price:</strong> 60–90% below on-demand. <strong>Catch:</strong> Can be interrupted with 2-minute notice (AWS) or 30-second notice (GCP). <strong>Best for:</strong> Batch processing, ML training, stateless web tiers with graceful shutdown handling, CI/CD workers, data transformation pipelines. Never use for databases, primary K8s control plane, or stateful services.</p>
           </div>
 
-          <h3>Cost Centers vs Profit Centers</h3>
-          <div class="comparison-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Aspect</th>
-                  <th>Cost Center</th>
-                  <th>Profit Center</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Focus</strong></td>
-                  <td>Efficiency and cost control</td>
-                  <td>Revenue generation and profitability</td>
-                </tr>
-                <tr>
-                  <td><strong>Measurement</strong></td>
-                  <td>Cost per unit, budget variance</td>
-                  <td>Revenue, margins, ROI</td>
-                </tr>
-                <tr>
-                  <td><strong>Accountability</strong></td>
-                  <td>Spending within budget</td>
-                  <td>Business value delivered</td>
-                </tr>
-                <tr>
-                  <td><strong>FinOps Approach</strong></td>
-                  <td>Cost optimization focus</td>
-                  <td>Value optimization focus</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h2>Cloud Cost Models</h2>
-
-          <h3>Variable vs Fixed Costs</h3>
           <div class="concept-card">
-            <h3>Understanding Cost Structures</h3>
-
-            <h4>Variable Costs</h4>
-            <ul>
-              <li>Pay-as-you-go compute instances</li>
-              <li>Data transfer and storage</li>
-              <li>API calls and requests</li>
-              <li>Scale with usage automatically</li>
-            </ul>
-
-            <h4>Fixed Costs</h4>
-            <ul>
-              <li>Reserved instances and savings plans</li>
-              <li>Licensing fees</li>
-              <li>Support contracts</li>
-              <li>Committed spend agreements</li>
-            </ul>
-
-            <h4>Hybrid Approach</h4>
-            <ul>
-              <li>Baseline capacity with reservations</li>
-              <li>On-demand capacity for variable load</li>
-              <li>Spot instances for fault-tolerant workloads</li>
-              <li>Optimize for both predictability and flexibility</li>
-            </ul>
+            <h4>GCP Sustained Use Discounts (SUDs)</h4>
+            <p><strong>Automatic:</strong> GCP automatically applies discounts (up to 30%) when you use an instance for more than 25% of a month — no reservation needed. This makes GCP's on-demand pricing inherently more cost-effective than AWS for continuously-running workloads.</p>
           </div>
 
-          <h3>Total Cost of Ownership (TCO)</h3>
-          <div class="strategy-card">
-            <h4>Comprehensive Cost Analysis</h4>
-            <p>TCO includes all costs associated with cloud adoption and operation.</p>
-            <pre><code># TCO Components
-Direct Costs:
-├── Compute (EC2, Lambda, etc.)
-├── Storage (S3, EBS, etc.)
-├── Networking (VPC, Load Balancers, etc.)
-├── Database (RDS, DynamoDB, etc.)
-└── Analytics (Redshift, Athena, etc.)
+          <h2>Cost Attribution for Shared Resources</h2>
+          <p>Shared resources (Kubernetes clusters, databases serving multiple teams, shared networking) are the hardest challenge in cost allocation. Here are proven approaches:</p>
 
-Indirect Costs:
-├── Management and monitoring tools
-├── Security and compliance
-├── Training and enablement
-├── Support and maintenance
-└── Migration and integration
+          <h3>Kubernetes Cost Attribution with Kubecost</h3>
+          <pre><code># Install Kubecost on your cluster
+helm repo add kubecost https://kubecost.github.io/cost-analyzer/
+helm install kubecost kubecost/cost-analyzer \
+  --namespace kubecost \
+  --create-namespace \
+  --set kubecostToken="your-token" \
+  --set global.prometheus.enabled=true
 
-Hidden Costs:
-├── Data transfer between regions
-├── Cross-AZ traffic
-├── Backup and disaster recovery
-├── Cost of downtime and outages
-└── Technical debt and refactoring</code></pre>
+# Access Kubecost UI
+kubectl port-forward -n kubecost svc/kubecost-cost-analyzer 9090
+
+# Query Kubecost API for namespace cost
+curl "http://localhost:9090/model/allocation?window=7d&aggregate=namespace" | jq '
+  .data[] |
+  to_entries[] |
+  {namespace: .key, cost: .value.totalCost | round}
+'
+
+# Example output:
+# {"namespace": "team-backend", "cost": 1247}
+# {"namespace": "team-frontend", "cost": 423}
+# {"namespace": "team-data", "cost": 3891}
+# {"namespace": "kube-system", "cost": 312}  # ← shared overhead
+</code></pre>
+
+          <h3>Shared Service Allocation Methods</h3>
+          <pre><code">## Three approaches to allocate shared infrastructure costs
+
+# Method 1: Proportional (most common)
+# Allocate based on each team's share of total workload costs
+shared_cost = 5000  # monthly cost of shared services (NAT GW, logging, monitoring)
+team_costs = {
+    'backend':  12500,
+    'frontend':  3200,
+    'data':     18700,
+}
+total_direct = sum(team_costs.values())  # 34400
+
+allocations = {
+    team: (cost / total_direct) * shared_cost
+    for team, cost in team_costs.items()
+}
+# backend  → $1,815  (36.3%)
+# frontend → $  465  ( 9.3%)
+# data     → $2,720  (54.4%)
+
+# Method 2: Equal Split (simple, less accurate)
+per_team = shared_cost / len(team_costs)  # $1,666.67 each
+
+# Method 3: Custom weights (for known usage patterns)
+weights = {'backend': 0.4, 'frontend': 0.1, 'data': 0.5}
+custom_alloc = {team: shared_cost * weight for team, weight in weights.items()}
+</code></pre>
+
+          <h2>Anomaly Detection</h2>
+          <p>Cost anomalies — unexpected spikes or drops in cloud spend — indicate either a production incident, a misconfiguration, or an attack. Fast detection prevents bill shock.</p>
+
+          <h3>AWS Cost Anomaly Detection</h3>
+          <pre><code># Enable AWS Cost Anomaly Detection via Terraform
+resource "aws_ce_anomaly_monitor" "all_services" {
+  name              = "all-services-monitor"
+  monitor_type      = "DIMENSIONAL"
+  monitor_dimension = "SERVICE"
+}
+
+resource "aws_ce_anomaly_subscription" "pagerduty_alert" {
+  name      = "cost-anomaly-alerts"
+  threshold = 20  # Alert when anomaly impact > $20
+
+  monitor_arn_list = [aws_ce_anomaly_monitor.all_services.arn]
+
+  subscriber {
+    type    = "EMAIL"
+    address = "finops@company.com"
+  }
+
+  subscriber {
+    type    = "SNS"
+    address = aws_sns_topic.cost_alerts.arn
+  }
+
+  frequency = "DAILY"  # or IMMEDIATE for high-priority environments
+}
+</code></pre>
+
+          <h3>GCP Budget Alerts</h3>
+          <pre><code># GCP Budget Alert with Pub/Sub notification (Terraform)
+resource "google_billing_budget" "project_budget" {
+  billing_account = var.billing_account_id
+  display_name    = "my-project monthly budget"
+
+  budget_filter {
+    projects = ["projects/${var.project_number}"]
+    services = []  # empty = all services
+  }
+
+  amount {
+    specified_amount {
+      currency_code = "USD"
+      units         = "5000"  # $5,000/month budget
+    }
+  }
+
+  threshold_rules {
+    threshold_percent = 0.5   # Alert at 50%
+  }
+  threshold_rules {
+    threshold_percent = 0.8   # Alert at 80%
+  }
+  threshold_rules {
+    threshold_percent = 1.0   # Alert at 100%
+    spend_basis       = "FORECASTED_SPEND"
+  }
+
+  all_updates_rule {
+    pubsub_topic                     = google_pubsub_topic.billing_alerts.id
+    schema_version                   = "1.0"
+    monitoring_notification_channels = [var.email_notification_channel]
+    disable_default_iam_recipients   = false
+  }
+}
+</code></pre>
+
+          <h3>Slack Cost Spike Notification (Python Lambda)</h3>
+          <pre><code">import boto3
+import json
+import urllib3
+import os
+from datetime import datetime, timedelta
+
+def get_daily_cost():
+    ce = boto3.client('ce', region_name='us-east-1')
+    today = datetime.today()
+    yesterday = today - timedelta(days=1)
+    week_ago = today - timedelta(days=8)
+
+    def cost_for_period(start, end):
+        resp = ce.get_cost_and_usage(
+            TimePeriod={'Start': start.strftime('%Y-%m-%d'), 'End': end.strftime('%Y-%m-%d')},
+            Granularity='DAILY',
+            Metrics=['UnblendedCost']
+        )
+        return float(resp['ResultsByTime'][0]['Total']['UnblendedCost']['Amount'])
+
+    yesterday_cost = cost_for_period(yesterday, today)
+
+    # Calculate 7-day average for baseline
+    week_costs = []
+    for i in range(2, 9):
+        d = today - timedelta(days=i)
+        week_costs.append(cost_for_period(d, d + timedelta(days=1)))
+    avg_cost = sum(week_costs) / len(week_costs)
+
+    return yesterday_cost, avg_cost
+
+def lambda_handler(event, context):
+    yesterday_cost, avg_cost = get_daily_cost()
+    spike_threshold = 1.25  # 25% above 7-day average
+
+    if yesterday_cost > avg_cost * spike_threshold:
+        pct_change = ((yesterday_cost - avg_cost) / avg_cost) * 100
+        message = {
+            "text": f":rotating_light: *Cost Anomaly Detected*",
+            "blocks": [
+                {"type": "header", "text": {"type": "plain_text", "text": "Cost Spike Alert"}},
+                {"type": "section", "fields": [
+                    {"type": "mrkdwn", "text": f"*Yesterday's Cost:*\n${yesterday_cost:,.2f}"},
+                    {"type": "mrkdwn", "text": f"*7-Day Average:*\n${avg_cost:,.2f}"},
+                    {"type": "mrkdwn", "text": f"*Change:*\n+{pct_change:.1f}%"},
+                    {"type": "mrkdwn", "text": f"*Action:*\nReview AWS Cost Explorer"},
+                ]}
+            ]
+        }
+
+        http = urllib3.PoolManager()
+        http.request('POST', os.environ['SLACK_WEBHOOK_URL'],
+                     body=json.dumps(message).encode('utf-8'),
+                     headers={'Content-Type': 'application/json'})
+</code></pre>
+
+          <h2>AWS Cost Explorer Saved Queries &amp; Analysis</h2>
+          <pre><code"># Useful AWS CLI queries for FinOps analysis
+
+# 1. Cost by service, last 30 days
+aws ce get-cost-and-usage \
+  --time-period Start=2025-02-01,End=2025-03-01 \
+  --granularity MONTHLY \
+  --metrics UnblendedCost \
+  --group-by Type=DIMENSION,Key=SERVICE \
+  --query 'ResultsByTime[0].Groups[?Total.UnblendedCost.Amount > `100`] | sort_by(@, &Total.UnblendedCost.Amount) | reverse(@)' \
+  --output table
+
+# 2. Cost by tag (Team), current month
+aws ce get-cost-and-usage \
+  --time-period Start=$(date +%Y-%m-01),End=$(date +%Y-%m-%d) \
+  --granularity MONTHLY \
+  --metrics UnblendedCost \
+  --group-by Type=TAG,Key=Team \
+  --output json | jq '.ResultsByTime[0].Groups[] | {team: .Keys[0], cost: .Total.UnblendedCost.Amount}'
+
+# 3. Identify untagged spend
+aws ce get-cost-and-usage \
+  --time-period Start=2025-02-01,End=2025-03-01 \
+  --granularity MONTHLY \
+  --metrics UnblendedCost \
+  --filter '{"Tags": {"Key": "Team", "Values": [""], "MatchOptions": ["ABSENT"]}}' \
+  --group-by Type=DIMENSION,Key=SERVICE
+</code></pre>
+
+          <h2>GCP BigQuery Billing Export Queries</h2>
+          <pre><code">-- Query 1: Monthly cost by label (team) and service
+SELECT
+  labels.value AS team,
+  service.description AS service,
+  SUM(cost) AS total_cost,
+  SUM(cost) / SUM(SUM(cost)) OVER (PARTITION BY labels.value) AS pct_of_team_budget
+FROM
+  `my-billing-project.billing_export.gcp_billing_export_v1_BILLING_ACCT_ID`
+CROSS JOIN UNNEST(labels) AS labels
+WHERE
+  labels.key = 'team'
+  AND DATE_TRUNC(usage_start_time, MONTH) = DATE_TRUNC(CURRENT_DATE(), MONTH)
+GROUP BY 1, 2
+ORDER BY 1, 3 DESC;
+
+-- Query 2: Top 10 most expensive resources this month
+SELECT
+  resource.name AS resource_name,
+  service.description AS service,
+  sku.description AS sku,
+  SUM(cost) AS total_cost
+FROM
+  `my-billing-project.billing_export.gcp_billing_export_v1_BILLING_ACCT_ID`
+WHERE
+  DATE_TRUNC(usage_start_time, MONTH) = DATE_TRUNC(CURRENT_DATE(), MONTH)
+  AND cost > 0
+GROUP BY 1, 2, 3
+ORDER BY total_cost DESC
+LIMIT 10;
+
+-- Query 3: Cost trend (last 6 months, by month)
+SELECT
+  DATE_TRUNC(usage_start_time, MONTH) AS month,
+  SUM(cost) AS total_cost,
+  LAG(SUM(cost)) OVER (ORDER BY DATE_TRUNC(usage_start_time, MONTH)) AS prev_month,
+  (SUM(cost) - LAG(SUM(cost)) OVER (ORDER BY DATE_TRUNC(usage_start_time, MONTH)))
+    / LAG(SUM(cost)) OVER (ORDER BY DATE_TRUNC(usage_start_time, MONTH)) * 100 AS pct_change
+FROM
+  `my-billing-project.billing_export.gcp_billing_export_v1_BILLING_ACCT_ID`
+WHERE
+  usage_start_time >= DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)
+GROUP BY 1
+ORDER BY 1;
+</code></pre>
+
+          <div class="success-box">
+            <strong>Next step:</strong> Once you have these concepts implemented — cost allocation via accounts and tags, showback dashboards, unit economics tracking, and anomaly alerts — you are ready to move to active optimization. See <a href="best-practices.html">Cost Optimization Best Practices</a> for the tactical playbook.
           </div>
-
-          <h2>FinOps Governance</h2>
-
-          <h3>Policies and Controls</h3>
-          <div class="concept-card">
-            <h3>Guardrails for Cost Control</h3>
-
-            <h4>Preventive Controls</h4>
-            <ul>
-              <li>Instance type restrictions</li>
-              <li>Region limitations</li>
-              <li>Service usage policies</li>
-              <li>Mandatory tagging requirements</li>
-            </ul>
-
-            <h4>Detective Controls</h4>
-            <ul>
-              <li>Cost anomaly alerts</li>
-              <li>Budget threshold notifications</li>
-              <li>Compliance monitoring</li>
-              <li>Resource usage audits</li>
-            </ul>
-
-            <h4>Corrective Controls</h4>
-            <ul>
-              <li>Automated resource shutdown</li>
-              <li>Instance rightsizing</li>
-              <li>Unused resource cleanup</li>
-              <li>Policy enforcement actions</li>
-            </ul>
-          </div>
-
-          <h3>Risk Management</h3>
-          <div class="strategy-card">
-            <h4>Cost-Related Risks</h4>
-            <pre><code># Cost Risk Categories
-1. Budget Overruns
-   - Uncontrolled spending
-   - Unexpected usage spikes
-   - Inaccurate forecasting
-
-2. Service Disruptions
-   - Cost of downtime
-   - Data loss recovery costs
-   - Business continuity expenses
-
-3. Compliance Costs
-   - Audit and certification fees
-   - Security incident response
-   - Regulatory fines
-
-4. Technical Debt
-   - Refactoring and modernization costs
-   - Legacy system maintenance
-   - Skill gap remediation
-
-# Risk Mitigation Strategies
-- Implement cost controls and alerts
-- Regular cost reviews and audits
-- Diversify cloud providers
-- Invest in automation and monitoring
-- Build cost-aware culture</code></pre>
-          </div>
-
-          <h2>Measuring FinOps Success</h2>
-
-          <h3>Key Performance Indicators</h3>
-          <div class="concept-card">
-            <h3>FinOps KPIs</h3>
-
-            <h4>Efficiency Metrics</h4>
-            <ul>
-              <li><strong>Cost per Unit</strong> - Cloud costs per business metric</li>
-              <li><strong>Resource Utilization</strong> - CPU, memory, storage usage rates</li>
-              <li><strong>Time to Provision</strong> - Speed of resource deployment</li>
-              <li><strong>Automation Rate</strong> - Percentage of manual vs automated processes</li>
-            </ul>
-
-            <h4>Effectiveness Metrics</h4>
-            <ul>
-              <li><strong>Budget Variance</strong> - Actual vs planned spending</li>
-              <li><strong>Cost Savings</strong> - Year-over-year cost reductions</li>
-              <li><strong>ROI by Project</strong> - Return on cloud investments</li>
-              <li><strong>MTTR for Cost Issues</strong> - Time to resolve cost anomalies</li>
-            </ul>
-          </div>
-
-          <div class="tip-box">
-            <strong>💡 FinOps Implementation Tips:</strong>
-            <ul>
-              <li>Start with visibility before attempting optimization</li>
-              <li>Involve all stakeholders in cost decisions</li>
-              <li>Focus on value, not just cost reduction</li>
-              <li>Implement gradual changes with measurable results</li>
-              <li>Celebrate cost savings and share success stories</li>
-              <li>Build cost awareness into team culture</li>
-              <li>Regularly review and adjust cost strategies</li>
-            </ul>
-          </div>
-
-          <h2>Next Steps</h2>
-          <ul>
-            <li><strong><a href="best-practices.html">Best Practices</a></strong> - Proven FinOps strategies and implementation guides</li>
-            <li><strong><a href="tools.html">Tools & Platforms</a></strong> - FinOps tools and technology stack</li>
-            <li><strong><a href="index.html">FinOps Overview</a></strong> - Back to fundamentals</li>
-          </ul>
 
         </div>
       </div>

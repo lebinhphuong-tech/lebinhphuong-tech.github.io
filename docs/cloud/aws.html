@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Deep Dive | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light px-4">
+    <a class="navbar-brand fw-bold" style="color: var(--secondary-color);" href="../../index.html">
+      <i class="bi bi-person-circle me-2" style="color: var(--primary-color);"></i>Lê Bình Phương
+    </a>
+    <div class="ms-auto">
+      <a href="../../index.html" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-house me-1"></i>Home
+      </a>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Cloud</a></li>
+        <li class="breadcrumb-item active">AWS</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5><i class="bi bi-cloud me-2"></i>Cloud</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html"><i class="bi bi-house-door me-2"></i>Overview</a>
+            <a class="nav-link active" href="aws.html"><i class="bi bi-cloud-fill me-2"></i>AWS</a>
+            <a class="nav-link" href="gcp.html"><i class="bi bi-google me-2"></i>GCP</a>
+            <a class="nav-link" href="architecture.html"><i class="bi bi-diagram-3 me-2"></i>Architecture</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-cloud-fill me-2"></i>AWS Deep Dive</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Amazon Web Services — the world's most comprehensive and broadly adopted cloud platform. This guide covers production-grade configurations with real CLI commands and Terraform snippets.
+          </div>
+
+          <!-- ==================== COMPUTE ==================== -->
+          <h2>Compute</h2>
+
+          <h3>EC2 — Elastic Compute Cloud</h3>
+          <p>EC2 provides resizable virtual servers in the cloud. Choosing the right instance type is critical for performance and cost efficiency.</p>
+
+          <table>
+            <thead>
+              <tr><th>Family</th><th>Optimized For</th><th>Examples</th><th>Use Cases</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>General Purpose</strong></td><td>Balanced CPU/Memory</td><td>m7g, m6i, t3, t4g</td><td>Web servers, app servers, dev environments</td></tr>
+              <tr><td><strong>Compute Optimized</strong></td><td>High CPU performance</td><td>c7g, c6i, c6a</td><td>Batch processing, media encoding, gaming, HPC</td></tr>
+              <tr><td><strong>Memory Optimized</strong></td><td>Large RAM workloads</td><td>r7g, r6i, x2idn, u-24tb1</td><td>In-memory databases, SAP HANA, real-time analytics</td></tr>
+              <tr><td><strong>Storage Optimized</strong></td><td>High disk I/O</td><td>i4i, im4gn, d3en</td><td>NoSQL DBs, data warehouses, OLTP, distributed FS</td></tr>
+              <tr><td><strong>Accelerated Computing</strong></td><td>GPU / FPGA</td><td>p4d, g5, inf2, trn1</td><td>ML training/inference, video rendering, HPC</td></tr>
+            </tbody>
+          </table>
+
+          <pre><code># Launch EC2 instance with detailed options
+aws ec2 run-instances \
+  --image-id ami-0c55b159cbfafe1f0 \
+  --instance-type m6i.xlarge \
+  --key-name my-keypair \
+  --subnet-id subnet-0a1b2c3d4e5f \
+  --security-group-ids sg-0abc123 \
+  --iam-instance-profile Name=my-instance-profile \
+  --user-data file://user-data.sh \
+  --block-device-mappings '[{"DeviceName":"/dev/xvda","Ebs":{"VolumeSize":50,"VolumeType":"gp3","Iops":3000,"Encrypted":true}}]' \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=web-server-01},{Key=Environment,Value=prod}]' \
+  --metadata-options "HttpTokens=required,HttpEndpoint=enabled" \
+  --placement '{"AvailabilityZone":"ap-southeast-1a","Tenancy":"default"}'
+
+# Describe instances with filter
+aws ec2 describe-instances \
+  --filters "Name=tag:Environment,Values=prod" "Name=instance-state-name,Values=running" \
+  --query 'Reservations[*].Instances[*].[InstanceId,InstanceType,PrivateIpAddress,Tags[?Key==`Name`].Value|[0]]' \
+  --output table
+
+# Create AMI from running instance
+aws ec2 create-image \
+  --instance-id i-1234567890abcdef0 \
+  --name "my-app-ami-$(date +%Y%m%d)" \
+  --description "Production app AMI" \
+  --no-reboot
+
+# Modify instance type (must be stopped)
+aws ec2 modify-instance-attribute \
+  --instance-id i-1234567890abcdef0 \
+  --instance-type '{"Value":"m6i.2xlarge"}'
+
+# Create placement group for low-latency cluster
+aws ec2 create-placement-group \
+  --group-name my-cluster-pg \
+  --strategy cluster</code></pre>
+
+          <div class="tip-box">
+            <strong>Security best practice:</strong> Always set <code>HttpTokens=required</code> in metadata options to enforce IMDSv2 and prevent SSRF attacks targeting the instance metadata service.
+          </div>
+
+          <h3>EKS — Elastic Kubernetes Service</h3>
+          <pre><code># Create EKS cluster with eksctl (recommended)
+eksctl create cluster \
+  --name prod-cluster \
+  --region ap-southeast-1 \
+  --version 1.29 \
+  --nodegroup-name managed-ng-1 \
+  --node-type m6i.xlarge \
+  --nodes 3 \
+  --nodes-min 2 \
+  --nodes-max 10 \
+  --managed \
+  --asg-access \
+  --with-oidc \
+  --ssh-access \
+  --ssh-public-key my-keypair \
+  --vpc-private-subnets subnet-aaa,subnet-bbb,subnet-ccc
+
+# Add Fargate profile for serverless pods
+eksctl create fargateprofile \
+  --cluster prod-cluster \
+  --name fp-default \
+  --namespace default \
+  --namespace kube-system \
+  --labels env=fargate
+
+# Install EKS add-ons
+# VPC CNI
+aws eks create-addon \
+  --cluster-name prod-cluster \
+  --addon-name vpc-cni \
+  --addon-version v1.16.0-eksbuild.1 \
+  --service-account-role-arn arn:aws:iam::123456789012:role/AmazonEKSVPCCNIRole
+
+# CoreDNS
+aws eks create-addon \
+  --cluster-name prod-cluster \
+  --addon-name coredns \
+  --addon-version v1.11.1-eksbuild.4
+
+# kube-proxy
+aws eks create-addon \
+  --cluster-name prod-cluster \
+  --addon-name kube-proxy \
+  --addon-version v1.29.0-eksbuild.1
+
+# EBS CSI Driver
+aws eks create-addon \
+  --cluster-name prod-cluster \
+  --addon-name aws-ebs-csi-driver \
+  --addon-version v1.26.0-eksbuild.1 \
+  --service-account-role-arn arn:aws:iam::123456789012:role/AmazonEKSEBSCSIDriverRole
+
+# AWS Load Balancer Controller (via Helm)
+helm repo add eks https://aws.github.io/eks-charts
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=prod-cluster \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller
+
+# Update kubeconfig
+aws eks update-kubeconfig --region ap-southeast-1 --name prod-cluster</code></pre>
+
+          <h3>Lambda — Serverless Functions</h3>
+          <pre><code># Create Lambda function
+aws lambda create-function \
+  --function-name process-orders \
+  --runtime python3.12 \
+  --role arn:aws:iam::123456789012:role/lambda-execution-role \
+  --handler app.handler \
+  --zip-file fileb://function.zip \
+  --timeout 30 \
+  --memory-size 512 \
+  --environment Variables="{DB_HOST=db.example.com,STAGE=prod}" \
+  --vpc-config SubnetIds=subnet-aaa,subnet-bbb,SecurityGroupIds=sg-0abc123 \
+  --layers arn:aws:lambda:ap-southeast-1:123456789012:layer:my-deps:3
+
+# Configure reserved concurrency (prevent throttling neighbors)
+aws lambda put-function-concurrency \
+  --function-name process-orders \
+  --reserved-concurrent-executions 100
+
+# Configure provisioned concurrency (eliminate cold starts)
+aws lambda put-provisioned-concurrency-config \
+  --function-name process-orders \
+  --qualifier prod \
+  --provisioned-concurrent-executions 10
+
+# Add SQS trigger
+aws lambda create-event-source-mapping \
+  --event-source-arn arn:aws:sqs:ap-southeast-1:123456789012:orders-queue \
+  --function-name process-orders \
+  --batch-size 10 \
+  --maximum-batching-window-in-seconds 5</code></pre>
+
+          <!-- ==================== NETWORKING ==================== -->
+          <h2>Networking</h2>
+
+          <h3>VPC — Virtual Private Cloud</h3>
+          <pre><code># Create VPC with CIDR
+aws ec2 create-vpc \
+  --cidr-block 10.10.0.0/16 \
+  --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=prod-vpc}]'
+
+# Create subnets across 3 AZs
+# Public subnets (for ALB, NAT GW)
+for i in 1 2 3; do
+  aws ec2 create-subnet \
+    --vpc-id vpc-0abc123 \
+    --cidr-block "10.10.${i}.0/24" \
+    --availability-zone "ap-southeast-1$(echo 'abc' | cut -c${i})" \
+    --tag-specifications "ResourceType=subnet,Tags=[{Key=Name,Value=public-subnet-${i}},{Key=Type,Value=public}]"
+done
+
+# Private subnets (app tier)
+for i in 1 2 3; do
+  aws ec2 create-subnet \
+    --vpc-id vpc-0abc123 \
+    --cidr-block "10.10.1${i}.0/24" \
+    --availability-zone "ap-southeast-1$(echo 'abc' | cut -c${i})" \
+    --tag-specifications "ResourceType=subnet,Tags=[{Key=Name,Value=private-subnet-${i}},{Key=Type,Value=private}]"
+done
+
+# Isolated subnets (database tier — no internet access)
+for i in 1 2 3; do
+  aws ec2 create-subnet \
+    --vpc-id vpc-0abc123 \
+    --cidr-block "10.10.2${i}.0/24" \
+    --availability-zone "ap-southeast-1$(echo 'abc' | cut -c${i})" \
+    --tag-specifications "ResourceType=subnet,Tags=[{Key=Name,Value=isolated-subnet-${i}},{Key=Type,Value=isolated}]"
+done
+
+# Create and attach Internet Gateway
+aws ec2 create-internet-gateway \
+  --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=prod-igw}]'
+aws ec2 attach-internet-gateway --internet-gateway-id igw-0abc123 --vpc-id vpc-0abc123
+
+# Create NAT Gateway with EIP (one per AZ for HA)
+aws ec2 allocate-address --domain vpc
+aws ec2 create-nat-gateway \
+  --subnet-id subnet-public-1a \
+  --allocation-id eipalloc-0abc123 \
+  --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=nat-gw-1a}]'
+
+# VPC Endpoint — Gateway type for S3/DynamoDB (free)
+aws ec2 create-vpc-endpoint \
+  --vpc-id vpc-0abc123 \
+  --service-name com.amazonaws.ap-southeast-1.s3 \
+  --vpc-endpoint-type Gateway \
+  --route-table-ids rtb-private-1 rtb-private-2 rtb-private-3
+
+# VPC Endpoint — Interface type for ECR (charges apply)
+aws ec2 create-vpc-endpoint \
+  --vpc-id vpc-0abc123 \
+  --service-name com.amazonaws.ap-southeast-1.ecr.dkr \
+  --vpc-endpoint-type Interface \
+  --subnet-ids subnet-private-1 subnet-private-2 \
+  --security-group-ids sg-endpoints \
+  --private-dns-enabled</code></pre>
+
+          <h3>Load Balancers</h3>
+          <pre><code># Create Application Load Balancer (Layer 7)
+aws elbv2 create-load-balancer \
+  --name prod-alb \
+  --type application \
+  --scheme internet-facing \
+  --subnets subnet-public-1a subnet-public-1b subnet-public-1c \
+  --security-groups sg-alb \
+  --ip-address-type ipv4
+
+# Create target group with health check
+aws elbv2 create-target-group \
+  --name prod-tg-app \
+  --protocol HTTP \
+  --port 8080 \
+  --vpc-id vpc-0abc123 \
+  --health-check-path /health \
+  --health-check-interval-seconds 15 \
+  --healthy-threshold-count 2 \
+  --unhealthy-threshold-count 3 \
+  --target-type ip
+
+# Create HTTPS listener with redirect
+aws elbv2 create-listener \
+  --load-balancer-arn arn:aws:elasticloadbalancing:... \
+  --protocol HTTPS \
+  --port 443 \
+  --certificates CertificateArn=arn:aws:acm:ap-southeast-1:123456789012:certificate/abc \
+  --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:...
+
+# Add path-based routing rule
+aws elbv2 create-rule \
+  --listener-arn arn:aws:elasticloadbalancing:...:listener/... \
+  --priority 10 \
+  --conditions '[{"Field":"path-pattern","Values":["/api/*"]}]' \
+  --actions '[{"Type":"forward","TargetGroupArn":"arn:aws:elasticloadbalancing:...:targetgroup/api-tg/..."}]'
+
+# Create Network Load Balancer (Layer 4 — static IPs, PrivateLink)
+aws elbv2 create-load-balancer \
+  --name prod-nlb \
+  --type network \
+  --scheme internal \
+  --subnets subnet-private-1a subnet-private-1b subnet-private-1c</code></pre>
+
+          <h3>Route 53</h3>
+          <pre><code># Create private hosted zone
+aws route53 create-hosted-zone \
+  --name internal.example.com \
+  --caller-reference $(date +%s) \
+  --hosted-zone-config Comment="Internal DNS",PrivateZone=true \
+  --vpc VPCRegion=ap-southeast-1,VPCId=vpc-0abc123
+
+# Create A record (alias to ALB)
+aws route53 change-resource-record-sets \
+  --hosted-zone-id Z1234ABCD \
+  --change-batch '{
+    "Changes": [{
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "app.example.com",
+        "Type": "A",
+        "AliasTarget": {
+          "HostedZoneId": "Z35SXDOTRQ7X7K",
+          "DNSName": "prod-alb-123456789.ap-southeast-1.elb.amazonaws.com",
+          "EvaluateTargetHealth": true
+        }
+      }
+    }]
+  }'
+
+# Weighted routing (for canary/A-B testing)
+# 90% to v1, 10% to v2
+aws route53 change-resource-record-sets \
+  --hosted-zone-id Z1234ABCD \
+  --change-batch '{
+    "Changes": [
+      {
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "api.example.com",
+          "Type": "A",
+          "SetIdentifier": "v1",
+          "Weight": 90,
+          "AliasTarget": { "HostedZoneId": "...", "DNSName": "v1-alb...", "EvaluateTargetHealth": true }
+        }
+      },
+      {
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "api.example.com",
+          "Type": "A",
+          "SetIdentifier": "v2",
+          "Weight": 10,
+          "AliasTarget": { "HostedZoneId": "...", "DNSName": "v2-alb...", "EvaluateTargetHealth": true }
+        }
+      }
+    ]
+  }'
+
+# Latency-based routing (multi-region)
+aws route53 change-resource-record-sets \
+  --hosted-zone-id Z1234ABCD \
+  --change-batch '{
+    "Changes": [{
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "api.example.com",
+        "Type": "A",
+        "SetIdentifier": "ap-southeast-1",
+        "Region": "ap-southeast-1",
+        "AliasTarget": { "HostedZoneId": "...", "DNSName": "sg-alb...", "EvaluateTargetHealth": true }
+      }
+    }]
+  }'</code></pre>
+
+          <h3>CloudFront</h3>
+          <pre><code># Create CloudFront distribution with S3 origin and WAF
+aws cloudfront create-distribution --distribution-config '{
+  "Origins": {
+    "Quantity": 1,
+    "Items": [{
+      "Id": "S3-prod-static",
+      "DomainName": "prod-bucket.s3.ap-southeast-1.amazonaws.com",
+      "S3OriginConfig": { "OriginAccessIdentity": "origin-access-identity/cloudfront/ABCDEF" }
+    }]
+  },
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "S3-prod-static",
+    "ViewerProtocolPolicy": "redirect-to-https",
+    "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+    "Compress": true
+  },
+  "WebACLId": "arn:aws:wafv2:us-east-1:123456789012:global/webacl/prod-waf/abc",
+  "PriceClass": "PriceClass_All",
+  "Enabled": true,
+  "Comment": "Production CDN"
+}'</code></pre>
+
+          <!-- ==================== STORAGE ==================== -->
+          <h2>Storage</h2>
+
+          <h3>S3 — Simple Storage Service</h3>
+          <pre><code># Create bucket with versioning and encryption
+aws s3api create-bucket \
+  --bucket prod-app-assets-123456789012 \
+  --region ap-southeast-1 \
+  --create-bucket-configuration LocationConstraint=ap-southeast-1
+
+aws s3api put-bucket-versioning \
+  --bucket prod-app-assets-123456789012 \
+  --versioning-configuration Status=Enabled
+
+aws s3api put-bucket-encryption \
+  --bucket prod-app-assets-123456789012 \
+  --server-side-encryption-configuration '{
+    "Rules": [{
+      "ApplyServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "aws:kms",
+        "KMSMasterKeyID": "arn:aws:kms:ap-southeast-1:123456789012:key/abc123"
+      },
+      "BucketKeyEnabled": true
+    }]
+  }'
+
+# Block all public access
+aws s3api put-public-access-block \
+  --bucket prod-app-assets-123456789012 \
+  --public-access-block-configuration \
+    BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+
+# Lifecycle policy: transition to cheaper storage tiers
+aws s3api put-bucket-lifecycle-configuration \
+  --bucket prod-app-assets-123456789012 \
+  --lifecycle-configuration '{
+    "Rules": [{
+      "ID": "transition-old-objects",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "logs/" },
+      "Transitions": [
+        { "Days": 30, "StorageClass": "STANDARD_IA" },
+        { "Days": 90, "StorageClass": "GLACIER_IR" },
+        { "Days": 365, "StorageClass": "DEEP_ARCHIVE" }
+      ],
+      "Expiration": { "Days": 2555 }
+    }]
+  }'
+
+# Cross-region replication (requires versioning on both buckets)
+aws s3api put-bucket-replication \
+  --bucket prod-app-assets-123456789012 \
+  --replication-configuration '{
+    "Role": "arn:aws:iam::123456789012:role/s3-replication-role",
+    "Rules": [{
+      "ID": "replicate-to-dr",
+      "Status": "Enabled",
+      "Filter": {},
+      "Destination": {
+        "Bucket": "arn:aws:s3:::prod-app-assets-dr-123456789012",
+        "StorageClass": "STANDARD_IA",
+        "EncryptionConfiguration": {
+          "ReplicaKmsKeyID": "arn:aws:kms:us-east-1:123456789012:key/xyz789"
+        }
+      },
+      "DeleteMarkerReplication": { "Status": "Enabled" }
+    }]
+  }'
+
+# Generate presigned URL (15-minute expiry)
+aws s3 presign s3://prod-app-assets-123456789012/reports/Q4-2025.pdf \
+  --expires-in 900</code></pre>
+
+          <h3>EBS Volume Types</h3>
+          <table>
+            <thead>
+              <tr><th>Type</th><th>Use Case</th><th>Max IOPS</th><th>Max Throughput</th><th>Notes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>gp3</strong></td><td>General purpose SSD</td><td>16,000</td><td>1,000 MiB/s</td><td>Baseline 3,000 IOPS free; independently configure IOPS/throughput</td></tr>
+              <tr><td><strong>io2 Block Express</strong></td><td>Critical databases</td><td>256,000</td><td>4,000 MiB/s</td><td>99.999% durability; sub-millisecond latency</td></tr>
+              <tr><td><strong>st1</strong></td><td>Throughput-intensive HDD</td><td>500</td><td>500 MiB/s</td><td>Big data, log processing; cannot be boot volume</td></tr>
+              <tr><td><strong>sc1</strong></td><td>Cold HDD (infrequent access)</td><td>250</td><td>250 MiB/s</td><td>Lowest cost; cold data archives</td></tr>
+            </tbody>
+          </table>
+          <pre><code># Create encrypted gp3 volume with custom IOPS
+aws ec2 create-volume \
+  --volume-type gp3 \
+  --size 200 \
+  --iops 6000 \
+  --throughput 500 \
+  --encrypted \
+  --kms-key-id arn:aws:kms:ap-southeast-1:123456789012:key/abc123 \
+  --availability-zone ap-southeast-1a \
+  --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=prod-db-data}]'
+
+# Create snapshot with retention tag
+aws ec2 create-snapshot \
+  --volume-id vol-0abc123 \
+  --description "Daily backup $(date +%Y-%m-%d)" \
+  --tag-specifications 'ResourceType=snapshot,Tags=[{Key=Retention,Value=30d}]'</code></pre>
+
+          <h3>EFS — Elastic File System</h3>
+          <pre><code># Create EFS with encryption and performance mode
+aws efs create-file-system \
+  --encrypted \
+  --kms-key-id arn:aws:kms:ap-southeast-1:123456789012:key/abc123 \
+  --performance-mode generalPurpose \
+  --throughput-mode elastic \
+  --tags Key=Name,Value=prod-efs
+
+# Create mount targets (one per AZ)
+for subnet in subnet-1a subnet-1b subnet-1c; do
+  aws efs create-mount-target \
+    --file-system-id fs-0abc123 \
+    --subnet-id $subnet \
+    --security-groups sg-efs-mount
+done
+
+# Create access point (for EKS persistent volumes)
+aws efs create-access-point \
+  --file-system-id fs-0abc123 \
+  --posix-user Uid=1000,Gid=1000 \
+  --root-directory Path=/data/app,CreationInfo={OwnerUid=1000,OwnerGid=1000,Permissions=755}</code></pre>
+
+          <!-- ==================== SECURITY ==================== -->
+          <h2>Security</h2>
+
+          <h3>IAM — Least Privilege Policy Examples</h3>
+          <pre><code># S3 read-only access to specific bucket and prefix
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListBucketWithPrefix",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": "arn:aws:s3:::prod-app-assets-123456789012",
+      "Condition": {
+        "StringLike": { "s3:prefix": ["reports/*"] }
+      }
+    },
+    {
+      "Sid": "ReadObjectsInPrefix",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:GetObjectVersion"],
+      "Resource": "arn:aws:s3:::prod-app-assets-123456789012/reports/*"
+    }
+  ]
+}
+
+# EKS pod-level IAM via IRSA (IAM Roles for Service Accounts)
+# 1. Create OIDC provider for cluster
+eksctl utils associate-iam-oidc-provider \
+  --cluster prod-cluster \
+  --approve
+
+# 2. Create role with trust policy scoped to specific SA
+aws iam create-role \
+  --role-name prod-app-sa-role \
+  --assume-role-policy-document '{
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::123456789012:oidc-provider/oidc.eks.ap-southeast-1.amazonaws.com/id/ABCD1234"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "oidc.eks.ap-southeast-1.amazonaws.com/id/ABCD1234:sub": "system:serviceaccount:default:my-app-sa",
+          "oidc.eks.ap-southeast-1.amazonaws.com/id/ABCD1234:aud": "sts.amazonaws.com"
+        }
+      }
+    }]
+  }'</code></pre>
+
+          <h3>KMS — Key Management Service</h3>
+          <pre><code># Create customer-managed CMK (symmetric)
+aws kms create-key \
+  --description "Production application data encryption key" \
+  --key-usage ENCRYPT_DECRYPT \
+  --key-spec SYMMETRIC_DEFAULT \
+  --tags TagKey=Environment,TagValue=prod
+
+# Create key alias
+aws kms create-alias \
+  --alias-name alias/prod-app-key \
+  --target-key-id arn:aws:kms:ap-southeast-1:123456789012:key/abc123
+
+# Grant cross-account access via key policy
+aws kms put-key-policy \
+  --key-id alias/prod-app-key \
+  --policy-name default \
+  --policy '{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "Enable IAM Root Access",
+        "Effect": "Allow",
+        "Principal": { "AWS": "arn:aws:iam::123456789012:root" },
+        "Action": "kms:*",
+        "Resource": "*"
+      },
+      {
+        "Sid": "Allow Cross Account Usage",
+        "Effect": "Allow",
+        "Principal": { "AWS": "arn:aws:iam::999888777666:role/app-role" },
+        "Action": ["kms:Decrypt", "kms:GenerateDataKey"],
+        "Resource": "*"
+      }
+    ]
+  }'
+
+# Envelope encryption example (encrypt data key with CMK)
+# 1. Generate data key
+aws kms generate-data-key \
+  --key-id alias/prod-app-key \
+  --key-spec AES_256
+
+# 2. Decrypt data key when needed
+aws kms decrypt \
+  --ciphertext-blob fileb://encrypted-data-key.bin \
+  --key-id alias/prod-app-key</code></pre>
+
+          <h3>Secrets Manager</h3>
+          <pre><code># Create a secret
+aws secretsmanager create-secret \
+  --name prod/myapp/db-credentials \
+  --description "Production database credentials" \
+  --secret-string '{"username":"admin","password":"S3cur3P@ssw0rd","host":"db.example.com","port":5432}' \
+  --kms-key-id alias/prod-app-key \
+  --tags Key=Environment,Value=prod
+
+# Retrieve secret value
+aws secretsmanager get-secret-value \
+  --secret-id prod/myapp/db-credentials \
+  --query SecretString \
+  --output text | python3 -m json.tool
+
+# Enable automatic rotation (requires a Lambda rotation function)
+aws secretsmanager rotate-secret \
+  --secret-id prod/myapp/db-credentials \
+  --rotation-lambda-arn arn:aws:lambda:ap-southeast-1:123456789012:function:SecretsManagerRotation \
+  --rotation-rules AutomaticallyAfterDays=30
+
+# Python boto3 — retrieve secret in application code
+import boto3
+import json
+
+def get_secret(secret_name: str, region: str = "ap-southeast-1") -> dict:
+    client = boto3.client("secretsmanager", region_name=region)
+    response = client.get_secret_value(SecretId=secret_name)
+    return json.loads(response["SecretString"])
+
+creds = get_secret("prod/myapp/db-credentials")
+db_host = creds["host"]
+db_pass = creds["password"]</code></pre>
+
+          <h3>Security Services Overview</h3>
+          <pre><code># Enable GuardDuty (threat detection)
+aws guardduty create-detector \
+  --enable \
+  --finding-publishing-frequency FIFTEEN_MINUTES \
+  --features '[{"Name":"S3_DATA_EVENTS","Status":"ENABLED"},{"Name":"EKS_AUDIT_LOGS","Status":"ENABLED"},{"Name":"MALWARE_PROTECTION","Status":"ENABLED"}]'
+
+# Enable Security Hub with standards
+aws securityhub enable-security-hub \
+  --enable-default-standards
+
+aws securityhub batch-enable-standards \
+  --standards-subscription-requests \
+    '[{"StandardsArn":"arn:aws:securityhub:ap-southeast-1::standards/cis-aws-foundations-benchmark/v/1.4.0"},
+      {"StandardsArn":"arn:aws:securityhub:ap-southeast-1::standards/aws-foundational-security-best-practices/v/1.0.0"}]'
+
+# Enable CloudTrail (management events + data events)
+aws cloudtrail create-trail \
+  --name prod-trail \
+  --s3-bucket-name prod-cloudtrail-logs-123456789012 \
+  --include-global-service-events \
+  --is-multi-region-trail \
+  --enable-log-file-validation \
+  --kms-key-id alias/prod-app-key
+
+aws cloudtrail start-logging --name prod-trail
+
+# AWS Config — enable recorder and conformance pack
+aws configservice put-configuration-recorder \
+  --configuration-recorder '{
+    "name": "default",
+    "roleARN": "arn:aws:iam::123456789012:role/config-role",
+    "recordingGroup": {
+      "allSupported": true,
+      "includeGlobalResourceTypes": true
+    }
+  }'</code></pre>
+
+          <!-- ==================== MONITORING ==================== -->
+          <h2>Monitoring</h2>
+
+          <h3>CloudWatch</h3>
+          <pre><code># Create CloudWatch alarm for high CPU
+aws cloudwatch put-metric-alarm \
+  --alarm-name "prod-ec2-high-cpu" \
+  --alarm-description "CPU above 80% for 5 minutes" \
+  --metric-name CPUUtilization \
+  --namespace AWS/EC2 \
+  --statistic Average \
+  --period 300 \
+  --threshold 80 \
+  --comparison-operator GreaterThanOrEqualToThreshold \
+  --evaluation-periods 2 \
+  --dimensions Name=AutoScalingGroupName,Value=prod-asg \
+  --alarm-actions arn:aws:sns:ap-southeast-1:123456789012:prod-alerts \
+  --ok-actions arn:aws:sns:ap-southeast-1:123456789012:prod-alerts
+
+# CloudWatch Logs Insights — query examples
+# Top 10 error messages in last hour
+aws logs start-query \
+  --log-group-name /aws/eks/prod-cluster/application \
+  --start-time $(date -d '1 hour ago' +%s) \
+  --end-time $(date +%s) \
+  --query-string '
+    fields @timestamp, @message
+    | filter @message like /ERROR/
+    | stats count(*) as error_count by @message
+    | sort error_count desc
+    | limit 10
+  '
+
+# P99 latency from ALB access logs
+aws logs start-query \
+  --log-group-name /aws/elasticloadbalancing/prod-alb \
+  --start-time $(date -d '1 hour ago' +%s) \
+  --end-time $(date +%s) \
+  --query-string '
+    fields @timestamp, target_processing_time
+    | filter elb_status_code >= 200
+    | stats pct(target_processing_time, 99) as p99_latency,
+            pct(target_processing_time, 95) as p95_latency,
+            avg(target_processing_time) as avg_latency
+            by bin(5m)
+  '
+
+# Container Insights — enable on EKS
+aws eks update-addon \
+  --cluster-name prod-cluster \
+  --addon-name amazon-cloudwatch-observability \
+  --addon-version v1.7.0-eksbuild.1
+
+# Create dashboard
+aws cloudwatch put-dashboard \
+  --dashboard-name prod-overview \
+  --dashboard-body file://dashboard.json</code></pre>
+
+          <div class="success-box">
+            <strong>AWS X-Ray:</strong> Enable distributed tracing by adding the X-Ray SDK to your application and the X-Ray daemon as a sidecar container in EKS pods. Use <code>aws xray get-service-graph</code> to visualize service dependencies and identify bottlenecks.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

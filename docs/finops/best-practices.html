@@ -3,258 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FinOps Best Practices | FinOps & Cloud Cost Optimization</title>
-
+  <title>FinOps Best Practices | Lê Bình Phương</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-
   <style>
-    :root {
-      --primary-color: #149ddd;
-      --secondary-color: #173b6c;
-      --text-color: #272829;
-      --bg-light: #f5f8fd;
-      --code-bg: #282c34;
-      --code-text: #abb2bf;
-    }
-
-    body {
-      font-family: 'Open Sans', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-color);
-      line-height: 1.8;
-    }
-
-    .sidebar {
-      position: sticky;
-      top: 20px;
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      height: fit-content;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h5 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .sidebar .nav-link {
-      color: var(--text-color);
-      padding: 0.5rem 0;
-      border-left: 3px solid transparent;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: block;
-    }
-
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active {
-      color: var(--primary-color);
-      border-left-color: var(--primary-color);
-      padding-left: 1rem;
-    }
-
-    .content {
-      background: white;
-      border-radius: 12px;
-      padding: 3rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      color: var(--secondary-color);
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
-
-    h2 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-top: 2.5rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--bg-light);
-    }
-
-    h3 {
-      color: var(--secondary-color);
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    code {
-      background: #f8f9fa;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      color: #e83e8c;
-    }
-
-    pre {
-      background: var(--code-bg);
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 1.5rem;
-      overflow-x: auto;
-      margin: 1.5rem 0;
-    }
-
-    pre code {
-      background: none;
-      padding: 0;
-      color: var(--code-text);
-      font-family: 'Courier New', monospace;
-    }
-
-    .navbar {
-      background: white;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb {
-      background: transparent;
-      padding: 0;
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb a {
-      color: var(--primary-color);
-      text-decoration: none;
-    }
-
-    .practice-card {
-      background: var(--bg-light);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1rem 0;
-      border-left: 4px solid var(--primary-color);
-    }
-
-    .practice-card h3 {
-      color: var(--primary-color);
-      margin-top: 0;
-      margin-bottom: 1rem;
-    }
-
-    .tip-box {
-      background: #e7f3ff;
-      border-left: 4px solid #007bff;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
-
-    .warning-box {
-      background: #fff3cd;
-      border-left: 4px solid #ffc107;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
-
-    .success-box {
-      background: #d4edda;
-      border-left: 4px solid #28a745;
-      padding: 1rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 6px;
-    }
-
-    .strategy-card {
-      background: var(--bg-light);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1rem 0;
-      border-left: 4px solid var(--primary-color);
-    }
-
-    .strategy-card h4 {
-      color: var(--primary-color);
-      margin-bottom: 0.5rem;
-    }
-
-    .do-list {
-      background: #d4edda;
-      border-left: 4px solid #28a745;
-      padding: 1rem 1.5rem;
-      margin: 1rem 0;
-    }
-
-    .dont-list {
-      background: #f8d7da;
-      border-left: 4px solid #dc3545;
-      padding: 1rem 1.5rem;
-      margin: 1rem 0;
-    }
-
-    .implementation-steps {
-      counter-reset: step-counter;
-      margin: 2rem 0;
-    }
-
-    .implementation-step {
-      counter-increment: step-counter;
-      margin-bottom: 1.5rem;
-      padding: 1.5rem;
-      background: white;
-      border-radius: 8px;
-      border: 2px solid #e9ecef;
-      position: relative;
-    }
-
-    .implementation-step::before {
-      content: counter(step-counter);
-      position: absolute;
-      top: -15px;
-      left: 20px;
-      background: var(--primary-color);
-      color: white;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-
-    .case-study {
-      background: linear-gradient(135deg, var(--bg-light) 0%, white 100%);
-      border-radius: 12px;
-      padding: 2rem;
-      margin: 2rem 0;
-      border: 2px solid var(--primary-color);
-      position: relative;
-    }
-
-    .case-study::before {
-      content: "💡";
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 2rem;
-    }
-
-    .case-study h4 {
-      color: var(--primary-color);
-      margin-bottom: 1rem;
-      font-size: 1.3rem;
-    }
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .savings-badge { background: #28a745; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
       <div class="container">
@@ -266,8 +48,6 @@
   </nav>
 
   <div class="container">
-
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
@@ -278,517 +58,781 @@
     </nav>
 
     <div class="row">
-
-      <!-- Sidebar -->
       <div class="col-lg-3">
         <div class="sidebar">
-          <h5><i class="bi bi-cash-stack me-2"></i>FinOps</h5>
+          <h5><i class="bi bi-cash-coin me-2"></i>FinOps</h5>
           <nav class="nav flex-column">
             <a class="nav-link" href="index.html">Overview</a>
-            <a class="nav-link" href="concepts.html">Core Concepts</a>
+            <a class="nav-link" href="concepts.html">Concepts</a>
             <a class="nav-link active" href="best-practices.html">Best Practices</a>
-            <a class="nav-link" href="tools.html">Tools & Platforms</a>
           </nav>
         </div>
       </div>
 
-      <!-- Main Content -->
       <div class="col-lg-9">
         <div class="content">
-          <h1><i class="bi bi-star-fill me-2"></i>FinOps Best Practices</h1>
+          <h1><i class="bi bi-check2-all me-2"></i>Cost Optimization Best Practices</h1>
 
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Optimization order matters:</strong> Start with rightsizing and waste elimination (free, immediate savings), then purchase commitments (Reserved Instances / Savings Plans), then architectural optimizations (Spot instances, storage tiering). Never buy commitments before rightsizing — you lock in inefficiency.
+          </div>
+
+          <h2>1. Rightsizing</h2>
           <p>
-            This comprehensive guide covers proven FinOps best practices, implementation strategies, and real-world examples.
-            Learn how to implement effective cloud cost management and optimization in your organization.
+            Rightsizing means selecting the correct resource size for your actual workload. Over-provisioning is endemic in cloud environments — teams request large instances "just in case" and never revisit them. Studies show 30–40% of cloud compute spend is typically wasted on over-provisioned resources.
           </p>
 
-          <div class="success-box">
-            <strong>🎯 FinOps Success Principles:</strong>
-            <ul>
-              <li><strong>Start with Visibility</strong> - You can't optimize what you can't see</li>
-              <li><strong>Everyone is Responsible</strong> - Cost awareness across all teams</li>
-              <li><strong>Data-Driven Decisions</strong> - Use metrics to guide optimization</li>
-              <li><strong>Iterate and Improve</strong> - Continuous cost optimization process</li>
-              <li><strong>Celebrate Success</strong> - Share cost savings and lessons learned</li>
-            </ul>
-          </div>
+          <h3>Identifying Oversized Instances</h3>
+          <p>Use native cloud tools to find rightsizing opportunities automatically:</p>
 
-          <h2>Implementation Roadmap</h2>
+          <pre><code># AWS Compute Optimizer — query recommendations via CLI
+aws compute-optimizer get-ec2-instance-recommendations \
+  --region us-east-1 \
+  --query 'instanceRecommendations[?finding == `OVER_PROVISIONED`].{
+    Instance: instanceArn,
+    Current: currentInstanceType,
+    Recommended: recommendationOptions[0].instanceType,
+    MonthlySavings: recommendationOptions[0].estimatedMonthlySavings.value
+  }' \
+  --output table
 
-          <div class="implementation-steps">
-            <div class="implementation-step">
-              <h3>Establish Cost Visibility</h3>
-              <p>Implement comprehensive cost monitoring and tagging to understand current spending patterns.</p>
-              <ul>
-                <li>Deploy cost allocation tags on all resources</li>
-                <li>Set up real-time cost monitoring dashboards</li>
-                <li>Configure budget alerts and notifications</li>
-                <li>Create cost reports by team, project, and environment</li>
-              </ul>
-            </div>
+# Example output:
+# Instance           | Current     | Recommended | MonthlySavings
+# i-0abc123...prod   | m5.2xlarge  | m5.large    | $127.44
+# i-0def456...api    | c5.4xlarge  | c5.xlarge   | $203.76
+# i-0ghi789...worker | r5.xlarge   | r5.large    | $89.20
 
-            <div class="implementation-step">
-              <h3>Implement Cost Controls</h3>
-              <p>Establish governance policies and automated controls to prevent cost overruns.</p>
-              <ul>
-                <li>Set resource usage limits and quotas</li>
-                <li>Implement approval workflows for expensive resources</li>
-                <li>Create instance type and region restrictions</li>
-                <li>Establish mandatory tagging policies</li>
-              </ul>
-            </div>
+# GCP Recommender — list rightsizing recommendations
+gcloud recommender recommendations list \
+  --recommender=google.compute.instance.MachineTypeRecommender \
+  --project=my-project \
+  --location=us-central1-a \
+  --format='table(name,stateInfo.state,primaryImpact.costProjection.cost.units,content.operationGroups)'
+</code></pre>
 
-            <div class="implementation-step">
-              <h3>Optimize Resource Usage</h3>
-              <p>Right-size resources and implement cost optimization measures.</p>
-              <ul>
-                <li>Conduct resource utilization assessments</li>
-                <li>Implement auto-scaling for variable workloads</li>
-                <li>Purchase reserved instances and savings plans</li>
-                <li>Optimize storage classes and lifecycle policies</li>
-              </ul>
-            </div>
+          <h3>Rightsizing Workflow</h3>
+          <ol>
+            <li><strong>Collect 2–4 weeks of CPU, memory, and network utilization data</strong> — short windows miss weekly patterns</li>
+            <li><strong>Set thresholds:</strong> Flag instances with CPU &lt;20% p90 AND memory &lt;40% p90 as rightsizing candidates</li>
+            <li><strong>Validate with the owning team:</strong> Some instances have intentional headroom (burst capacity, maintenance jobs)</li>
+            <li><strong>Test in staging first:</strong> Downsize in staging, run load tests, then apply to production</li>
+            <li><strong>Apply during low-traffic windows:</strong> Resize requires a stop/start cycle for EC2</li>
+            <li><strong>Track savings:</strong> Record the before/after cost impact for reporting</li>
+          </ol>
 
-            <div class="implementation-step">
-              <h3>Build Cost-Aware Culture</h3>
-              <p>Foster a culture of cost awareness and accountability across teams.</p>
-              <ul>
-                <li>Provide cost training and education</li>
-                <li>Share cost optimization success stories</li>
-                <li>Implement regular cost review meetings</li>
-                <li>Create cost-aware architecture patterns</li>
-              </ul>
-            </div>
+          <h3>Auto-Remediation for Dev Environments</h3>
+          <pre><code"># Lambda function to auto-rightsize dev instances (Python)
+# Triggered weekly by EventBridge
 
-            <div class="implementation-step">
-              <h3>Continuous Optimization</h3>
-              <p>Establish ongoing processes for cost monitoring and optimization.</p>
-              <ul>
-                <li>Implement automated cost optimization tools</li>
-                <li>Regular cost analysis and forecasting</li>
-                <li>Continuous improvement of cost management processes</li>
-                <li>Measure and track cost optimization ROI</li>
-              </ul>
-            </div>
-          </div>
-
-          <h2>Tagging Strategies</h2>
-
-          <h3>Mandatory Tagging Policy</h3>
-          <div class="practice-card">
-            <h3>Enforce Consistent Resource Tagging</h3>
-
-            <div class="do-list">
-              <strong>✅ Required Tags:</strong>
-              <ul>
-                <li><code>Environment</code>: dev, staging, prod, test</li>
-                <li><code>Team</code>: engineering, marketing, finance, devops</li>
-                <li><code>Project</code>: project-name, application-name</li>
-                <li><code>Owner</code>: team@company.com, individual@company.com</li>
-                <li><code>Cost-Center</code>: finance code or department ID</li>
-              </ul>
-            </div>
-
-            <div class="dont-list">
-              <strong>❌ Avoid:</strong>
-              <ul>
-                <li>Optional tagging (leads to incomplete data)</li>
-                <li>Too many mandatory tags (causes resistance)</li>
-                <li>Inconsistent tag values (dev vs development)</li>
-                <li>Tags without enforcement (no compliance)</li>
-              </ul>
-            </div>
-          </div>
-
-          <h3>Automated Tagging</h3>
-          <div class="strategy-card">
-            <h4>Implement Tagging Automation</h4>
-            <p>Use infrastructure as code and deployment pipelines to ensure consistent tagging.</p>
-            <pre><code># Terraform - Automated tagging
-resource "aws_instance" "web" {
-  ami           = "ami-12345"
-  instance_type = "t3.micro"
-
-  tags = {
-    Name        = "web-server"
-    Environment = var.environment
-    Team        = "engineering"
-    Project     = "ecommerce"
-    Owner       = "platform@company.com"
-    Cost-Center = "CC-001"
-  }
-}
-
-# AWS Config Rule - Enforce tagging
-resource "aws_config_config_rule" "required_tags" {
-  name = "required-tags"
-
-  source {
-    owner             = "AWS"
-    source_identifier = "REQUIRED_TAGS"
-  }
-
-  input_parameters = jsonencode({
-    tag1Key   = "Environment"
-    tag2Key   = "Team"
-    tag3Key   = "Project"
-    tag4Key   = "Owner"
-  })
-}</code></pre>
-          </div>
-
-          <h2>Cost Optimization Techniques</h2>
-
-          <h3>Compute Optimization</h3>
-          <div class="practice-card">
-            <h3>Right-Sizing Instances</h3>
-
-            <div class="do-list">
-              <strong>✅ Right-Sizing Process:</strong>
-              <ol>
-                <li>Monitor resource utilization (CPU, memory, disk)</li>
-                <li>Identify over-provisioned instances</li>
-                <li>Test performance with smaller instance types</li>
-                <li>Implement gradual changes with rollback plans</li>
-                <li>Monitor application performance post-change</li>
-              </ol>
-            </div>
-
-            <pre><code># AWS Instance Right-Sizing Commands
-# Check current utilization
-aws cloudwatch get-metric-statistics \
-  --namespace AWS/EC2 \
-  --metric-name CPUUtilization \
-  --dimensions Name=InstanceId,Value=i-1234567890 \
-  --start-time 2024-01-01T00:00:00Z \
-  --end-time 2024-01-07T23:59:59Z \
-  --period 3600 \
-  --statistics Average Maximum
-
-# Resize instance
-aws ec2 modify-instance-attribute \
-  --instance-id i-1234567890 \
-  --instance-type t3.small</code></pre>
-          </div>
-
-          <h3>Storage Optimization</h3>
-          <div class="strategy-card">
-            <h4>Implement Storage Lifecycle Policies</h4>
-            <pre><code># AWS S3 Lifecycle Configuration
-{
-  "Rules": [
-    {
-      "ID": "Move old objects to IA",
-      "Status": "Enabled",
-      "Prefix": "logs/",
-      "Transitions": [
-        {
-          "Days": 30,
-          "StorageClass": "STANDARD_IA"
-        },
-        {
-          "Days": 90,
-          "StorageClass": "GLACIER"
-        }
-      ]
-    },
-    {
-      "ID": "Delete old temporary files",
-      "Status": "Enabled",
-      "Prefix": "temp/",
-      "Expiration": {
-        "Days": 7
-      }
-    }
-  ]
-}
-
-# EBS Snapshot Lifecycle
-# Delete snapshots older than 30 days
-aws ec2 describe-snapshots --owner-ids self \
-  --query 'Snapshots[?StartTime<`2024-01-01`].SnapshotId' \
-  --output text | xargs -I {} aws ec2 delete-snapshot --snapshot-id {}</code></pre>
-          </div>
-
-          <h3>Reserved Instances Strategy</h3>
-          <div class="practice-card">
-            <h3>RI Purchase Strategy</h3>
-
-            <div class="do-list">
-              <strong>✅ RI Best Practices:</strong>
-              <ul>
-                <li>Analyze 1-3 months of usage data</li>
-                <li>Focus on steady-state workloads</li>
-                <li>Start with 1-year convertible RIs</li>
-                <li>Use cost calculators to compare options</li>
-                <li>Monitor RI utilization and coverage</li>
-                <li>Plan RI purchases quarterly</li>
-              </ul>
-            </div>
-
-            <div class="dont-list">
-              <strong>❌ Avoid:</strong>
-              <ul>
-                <li>Purchasing RIs for unpredictable workloads</li>
-                <li>Buying 3-year RIs without testing</li>
-                <li>Ignoring changing workload patterns</li>
-                <li>Not monitoring RI utilization</li>
-              </ul>
-            </div>
-          </div>
-
-          <h2>Automation & Orchestration</h2>
-
-          <h3>Scheduled Resource Management</h3>
-          <div class="strategy-card">
-            <h4>Auto-Start/Stop for Development Environments</h4>
-            <pre><code># AWS Lambda - Auto-stop development instances
 import boto3
-import datetime
 
 def lambda_handler(event, context):
-    ec2 = boto3.client('ec2')
+    ec2 = boto3.client('ec2', region_name='us-east-1')
+    cw = boto3.client('cloudwatch')
 
-    # Stop instances tagged as 'auto-stop'
-    instances = ec2.describe_instances(
-        Filters=[
-            {'Name': 'tag:Auto-Stop', 'Values': ['true']},
-            {'Name': 'instance-state-name', 'Values': ['running']}
-        ]
-    )
+    # Find all dev instances
+    instances = ec2.describe_instances(Filters=[
+        {'Name': 'tag:Environment', 'Values': ['dev']},
+        {'Name': 'instance-state-name', 'Values': ['running']}
+    ])
 
-    instance_ids = []
+    # Instance family downsizing map
+    downsize_map = {
+        't3.2xlarge': 't3.xlarge',
+        't3.xlarge':  't3.large',
+        'm5.2xlarge': 'm5.large',
+        'm5.xlarge':  'm5.large',
+    }
+
     for reservation in instances['Reservations']:
         for instance in reservation['Instances']:
-            instance_ids.append(instance['InstanceId'])
+            instance_id   = instance['InstanceId']
+            current_type  = instance['InstanceType']
+            target_type   = downsize_map.get(current_type)
 
-    if instance_ids:
-        ec2.stop_instances(InstanceIds=instance_ids)
-        print(f"Stopped instances: {instance_ids}")
+            if not target_type:
+                continue
 
-# CloudWatch Event Rule (cron expression for 6 PM weekdays)
-# cron(0 18 ? * MON-FRI *)</code></pre>
-          </div>
+            # Check 14-day avg CPU
+            metrics = cw.get_metric_statistics(
+                Namespace='AWS/EC2',
+                MetricName='CPUUtilization',
+                Dimensions=[{'Name': 'InstanceId', 'Value': instance_id}],
+                StartTime='2025-02-12T00:00:00Z',
+                EndTime='2025-02-26T00:00:00Z',
+                Period=1209600,  # 14 days
+                Statistics=['Average']
+            )
+            avg_cpu = metrics['Datapoints'][0]['Average'] if metrics['Datapoints'] else 100
 
-          <h3>Cost Anomaly Detection</h3>
-          <div class="strategy-card">
-            <h4>Automated Cost Alerting</h4>
-            <pre><code># AWS Cost Anomaly Detection
-# Create monitor
-aws ce create-anomaly-monitor \
-  --monitor-name "EC2-Monitor" \
-  --type DIMENSIONAL \
-  --monitor-dimension SERVICE
+            if avg_cpu &lt; 20:
+                print(f"Rightsizing {instance_id}: {current_type} → {target_type} (avg CPU: {avg_cpu:.1f}%)")
+                ec2.stop_instances(InstanceIds=[instance_id])
+                # wait for stop, then modify and start (simplified)
+                ec2.modify_instance_attribute(
+                    InstanceId=instance_id,
+                    Attribute='instanceType',
+                    Value=target_type
+                )
+                ec2.start_instances(InstanceIds=[instance_id])
+</code></pre>
 
-# Create subscription
-aws ce create-anomaly-subscription \
-  --subscription-name "Cost-Alerts" \
-  --frequency DAILY \
-  --monitor-arn arn:aws:ce:us-east-1:123456789012:anomalymonitor/monitor-id \
-  --subscribers SubscriberType=EMAIL,Address=finance@company.com \
-  --threshold 10
+          <h2>2. Reserved Instances &amp; Committed Use Discounts</h2>
+          <p>
+            After rightsizing, purchasing commitments is the highest-ROI FinOps action for stable workloads. The key rule: <strong>commit to what you know you will always run</strong>. Cover your minimum 24/7 baseline with reservations; let on-demand or Spot cover variable burst traffic.
+          </p>
 
-# Set up alerts for:
-# - Daily spend > $X
-# - Service cost increase > Y%
-# - Resource cost spike
-# - Budget threshold breaches</code></pre>
-          </div>
-
-          <h2>Team Organization</h2>
-
-          <h3>FinOps Center of Excellence</h3>
-          <div class="practice-card">
-            <h3>Centralized FinOps Team</h3>
-            <p>Create a dedicated team responsible for enterprise-wide FinOps practices.</p>
-
-            <h4>Team Responsibilities:</h4>
-            <ul>
-              <li>Develop and maintain FinOps tools and processes</li>
-              <li>Provide training and support to engineering teams</li>
-              <li>Monitor enterprise cost trends and anomalies</li>
-              <li>Implement cost optimization initiatives</li>
-              <li>Collaborate with finance and procurement teams</li>
-            </ul>
-
-            <h4>Team Composition:</h4>
-            <ul>
-              <li>FinOps Engineer/Architect</li>
-              <li>Cloud Cost Analyst</li>
-              <li>DevOps Engineer</li>
-              <li>Data Engineer (for cost analytics)</li>
-              <li>Finance Business Partner</li>
-            </ul>
-          </div>
-
-          <h3>Embedded FinOps</h3>
-          <div class="practice-card">
-            <h3>FinOps Champions in Teams</h3>
-            <p>Train team members to be FinOps advocates within their squads.</p>
-
-            <h4>Champion Responsibilities:</h4>
-            <ul>
-              <li>Educate team members about cost implications</li>
-              <li>Review architecture decisions for cost efficiency</li>
-              <li>Implement cost monitoring for team projects</li>
-              <li>Participate in cost optimization initiatives</li>
-              <li>Share cost-saving success stories</li>
-            </ul>
-          </div>
-
-          <h2>Reporting & Communication</h2>
-
-          <h3>Cost Reports</h3>
-          <div class="practice-card">
-            <h3>Regular Cost Reporting</h3>
-
-            <div class="do-list">
-              <strong>✅ Report Types:</strong>
-              <ul>
-                <li><strong>Daily Cost Dashboard</strong> - Real-time spending visibility</li>
-                <li><strong>Weekly Team Reports</strong> - Cost by team and project</li>
-                <li><strong>Monthly Executive Summary</strong> - Business unit and department costs</li>
-                <li><strong>Quarterly Trend Analysis</strong> - Cost optimization progress</li>
-                <li><strong>Ad-hoc Analysis</strong> - Deep dives into specific cost drivers</li>
-              </ul>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>AWS Reserved Instances</h4>
+                <ul>
+                  <li><strong>Standard RI:</strong> Locked to specific instance family, size, OS, and region. Highest discount (up to 72%). Not exchangeable.</li>
+                  <li><strong>Convertible RI:</strong> Can exchange for different instance types/sizes during term. Lower discount (up to 54%). Best for evolving architectures.</li>
+                  <li><strong>1-year vs 3-year:</strong> 3-year saves ~40% more but increases commitment risk. Use 1-year for services with uncertain lifetime.</li>
+                  <li><strong>Payment:</strong> All Upfront &gt; Partial Upfront &gt; No Upfront. All Upfront gives maximum discount; use it only when cash flow allows.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>GCP Committed Use Discounts</h4>
+                <ul>
+                  <li><strong>Resource-based CUDs:</strong> Commit to a specific amount of vCPU and RAM in a region. Up to 57% discount for 3-year.</li>
+                  <li><strong>Spend-based CUDs:</strong> Commit to a minimum dollar spend per hour. Applies to Cloud SQL, VMware Engine, and some other services.</li>
+                  <li><strong>Flexibility:</strong> CUDs apply across all machine types in a family — more flexible than AWS Standard RIs.</li>
+                  <li><strong>Sustained Use Discounts:</strong> Remember GCP auto-applies up to 30% for always-on instances before CUDs are even needed.</li>
+                </ul>
+              </div>
             </div>
           </div>
 
-          <h3>Cost Review Meetings</h3>
+          <h3>Analyzing Before Purchasing RIs</h3>
+          <pre><code># Before purchasing any RI, analyze your coverage and utilization
+# Use AWS Cost Explorer RI recommendations
+
+aws ce get-reservation-purchase-recommendation \
+  --service "Amazon EC2" \
+  --lookback-period-in-days SIXTY_DAYS \
+  --term-in-years ONE_YEAR \
+  --payment-option PARTIAL_UPFRONT \
+  --account-scope PAYER \
+  --query 'Recommendations[*].{
+    InstanceType: RecommendationDetails[0].InstanceDetails.EC2InstanceDetails.InstanceType,
+    Platform: RecommendationDetails[0].InstanceDetails.EC2InstanceDetails.Platform,
+    RecommendedCount: RecommendationDetails[0].RecommendedNumberOfInstancesToPurchase,
+    MonthlySavings: RecommendationSummary.TotalEstimatedMonthlySavingsAmount,
+    Coverage: RecommendationSummary.CurrentAverageCoverage
+  }' \
+  --output table
+
+# Coverage target: 70-80% of baseline compute
+# Anything above 80% risks wasted RIs if workloads change
+
+# Check current RI utilization (avoid buying more if utilization is &lt;80%)
+aws ce get-reservation-utilization \
+  --time-period Start=2025-02-01,End=2025-03-01 \
+  --query 'Total.{Utilization: UtilizationPercentage, Savings: NetSavings}'
+</code></pre>
+
+          <h2>3. AWS Savings Plans</h2>
+          <p>Savings Plans are more flexible than RIs — you commit to a $/hour compute spend level rather than specific instance types. This makes them easier to manage as your infrastructure evolves.</p>
+
           <div class="strategy-card">
-            <h4>Regular Cost Review Cadence</h4>
-            <pre><code># Cost Review Meeting Structure
-
-Weekly Team Reviews:
-├── Review past week's spending
-├── Identify cost anomalies
-├── Discuss upcoming deployments
-├── Plan cost optimization actions
-└── 30-minute meetings
-
-Monthly Department Reviews:
-├── Cross-team cost analysis
-├── Budget vs actual comparison
-├── Cost optimization progress
-├── Policy and process updates
-└── 60-minute meetings
-
-Quarterly Executive Reviews:
-├── Enterprise cost trends
-├── ROI analysis by project
-├── Strategic cost decisions
-├── Long-term cost optimization plans
-└── 90-minute meetings</code></pre>
+            <h4>Compute Savings Plans <span class="savings-badge">Up to 66% off</span></h4>
+            <p>Applies automatically to EC2 (any instance family, size, region, OS, tenancy), Fargate, and Lambda. The most flexible option. Ideal if you are migrating between instance families or running containers.</p>
           </div>
 
-          <h2>Case Studies</h2>
-
-          <div class="case-study">
-            <h4>E-commerce Platform Cost Optimization</h4>
-            <p><strong>Challenge:</strong> $500K monthly cloud spend with 40% resource waste</p>
-            <p><strong>Solution:</strong> Implemented comprehensive FinOps practices</p>
-            <ul>
-              <li>Right-sized 200+ EC2 instances (35% cost reduction)</li>
-              <li>Implemented auto-scaling for variable traffic</li>
-              <li>Migrated storage to appropriate classes (60% storage cost reduction)</li>
-              <li>Purchased RIs for baseline capacity (25% compute savings)</li>
-            </ul>
-            <p><strong>Result:</strong> 50% total cost reduction while improving performance</p>
+          <div class="strategy-card">
+            <h4>EC2 Instance Savings Plans <span class="savings-badge">Up to 72% off</span></h4>
+            <p>Committed to a specific EC2 instance family in a specific region (e.g., m5 in us-east-1). Higher discount than Compute Savings Plans. Applies regardless of size, OS, or tenancy within that family.</p>
           </div>
 
-          <div class="case-study">
-            <h4>Financial Services Compliance & Cost Control</h4>
-            <p><strong>Challenge:</strong> Strict compliance requirements with high cloud costs</p>
-            <p><strong>Solution:</strong> Automated governance and cost controls</p>
-            <ul>
-              <li>Implemented mandatory tagging with automated enforcement</li>
-              <li>Set up approval workflows for non-compliant resources</li>
-              <li>Created cost budgets with automated shutdown policies</li>
-              <li>Established regular compliance audits and reporting</li>
-            </ul>
-            <p><strong>Result:</strong> 30% cost reduction with 100% compliance maintained</p>
+          <div class="strategy-card">
+            <h4>SageMaker Savings Plans <span class="savings-badge">Up to 64% off</span></h4>
+            <p>Applies to SageMaker instance usage for training, real-time inference, and batch transform. Essential if you have stable ML workloads.</p>
           </div>
 
-          <div class="case-study">
-            <h4>Startup Growth Without Cost Explosion</h4>
-            <p><strong>Challenge:</strong> Rapid user growth causing exponential cost increases</p>
-            <p><strong>Solution:</strong> Built cost-aware culture from day one</p>
-            <ul>
-              <li>Implemented cost monitoring in CI/CD pipelines</li>
-              <li>Created cost budgets for each environment</li>
-              <li>Educated developers on cost implications of architecture decisions</li>
-              <li>Established cost review as part of sprint planning</li>
-            </ul>
-            <p><strong>Result:</strong> 70% user growth with only 40% cost increase</p>
-          </div>
+          <h3>Savings Plans Purchase Strategy</h3>
+          <pre><code># Step 1: Identify your stable compute baseline (minimum hourly spend)
+aws ce get-savings-plans-purchase-recommendation \
+  --savings-plans-type COMPUTE_SP \
+  --term-in-years ONE_YEAR \
+  --payment-option NO_UPFRONT \
+  --lookback-period-in-days SIXTY_DAYS \
+  --query 'SavingsPlansPurchaseRecommendation.{
+    HourlyCommitment: SavingsPlansPurchaseRecommendationDetails[0].HourlyCommitmentToPurchase,
+    MonthlySavings: SavingsPlansPurchaseRecommendationSummary.EstimatedMonthlySavingsAmount,
+    Coverage: SavingsPlansPurchaseRecommendationSummary.CurrentAverageCoveragePercentage
+  }'
 
-          <h2>Common Pitfalls & Solutions</h2>
+# Step 2: Review coverage vs utilization ratio
+# Purchase in tranches: buy 50% of recommended, evaluate, then buy more
+# This prevents over-commitment if workloads shrink
+
+# Step 3: Check Savings Plans utilization monthly
+aws ce get-savings-plans-utilization \
+  --time-period Start=2025-02-01,End=2025-03-01 \
+  --query 'Total.{Utilization: UtilizationPercentage, NetSavings: Savings.NetSavings}'
+</code></pre>
+
+          <h2>4. Spot / Preemptible Instances</h2>
+          <p>
+            Spot Instances (AWS) and Preemptible VMs (GCP) offer the largest discounts available in cloud computing — 60–90% below on-demand. The tradeoff: they can be reclaimed with short notice when the cloud provider needs the capacity back.
+          </p>
+
+          <h3>Ideal Spot Workloads</h3>
+          <ul>
+            <li>Batch processing jobs (ETL, data transformation, report generation)</li>
+            <li>ML/AI model training (checkpoint your model state every epoch)</li>
+            <li>CI/CD build runners and test executors</li>
+            <li>Stateless web tier nodes behind a load balancer (with graceful shutdown)</li>
+            <li>Development and staging environments (tolerate interruptions)</li>
+            <li>Video transcoding and image processing pipelines</li>
+          </ul>
+
+          <h3>Spot Interruption Handling (AWS EC2)</h3>
+          <pre><code">#!/bin/bash
+# /etc/spot-interruption-handler.sh
+# Runs as a background service on every Spot instance
+
+while true; do
+  # AWS provides 2-minute notice via instance metadata
+  HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+    http://169.254.169.254/latest/meta-data/spot/instance-action)
+
+  if [ "$HTTP_STATUS" = "200" ]; then
+    TERMINATION_TIME=$(curl -s \
+      http://169.254.169.254/latest/meta-data/spot/instance-action | jq -r '.time')
+
+    echo "Spot termination notice received at $(date). Scheduled for: $TERMINATION_TIME"
+
+    # 1. Deregister from load balancer (if applicable)
+    INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+    aws elbv2 deregister-targets \
+      --target-group-arn "$TARGET_GROUP_ARN" \
+      --targets "Id=$INSTANCE_ID"
+
+    # 2. Complete or drain current work
+    # (application-specific — emit a SIGTERM to your app)
+    kill -TERM $(pgrep -f my-worker-process)
+
+    # 3. Checkpoint any stateful work to S3
+    aws s3 sync /tmp/checkpoints/ "s3://my-checkpoints/${INSTANCE_ID}/"
+
+    # 4. Drain SQS messages back to queue (if applicable)
+    # Your worker should handle SIGTERM to ack or reject current message
+
+    echo "Graceful shutdown complete"
+    break
+  fi
+  sleep 5
+done
+</code></pre>
+
+          <h3>Mixed Instance Groups (EKS Node Groups)</h3>
+          <pre><code"># Terraform: EKS node group with Spot + On-Demand mix
+resource "aws_eks_node_group" "mixed" {
+  cluster_name    = aws_eks_cluster.main.name
+  node_group_name = "mixed-spot-ondemand"
+  node_role_arn   = aws_iam_role.node.arn
+  subnet_ids      = var.private_subnet_ids
+
+  capacity_type = "SPOT"  # Primary: Spot instances
+
+  instance_types = [
+    "m5.large", "m5.xlarge", "m4.large", "m4.xlarge",
+    "t3.large", "t3.xlarge",  # Multiple types = more Spot availability
+  ]
+
+  scaling_config {
+    desired_size = 10
+    min_size     = 3
+    max_size     = 50
+  }
+
+  # Use On-Demand for critical system pods (taint Spot nodes)
+  taint {
+    key    = "node.kubernetes.io/capacity-type"
+    value  = "spot"
+    effect = "NO_SCHEDULE"
+  }
+
+  labels = {
+    "node.kubernetes.io/capacity-type" = "spot"
+  }
+}
+
+# Separate On-Demand node group for critical workloads
+resource "aws_eks_node_group" "ondemand_critical" {
+  cluster_name    = aws_eks_cluster.main.name
+  node_group_name = "ondemand-critical"
+  capacity_type   = "ON_DEMAND"
+  instance_types  = ["m5.large"]
+
+  scaling_config {
+    desired_size = 3
+    min_size     = 3
+    max_size     = 10
+  }
+}
+</code></pre>
+
+          <h2>5. Storage Optimization</h2>
+
+          <h3>S3 Intelligent-Tiering and Lifecycle Policies</h3>
+          <pre><code"># Terraform: S3 bucket with comprehensive lifecycle rules
+resource "aws_s3_bucket_lifecycle_configuration" "data_lifecycle" {
+  bucket = aws_s3_bucket.data.id
+
+  rule {
+    id     = "intelligent-tiering-for-active-data"
+    status = "Enabled"
+
+    transition {
+      days          = 0
+      storage_class = "INTELLIGENT_TIERING"
+    }
+  }
+
+  rule {
+    id     = "archive-old-logs"
+    status = "Enabled"
+    filter { prefix = "logs/" }
+
+    transition {
+      days          = 30
+      storage_class = "STANDARD_IA"    # Infrequent Access after 30 days
+    }
+    transition {
+      days          = 90
+      storage_class = "GLACIER"        # Glacier after 90 days (~$0.004/GB/mo)
+    }
+    transition {
+      days          = 365
+      storage_class = "DEEP_ARCHIVE"   # Deep Archive after 1 year (~$0.00099/GB/mo)
+    }
+    expiration {
+      days = 2555  # Delete after 7 years (compliance requirement)
+    }
+  }
+
+  rule {
+    id     = "delete-incomplete-multipart"
+    status = "Enabled"
+
+    abort_incomplete_multipart_upload { days_after_initiation = 7 }
+  }
+
+  rule {
+    id     = "clean-old-versions"
+    status = "Enabled"
+
+    noncurrent_version_transition {
+      noncurrent_days = 30
+      storage_class   = "GLACIER"
+    }
+    noncurrent_version_expiration {
+      noncurrent_days = 90
+    }
+  }
+}
+</code></pre>
+
+          <h3>EBS Volume Cleanup Script</h3>
+          <pre><code">#!/usr/bin/env python3
+# Find and report unattached EBS volumes (potential waste)
+
+import boto3
+import csv
+from datetime import datetime
+
+def find_unattached_ebs():
+    ec2 = boto3.client('ec2', region_name='us-east-1')
+    pricing = boto3.client('pricing', region_name='us-east-1')
+
+    volumes = ec2.describe_volumes(
+        Filters=[{'Name': 'status', 'Values': ['available']}]  # Not attached
+    )['Volumes']
+
+    # GP3 cost: $0.08/GB/month
+    cost_per_gb = {'gp3': 0.08, 'gp2': 0.10, 'io1': 0.125, 'st1': 0.045, 'sc1': 0.025}
+
+    total_waste = 0
+    report = []
+
+    for vol in volumes:
+        vol_type = vol['VolumeType']
+        size_gb  = vol['Size']
+        monthly  = size_gb * cost_per_gb.get(vol_type, 0.10)
+        total_waste += monthly
+
+        tags = {t['Key']: t['Value'] for t in vol.get('Tags', [])}
+
+        report.append({
+            'VolumeId': vol['VolumeId'],
+            'Size':     f"{size_gb} GB",
+            'Type':     vol_type,
+            'Region':   'us-east-1',
+            'Team':     tags.get('Team', 'UNTAGGED'),
+            'Created':  vol['CreateTime'].strftime('%Y-%m-%d'),
+            'MonthlyWaste': f"${monthly:.2f}"
+        })
+
+    print(f"\nTotal unattached EBS volumes: {len(volumes)}")
+    print(f"Total monthly waste: ${total_waste:,.2f}")
+    print(f"\nTop wasteful volumes:")
+    for r in sorted(report, key=lambda x: float(x['MonthlyWaste'][1:]), reverse=True)[:10]:
+        print(f"  {r['VolumeId']}: {r['Size']} {r['Type']} - {r['MonthlyWaste']}/mo (Team: {r['Team']})")
+
+    # Write CSV for team review
+    with open('unattached-ebs-report.csv', 'w') as f:
+        writer = csv.DictWriter(f, fieldnames=report[0].keys())
+        writer.writeheader()
+        writer.writerows(report)
+
+if __name__ == '__main__':
+    find_unattached_ebs()
+</code></pre>
+
+          <h2>6. Kubernetes Cost Optimization</h2>
+          <p>Kubernetes clusters are complex cost centers — costs are driven by node provisioning, pod scheduling efficiency, namespace resource quotas, and persistent storage. These optimizations typically yield 30–50% savings on K8s infrastructure.</p>
+
+          <h3>Cluster Autoscaler Configuration</h3>
+          <pre><code"># cluster-autoscaler Helm values (EKS)
+helm upgrade --install cluster-autoscaler autoscaler/cluster-autoscaler \
+  --namespace kube-system \
+  --set autoDiscovery.clusterName=my-cluster \
+  --set awsRegion=us-east-1 \
+  --set extraArgs.scale-down-enabled=true \
+  --set extraArgs.scale-down-delay-after-add=10m \
+  --set extraArgs.scale-down-unneeded-time=10m \
+  --set extraArgs.scale-down-utilization-threshold=0.5 \
+  --set extraArgs.skip-nodes-with-local-storage=false \
+  --set extraArgs.expander=least-waste  # Pack nodes efficiently before scaling out
+</code></pre>
+
+          <h3>Karpenter — Next-Generation Node Autoscaling</h3>
+          <pre><code"># karpenter/provisioner.yaml — intelligent node provisioning
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: default
+spec:
+  # Allow Spot and On-Demand, prefer Spot
+  requirements:
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values: ["spot", "on-demand"]
+    - key: node.kubernetes.io/instance-type
+      operator: In
+      values:
+        - m5.large
+        - m5.xlarge
+        - m5.2xlarge
+        - m4.large
+        - m4.xlarge
+        - t3.large
+        - t3.xlarge
+  # Consolidation: remove underutilized nodes automatically
+  consolidation:
+    enabled: true
+  # TTL: terminate empty nodes after 30 seconds
+  ttlSecondsAfterEmpty: 30
+  # TTL: rotate nodes after 30 days (security, patch compliance)
+  ttlSecondsUntilExpired: 2592000
+  limits:
+    resources:
+      cpu: "1000"
+      memory: 4000Gi
+  provider:
+    instanceProfile: KarpenterNodeInstanceProfile
+    subnetSelector:
+      karpenter.sh/discovery: my-cluster
+    securityGroupSelector:
+      karpenter.sh/discovery: my-cluster
+    tags:
+      ManagedBy: karpenter
+      Environment: prod
+</code></pre>
+
+          <h3>Namespace Resource Quotas</h3>
+          <pre><code"># Apply resource quotas per namespace to prevent runaway costs
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: team-backend-quota
+  namespace: team-backend
+spec:
+  hard:
+    requests.cpu: "20"
+    requests.memory: 40Gi
+    limits.cpu: "40"
+    limits.memory: 80Gi
+    persistentvolumeclaims: "20"
+    requests.storage: 500Gi
+    count/pods: "100"
+---
+# LimitRange: default requests/limits for pods without explicit settings
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: team-backend-limits
+  namespace: team-backend
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: "500m"
+        memory: "512Mi"
+      defaultRequest:
+        cpu: "100m"
+        memory: "128Mi"
+      max:
+        cpu: "4"
+        memory: "8Gi"
+</code></pre>
+
+          <h2>7. Network Cost Optimization</h2>
 
           <div class="warning-box">
-            <h5><i class="bi bi-exclamation-triangle me-2"></i>FinOps Implementation Mistakes</h5>
-            <ul>
-              <li><strong>Starting with Optimization</strong> - Begin with visibility, not cost cutting</li>
-              <li><strong>Finance-Only Ownership</strong> - FinOps requires engineering involvement</li>
-              <li><strong>One-Size-Fits-All Approach</strong> - Different teams need different strategies</li>
-              <li><strong>Ignoring Cultural Aspects</strong> - Technology alone doesn't change behavior</li>
-              <li><strong>Infrequent Reviews</strong> - Cost management requires regular attention</li>
-              <li><strong>Focus on Cost Over Value</strong> - Optimize for business value, not just cost</li>
-            </ul>
+            <strong>Hidden cost alert:</strong> Data transfer is one of the most overlooked cloud costs. AWS charges $0.09/GB for data leaving a region, and $0.01/GB for cross-AZ traffic. In high-throughput architectures, transfer costs can rival compute costs.
           </div>
 
-          <h2>Measuring Success</h2>
+          <h3>NAT Gateway vs VPC Endpoints</h3>
+          <pre><code"># VPC endpoints eliminate NAT Gateway data transfer costs for AWS services
+# NAT Gateway: $0.045/GB processed + $0.045/hour = expensive for S3/DynamoDB traffic
 
-          <h3>FinOps Maturity Metrics</h3>
-          <div class="practice-card">
-            <h3>Track Progress Over Time</h3>
+# Terraform: Interface endpoint for S3 (eliminates NAT GW traffic)
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.us-east-1.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = aws_route_table.private[*].id
 
-            <h4>Inform Phase Metrics:</h4>
-            <ul>
-              <li>% of resources properly tagged</li>
-              <li>Time to detect cost anomalies</li>
-              <li>Cost reporting accuracy</li>
-              <li>Budget vs actual variance</li>
-            </ul>
+  tags = { Name = "s3-endpoint" }
+}
 
-            <h4>Optimize Phase Metrics:</h4>
-            <ul>
-              <li>Resource utilization rates</li>
-              <li>Cost per unit metrics</li>
-              <li>% spend on reservations/savings plans</li>
-              <li>Cost optimization ROI</li>
-            </ul>
+resource "aws_vpc_endpoint" "dynamodb" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.us-east-1.dynamodb"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = aws_route_table.private[*].id
+}
 
-            <h4>Operate Phase Metrics:</h4>
-            <ul>
-              <li>% automated cost controls</li>
-              <li>Time to implement cost optimizations</li>
-              <li>Team cost awareness survey results</li>
-              <li>Cost management process efficiency</li>
-            </ul>
-          </div>
+# Interface endpoints for ECR (eliminates NAT GW costs for container pulls)
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.us-east-1.ecr.api"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = aws_subnet.private[*].id
+  security_group_ids  = [aws_security_group.vpc_endpoint.id]
+}
+
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.us-east-1.ecr.dkr"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = aws_subnet.private[*].id
+  security_group_ids  = [aws_security_group.vpc_endpoint.id]
+}
+
+# ROI calculation:
+# NAT GW: 10TB/month × $0.045 = $450/month
+# Interface endpoints: ~$15/month fixed + no per-GB charge
+# Savings: ~$435/month per service
+</code></pre>
+
+          <h2>8. Database Cost Optimization</h2>
+
+          <h3>Aurora Serverless v2</h3>
+          <pre><code"># Aurora Serverless v2: scales to zero ACUs when idle, perfect for dev/staging
+resource "aws_rds_cluster" "aurora_serverless" {
+  cluster_identifier      = "my-app-db"
+  engine                  = "aurora-postgresql"
+  engine_version          = "15.4"
+  engine_mode             = "provisioned"  # Serverless v2 uses provisioned mode
+  database_name           = "myapp"
+  master_username         = "admin"
+  manage_master_user_password = true
+
+  serverlessv2_scaling_configuration {
+    min_capacity = 0.5   # Minimum 0.5 ACUs (~$0.06/ACU-hr in us-east-1)
+    max_capacity = 16    # Scales up under load
+  }
+
+  deletion_protection = true
+  skip_final_snapshot = false
+}
+
+resource "aws_rds_cluster_instance" "aurora_instance" {
+  cluster_identifier = aws_rds_cluster.aurora_serverless.id
+  instance_class     = "db.serverless"  # Special class for Serverless v2
+  engine             = aws_rds_cluster.aurora_serverless.engine
+}
+
+# Cost comparison:
+# db.r6g.large (always on): ~$175/month
+# Aurora Serverless v2 (dev, mostly idle): ~$15-30/month
+</code></pre>
+
+          <h2>9. Automated Cost Governance</h2>
+
+          <h3>Budget Alerts in Terraform</h3>
+          <pre><code"># AWS Budget with SNS alerts (Terraform)
+resource "aws_budgets_budget" "team_monthly" {
+  for_each = var.teams
+
+  name         = "${each.key}-monthly-budget"
+  budget_type  = "COST"
+  limit_amount = each.value.budget
+  limit_unit   = "USD"
+  time_unit    = "MONTHLY"
+
+  cost_filter {
+    name   = "TagKeyValue"
+    values = ["Team$${each.key}"]
+  }
+
+  notification {
+    comparison_operator        = "GREATER_THAN"
+    threshold                  = 80
+    threshold_type             = "PERCENTAGE"
+    notification_type          = "FORECASTED"
+    subscriber_email_addresses = [each.value.owner_email]
+    subscriber_sns_topic_arns  = [aws_sns_topic.finops.arn]
+  }
+
+  notification {
+    comparison_operator        = "GREATER_THAN"
+    threshold                  = 100
+    threshold_type             = "PERCENTAGE"
+    notification_type          = "ACTUAL"
+    subscriber_email_addresses = ["finops@company.com", each.value.owner_email]
+    subscriber_sns_topic_arns  = [aws_sns_topic.finops.arn]
+  }
+}
+</code></pre>
+
+          <h3>Auto-Stop Dev Environments (EventBridge Scheduler)</h3>
+          <pre><code"># Stop all dev EC2 instances nightly at 8PM, restart at 8AM
+resource "aws_scheduler_schedule" "stop_dev" {
+  name                         = "stop-dev-instances"
+  schedule_expression          = "cron(0 20 * * ? *)"  # 8PM UTC daily
+  schedule_expression_timezone = "Asia/Ho_Chi_Minh"
+
+  flexible_time_window { mode = "OFF" }
+
+  target {
+    arn      = "arn:aws:scheduler:::aws-sdk:ec2:stopInstances"
+    role_arn = aws_iam_role.scheduler.arn
+    input = jsonencode({
+      Filters = [
+        { Name = "tag:Environment", Values = ["dev"] },
+        { Name = "instance-state-name", Values = ["running"] }
+      ]
+    })
+  }
+}
+
+resource "aws_scheduler_schedule" "start_dev" {
+  name                = "start-dev-instances"
+  schedule_expression = "cron(0 8 ? * MON-FRI *)"  # 8AM UTC, weekdays only
+
+  flexible_time_window { mode = "OFF" }
+
+  target {
+    arn      = "arn:aws:scheduler:::aws-sdk:ec2:startInstances"
+    role_arn = aws_iam_role.scheduler.arn
+    input = jsonencode({
+      Filters = [{ Name = "tag:Environment", Values = ["dev"] }]
+    })
+  }
+}
+
+# Savings: dev instances running 12h/day instead of 24h = 50% cost reduction
+# Example: 20 × t3.medium ($0.0416/hr) × 12h saved = $9.98/day = ~$300/month
+</code></pre>
+
+          <h2>10. FinOps Reporting</h2>
+
+          <h3>Weekly Cost Report Script (Python)</h3>
+          <pre><code">#!/usr/bin/env python3
+# weekly-cost-report.py — Generate and send weekly cost summary to Slack
+
+import boto3
+import json
+import urllib3
+import os
+from datetime import datetime, timedelta
+
+def generate_weekly_report():
+    ce = boto3.client('ce', region_name='us-east-1')
+
+    today = datetime.today()
+    week_start = (today - timedelta(days=7)).strftime('%Y-%m-%d')
+    week_end   = today.strftime('%Y-%m-%d')
+    prev_start = (today - timedelta(days=14)).strftime('%Y-%m-%d')
+    prev_end   = week_start
+
+    def get_cost_by_tag(start, end, group_key='Team'):
+        resp = ce.get_cost_and_usage(
+            TimePeriod={'Start': start, 'End': end},
+            Granularity='MONTHLY',
+            Metrics=['UnblendedCost'],
+            GroupBy=[{'Type': 'TAG', 'Key': group_key}]
+        )
+        return {
+            g['Keys'][0].replace(f'{group_key}$', ''): float(g['Total']['UnblendedCost']['Amount'])
+            for g in resp['ResultsByTime'][0]['Groups']
+        }
+
+    this_week  = get_cost_by_tag(week_start, week_end)
+    last_week  = get_cost_by_tag(prev_start, prev_end)
+
+    total_this  = sum(this_week.values())
+    total_last  = sum(last_week.values())
+    pct_change  = ((total_this - total_last) / total_last * 100) if total_last else 0
+
+    arrow = ":chart_with_upwards_trend:" if pct_change > 5 else ":chart_with_downwards_trend:" if pct_change &lt; -5 else ":heavy_minus_sign:"
+
+    lines = [f"*Team*\t\t*This Week*\t*Last Week*\t*Change*"]
+    for team, cost in sorted(this_week.items(), key=lambda x: -x[1]):
+        prev = last_week.get(team, 0)
+        chg  = ((cost - prev) / prev * 100) if prev else 0
+        chg_str = f"+{chg:.1f}%" if chg &gt; 0 else f"{chg:.1f}%"
+        lines.append(f"{team:<16}\t${cost:,.2f}\t${prev:,.2f}\t{chg_str}")
+
+    message = {
+        "blocks": [
+            {"type": "header", "text": {"type": "plain_text", "text": f"Weekly Cloud Cost Report — {week_start} to {week_end}"}},
+            {"type": "section", "fields": [
+                {"type": "mrkdwn", "text": f"*This Week Total:*\n${total_this:,.2f}"},
+                {"type": "mrkdwn", "text": f"*Last Week Total:*\n${total_last:,.2f}"},
+                {"type": "mrkdwn", "text": f"*Week-over-Week:*\n{arrow} {pct_change:+.1f}%"},
+            ]},
+            {"type": "section", "text": {"type": "mrkdwn", "text": "```\n" + "\n".join(lines) + "\n```"}},
+            {"type": "section", "text": {"type": "mrkdwn",
+                "text": "_View full dashboard: <https://grafana.company.com/d/cloud-costs|Cloud Cost Dashboard>_"}}
+        ]
+    }
+
+    http = urllib3.PoolManager()
+    http.request('POST', os.environ['SLACK_WEBHOOK_URL'],
+                 body=json.dumps(message).encode('utf-8'),
+                 headers={'Content-Type': 'application/json'})
+    print(f"Report sent. Total: ${total_this:,.2f} ({pct_change:+.1f}% WoW)")
+
+if __name__ == '__main__':
+    generate_weekly_report()
+</code></pre>
 
           <div class="success-box">
-            <strong>✅ FinOps Success Checklist:</strong>
-            <ul>
-              <li>Comprehensive resource tagging strategy implemented</li>
-              <li>Real-time cost monitoring and alerting in place</li>
-              <li>Cross-functional FinOps team established</li>
-              <li>Cost optimization processes automated</li>
-              <li>Regular cost review meetings conducted</li>
-              <li>Cost-aware culture fostered across teams</li>
-              <li>Measurable cost savings achieved and tracked</li>
-              <li>Continuous improvement processes established</li>
-              <li>Success stories shared and celebrated</li>
-              <li>ROI of FinOps initiatives calculated and reported</li>
-            </ul>
+            <strong>FinOps maturity check:</strong> If you have implemented rightsizing, purchase commitments at 70%+ coverage, Spot instances for batch workloads, S3 lifecycle policies, and automated dev environment shutdown — you are operating at "Walk" maturity. The next step to "Run" is automated chargeback, CI/CD cost gates with Infracost, and FinOps OKRs embedded in engineering quarterly planning.
           </div>
-
-          <h2>Next Steps</h2>
-          <ul>
-            <li><strong><a href="tools.html">Tools & Platforms</a></strong> - FinOps tools and technology implementations</li>
-            <li><strong><a href="concepts.html">Core Concepts</a></strong> - Review fundamental FinOps principles</li>
-            <li><strong><a href="index.html">FinOps Overview</a></strong> - Back to fundamentals</li>
-          </ul>
 
         </div>
       </div>

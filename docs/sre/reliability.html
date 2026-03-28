@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reliability Engineering | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .pattern-card { background: white; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border: 1px solid #dee2e6; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .pattern-card h4 { color: var(--secondary-color); margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">SRE</a></li>
+        <li class="breadcrumb-item active">Reliability Engineering</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-shield-check me-2"></i>SRE</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link active" href="reliability.html">Reliability</a>
+            <a class="nav-link" href="incident.html">Incident Management</a>
+            <a class="nav-link" href="chaos.html">Chaos Engineering</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-diagram-2 me-2"></i>Reliability Engineering</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Reliability is engineered, not hoped for.</strong> Reliability patterns, capacity planning, performance testing, and auto-scaling are the engineering disciplines that turn SLO targets into achievable reality.
+          </div>
+
+          <h2>Reliability Patterns</h2>
+          <p>
+            Reliability patterns are proven architectural solutions to common failure modes in distributed systems. Implementing these patterns is what separates a system that achieves its SLO from one that fails under load or partial failures.
+          </p>
+
+          <h3>Circuit Breaker</h3>
+          <p>
+            The circuit breaker prevents cascading failures by stopping calls to a failing dependency. When the failure rate exceeds a threshold, the circuit "opens" and all calls immediately return a fallback response without hitting the failing service. After a timeout, the circuit becomes "half-open" and allows test requests through.
+          </p>
+          <pre><code">// Circuit Breaker implementation in Go using sony/gobreaker
+package main
+
+import (
+    "fmt"
+    "time"
+    "github.com/sony/gobreaker"
+)
+
+var cb *gobreaker.CircuitBreaker
+
+func init() {
+    st := gobreaker.Settings{
+        Name:        "payment-service",
+        MaxRequests: 5,            // Requests allowed in half-open state
+        Interval:    10 * time.Second, // Window for counting failures
+        Timeout:     30 * time.Second, // Time before trying half-open
+        ReadyToTrip: func(counts gobreaker.Counts) bool {
+            // Open circuit when > 60% of requests fail AND > 5 total requests
+            failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
+            return counts.Requests >= 5 && failureRatio >= 0.6
+        },
+        OnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {
+            fmt.Printf("Circuit Breaker '%s': %s → %s\n", name, from, to)
+            // Emit metric to Prometheus or DataDog
+        },
+    }
+    cb = gobreaker.NewCircuitBreaker(st)
+}
+
+func callPaymentService(payload []byte) ([]byte, error) {
+    result, err := cb.Execute(func() (interface{}, error) {
+        // Actual HTTP call to payment service
+        resp, err := httpClient.Post(paymentServiceURL, "application/json", bytes.NewReader(payload))
+        if err != nil {
+            return nil, err
+        }
+        if resp.StatusCode >= 500 {
+            return nil, fmt.Errorf("payment service returned %d", resp.StatusCode)
+        }
+        return io.ReadAll(resp.Body)
+    })
+
+    if err == gobreaker.ErrOpenState {
+        // Circuit is open — return fallback immediately
+        return fallbackPaymentResponse(), nil
+    }
+    if err != nil {
+        return nil, err
+    }
+    return result.([]byte), nil
+}
+</code></pre>
+
+          <h3>Retry with Exponential Backoff and Jitter</h3>
+          <pre><code">// Retry with exponential backoff and jitter (Python)
+import time
+import random
+import functools
+
+def retry_with_backoff(max_retries=5, base_delay=0.1, max_delay=30.0,
+                       exceptions=(Exception,), jitter=True):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(max_retries + 1):
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    if attempt == max_retries:
+                        raise
+
+                    # Exponential backoff: 0.1, 0.2, 0.4, 0.8, 1.6 seconds
+                    delay = min(base_delay * (2 ** attempt), max_delay)
+
+                    # Add jitter to prevent thundering herd
+                    if jitter:
+                        delay = delay * (0.5 + random.random() * 0.5)
+
+                    print(f"Attempt {attempt + 1} failed: {e}. Retrying in {delay:.2f}s...")
+                    time.sleep(delay)
+        return wrapper
+    return decorator
+
+@retry_with_backoff(max_retries=4, base_delay=0.5, exceptions=(ConnectionError, TimeoutError))
+def call_external_api(endpoint, payload):
+    response = requests.post(endpoint, json=payload, timeout=5)
+    response.raise_for_status()
+    return response.json()
+</code></pre>
+
+          <h3>Bulkhead Pattern</h3>
+          <p>The bulkhead pattern isolates failures to prevent one component from consuming all resources and bringing down the entire system. Named after the waterproof compartments in a ship's hull.</p>
+          <pre><code"># Kubernetes: implement bulkheads using namespace resource quotas
+# Each service gets its own resource limits — one service cannot starve another
+
+# payment-service has its own thread pool (Spring Boot example)
+management:
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  bulkhead:
+    instances:
+      paymentService:
+        maxConcurrentCalls: 25    # Max concurrent calls to payment service
+        maxWaitDuration: 500ms    # Wait time before rejecting new calls
+      userService:
+        maxConcurrentCalls: 50
+        maxWaitDuration: 1s
+      notificationService:
+        maxConcurrentCalls: 10    # Low-priority service gets small bulkhead
+        maxWaitDuration: 0ms      # Reject immediately if full (non-critical)
+
+# For Go: use semaphore to limit concurrency
+type BulkheadService struct {
+    sem chan struct{}
+}
+
+func NewBulkheadService(maxConcurrency int) *BulkheadService {
+    return &BulkheadService{sem: make(chan struct{}, maxConcurrency)}
+}
+
+func (s *BulkheadService) Execute(ctx context.Context, fn func() error) error {
+    select {
+    case s.sem &lt;- struct{}{}:
+        defer func() { &lt;-s.sem }()
+        return fn()
+    case &lt;-ctx.Done():
+        return fmt.Errorf("bulkhead: service at capacity (%d concurrent calls)", cap(s.sem))
+    }
+}
+</code></pre>
+
+          <h3>Timeout Pattern</h3>
+          <pre><code">// Always set timeouts on all external calls
+// Without timeouts, a slow dependency can hold connections indefinitely
+
+// HTTP client with timeout (Go)
+httpClient := &http.Client{
+    Timeout: 5 * time.Second,
+    Transport: &http.Transport{
+        DialContext: (&net.Dialer{
+            Timeout:   2 * time.Second, // TCP connection timeout
+            KeepAlive: 30 * time.Second,
+        }).DialContext,
+        TLSHandshakeTimeout:   3 * time.Second,
+        ResponseHeaderTimeout: 4 * time.Second,
+        IdleConnTimeout:       90 * time.Second,
+        MaxIdleConns:          100,
+        MaxConnsPerHost:       10,
+    },
+}
+
+// With context timeout for individual requests:
+ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+defer cancel()
+
+req, _ := http.NewRequestWithContext(ctx, "POST", url, body)
+resp, err := httpClient.Do(req)
+if err != nil {
+    if errors.Is(err, context.DeadlineExceeded) {
+        // Timeout — emit metric and return fallback
+        metrics.IncrCounter("external_calls_timeout", 1)
+        return fallbackResponse, nil
+    }
+    return nil, err
+}
+</code></pre>
+
+          <h2>Capacity Planning</h2>
+
+          <h3>Demand Forecasting</h3>
+          <p>Capacity planning starts with understanding your traffic patterns and forecasting future demand. For most services, traffic follows predictable patterns:</p>
+          <ul>
+            <li><strong>Daily seasonality:</strong> Traffic peaks during business hours, drops overnight. For consumer apps: peaks in evenings.</li>
+            <li><strong>Weekly seasonality:</strong> Weekday vs weekend patterns. B2B SaaS: low weekend traffic. Consumer: high weekend traffic.</li>
+            <li><strong>Growth trend:</strong> Linear or exponential growth based on user acquisition.</li>
+            <li><strong>Special events:</strong> Product launches, marketing campaigns, holiday peaks (can be 10-50x normal traffic).</li>
+          </ul>
+
+          <pre><code"># Capacity planning query: project resources needed for 2x traffic growth
+# Current state:
+# - 10 pods, avg CPU: 65%, p99 latency: 180ms at 5,000 RPS
+
+# At 10,000 RPS (2x growth):
+# - If CPU scales linearly: 10 × (65% × 2) = 130% → need 20 pods
+# - Add 30% headroom: 20 × 1.3 = 26 pods
+
+# PromQL: project pod count needed for target RPS
+# (current_pods * target_rps) / current_rps * 1.3  # 30% headroom
+(count(up{job="my-service"}) * 10000) / 5000 * 1.3
+
+# Memory scaling: track actual memory growth vs user growth
+# Use linear regression to forecast
+import numpy as np
+from sklearn.linear_model import LinearRegression
+
+months = np.array([1, 2, 3, 4, 5, 6]).reshape(-1, 1)
+memory_gb = np.array([12, 15, 19, 22, 27, 31])
+
+model = LinearRegression().fit(months, memory_gb)
+month_12_forecast = model.predict([[12]])[0]
+print(f"Projected memory at month 12: {month_12_forecast:.1f} GB")
+# → Add 20% safety buffer: {month_12_forecast * 1.2:.1f} GB
+</code></pre>
+
+          <h2>Performance Testing</h2>
+
+          <h3>k6 Load Test — Full Script</h3>
+          <p>k6 is the modern standard for load testing. It uses JavaScript for test scripts, runs efficiently, and integrates with CI/CD and Grafana.</p>
+          <pre><code">// k6/load-test.js
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+import { Counter, Histogram, Rate } from 'k6/metrics';
+
+// Custom metrics
+const errorRate    = new Rate('error_rate');
+const p99Latency   = new Histogram('p99_latency');
+const paymentErrors = new Counter('payment_errors');
+
+// Test configuration: ramp up → steady state → ramp down
+export const options = {
+  stages: [
+    { duration: '2m',  target: 100  },  // Ramp up to 100 VUs
+    { duration: '5m',  target: 100  },  // Hold at 100 VUs (steady state)
+    { duration: '2m',  target: 500  },  // Ramp to 500 VUs (stress test)
+    { duration: '5m',  target: 500  },  // Hold at 500 VUs
+    { duration: '2m',  target: 1000 },  // Spike to 1000 VUs
+    { duration: '3m',  target: 1000 },  // Hold spike
+    { duration: '2m',  target: 0    },  // Ramp down
+  ],
+  thresholds: {
+    // SLO enforcement: test fails if these are breached
+    'http_req_duration': ['p(99)&lt;500'],    // p99 &lt; 500ms
+    'http_req_failed':   ['rate&lt;0.01'],     // Error rate &lt; 1%
+    'error_rate':        ['rate&lt;0.005'],    // Custom error rate &lt; 0.5%
+  },
+};
+
+// Shared state: authentication token
+export function setup() {
+  const loginRes = http.post(`${__ENV.BASE_URL}/auth/login`, JSON.stringify({
+    username: __ENV.TEST_USER,
+    password: __ENV.TEST_PASSWORD,
+  }), { headers: { 'Content-Type': 'application/json' } });
+
+  return { token: loginRes.json('access_token') };
+}
+
+export default function(data) {
+  const headers = {
+    'Authorization': `Bearer ${data.token}`,
+    'Content-Type': 'application/json',
+  };
+  const baseUrl = __ENV.BASE_URL || 'https://staging.myapp.com';
+
+  // Test scenario 1: GET user profile (80% of traffic)
+  if (Math.random() &lt; 0.8) {
+    const profileRes = http.get(`${baseUrl}/api/v1/users/me`, { headers });
+    const profileOk = check(profileRes, {
+      'profile status 200': (r) => r.status === 200,
+      'profile latency &lt; 200ms': (r) => r.timings.duration &lt; 200,
+      'profile has user_id': (r) => r.json('user_id') !== undefined,
+    });
+    errorRate.add(!profileOk);
+    p99Latency.add(profileRes.timings.duration);
+  }
+
+  // Test scenario 2: Create payment (20% of traffic)
+  else {
+    const paymentRes = http.post(`${baseUrl}/api/v1/payments`, JSON.stringify({
+      amount: Math.floor(Math.random() * 1000) + 1,
+      currency: 'USD',
+      description: `Load test payment ${Date.now()}`,
+    }), { headers });
+
+    const paymentOk = check(paymentRes, {
+      'payment status 201': (r) => r.status === 201,
+      'payment latency &lt; 500ms': (r) => r.timings.duration &lt; 500,
+      'payment has transaction_id': (r) => r.json('transaction_id') !== undefined,
+    });
+
+    if (!paymentOk) paymentErrors.add(1);
+    errorRate.add(!paymentOk);
+  }
+
+  sleep(Math.random() * 0.5 + 0.5);  // Sleep 0.5-1s between requests
+}
+
+// Run: k6 run --env BASE_URL=https://staging.myapp.com load-test.js
+// Output to InfluxDB: k6 run -o influxdb=http://localhost:8086/k6 load-test.js
+</code></pre>
+
+          <h3>Locust Load Test (Python)</h3>
+          <pre><code">## locustfile.py
+from locust import HttpUser, task, between, events
+import json, random
+
+class APIUser(HttpUser):
+    wait_time = between(0.5, 2.0)
+
+    def on_start(self):
+        # Login and store auth token
+        resp = self.client.post('/auth/login', json={
+            'username': 'test@company.com',
+            'password': 'testpassword'
+        })
+        self.token = resp.json()['access_token']
+        self.headers = {'Authorization': f'Bearer {self.token}'}
+
+    @task(8)  # Weight: 8 times more frequent than payment task
+    def get_user_profile(self):
+        with self.client.get('/api/v1/users/me', headers=self.headers,
+                             catch_response=True) as resp:
+            if resp.status_code == 200:
+                resp.success()
+            else:
+                resp.failure(f"Expected 200, got {resp.status_code}")
+
+    @task(2)
+    def list_transactions(self):
+        with self.client.get('/api/v1/transactions?page=1&limit=20',
+                             headers=self.headers, catch_response=True) as resp:
+            if resp.status_code == 200 and 'items' in resp.json():
+                resp.success()
+            else:
+                resp.failure("Invalid response")
+
+    @task(1)
+    def create_payment(self):
+        payload = {
+            'amount': random.randint(10, 10000),
+            'currency': random.choice(['USD', 'EUR', 'GBP']),
+        }
+        with self.client.post('/api/v1/payments', json=payload,
+                              headers=self.headers, catch_response=True) as resp:
+            if resp.status_code in [200, 201]:
+                resp.success()
+            else:
+                resp.failure(f"Payment failed: {resp.status_code} - {resp.text[:200]}")
+
+# Run: locust -f locustfile.py --host https://staging.myapp.com
+#      --users 500 --spawn-rate 10 --run-time 10m --headless
+</code></pre>
+
+          <h2>Auto-Scaling</h2>
+
+          <h3>Horizontal Pod Autoscaler (HPA) with Custom Metrics</h3>
+          <pre><code"># HPA scaling on CPU + memory + custom Prometheus metric
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: payment-api-hpa
+  namespace: production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: payment-api
+  minReplicas: 3
+  maxReplicas: 50
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70  # Scale when avg CPU > 70%
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Pods
+      pods:
+        metric:
+          name: http_requests_per_second  # Custom metric from Prometheus Adapter
+        target:
+          type: AverageValue
+          averageValue: "500"  # Scale when > 500 RPS per pod
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60   # Wait 60s before scaling up again
+      policies:
+        - type: Pods
+          value: 5          # Add at most 5 pods per scaling event
+          periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300  # Wait 5min before scaling down
+      policies:
+        - type: Percent
+          value: 20         # Remove at most 20% of pods per event
+          periodSeconds: 60
+</code></pre>
+
+          <h3>KEDA — Kubernetes Event-Driven Autoscaling</h3>
+          <pre><code"># KEDA ScaledObject: scale on SQS queue depth
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: order-processor-scaler
+  namespace: production
+spec:
+  scaleTargetRef:
+    name: order-processor
+  minReplicaCount: 1
+  maxReplicaCount: 100
+  pollingInterval: 15   # Check queue every 15 seconds
+  cooldownPeriod:  60   # Wait 60s before scaling to zero
+  triggers:
+    - type: aws-sqs-queue
+      metadata:
+        queueURL: https://sqs.us-east-1.amazonaws.com/123456789/orders-queue
+        queueLength: "20"   # 1 replica per 20 messages in queue
+        awsRegion: us-east-1
+      authenticationRef:
+        name: keda-sqs-auth
+---
+# KEDA ScaledObject: scale on Prometheus metric (active WebSocket connections)
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: websocket-server-scaler
+spec:
+  scaleTargetRef:
+    name: websocket-server
+  minReplicaCount: 2
+  maxReplicaCount: 30
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus.monitoring.svc:9090
+        metricName: active_websocket_connections
+        query: sum(websocket_connections_active{job="websocket-server"})
+        threshold: "1000"  # 1 replica per 1000 active connections
+---
+# KEDA ScaledObject: schedule-based scaling (scale up before business hours)
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: api-scheduled-scaler
+spec:
+  scaleTargetRef:
+    name: backend-api
+  triggers:
+    - type: cron
+      metadata:
+        timezone: Asia/Ho_Chi_Minh
+        start: "0 8 * * 1-5"    # 8AM weekdays: scale up
+        end:   "0 20 * * 1-5"   # 8PM weekdays: scale down
+        desiredReplicas: "20"
+</code></pre>
+
+          <h3>Vertical Pod Autoscaler (VPA)</h3>
+          <pre><code"># VPA: automatically adjust container resource requests
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: payment-api-vpa
+  namespace: production
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: payment-api
+  updatePolicy:
+    updateMode: "Auto"  # Options: Off (recommend only), Initial, Auto
+  resourcePolicy:
+    containerPolicies:
+      - containerName: payment-api
+        minAllowed:
+          cpu: 100m
+          memory: 128Mi
+        maxAllowed:
+          cpu: 4
+          memory: 8Gi
+        controlledResources: ["cpu", "memory"]
+# Note: Do NOT use VPA + HPA on the same resource simultaneously
+# unless HPA uses custom metrics (not CPU/memory)
+</code></pre>
+
+          <h2>SRE Runbooks</h2>
+
+          <h3>What Every Runbook Must Include</h3>
+          <ul>
+            <li><strong>Alert Description:</strong> What alert fired, what it means, expected behavior</li>
+            <li><strong>Impact:</strong> Which users/services are affected, estimated blast radius</li>
+            <li><strong>Diagnosis Steps:</strong> Step-by-step queries and checks to identify root cause</li>
+            <li><strong>Mitigation Steps:</strong> Ordered list of actions to reduce user impact</li>
+            <li><strong>Resolution Steps:</strong> Full fix to prevent recurrence</li>
+            <li><strong>Escalation:</strong> Who to call and when if steps fail</li>
+            <li><strong>Related Alerts:</strong> Links to related runbooks and dashboards</li>
+          </ul>
+
+          <h3>Real Runbook: High Error Rate Alert</h3>
+          <pre><code"># Runbook: HighErrorRate — payment-api
+# Alert: http_error_rate > 1% for 5 minutes
+# Severity: SEV2 | On-call paged | Response time: 15 minutes
+# Dashboard: https://grafana.company.com/d/payment-api-overview
+
+## Impact Assessment
+- User-facing: Payment failures visible to customers
+- Revenue impact: ~$X per minute at current error rate
+- Affected services: payment-api, order-service (depends on payment-api)
+
+## Step 1: Assess blast radius (2 minutes)
+# Check error rate trend
+curl -G 'http://prometheus:9090/api/v1/query' \
+  --data-urlencode 'query=rate(http_requests_total{job="payment-api",code=~"5.."}[5m])'
+
+# Check which endpoints are failing
+kubectl logs -n production -l app=payment-api --tail=100 | grep '"level":"error"' | \
+  jq -c '{timestamp: .time, path: .path, error: .error}' | head -20
+
+## Step 2: Check recent deployments (1 minute)
+kubectl rollout history deployment/payment-api -n production
+# If deployment in last 30 minutes: ROLLBACK IMMEDIATELY
+kubectl rollout undo deployment/payment-api -n production
+
+## Step 3: Check downstream dependencies (3 minutes)
+# Database connectivity
+kubectl exec -n production deploy/payment-api -- \
+  psql "$DATABASE_URL" -c "SELECT count(*) FROM pg_stat_activity;"
+
+# Check DB connection pool saturation
+kubectl exec -n production deploy/payment-api -- \
+  curl -s localhost:8080/actuator/metrics/hikaricp.connections.active
+
+# External payment processor status
+curl -s https://status.stripe.com/api/v2/status.json | jq '.status.indicator'
+
+## Step 4: Check resource saturation (2 minutes)
+kubectl top pods -n production -l app=payment-api
+kubectl describe hpa payment-api-hpa -n production
+
+## Step 5: Mitigation options
+# Option A: If DB is the issue → enable read replica fallback
+kubectl set env deployment/payment-api USE_READ_REPLICA=true -n production
+
+# Option B: If specific endpoint is failing → enable feature flag to disable
+kubectl set env deployment/payment-api PAYMENT_BATCH_ENABLED=false -n production
+
+# Option C: If traffic spike → manual scale up
+kubectl scale deployment payment-api --replicas=30 -n production
+
+## Escalation
+# After 15 minutes without resolution: page engineering lead
+# After 30 minutes: page VP Engineering
+# Contact: payment-team-oncall@company.com | PagerDuty escalation policy: payment-api-p1
+</code></pre>
+
+          <h2>Graceful Degradation</h2>
+          <p>Systems should degrade gracefully when dependencies fail — providing reduced functionality rather than complete failure. This is the difference between a 503 error and a "some features are temporarily unavailable" experience.</p>
+
+          <pre><code">// Feature flag + circuit breaker for graceful degradation (Go)
+type RecommendationService struct {
+    client      *http.Client
+    cb          *gobreaker.CircuitBreaker
+    featureFlags *flags.Client
+}
+
+func (s *RecommendationService) GetRecommendations(userID string) []Product {
+    // Check feature flag first (can be disabled via LaunchDarkly/Unleash)
+    if !s.featureFlags.BoolVariation("recommendations-enabled", false) {
+        return getPopularProductsFallback()
+    }
+
+    result, err := s.cb.Execute(func() (interface{}, error) {
+        return s.callRecommendationAPI(userID)
+    })
+
+    if err != nil {
+        // Circuit open or API failed — return popular products as fallback
+        log.Warn("recommendations degraded, using fallback", "user_id", userID, "error", err)
+        metrics.IncrCounter("recommendations_fallback_total", 1)
+        return getPopularProductsFallback()
+    }
+
+    return result.([]Product)
+}
+
+func getPopularProductsFallback() []Product {
+    // Return pre-computed popular products from cache (Redis/Memcached)
+    // This is always available, even when recommendation service is down
+    cached, _ := cache.Get("popular_products_v2")
+    if cached != nil {
+        return cached.([]Product)
+    }
+    return []Product{}  // Empty list is better than 500 error
+}
+</code></pre>
+
+          <h2>SLO Tracking Dashboard (Grafana + PromQL)</h2>
+          <pre><code"># Key Grafana panel queries for SLO tracking
+
+# Panel 1: Availability SLO (30-day rolling window)
+# Target: 99.9% | Shows percentage and burn rate
+(
+  sum(rate(http_requests_total{job="payment-api", code!~"5.."}[30d]))
+  / sum(rate(http_requests_total{job="payment-api"}[30d]))
+) * 100
+# Threshold: &lt; 99.9 = red, 99.9-99.95 = yellow, &gt; 99.95 = green
+
+# Panel 2: Error Budget Remaining (%)
+# How much of the monthly error budget is left
+(
+  1 - (
+    sum(rate(http_requests_total{job="payment-api", code=~"5.."}[30d]))
+    / sum(rate(http_requests_total{job="payment-api"}[30d]))
+  ) / (1 - 0.999)  # (1 - SLO target)
+) * 100
+
+# Panel 3: Latency SLO — % of requests under 500ms
+(
+  sum(rate(http_request_duration_seconds_bucket{job="payment-api", le="0.5"}[5m]))
+  / sum(rate(http_request_duration_seconds_count{job="payment-api"}[5m]))
+) * 100
+
+# Panel 4: Error Budget Burn Rate Alerts (multi-window)
+# Fast burn (1h window): alert if burning &gt; 14x the allowed rate
+(
+  sum(rate(http_requests_total{job="payment-api", code=~"5.."}[1h]))
+  / sum(rate(http_requests_total{job="payment-api"}[1h]))
+) / (1 - 0.999) > 14
+
+# Slow burn (6h window): alert if burning &gt; 6x the allowed rate
+(
+  sum(rate(http_requests_total{job="payment-api", code=~"5.."}[6h]))
+  / sum(rate(http_requests_total{job="payment-api"}[6h]))
+) / (1 - 0.999) > 6
+</code></pre>
+
+          <div class="success-box">
+            <strong>Reliability engineering is iterative:</strong> Start with the basics — circuit breakers, timeouts, HPA — then add more sophisticated patterns as you learn where your system actually fails. Use your post-mortems and chaos engineering results to prioritize which patterns to implement next.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -3,1002 +3,500 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Helm Cheatsheet | Quick Reference</title>
-
+  <title>Helm Cheatsheet | Lê Bình Phương</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-
   <style>
-    :root {
-      --primary-color: #149ddd;
-      --secondary-color: #173b6c;
-      --text-color: #272829;
-      --bg-light: #f5f8fd;
-      --code-bg: #282c34;
-      --code-text: #abb2bf;
-    }
-
-    body {
-      font-family: 'Open Sans', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-color);
-      line-height: 1.8;
-    }
-
-    .content {
-      background: white;
-      border-radius: 12px;
-      padding: 3rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      color: var(--secondary-color);
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
-
-    h2 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-top: 2.5rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--bg-light);
-    }
-
-    h3 {
-      color: var(--secondary-color);
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
-    }
-
-    code {
-      background: #f8f9fa;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      color: #e83e8c;
-    }
-
-    pre {
-      background: var(--code-bg);
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 1.5rem;
-      overflow-x: auto;
-      margin: 1rem 0;
-    }
-
-    pre code {
-      background: none;
-      padding: 0;
-      color: var(--code-text);
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-    }
-
-    .navbar {
-      background: white;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb {
-      background: transparent;
-      padding: 0;
-      margin-bottom: 2rem;
-    }
-
-    .breadcrumb a {
-      color: var(--primary-color);
-      text-decoration: none;
-    }
-    .sidebar {
-      position: sticky;
-      top: 20px;
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      height: fit-content;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h5 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .sidebar .nav-link {
-      color: var(--text-color);
-      padding: 0.5rem 0;
-      border-left: 3px solid transparent;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: block;
-      font-size: 0.9rem;
-    }
-
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active {
-      color: var(--primary-color);
-      border-left-color: var(--primary-color);
-      padding-left: 1rem;
-    }
-    .sidebar {
-      position: sticky;
-      top: 20px;
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      height: fit-content;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h5 {
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .sidebar .nav-link {
-      color: var(--text-color);
-      padding: 0.5rem 0;
-      border-left: 3px solid transparent;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: block;
-      font-size: 0.9rem;
-    }
-
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active {
-      color: var(--primary-color);
-      border-left-color: var(--primary-color);
-      padding-left: 1rem;
-    }
-
-    .command-section {
-      margin-bottom: 2.5rem;
-    }
-
-    .command-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-
-    .command-card {
-      background: var(--bg-light);
-      border-radius: 8px;
-      padding: 1.5rem;
-      border-left: 4px solid var(--primary-color);
-    }
-
-    .command-card h4 {
-      color: var(--secondary-color);
-      margin-bottom: 1rem;
-      font-size: 1.1rem;
-    }
-
-    .command-item {
-      margin-bottom: 1rem;
-    }
-
-    .command-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .command-syntax {
-      background: white;
-      padding: 0.8rem;
-      border-radius: 6px;
-      border: 1px solid #e9ecef;
-      margin-bottom: 0.5rem;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      color: var(--text-color);
-    }
-
-    .command-desc {
-      color: #666;
-      font-size: 0.9rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .chart-example {
-      background: var(--bg-light);
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-      border-left: 4px solid #28a745;
-    }
-
-    .chart-example h4 {
-      color: #155724;
-      margin-bottom: 1rem;
-    }
-
-    .values-example {
-      background: var(--bg-light);
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-      border-left: 4px solid #ffc107;
-    }
-
-    .values-example h4 {
-      color: #856404;
-      margin-bottom: 1rem;
-    }
-
-    .tool-badge {
-      background: var(--primary-color);
-      color: white;
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      display: inline-block;
-      margin-bottom: 0.5rem;
-    }
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 0.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); font-size: 1.3rem; }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; font-size: 0.88rem; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 6px; font-size: 0.9rem; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 6px; font-size: 0.9rem; }
+    .ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+    .ref-section { background: var(--bg-light); border-radius: 8px; padding: 1.2rem; border-top: 3px solid var(--primary-color); }
+    .ref-section h3 { color: var(--primary-color); font-size: 1rem; margin-top: 0; margin-bottom: 0.8rem; }
+    .ref-section pre { margin: 0; font-size: 0.82rem; }
   </style>
 </head>
 <body>
-
-  <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container-fluid">
-      <div class="container">
-        <a class="navbar-brand" href="../../index.html">
-          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
-        </a>
-      </div>
-    </div>
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
   </nav>
-
   <div class="container">
-
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
         <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
-        <li class="breadcrumb-item"><a href="index.html">Quick Reference</a></li>
-        <li class="breadcrumb-item active">Helm</li>
+        <li class="breadcrumb-item active">Helm Cheatsheet</li>
       </ol>
     </nav>
-
-    <!-- Main Content -->
     <div class="content">
-    <div class="row">
+      <h1><i class="bi bi-box-seam me-2"></i>Helm Cheatsheet</h1>
+      <p class="text-muted">Quick reference for Helm — the Kubernetes package manager. Covers installation, chart management, templating, OCI registries, and production patterns.</p>
 
-      <!-- Sidebar -->
-      <div class="col-lg-3">
-        <div class="sidebar">
-          <h5><i class="bi bi-book me-2"></i>Helm</h5>
-          <nav class="nav flex-column">
-            <a class="nav-link active" href="#getting-started">Getting Started</a>
-            <a class="nav-link" href="#repository-operations">Repositories</a>
-            <a class="nav-link" href="#chart-installation">Installation</a>
-            <a class="nav-link" href="#release-management">Release Mgmt</a>
-            <a class="nav-link" href="#chart-development">Development</a>
-            <a class="nav-link" href="#advanced-operations">Advanced</a>
-          </nav>
+      <h2>Quick Reference</h2>
+      <div class="ref-grid">
+
+        <div class="ref-section">
+          <h3>Installation &amp; Setup</h3>
+          <pre><code># Install Helm (Linux/macOS)
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# macOS via Homebrew
+brew install helm
+
+# Verify installation
+helm version
+helm env
+
+# Set default namespace
+export HELM_NAMESPACE=production</code></pre>
         </div>
-      </div>
 
-      <!-- Main Content -->
-      <div class="col-lg-9">
-        <div class="content">
-    <div class="row">
+        <div class="ref-section">
+          <h3>Repository Management</h3>
+          <pre><code># Add popular repos
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add stable https://charts.helm.sh/stable
+helm repo add jetstack https://charts.jetstack.io
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
-      <!-- Sidebar -->
-      <div class="col-lg-3">
-        <div class="sidebar">
-          <h5><i class="bi bi-book me-2"></i>Helm</h5>
-          <nav class="nav flex-column">
-            <a class="nav-link active" href="#getting-started">Getting Started</a>
-            <a class="nav-link" href="#repository-operations">Repositories</a>
-            <a class="nav-link" href="#chart-installation">Installation</a>
-            <a class="nav-link" href="#release-management">Release Mgmt</a>
-            <a class="nav-link" href="#chart-development">Development</a>
-            <a class="nav-link" href="#advanced-operations">Advanced</a>
-          </nav>
+# Update all repos
+helm repo update
+
+# List configured repos
+helm repo list
+
+# Remove a repo
+helm repo remove stable
+
+# Search in repos
+helm search repo nginx
+helm search repo bitnami/nginx --versions</code></pre>
         </div>
-      </div>
 
-      <!-- Main Content -->
-      <div class="col-lg-9">
-        <div class="content">
-      <h1><i class="bi bi-helm me-2"></i>Helm Cheatsheet</h1>
+        <div class="ref-section">
+          <h3>Chart Operations</h3>
+          <pre><code># Install a chart
+helm install my-release bitnami/nginx -n my-ns
 
-      <p>
-        Helm is the package manager for Kubernetes, helping you define, install, and upgrade even the most complex Kubernetes applications.
-        This cheatsheet covers essential Helm commands, chart development, and best practices.
-      </p>
+# Install with values file
+helm install my-release bitnami/nginx -f values.yaml
 
-      <h2 id="getting-started">Getting Started</h2>
+# Upgrade (or install if not exists)
+helm upgrade --install my-release bitnami/nginx \
+  --namespace my-ns --create-namespace \
+  -f values.yaml
 
-      <h3>Installation</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Linux/macOS</h4>
-            <div class="command-item">
-              <div class="command-syntax">curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash</div>
-              <div class="command-desc">Install Helm 3 using script</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">brew install helm</div>
-              <div class="command-desc">Install via Homebrew (macOS)</div>
-            </div>
-          </div>
+# Uninstall a release
+helm uninstall my-release -n my-ns
 
-          <div class="command-card">
-            <h4>Windows</h4>
-            <div class="command-item">
-              <div class="command-syntax">choco install kubernetes-helm</div>
-              <div class="command-desc">Install via Chocolatey</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">scoop install helm</div>
-              <div class="command-desc">Install via Scoop</div>
-            </div>
-          </div>
+# Rollback to previous revision
+helm rollback my-release 1 -n my-ns
+
+# View release history
+helm history my-release -n my-ns</code></pre>
         </div>
-      </div>
 
-      <h3>Basic Commands</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Version & Help</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm version</div>
-              <div class="command-desc">Show Helm version</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm help</div>
-              <div class="command-desc">Show general help</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm help install</div>
-              <div class="command-desc">Show help for specific command</div>
-            </div>
-          </div>
+        <div class="ref-section">
+          <h3>Release Management</h3>
+          <pre><code># List all releases (all namespaces)
+helm list -A
+helm list --all-namespaces
 
-          <div class="command-card">
-            <h4>Repository Management</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm repo list</div>
-              <div class="command-desc">List configured repositories</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm repo update</div>
-              <div class="command-desc">Update repository information</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm search repo</div>
-              <div class="command-desc">Search for charts in repositories</div>
-            </div>
-          </div>
+# Filter by state
+helm list -A --deployed
+helm list -A --failed
+helm list -A --pending
+
+# Get release status
+helm status my-release -n my-ns
+
+# Get deployed values
+helm get values my-release -n my-ns
+helm get values my-release -n my-ns --all  # includes defaults
+
+# Get manifest / hooks / notes
+helm get manifest my-release -n my-ns
+helm get hooks my-release -n my-ns
+helm get notes my-release -n my-ns</code></pre>
         </div>
-      </div>
 
-      <h2 id="repository-operations">Repository Operations</h2>
+        <div class="ref-section">
+          <h3>Templating &amp; Debugging</h3>
+          <pre><code># Render templates locally (no cluster)
+helm template my-release ./mychart -f values.yaml
 
-      <h3>Repository Management</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Add Repositories</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm repo add bitnami https://charts.bitnami.com/bitnami</div>
-              <div class="command-desc">Add Bitnami repository</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm repo add stable https://charts.helm.sh/stable</div>
-              <div class="command-desc">Add stable repository</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm repo add prometheus https://prometheus-community.github.io/helm-charts</div>
-              <div class="command-desc">Add Prometheus community charts</div>
-            </div>
-          </div>
+# Render with namespace context
+helm template my-release ./mychart \
+  --namespace production \
+  --set image.tag=1.2.3
 
-          <div class="command-card">
-            <h4>Repository Operations</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm repo remove bitnami</div>
-              <div class="command-desc">Remove repository</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm repo update bitnami</div>
-              <div class="command-desc">Update specific repository</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm repo index .</div>
-              <div class="command-desc">Generate index for local repository</div>
-            </div>
-          </div>
+# Lint a chart
+helm lint ./mychart
+helm lint ./mychart -f values.yaml
+
+# Dry run (server-side validation)
+helm install my-release ./mychart --dry-run --debug
+
+# Diff plugin (show what will change)
+helm plugin install https://github.com/databus23/helm-diff
+helm diff upgrade my-release ./mychart -f values.yaml</code></pre>
         </div>
-      </div>
 
-      <h3>Chart Search & Info</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Search Charts</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm search repo nginx</div>
-              <div class="command-desc">Search for nginx charts</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm search hub wordpress</div>
-              <div class="command-desc">Search Helm Hub for charts</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm search repo -l nginx</div>
-              <div class="command-desc">List all versions of nginx</div>
-            </div>
-          </div>
+        <div class="ref-section">
+          <h3>Chart Development</h3>
+          <pre><code># Create new chart scaffold
+helm create mychart
 
-          <div class="command-card">
-            <h4>Chart Information</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm show chart bitnami/nginx</div>
-              <div class="command-desc">Show chart metadata</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm show values bitnami/nginx</div>
-              <div class="command-desc">Show default values</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm show readme bitnami/nginx</div>
-              <div class="command-desc">Show chart README</div>
-            </div>
-          </div>
+# Chart directory structure
+mychart/
+  Chart.yaml          # Chart metadata
+  values.yaml         # Default values
+  charts/             # Chart dependencies
+  templates/          # Kubernetes manifests
+    deployment.yaml
+    service.yaml
+    ingress.yaml
+    _helpers.tpl      # Named templates
+    NOTES.txt         # Post-install notes
+  .helmignore         # Files to exclude
+
+# Package a chart
+helm package ./mychart
+helm package ./mychart --version 1.2.3</code></pre>
         </div>
-      </div>
 
-      <h2 id="chart-installation">Chart Installation</h2>
+        <div class="ref-section">
+          <h3>Show Chart Info</h3>
+          <pre><code># Show default values
+helm show values bitnami/nginx
+helm show values bitnami/nginx > values-defaults.yaml
 
-      <h3>Basic Installation</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Install Charts</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm install my-release bitnami/nginx</div>
-              <div class="command-desc">Install chart with release name</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install nginx bitnami/nginx</div>
-              <div class="command-desc">Install with auto-generated name</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install ./mychart</div>
-              <div class="command-desc">Install from local directory</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install mychart-1.0.0.tgz</div>
-              <div class="command-desc">Install from packaged chart</div>
-            </div>
-          </div>
+# Show chart metadata
+helm show chart bitnami/nginx
 
-          <div class="command-card">
-            <h4>Installation Options</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm install --dry-run my-release bitnami/nginx</div>
-              <div class="command-desc">Dry run installation</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install --debug my-release bitnami/nginx</div>
-              <div class="command-desc">Show debug information</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install --namespace dev my-release bitnami/nginx</div>
-              <div class="command-desc">Install in specific namespace</div>
-            </div>
-          </div>
+# Show README
+helm show readme bitnami/nginx
+
+# Show all info
+helm show all bitnami/nginx
+
+# Pull chart tarball locally
+helm pull bitnami/nginx
+helm pull bitnami/nginx --untar
+helm pull bitnami/nginx --version 15.0.0 --untar</code></pre>
         </div>
-      </div>
 
-      <h3>Custom Values</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Set Values</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm install my-release bitnami/nginx --set image.tag="1.21"</div>
-              <div class="command-desc">Set single value</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install my-release bitnami/nginx --set service.type=LoadBalancer</div>
-              <div class="command-desc">Set service type</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install my-release bitnami/nginx --set replicaCount=3</div>
-              <div class="command-desc">Set replica count</div>
-            </div>
-          </div>
+        <div class="ref-section">
+          <h3>OCI Registry</h3>
+          <pre><code># Login to GHCR
+helm registry login ghcr.io \
+  -u USERNAME --password-stdin &lt;&lt; EOF
+ghp_TOKEN
+EOF
 
-          <div class="command-card">
-            <h4>Values Files</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm install my-release bitnami/nginx -f values.yaml</div>
-              <div class="command-desc">Use custom values file</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install my-release bitnami/nginx -f values.yaml -f prod-values.yaml</div>
-              <div class="command-desc">Use multiple values files</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install my-release bitnami/nginx --values=values.yaml</div>
-              <div class="command-desc">Alternative syntax for values</div>
-            </div>
-          </div>
+# Login to ECR
+aws ecr get-login-password --region us-east-1 \
+  | helm registry login \
+    --username AWS \
+    --password-stdin \
+    123456789.dkr.ecr.us-east-1.amazonaws.com
+
+# Push chart to OCI registry
+helm push mychart-1.0.0.tgz oci://ghcr.io/myorg/charts
+
+# Pull from OCI registry
+helm pull oci://ghcr.io/myorg/charts/mychart --version 1.0.0
+
+# Install directly from OCI
+helm install my-release \
+  oci://ghcr.io/myorg/charts/mychart \
+  --version 1.0.0</code></pre>
         </div>
+
       </div>
 
-      <h2 id="release-management">Release Management</h2>
+      <h2>Values Override Patterns</h2>
+      <p>Helm applies values in order of increasing precedence: chart defaults → <code>-f file</code> flags (left to right) → <code>--set</code> flags.</p>
+      <pre><code># --set: simple key=value (highest precedence)
+helm upgrade --install my-release ./chart \
+  --set image.repository=myrepo/myapp \
+  --set image.tag=v1.2.3 \
+  --set replicaCount=3
 
-      <h3>Release Operations</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>List & Status</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm list</div>
-              <div class="command-desc">List all releases</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm list -a</div>
-              <div class="command-desc">List all releases including failed</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm status my-release</div>
-              <div class="command-desc">Show release status</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm history my-release</div>
-              <div class="command-desc">Show release history</div>
-            </div>
-          </div>
+# --set-string: force string type (useful for numeric-looking values)
+helm install my-release ./chart \
+  --set-string image.tag=007 \
+  --set-string annotations."app\.kubernetes\.io/version"=latest
 
-          <div class="command-card">
-            <h4>Upgrade & Rollback</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm upgrade my-release bitnami/nginx</div>
-              <div class="command-desc">Upgrade to latest version</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm rollback my-release 1</div>
-              <div class="command-desc">Rollback to revision 1</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm rollback my-release 0</div>
-              <div class="command-desc">Rollback to previous version</div>
-            </div>
-          </div>
-        </div>
-      </div>
+# --set-json: pass JSON values (arrays, objects)
+helm install my-release ./chart \
+  --set-json 'tolerations=[{"key":"dedicated","operator":"Equal","value":"gpu"}]'
 
-      <h3>Uninstall & Cleanup</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Uninstall Releases</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm uninstall my-release</div>
-              <div class="command-desc">Uninstall release</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm uninstall release1 release2</div>
-              <div class="command-desc">Uninstall multiple releases</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm uninstall -n dev my-release</div>
-              <div class="command-desc">Uninstall from specific namespace</div>
-            </div>
-          </div>
+# --values / -f: load from file
+helm upgrade --install my-release ./chart \
+  -f values-base.yaml \
+  -f values-production.yaml \
+  --set image.tag=$(git rev-parse --short HEAD)
 
-          <div class="command-card">
-            <h4>Cleanup</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm uninstall --keep-history my-release</div>
-              <div class="command-desc">Keep release history</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm uninstall --wait my-release</div>
-              <div class="command-desc">Wait for resources to be deleted</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm uninstall --timeout 300s my-release</div>
-              <div class="command-desc">Set uninstall timeout</div>
-            </div>
-          </div>
-        </div>
-      </div>
+# Multiple -f flags (right file wins on conflict)
+helm upgrade --install my-release ./chart \
+  -f ./environments/base/values.yaml \
+  -f ./environments/prod/values.yaml \
+  -f ./secrets/prod-secrets.yaml
 
-      <h2 id="chart-development">Chart Development</h2>
+# Precedence order (lowest to highest):
+# 1. Chart's values.yaml (defaults)
+# 2. Parent chart's values.yaml
+# 3. -f files (left to right)
+# 4. --set / --set-string / --set-json (rightmost wins)</code></pre>
 
-      <h3>Chart Structure</h3>
-      <div class="chart-example">
-        <h4>Basic Chart Structure</h4>
-        <pre><code>mychart/
-├── Chart.yaml          # Chart metadata
-├── values.yaml         # Default values
-├── templates/          # Kubernetes manifests
-│   ├── deployment.yaml
-│   ├── service.yaml
-│   ├── _helpers.tpl    # Template helpers
-│   └── NOTES.txt       # Post-install notes
-└── charts/             # Dependencies</code></pre>
-      </div>
-
-      <h3>Create Charts</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Chart Creation</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm create mychart</div>
-              <div class="command-desc">Create a new chart</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm template mychart ./mychart</div>
-              <div class="command-desc">Render chart templates</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm lint ./mychart</div>
-              <div class="command-desc">Lint chart for issues</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Chart Packaging</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm package ./mychart</div>
-              <div class="command-desc">Package chart into tgz</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm dependency update ./mychart</div>
-              <div class="command-desc">Update chart dependencies</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm dependency build ./mychart</div>
-              <div class="command-desc">Build chart dependencies</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h3>Chart.yaml Example</h3>
-      <div class="chart-example">
-        <h4>Chart.yaml</h4>
-        <pre><code>apiVersion: v2
+      <h2>Complete Chart.yaml Example</h2>
+      <pre><code>apiVersion: v2
 name: mychart
-description: A Helm chart for Kubernetes
-type: application
-version: 1.0.0
-appVersion: "1.0.0"
+description: A Helm chart for my application
+type: application          # or "library"
+version: 1.2.3             # Chart version (SemVer)
+appVersion: "2.5.1"        # App version (informational)
 
+# Optional fields
+icon: https://example.com/icon.png
+home: https://example.com
+sources:
+  - https://github.com/myorg/myapp
 keywords:
   - myapp
-  - kubernetes
-
+  - web
 maintainers:
-  - name: Your Name
-    email: your.email@example.com
+  - name: Binh Phuong
+    email: admin@example.com
+    url: https://lebinhphuong.tech
 
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Added support for PodDisruptionBudget
+
+# Chart dependencies (stored in charts/ after helm dep update)
 dependencies:
   - name: postgresql
-    version: "12.1.0"
-    repository: "https://charts.bitnami.com/bitnami"
-    condition: postgresql.enabled</code></pre>
+    version: "12.x.x"
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+    tags:
+      - database
+  - name: redis
+    version: "17.x.x"
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled</code></pre>
+
+      <h2>Helm Hooks</h2>
+      <p>Hooks execute at specific points in a release lifecycle. Common uses: run DB migrations before upgrade, send notifications after install, clean up jobs before delete.</p>
+      <pre><code># Hook annotations reference
+annotations:
+  "helm.sh/hook": pre-install           # Before first install
+  "helm.sh/hook": post-install          # After first install
+  "helm.sh/hook": pre-upgrade           # Before upgrade
+  "helm.sh/hook": post-upgrade          # After upgrade
+  "helm.sh/hook": pre-delete            # Before uninstall
+  "helm.sh/hook": post-delete           # After uninstall
+  "helm.sh/hook": pre-rollback          # Before rollback
+  "helm.sh/hook": post-rollback         # After rollback
+  "helm.sh/hook": test                  # helm test command
+  "helm.sh/hook-weight": "-5"           # Order (lower = earlier)
+  "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded</code></pre>
+      <h3>DB Migration Hook Job Example</h3>
+      <pre><code">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "mychart.fullname" . }}-migrate
+  annotations:
+    "helm.sh/hook": pre-upgrade,pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["python", "manage.py", "migrate"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-db-secret
+                  key: url
+  backoffLimit: 3</code></pre>
+
+      <h2>Helm Tests</h2>
+      <pre><code"># Run tests for a release
+helm test my-release -n my-ns
+helm test my-release -n my-ns --logs
+
+# Test Pod template (place in templates/tests/)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "mychart.fullname" . }}-test-connection
+  annotations:
+    "helm.sh/hook": test
+spec:
+  restartPolicy: Never
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args:
+        - '--spider'
+        - 'http://{{ include "mychart.fullname" . }}:{{ .Values.service.port }}/healthz'</code></pre>
+
+      <h2>Common Helm Patterns</h2>
+      <h3>Subcharts &amp; Dependencies</h3>
+      <pre><code># Download dependencies declared in Chart.yaml
+helm dependency update ./mychart
+helm dependency build ./mychart    # use Chart.lock (reproducible)
+helm dependency list ./mychart
+
+# Override subchart values in parent values.yaml:
+# values.yaml
+postgresql:
+  enabled: true
+  auth:
+    database: myapp
+    username: myuser
+  primary:
+    persistence:
+      size: 20Gi
+
+redis:
+  enabled: true
+  architecture: standalone</code></pre>
+
+      <h3>Library Charts</h3>
+      <pre><code># Chart.yaml for a library chart
+apiVersion: v2
+name: mylib
+type: library        # Cannot be installed directly
+version: 0.1.0
+
+# Use in _helpers.tpl of consumer chart:
+{{- define "mylib.labels" -}}
+app.kubernetes.io/name: {{ .Chart.Name }}
+app.kubernetes.io/version: {{ .Chart.AppVersion }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}</code></pre>
+
+      <h3>Helmfile Usage</h3>
+      <pre><code"># helmfile.yaml example
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx
+
+releases:
+  - name: ingress-nginx
+    namespace: ingress-nginx
+    createNamespace: true
+    chart: ingress-nginx/ingress-nginx
+    version: 4.9.0
+    values:
+      - ./values/ingress-nginx.yaml
+
+  - name: myapp
+    namespace: production
+    chart: ./charts/myapp
+    version: 1.2.3
+    values:
+      - ./values/myapp-base.yaml
+      - ./values/myapp-prod.yaml
+    secrets:
+      - ./secrets/myapp-prod.yaml   # helm-secrets integration
+
+# Common helmfile commands
+helmfile sync              # Apply all releases
+helmfile diff              # Show pending changes
+helmfile apply             # Sync only changed releases
+helmfile destroy           # Uninstall all releases
+helmfile -l name=myapp sync  # Target specific release</code></pre>
+
+      <h2>Production Tips</h2>
+      <div class="tip-box">
+        <strong>Tip — Immutable Image Tags:</strong> Always pin <code>image.tag</code> to a specific SHA or semver tag in production. Never use <code>latest</code> — it makes rollbacks impossible and breaks reproducibility.
       </div>
+      <pre><code># In CI/CD pipeline, set tag to git commit SHA
+IMAGE_TAG=$(git rev-parse --short HEAD)
+helm upgrade --install myapp ./chart \
+  --set image.tag=${IMAGE_TAG} \
+  --atomic --timeout 5m \
+  --wait</code></pre>
 
-      <h3>Values.yaml Example</h3>
-      <div class="values-example">
-        <h4>values.yaml</h4>
-        <pre><code># Default values for mychart
-replicaCount: 1
-
-image:
-  repository: nginx
-  tag: "1.21"
-  pullPolicy: IfNotPresent
-
-service:
-  type: ClusterIP
-  port: 80
-
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-  hosts:
-    - host: myapp.local
-      paths:
-        - path: /
-          pathType: Prefix
-  tls: []
-
+      <h3>Resource Limits in Charts</h3>
+      <pre><code># Always provide defaults in values.yaml
 resources:
   limits:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 500m
+    memory: 512Mi
   requests:
     cpu: 100m
     memory: 128Mi
 
-nodeSelector: {}
+# In templates/deployment.yaml:
+resources:
+  {{- toYaml .Values.resources | nindent 10 }}</code></pre>
 
-tolerations: []
+      <h3>Values Validation with JSON Schema</h3>
+      <pre><code># Create values.schema.json in chart root
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["image", "replicaCount"],
+  "properties": {
+    "replicaCount": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50
+    },
+    "image": {
+      "type": "object",
+      "required": ["repository", "tag"],
+      "properties": {
+        "repository": { "type": "string" },
+        "tag": { "type": "string" },
+        "pullPolicy": {
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"]
+        }
+      }
+    }
+  }
+}
+# Helm validates values against schema on install/upgrade</code></pre>
 
-affinity: {}</code></pre>
+      <div class="warning-box">
+        <strong>Warning:</strong> Avoid <code>helm upgrade</code> without <code>--atomic</code> in production pipelines. Without it, a failed upgrade leaves the release in a broken state. Use <code>--atomic --timeout 5m</code> to auto-rollback on failure.
       </div>
 
-      <h2 id="template-functions">Template Functions</h2>
-
-      <h3>Built-in Template Functions</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>String Functions</h4>
-            <div class="command-item">
-              <div class="command-syntax">{{ .Values.name | quote }}</div>
-              <div class="command-desc">Quote string value</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">{{ .Values.name | upper }}</div>
-              <div class="command-desc">Convert to uppercase</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">{{ .Values.name | default "default" }}</div>
-              <div class="command-desc">Use default value</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">{{ include "mychart.fullname" . }}</div>
-              <div class="command-desc">Include template function</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Control Structures</h4>
-            <div class="command-item">
-              <div class="command-syntax">{{- if .Values.enabled }}</div>
-              <div class="command-desc">Conditional template</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">{{- range .Values.items }}</div>
-              <div class="command-desc">Loop over array</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">{{- with .Values.config }}</div>
-              <div class="command-desc">Change scope</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h3>Helper Functions (_helpers.tpl)</h3>
-      <div class="chart-example">
-        <h4>Template Helpers</h4>
-        <pre><code>{{/*
-Expand the name of the chart.
-*/}}
-{{- define "mychart.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{/*
-Create a default fully qualified app name.
-*/}}
-{{- define "mychart.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
-{{- end }}
-
-{{/*
-Create chart name and version as used by the chart label.
-*/}}
-{{- define "mychart.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }}</code></pre>
-      </div>
-
-      <h2 id="advanced-operations">Advanced Operations</h2>
-
-      <h3>Secrets & ConfigMaps</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Plugin Management</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm plugin list</div>
-              <div class="command-desc">List installed plugins</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm plugin install https://github.com/example/plugin</div>
-              <div class="command-desc">Install plugin from URL</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm plugin update plugin-name</div>
-              <div class="command-desc">Update plugin</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm plugin uninstall plugin-name</div>
-              <div class="command-desc">Uninstall plugin</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Testing</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm test my-release</div>
-              <div class="command-desc">Run chart tests</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm test --logs my-release</div>
-              <div class="command-desc">Run tests with logs</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm test --timeout 300s my-release</div>
-              <div class="command-desc">Set test timeout</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h3>Environment Management</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Multiple Environments</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm install dev-release ./mychart -f values-dev.yaml -n dev</div>
-              <div class="command-desc">Install for development</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install staging-release ./mychart -f values-staging.yaml -n staging</div>
-              <div class="command-desc">Install for staging</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install prod-release ./mychart -f values-prod.yaml -n prod</div>
-              <div class="command-desc">Install for production</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Environment Variables</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm install my-release ./mychart --set image.tag=$IMAGE_TAG</div>
-              <div class="command-desc">Use environment variables</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm install my-release ./mychart --set env.DATABASE_URL=$DB_URL</div>
-              <div class="command-desc">Set environment-specific values</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 id="best-practices">Best Practices</h2>
-
-      <h3>Chart Development Best Practices</h3>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 2rem 0;">
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">Version Management</h5>
-          <ul style="margin: 0;">
-            <li>Use semantic versioning</li>
-            <li>Update Chart.yaml version on changes</li>
-            <li>Use appVersion for application version</li>
-            <li>Tag releases in git</li>
-          </ul>
-        </div>
-
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">Security</h5>
-          <ul style="margin: 0;">
-            <li>Don't hardcode secrets in values</li>
-            <li>Use RBAC for service accounts</li>
-            <li>Validate user inputs</li>
-            <li>Keep dependencies updated</li>
-          </ul>
-        </div>
-
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">Maintainability</h5>
-          <ul style="margin: 0;">
-            <li>Use helper templates</li>
-            <li>Document your charts</li>
-            <li>Test your charts</li>
-            <li>Use consistent naming</li>
-          </ul>
-        </div>
-
-        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-          <h5 style="color: var(--secondary-color);">CI/CD Integration</h5>
-          <ul style="margin: 0;">
-            <li>Lint charts in CI</li>
-            <li>Test chart installations</li>
-            <li>Package charts automatically</li>
-            <li>Use chart repositories</li>
-          </ul>
-        </div>
-      </div>
-
-      <h3>Troubleshooting</h3>
-      <div class="command-section">
-        <div class="command-grid">
-          <div class="command-card">
-            <h4>Debug Commands</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm get all my-release</div>
-              <div class="command-desc">Get all release information</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm get manifest my-release</div>
-              <div class="command-desc">Get generated manifests</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm get values my-release</div>
-              <div class="command-desc">Get release values</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm template --debug my-release ./mychart</div>
-              <div class="command-desc">Debug template rendering</div>
-            </div>
-          </div>
-
-          <div class="command-card">
-            <h4>Common Issues</h4>
-            <div class="command-item">
-              <div class="command-syntax">helm list --failed</div>
-              <div class="command-desc">List failed releases</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm list --pending</div>
-              <div class="command-desc">List pending releases</div>
-            </div>
-            <div class="command-item">
-              <div class="command-syntax">helm repo update</div>
-              <div class="command-desc">Refresh repository cache</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-      </div>
-
-    </div>
-      </div>
-
+      <p class="mt-4 text-muted">
+        <a href="../index.html" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to Documents</a>
+      </p>
     </div>
   </div>
-
   <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

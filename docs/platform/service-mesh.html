@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Mesh (Istio) | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) td { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Platform Engineering</a></li>
+        <li class="breadcrumb-item active">Service Mesh</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-grid-3x3-gap me-2"></i>Platform Engineering</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link active" href="service-mesh.html">Service Mesh</a>
+            <a class="nav-link" href="secrets-pki.html">Secrets &amp; PKI</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-diagram-3 me-2"></i>Service Mesh — Istio</h1>
+
+          <div class="alert-info">
+            <strong>Istio</strong> is a production-grade service mesh that provides traffic management, mTLS security, and observability for microservices — without requiring application code changes. It runs as a CNCF graduated project and is the dominant service mesh for Kubernetes at scale.
+          </div>
+
+          <!-- ARCHITECTURE -->
+          <h2>Architecture</h2>
+          <p>Istio follows a split control-plane / data-plane architecture. Understanding this split is essential for debugging and capacity planning.</p>
+
+          <h3>Control Plane — istiod</h3>
+          <p>
+            Starting with Istio 1.5, the three original control-plane components (Pilot, Citadel, Galley) were unified into a single binary called <strong>istiod</strong>. This dramatically simplifies operations while preserving all functionality.
+          </p>
+
+          <div class="concept-card">
+            <h4>Pilot (xDS configuration)</h4>
+            <p>Translates Istio CRDs (VirtualService, DestinationRule, etc.) into Envoy xDS (Discovery Service) configuration and pushes it to the data-plane proxies. Manages service discovery by watching the Kubernetes API for Endpoints, Services, and Pods. Implements the xDS protocol: LDS (listeners), RDS (routes), CDS (clusters), EDS (endpoints).</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Citadel (Certificate Authority)</h4>
+            <p>Issues and rotates X.509 certificates for every workload in the mesh. Each pod gets a SPIFFE-compliant identity (<code>spiffe://cluster.local/ns/&lt;namespace&gt;/sa/&lt;service-account&gt;</code>). Certificates are rotated before expiry (default: 24 hours) without service disruption. Powers mTLS between all mesh participants.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Galley (Config Validation)</h4>
+            <p>Validates Istio configuration resources before they reach Pilot, preventing misconfigured VirtualServices or DestinationRules from causing outages. Implemented as a Kubernetes Admission Webhook — invalid configs are rejected at apply time.</p>
+          </div>
+
+          <h3>Data Plane — Envoy Proxy</h3>
+          <p>
+            Every pod in the mesh gets an Envoy proxy injected as a sidecar container. All inbound and outbound traffic flows through the sidecar — the application container has no awareness of the mesh. Envoy handles TLS termination/origination, load balancing, circuit breaking, retries, and telemetry collection at the L7 level.
+          </p>
+          <p>Key Envoy concepts: listeners (accept traffic), filters (process traffic — HTTP Connection Manager, gRPC transcoding, Lua), clusters (upstream services), endpoints (individual instances).</p>
+
+          <h3>Key CRDs</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>CRD</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>VirtualService</code></td>
+                <td>HTTP/TCP routing rules: weights, retries, timeouts, fault injection</td>
+              </tr>
+              <tr>
+                <td><code>DestinationRule</code></td>
+                <td>Traffic policy for a destination: load balancing, connection pool, circuit breaker, subsets</td>
+              </tr>
+              <tr>
+                <td><code>Gateway</code></td>
+                <td>Configures the ingress/egress gateway (ports, protocols, TLS)</td>
+              </tr>
+              <tr>
+                <td><code>ServiceEntry</code></td>
+                <td>Registers external services in the mesh registry for routing and policy</td>
+              </tr>
+              <tr>
+                <td><code>PeerAuthentication</code></td>
+                <td>Configures mTLS mode (STRICT, PERMISSIVE, DISABLE) per namespace/workload</td>
+              </tr>
+              <tr>
+                <td><code>AuthorizationPolicy</code></td>
+                <td>L7 access control: allow/deny rules based on source, method, path, JWT claims</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- INSTALLATION -->
+          <h2>Installation</h2>
+
+          <h3>istioctl Install Profiles</h3>
+          <p>Istio ships with named profiles that configure component sets and resource defaults:</p>
+          <table>
+            <thead>
+              <tr><th>Profile</th><th>Use Case</th><th>Components</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>minimal</code></td><td>Control plane only, no ingress gateway</td><td>istiod</td></tr>
+              <tr><td><code>default</code></td><td>Production baseline</td><td>istiod + ingress gateway</td></tr>
+              <tr><td><code>demo</code></td><td>All features, for learning (high resources)</td><td>istiod + ingress + egress</td></tr>
+              <tr><td><code>ambient</code></td><td>Sidecarless ambient mode (preview)</td><td>istiod + ztunnel + waypoint</td></tr>
+            </tbody>
+          </table>
+
+          <pre><code># Download istioctl (replace VERSION with target, e.g. 1.22.0)
+curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.22.0 sh -
+export PATH="$PWD/istio-1.22.0/bin:$PATH"
+
+# Pre-flight check
+istioctl x precheck
+
+# Install with default profile
+istioctl install --set profile=default -y
+
+# Install with custom overlay (recommended for production)
+istioctl install -f istio-operator.yaml -y
+
+# Verify installation
+istioctl verify-install
+
+# Check component status
+kubectl get pods -n istio-system
+
+# Upgrade (in-place, canary-safe)
+istioctl upgrade --set profile=default -y</code></pre>
+
+          <p><strong>Production IstioOperator overlay:</strong></p>
+          <pre><code>apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: production
+spec:
+  profile: default
+  meshConfig:
+    accessLogFile: /dev/stdout
+    defaultConfig:
+      tracing:
+        sampling: 1.0   # 1% sampling in production
+        zipkin:
+          address: jaeger-collector.monitoring:9411
+    outboundTrafficPolicy:
+      mode: REGISTRY_ONLY  # Block unregistered egress traffic
+
+  components:
+    pilot:
+      k8s:
+        resources:
+          requests:
+            cpu: 500m
+            memory: 2Gi
+          limits:
+            cpu: 1000m
+            memory: 4Gi
+        hpaSpec:
+          minReplicas: 2
+          maxReplicas: 5
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+        k8s:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 2000m
+              memory: 1Gi
+          hpaSpec:
+            minReplicas: 2
+            maxReplicas: 10
+
+  values:
+    global:
+      proxy:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi</code></pre>
+
+          <h3>Sidecar Injection</h3>
+          <pre><code># Enable automatic sidecar injection for a namespace
+kubectl label namespace production istio-injection=enabled
+
+# Verify injection label
+kubectl get namespace production --show-labels
+
+# Manually inject sidecar into existing deployment (for testing)
+istioctl kube-inject -f deployment.yaml | kubectl apply -f -
+
+# Opt a specific pod OUT of injection (e.g., for a database sidecar)
+# Add this annotation to the Pod spec:
+# annotations:
+#   sidecar.istio.io/inject: "false"
+
+# Check which pods have sidecars injected
+kubectl get pods -n production -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.containers[*].name}{"\n"}{end}'</code></pre>
+
+          <!-- TRAFFIC MANAGEMENT -->
+          <h2>Traffic Management</h2>
+
+          <h3>VirtualService — HTTP Routing</h3>
+          <p>A VirtualService defines routing rules for traffic destined for a Kubernetes service. It intercepts requests at the Envoy sidecar level.</p>
+
+          <pre><code>apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: payment-service
+  namespace: production
+spec:
+  hosts:
+    - payment-service
+  http:
+    # Header-based routing (e.g., for internal QA traffic)
+    - match:
+        - headers:
+            x-env:
+              exact: staging
+      route:
+        - destination:
+            host: payment-service
+            subset: v2-canary
+
+    # Default weighted routing: 90% v1, 10% v2
+    - route:
+        - destination:
+            host: payment-service
+            subset: v1
+          weight: 90
+        - destination:
+            host: payment-service
+            subset: v2
+          weight: 10
+      # Retry configuration
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: "connect-failure,refused-stream,unavailable,cancelled,5xx"
+      # Timeout for entire request
+      timeout: 30s</code></pre>
+
+          <h3>Fault Injection</h3>
+          <p>Inject faults in production-like environments to test service resilience without modifying application code:</p>
+          <pre><code>apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: payment-service-chaos
+spec:
+  hosts:
+    - payment-service
+  http:
+    - match:
+        - headers:
+            x-chaos-test:
+              exact: "true"
+      fault:
+        delay:
+          percentage:
+            value: 10.0   # inject 500ms delay for 10% of requests
+          fixedDelay: 500ms
+        abort:
+          percentage:
+            value: 5.0    # return HTTP 503 for 5% of requests
+          httpStatus: 503
+      route:
+        - destination:
+            host: payment-service
+    - route:
+        - destination:
+            host: payment-service</code></pre>
+
+          <h3>DestinationRule — Traffic Policy &amp; Circuit Breaker</h3>
+          <pre><code>apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: payment-service
+  namespace: production
+spec:
+  host: payment-service
+  trafficPolicy:
+    loadBalancer:
+      simple: LEAST_CONN   # ROUND_ROBIN | LEAST_CONN | RANDOM | PASSTHROUGH
+    connectionPool:
+      tcp:
+        maxConnections: 100
+        connectTimeout: 3s
+      http:
+        http1MaxPendingRequests: 64
+        http2MaxRequests: 1000
+        maxRequestsPerConnection: 10
+        maxRetries: 3
+    outlierDetection:
+      # Circuit breaker: eject hosts with too many errors
+      consecutiveGatewayErrors: 5
+      consecutive5xxErrors: 5
+      interval: 10s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+      minHealthPercent: 30
+  subsets:
+    - name: v1
+      labels:
+        version: v1
+      trafficPolicy:
+        loadBalancer:
+          simple: ROUND_ROBIN
+    - name: v2
+      labels:
+        version: v2
+    - name: v2-canary
+      labels:
+        version: v2-canary</code></pre>
+
+          <h3>Gateway — Ingress TLS</h3>
+          <pre><code>apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: production-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: production-tls-cert   # K8s secret with tls.crt/tls.key
+      hosts:
+        - api.example.com
+        - admin.example.com
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      tls:
+        httpsRedirect: true   # redirect all HTTP to HTTPS
+      hosts:
+        - api.example.com
+        - admin.example.com
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: api-routing
+  namespace: production
+spec:
+  hosts:
+    - api.example.com
+  gateways:
+    - istio-system/production-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /payment
+      route:
+        - destination:
+            host: payment-service
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /orders
+      route:
+        - destination:
+            host: order-service
+            port:
+              number: 8080</code></pre>
+
+          <h3>Canary Deployment</h3>
+          <p>Progressive traffic shifting with Istio — no Kubernetes resource changes needed between steps:</p>
+          <pre><code># Step 1: Deploy v2 pods (but send 0% traffic)
+kubectl apply -f payment-service-v2-deployment.yaml
+
+# Step 2: Configure initial 5% canary
+kubectl apply -f - &lt;&lt;EOF
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: payment-service
+spec:
+  hosts: [payment-service]
+  http:
+    - route:
+        - destination:
+            host: payment-service
+            subset: v1
+          weight: 95
+        - destination:
+            host: payment-service
+            subset: v2
+          weight: 5
+EOF
+
+# Step 3: Watch error rate in Prometheus before progressing
+# istio_requests_total{destination_service="payment-service",response_code=~"5.."}
+
+# Step 4: Shift to 50/50
+# (patch VirtualService weight: v1=50, v2=50)
+
+# Step 5: Full cutover
+# (patch VirtualService weight: v1=0, v2=100)
+
+# Step 6: Decommission v1 pods
+kubectl delete deployment payment-service-v1</code></pre>
+
+          <h3>Traffic Mirroring (Shadow Traffic)</h3>
+          <pre><code>apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: payment-service
+spec:
+  hosts:
+    - payment-service
+  http:
+    - route:
+        - destination:
+            host: payment-service
+            subset: v1
+          weight: 100
+      mirror:
+        host: payment-service
+        subset: v2-shadow    # receives a copy of 20% of live traffic
+      mirrorPercentage:
+        value: 20.0</code></pre>
+
+          <!-- SECURITY -->
+          <h2>Security</h2>
+
+          <h3>mTLS — PeerAuthentication</h3>
+          <p>mTLS ensures all service-to-service communication is encrypted and mutually authenticated using SPIFFE identities. Enforce STRICT mode after migration is complete:</p>
+          <pre><code># STRICT mode for entire namespace — all traffic must be mTLS
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: production
+spec:
+  mtls:
+    mode: STRICT
+
+---
+# PERMISSIVE during migration — accept both mTLS and plaintext
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: production
+spec:
+  mtls:
+    mode: PERMISSIVE
+
+---
+# Workload-specific override — exempt a legacy pod
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: legacy-exception
+  namespace: production
+spec:
+  selector:
+    matchLabels:
+      app: legacy-db-client
+  mtls:
+    mode: PERMISSIVE</code></pre>
+
+          <div class="tip-box">
+            <strong>Migration strategy:</strong> Start mesh-wide with PERMISSIVE, then progressively add STRICT per-namespace as you verify mTLS is working. Use <code>istioctl x authz check &lt;pod&gt;</code> to debug policy application.
+          </div>
+
+          <h3>AuthorizationPolicy — Service-Level RBAC</h3>
+          <p>AuthorizationPolicy implements L7 access control. The default (no policy) is allow-all. A deny-all baseline with explicit allows is the production-safe pattern:</p>
+          <pre><code># Step 1: Deny all inbound traffic to production namespace
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-all
+  namespace: production
+spec:
+  {}   # no selector = applies to all workloads in namespace
+  # no rules = deny all
+
+---
+# Step 2: Allow payment-service to be called from order-service and api-gateway only
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: payment-service-access
+  namespace: production
+spec:
+  selector:
+    matchLabels:
+      app: payment-service
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - "cluster.local/ns/production/sa/order-service"
+              - "cluster.local/ns/production/sa/api-gateway"
+      to:
+        - operation:
+            methods: ["GET", "POST"]
+            paths: ["/api/v1/payments/*", "/api/v1/refunds/*"]
+    - from:
+        - source:
+            namespaces: ["monitoring"]
+      to:
+        - operation:
+            methods: ["GET"]
+            paths: ["/metrics"]</code></pre>
+
+          <h3>JWT Validation</h3>
+          <pre><code># Validate JWTs issued by your IdP
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: jwt-validation
+  namespace: production
+spec:
+  selector:
+    matchLabels:
+      app: api-gateway
+  jwtRules:
+    - issuer: "https://auth.example.com"
+      jwksUri: "https://auth.example.com/.well-known/jwks.json"
+      audiences:
+        - "api.example.com"
+      forwardOriginalToken: true
+
+---
+# Require valid JWT for all paths except /health
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: require-jwt
+  namespace: production
+spec:
+  selector:
+    matchLabels:
+      app: api-gateway
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            requestPrincipals: ["https://auth.example.com/*"]
+    - to:
+        - operation:
+            paths: ["/health", "/ready"]</code></pre>
+
+          <h3>Egress Control — ServiceEntry</h3>
+          <p>With <code>outboundTrafficPolicy: REGISTRY_ONLY</code>, all egress to unregistered hosts is blocked. Register external services explicitly:</p>
+          <pre><code>apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: external-payment-gateway
+  namespace: production
+spec:
+  hosts:
+    - api.stripe.com
+  ports:
+    - number: 443
+      name: https
+      protocol: HTTPS
+  location: MESH_EXTERNAL
+  resolution: DNS
+
+---
+# Route egress through egress gateway for auditing
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: stripe-via-egress
+  namespace: production
+spec:
+  hosts:
+    - api.stripe.com
+  tls:
+    - match:
+        - port: 443
+          sniHosts: [api.stripe.com]
+      route:
+        - destination:
+            host: istio-egressgateway.istio-system.svc.cluster.local
+            port:
+              number: 443</code></pre>
+
+          <!-- OBSERVABILITY -->
+          <h2>Observability</h2>
+
+          <h3>Automatic Prometheus Metrics</h3>
+          <p>Istio generates the following L7 metrics automatically for every request, labeled by source and destination workload:</p>
+          <ul>
+            <li><code>istio_requests_total</code> — counter of requests (labels: reporter, source/dest workload, namespace, response_code)</li>
+            <li><code>istio_request_duration_milliseconds</code> — histogram of request latencies</li>
+            <li><code>istio_request_bytes</code> — histogram of request body sizes</li>
+            <li><code>istio_response_bytes</code> — histogram of response body sizes</li>
+            <li><code>istio_tcp_sent_bytes_total</code> / <code>istio_tcp_received_bytes_total</code> — TCP-level byte counters</li>
+          </ul>
+
+          <p>Useful PromQL queries:</p>
+          <pre><code># Request rate per service (RED: Rate)
+sum(rate(istio_requests_total{reporter="destination"}[5m])) by (destination_service_name)
+
+# Error rate per service (RED: Errors)
+sum(rate(istio_requests_total{reporter="destination",response_code=~"5.."}[5m])) by (destination_service_name)
+/
+sum(rate(istio_requests_total{reporter="destination"}[5m])) by (destination_service_name)
+
+# P99 latency per service (RED: Duration)
+histogram_quantile(0.99,
+  sum(rate(istio_request_duration_milliseconds_bucket{reporter="destination"}[5m]))
+  by (destination_service_name, le)
+)</code></pre>
+
+          <h3>Distributed Tracing — Jaeger</h3>
+          <pre><code># Deploy Jaeger (all-in-one for dev, production operator for prod)
+kubectl apply -f https://github.com/jaegertracing/jaeger-operator/releases/latest/download/jaeger-operator.yaml -n observability
+
+# Jaeger instance
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: jaeger
+  namespace: observability
+spec:
+  strategy: production
+  storage:
+    type: elasticsearch
+    options:
+      es:
+        server-urls: https://elasticsearch:9200
+  collector:
+    maxReplicas: 5
+
+# Configure Istio to send traces to Jaeger
+# In IstioOperator:
+# meshConfig:
+#   defaultConfig:
+#     tracing:
+#       sampling: 1.0
+#       zipkin:
+#         address: jaeger-collector.observability:9411</code></pre>
+
+          <h3>Kiali — Service Graph</h3>
+          <pre><code># Install Kiali via Helm
+helm repo add kiali https://kiali.org/helm-charts
+helm install kiali-server kiali/kiali-server \
+  --namespace istio-system \
+  --set auth.strategy="token" \
+  --set external_services.prometheus.url="http://prometheus.monitoring:9090" \
+  --set external_services.jaeger.url="http://jaeger-query.observability:16686"
+
+# Access Kiali UI
+kubectl port-forward svc/kiali -n istio-system 20001:20001
+# open http://localhost:20001</code></pre>
+          <p>Kiali provides: service topology graph with real-time traffic flow, error rate heat maps, configuration validation (detects broken VirtualServices), mTLS status per edge, and workload health indicators.</p>
+
+          <!-- PRODUCTION TIPS -->
+          <h2>Production Tips &amp; Best Practices</h2>
+
+          <h3>Envoy Sidecar Resources</h3>
+          <div class="warning-box">
+            <strong>Always set resource requests and limits on Envoy sidecars.</strong> An undersized sidecar under load can throttle all traffic through a pod even when the application is healthy. Tune based on your traffic profile.
+          </div>
+          <pre><code># Set sidecar resource defaults via annotation on Deployment/Pod
+annotations:
+  proxy.istio.io/config: |
+    concurrency: 4
+  sidecar.istio.io/proxyCPU: "200m"
+  sidecar.istio.io/proxyMemory: "256Mi"
+  sidecar.istio.io/proxyCPULimit: "500m"
+  sidecar.istio.io/proxyMemoryLimit: "512Mi"</code></pre>
+
+          <h3>Graceful Termination</h3>
+          <p>Envoy needs time to drain in-flight connections on pod shutdown. Without this, you get 503s during rolling deploys:</p>
+          <pre><code># Add a preStop lifecycle hook to your application container
+# to give Envoy time to drain connections
+lifecycle:
+  preStop:
+    exec:
+      command: ["/bin/sh", "-c", "sleep 5"]
+
+# Also configure Envoy drain duration via annotation
+annotations:
+  proxy.istio.io/config: |
+    terminationDrainDuration: 30s
+
+# Set pod terminationGracePeriodSeconds to exceed drain duration
+spec:
+  terminationGracePeriodSeconds: 60</code></pre>
+
+          <h3>Ambient Mode (Sidecarless)</h3>
+          <p>
+            Istio Ambient Mode (graduated to stable in Istio 1.22) eliminates per-pod sidecars. Instead:
+          </p>
+          <ul>
+            <li><strong>ztunnel</strong> — a DaemonSet node proxy handling L4 mTLS and basic L4 authorization</li>
+            <li><strong>Waypoint proxy</strong> — an optional, namespace-scoped Envoy deployment for L7 features (only deploy when you need L7 routing/auth)</li>
+          </ul>
+          <p>Benefits: ~50% lower resource overhead, no pod restart required to add/remove from mesh, simpler upgrade path. Trade-off: L7 features require explicit waypoint deployment and add a hop. Ambient is ideal for large clusters where sidecar overhead is a major cost driver.</p>
+          <pre><code># Enable ambient mode for a namespace
+kubectl label namespace production istio.io/dataplane-mode=ambient
+
+# Deploy a waypoint proxy for L7 features
+istioctl waypoint apply --namespace production --enroll-namespace</code></pre>
+
+          <h3>Debugging Commands</h3>
+          <pre><code># Analyze Istio configuration for issues
+istioctl analyze -n production
+
+# Check proxy config for a specific pod
+istioctl proxy-config listener &lt;pod-name&gt; -n production
+istioctl proxy-config route &lt;pod-name&gt; -n production
+istioctl proxy-config cluster &lt;pod-name&gt; -n production
+istioctl proxy-config endpoint &lt;pod-name&gt; -n production
+
+# Check authorization policy application
+istioctl x authz check &lt;pod-name&gt; -n production
+
+# View sidecar access logs (must have accessLogFile set)
+kubectl logs &lt;pod-name&gt; -n production -c istio-proxy --tail=100
+
+# Check mTLS status between services
+istioctl x describe pod &lt;pod-name&gt; -n production</code></pre>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

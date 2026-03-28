@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ansible Roles &amp; Modules | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #149ddd;
+      --secondary-color: #173b6c;
+      --text-color: #272829;
+      --bg-light: #f5f8fd;
+      --code-bg: #282c34;
+      --code-text: #abb2bf;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.8;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      padding-left: 1rem;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #e83e8c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--code-text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .tip-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .success-box {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .concept-card {
+      background: var(--bg-light);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .concept-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .module-table th {
+      background: var(--secondary-color);
+      color: white;
+    }
+
+    .module-table td code {
+      color: var(--primary-color);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+          <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Ansible</a></li>
+        <li class="breadcrumb-item active">Roles &amp; Modules</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-gear me-2"></i>Ansible</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Introduction</a>
+            <a class="nav-link" href="playbooks.html">Playbooks</a>
+            <a class="nav-link active" href="roles.html">Roles &amp; Modules</a>
+            <a class="nav-link" href="#roles">Roles</a>
+            <a class="nav-link" href="#modules">Common Modules</a>
+            <a class="nav-link" href="#galaxy">Ansible Galaxy</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-puzzle me-2"></i>Roles &amp; Modules</h1>
+
+          <p>
+            Roles provide a framework for organizing playbooks into reusable, portable units of automation.
+            Modules are the building blocks — pre-built functions that perform specific tasks on managed nodes.
+          </p>
+
+          <h2 id="roles">Ansible Roles</h2>
+
+          <h3>Role Directory Structure</h3>
+          <pre><code>roles/
+└── nginx/                        # Role name
+    ├── defaults/
+    │   └── main.yml              # Default variables (lowest priority)
+    ├── vars/
+    │   └── main.yml              # Role variables (higher priority)
+    ├── tasks/
+    │   ├── main.yml              # Main task file (entry point)
+    │   ├── install.yml           # Sub-task file
+    │   └── configure.yml         # Sub-task file
+    ├── handlers/
+    │   └── main.yml              # Handlers for this role
+    ├── templates/
+    │   └── nginx.conf.j2         # Jinja2 templates
+    ├── files/
+    │   └── nginx.conf.d/         # Static files to copy
+    ├── meta/
+    │   └── main.yml              # Role metadata and dependencies
+    └── README.md                 # Role documentation</code></pre>
+
+          <h3>Create a Role</h3>
+          <pre><code># Generate role skeleton
+ansible-galaxy role init nginx
+
+# Output:
+# - nginx/
+# - nginx/defaults/main.yml
+# - nginx/handlers/main.yml
+# - nginx/tasks/main.yml
+# - nginx/templates/
+# - nginx/files/
+# - nginx/vars/main.yml
+# - nginx/meta/main.yml
+# - nginx/README.md</code></pre>
+
+          <h3>Role Files</h3>
+
+          <div class="concept-card">
+            <h4>defaults/main.yml</h4>
+            <pre><code>---
+# Lowest priority — easily overridden by playbook or inventory vars
+nginx_port: 80
+nginx_worker_processes: auto
+nginx_worker_connections: 1024
+nginx_server_name: "_"
+nginx_root: /var/www/html
+ssl_enabled: false
+nginx_extra_configs: []</code></pre>
+          </div>
+
+          <div class="concept-card">
+            <h4>tasks/main.yml</h4>
+            <pre><code>---
+- name: Import installation tasks
+  import_tasks: install.yml
+  tags: install
+
+- name: Import configuration tasks
+  import_tasks: configure.yml
+  tags: configure
+
+- name: Import SSL tasks
+  import_tasks: ssl.yml
+  when: ssl_enabled | bool
+  tags: ssl</code></pre>
+          </div>
+
+          <div class="concept-card">
+            <h4>tasks/install.yml</h4>
+            <pre><code>---
+- name: Install Nginx (Debian/Ubuntu)
+  apt:
+    name: nginx
+    state: present
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: Install Nginx (RHEL/CentOS)
+  dnf:
+    name: nginx
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Ensure Nginx is started and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: true</code></pre>
+          </div>
+
+          <div class="concept-card">
+            <h4>tasks/configure.yml</h4>
+            <pre><code>---
+- name: Deploy main Nginx configuration
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+    validate: nginx -t -c %s
+  notify: Reload Nginx
+
+- name: Remove default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload Nginx
+
+- name: Deploy virtual host configs
+  template:
+    src: vhost.conf.j2
+    dest: /etc/nginx/sites-available/{{ item.name }}.conf
+  loop: "{{ nginx_vhosts | default([]) }}"
+  notify: Reload Nginx
+
+- name: Enable virtual hosts
+  file:
+    src: /etc/nginx/sites-available/{{ item.name }}.conf
+    dest: /etc/nginx/sites-enabled/{{ item.name }}.conf
+    state: link
+  loop: "{{ nginx_vhosts | default([]) }}"
+  notify: Reload Nginx</code></pre>
+          </div>
+
+          <div class="concept-card">
+            <h4>handlers/main.yml</h4>
+            <pre><code>---
+- name: Start Nginx
+  service:
+    name: nginx
+    state: started
+
+- name: Reload Nginx
+  service:
+    name: nginx
+    state: reloaded
+
+- name: Restart Nginx
+  service:
+    name: nginx
+    state: restarted</code></pre>
+          </div>
+
+          <div class="concept-card">
+            <h4>meta/main.yml</h4>
+            <pre><code>---
+galaxy_info:
+  author: lebinhphuong
+  description: Nginx web server role
+  license: MIT
+  min_ansible_version: "2.12"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - "20.04"
+        - "22.04"
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+  galaxy_tags:
+    - nginx
+    - web
+    - proxy
+
+dependencies:
+  - role: common          # This role depends on 'common' role
+  - role: firewall
+    vars:
+      firewall_allowed_ports: [80, 443]</code></pre>
+          </div>
+
+          <h3>Using Roles in a Playbook</h3>
+          <pre><code">---
+- name: Configure web servers
+  hosts: webservers
+  become: true
+
+  roles:
+    # Simple role usage
+    - common
+
+    # Role with variables override
+    - role: nginx
+      vars:
+        nginx_port: 8080
+        ssl_enabled: true
+        nginx_vhosts:
+          - name: myapp
+            server_name: myapp.example.com
+            root: /var/www/myapp
+
+    # Conditional role
+    - role: datadog
+      when: monitoring_enabled | default(false)
+
+  # Mix tasks and roles
+  tasks:
+    - name: Final health check
+      uri:
+        url: "http://localhost:{{ nginx_port }}"
+        status_code: 200</code></pre>
+
+          <h3>Import vs Include</h3>
+          <pre><code># import_tasks — static, processed at parse time
+# Use when: tasks are always needed, supports tags properly
+- import_tasks: configure.yml
+
+# include_tasks — dynamic, processed at runtime
+# Use when: tasks are conditional or in a loop
+- include_tasks: "{{ ansible_os_family | lower }}.yml"
+
+- include_tasks: install-pkg.yml
+  loop: "{{ packages }}"
+  loop_control:
+    loop_var: pkg_name
+
+# import_role vs include_role — same principle
+- import_role:
+    name: nginx
+
+- include_role:
+    name: "{{ role_name }}"
+  when: install_role | bool</code></pre>
+
+          <h2 id="modules">Common Built-in Modules</h2>
+
+          <h3>File and Directory Management</h3>
+          <pre><code># file — manage files, directories, symlinks
+- name: Create directory
+  file:
+    path: /opt/myapp
+    state: directory    # file | directory | link | absent | touch
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+    recurse: true       # Apply permissions recursively
+
+# copy — copy local files to remote
+- name: Copy config file
+  copy:
+    src: files/app.conf
+    dest: /etc/myapp/app.conf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: true        # Backup existing file
+
+# template — render Jinja2 template and copy
+- name: Deploy config template
+  template:
+    src: app.conf.j2
+    dest: /etc/myapp/app.conf
+
+# fetch — copy files from remote to control node
+- name: Fetch log file
+  fetch:
+    src: /var/log/app/error.log
+    dest: /tmp/logs/{{ inventory_hostname }}/
+
+# lineinfile — manage a line in a file
+- name: Set max open files in limits.conf
+  lineinfile:
+    path: /etc/security/limits.conf
+    line: "ubuntu  soft  nofile  65536"
+    state: present
+
+# blockinfile — insert/update a block of lines
+- name: Add SSH config block
+  blockinfile:
+    path: /etc/ssh/sshd_config
+    marker: "# {mark} MANAGED BY ANSIBLE"
+    block: |
+      PasswordAuthentication no
+      PermitRootLogin no
+      MaxAuthTries 3
+
+# stat — get file/directory status
+- name: Check if file exists
+  stat:
+    path: /opt/myapp/current
+  register: app_link
+
+- name: Run only if file exists
+  debug:
+    msg: "App is deployed"
+  when: app_link.stat.exists</code></pre>
+
+          <h3>Package Management</h3>
+          <pre><code># apt — Debian/Ubuntu package management
+- name: Install packages
+  apt:
+    name:
+      - nginx
+      - python3-pip
+      - git
+    state: present          # present | latest | absent
+    update_cache: true
+    cache_valid_time: 3600  # Only update cache if older than 1 hour
+
+# dnf — RHEL/CentOS/Fedora package management
+- name: Install packages
+  dnf:
+    name:
+      - nginx
+      - python3
+    state: present
+    enablerepo: epel
+
+# pip — Python package management
+- name: Install Python packages
+  pip:
+    name:
+      - flask
+      - gunicorn
+      - psycopg2-binary
+    state: present
+    virtualenv: /opt/myapp/venv
+    virtualenv_python: python3
+
+# package — generic package module (detects OS)
+- name: Install curl (any OS)
+  package:
+    name: curl
+    state: present</code></pre>
+
+          <h3>Service Management</h3>
+          <pre><code"># service — manage services (SysV / systemd)
+- name: Manage Nginx service
+  service:
+    name: nginx
+    state: started       # started | stopped | restarted | reloaded
+    enabled: true        # Start on boot
+
+# systemd — manage systemd units
+- name: Configure and start custom service
+  systemd:
+    name: myapp
+    state: started
+    enabled: true
+    daemon_reload: true   # Reload systemd after unit file change
+
+# Deploy a systemd unit file first
+- name: Deploy systemd service file
+  template:
+    src: myapp.service.j2
+    dest: /etc/systemd/system/myapp.service
+  notify:
+    - Reload systemd
+    - Restart MyApp</code></pre>
+
+          <h3>User and Group Management</h3>
+          <pre><code"># user — manage users
+- name: Create application user
+  user:
+    name: appuser
+    comment: "Application Service Account"
+    shell: /bin/bash
+    groups:
+      - www-data
+      - docker
+    home: /home/appuser
+    create_home: true
+    system: false
+    state: present
+
+# group — manage groups
+- name: Create application group
+  group:
+    name: appteam
+    gid: 5000
+    state: present
+
+# authorized_key — manage SSH authorized keys
+- name: Add SSH public key
+  authorized_key:
+    user: ubuntu
+    state: present
+    key: "{{ lookup('file', 'files/id_rsa.pub') }}"</code></pre>
+
+          <h3>Command and Shell Execution</h3>
+          <pre><code># command — run commands without shell interpretation (safer)
+- name: Run application command
+  command: /opt/myapp/bin/myapp --migrate
+  args:
+    chdir: /opt/myapp
+    creates: /opt/myapp/.migrated   # Skip if file exists
+
+# shell — run commands through shell (supports pipes, redirects)
+- name: Get running containers
+  shell: docker ps --format '{% raw %}{{.Names}}{% endraw %}' | grep myapp
+  register: running_containers
+  changed_when: false
+
+# script — run a local script on remote hosts
+- name: Run initialization script
+  script: scripts/init.sh {{ app_version }}
+  args:
+    creates: /opt/myapp/.initialized
+
+# raw — run raw SSH command (no Python needed)
+- name: Bootstrap Python on minimal host
+  raw: apt-get install -y python3
+  changed_when: true</code></pre>
+
+          <h3>Network and URI Modules</h3>
+          <pre><code># uri — interact with HTTP/HTTPS endpoints
+- name: Check application health
+  uri:
+    url: "http://localhost:8080/health"
+    method: GET
+    status_code: 200
+    return_content: true
+  register: health_check
+  retries: 5
+  delay: 10
+  until: health_check.status == 200
+
+- name: POST data to API
+  uri:
+    url: "https://api.example.com/deploy"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ api_token }}"
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      version: "{{ app_version }}"
+      environment: "{{ env }}"
+    status_code: [200, 201]
+
+# get_url — download files from URL
+- name: Download application binary
+  get_url:
+    url: "https://releases.example.com/myapp-{{ app_version }}.tar.gz"
+    dest: /tmp/myapp.tar.gz
+    checksum: "sha256:{{ app_checksum }}"
+    mode: '0644'</code></pre>
+
+          <h3>Cloud Modules</h3>
+          <pre><code># AWS — EC2 instance management
+- name: Launch EC2 instance
+  amazon.aws.ec2_instance:
+    name: my-web-server
+    key_name: my-key-pair
+    instance_type: t3.medium
+    image_id: ami-0c55b159cbfafe1f0
+    security_group: web-sg
+    vpc_subnet_id: subnet-12345678
+    region: ap-southeast-1
+    tags:
+      Environment: production
+      Role: webserver
+    state: running
+
+# AWS — S3 operations
+- name: Upload file to S3
+  amazon.aws.s3_object:
+    bucket: my-app-artifacts
+    object: "releases/myapp-{{ app_version }}.tar.gz"
+    src: /tmp/myapp.tar.gz
+    mode: put
+    region: ap-southeast-1
+
+# GCP — Compute Engine
+- name: Create GCP instance
+  google.cloud.gcp_compute_instance:
+    name: my-instance
+    machine_type: n1-standard-2
+    zone: asia-southeast1-a
+    project: my-gcp-project
+    auth_kind: serviceaccount
+    service_account_file: /etc/gcp-sa.json
+    state: present</code></pre>
+
+          <h3>Database Modules</h3>
+          <pre><code># postgresql_db — manage PostgreSQL databases
+- name: Create application database
+  community.postgresql.postgresql_db:
+    name: myapp_db
+    owner: myapp_user
+    encoding: UTF8
+    lc_collate: en_US.UTF-8
+    lc_ctype: en_US.UTF-8
+    state: present
+
+# postgresql_user — manage PostgreSQL users
+- name: Create database user
+  community.postgresql.postgresql_user:
+    name: myapp_user
+    password: "{{ db_password }}"
+    role_attr_flags: NOSUPERUSER,CREATEDB
+    state: present
+
+# mysql_db — manage MySQL databases
+- name: Create MySQL database
+  community.mysql.mysql_db:
+    name: myapp
+    encoding: utf8mb4
+    collation: utf8mb4_unicode_ci
+    state: present
+    login_host: "{{ db_host }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"</code></pre>
+
+          <h2 id="galaxy">Ansible Galaxy</h2>
+
+          <h3>Install Roles and Collections</h3>
+          <pre><code># Install a role from Galaxy
+ansible-galaxy role install geerlingguy.nginx
+
+# Install a specific version
+ansible-galaxy role install geerlingguy.nginx,3.1.0
+
+# Install from requirements file
+ansible-galaxy role install -r requirements.yml
+
+# Install a collection
+ansible-galaxy collection install community.general
+ansible-galaxy collection install amazon.aws
+
+# Install collections from requirements
+ansible-galaxy collection install -r requirements.yml
+
+# List installed roles
+ansible-galaxy role list
+
+# Remove a role
+ansible-galaxy role remove geerlingguy.nginx</code></pre>
+
+          <h3>requirements.yml</h3>
+          <pre><code">---
+# requirements.yml
+
+roles:
+  - name: geerlingguy.nginx
+    version: "3.1.0"
+
+  - name: geerlingguy.postgresql
+    version: "3.3.0"
+
+  # From GitHub
+  - name: my-custom-role
+    src: https://github.com/myorg/ansible-role-custom
+    version: main
+
+collections:
+  - name: community.general
+    version: ">=7.0.0"
+
+  - name: amazon.aws
+    version: "6.5.0"
+
+  - name: community.postgresql
+    version: "3.2.0"</code></pre>
+
+          <h3>Publish Your Own Role</h3>
+          <pre><code># Login to Galaxy
+ansible-galaxy login
+
+# Import your role (from GitHub)
+ansible-galaxy import myusername my-role-repo
+
+# Or use the Galaxy API token
+ansible-galaxy role import --token &lt;token&gt; myusername my-role-repo</code></pre>
+
+          <h2>Best Practices for Roles</h2>
+
+          <div class="success-box">
+            <strong>✅ Do:</strong>
+            <ul>
+              <li>Use <code>defaults/main.yml</code> for all configurable variables with sane defaults</li>
+              <li>Keep roles focused on a single technology (nginx, postgresql, redis, etc.)</li>
+              <li>Prefix role-specific variables with the role name (e.g. <code>nginx_port</code>, <code>nginx_user</code>)</li>
+              <li>Write a clear <code>README.md</code> with example usage and all available variables</li>
+              <li>Use <code>molecule</code> for testing roles locally before sharing</li>
+              <li>Tag tasks for selective execution (<code>install</code>, <code>configure</code>, <code>ssl</code>)</li>
+            </ul>
+          </div>
+
+          <div class="warning-box">
+            <strong>⚠️ Avoid:</strong>
+            <ul>
+              <li>Hardcoding values — use variables with defaults instead</li>
+              <li>Using <code>shell</code> or <code>command</code> when a dedicated module exists</li>
+              <li>Including sensitive data directly in role files — use Vault</li>
+              <li>Making roles depend on host-specific facts without providing fallbacks</li>
+              <li>Duplicating logic across roles — extract shared tasks into a <code>common</code> role</li>
+            </ul>
+          </div>
+
+          <h2>Testing Roles with Molecule</h2>
+          <pre><code># Install Molecule
+pip3 install molecule molecule-docker
+
+# Initialize Molecule in existing role
+cd roles/nginx
+molecule init scenario --driver-name docker
+
+# Run tests
+molecule test         # Full test cycle (create, converge, verify, destroy)
+molecule converge     # Apply role on test container
+molecule verify       # Run tests against converged container
+molecule lint         # Lint playbooks and tasks
+
+# molecule/default/molecule.yml
+---
+driver:
+  name: docker
+platforms:
+  - name: ubuntu-22.04
+    image: ubuntu:22.04
+    pre_build_image: true
+  - name: rocky-9
+    image: rockylinux:9
+    pre_build_image: true
+
+provisioner:
+  name: ansible
+  playbooks:
+    converge: converge.yml
+
+verifier:
+  name: ansible</code></pre>
+
+          <div class="tip-box">
+            <strong>💡 Tip:</strong> Use <code>ansible-lint</code> to catch common issues and enforce best practices before committing your playbooks and roles:
+            <pre><code>pip3 install ansible-lint
+ansible-lint site.yml
+ansible-lint roles/nginx/</code></pre>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="playbooks.html">Playbooks</a></strong> - Go deeper into playbook features</li>
+            <li><strong><a href="index.html">Introduction</a></strong> - Back to Ansible basics</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
