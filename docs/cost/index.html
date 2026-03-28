@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cost Optimization Overview | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Cost Optimization</a></li>
+        <li class="breadcrumb-item active">Overview</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-piggy-bank me-2"></i>Cost Optimization</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Overview</a>
+            <a class="nav-link" href="aws-cost.html">AWS Cost Optimization</a>
+            <a class="nav-link" href="gcp-cost.html">GCP Cost Optimization</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-piggy-bank me-2"></i>Cost Optimization Overview</h1>
+
+          <div class="alert-info">
+            <strong>Cloud Cost Optimization</strong> is the practice of reducing cloud spend while maintaining or improving performance, reliability, and security. It is an ongoing discipline — not a one-time activity — embedded in every stage of the infrastructure lifecycle.
+          </div>
+
+          <h2>Cost Optimization Principles</h2>
+          <p>
+            Effective cloud cost optimization follows a structured progression. Without visibility you cannot act, and without governance the gains erode over time.
+          </p>
+
+          <div class="concept-card">
+            <h4>1. Visibility</h4>
+            <p>Understand exactly what you are spending, on which services, in which accounts or projects, and by which teams. Implement cost allocation tags/labels, enable billing exports, and build dashboards before attempting any optimization.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>2. Accountability</h4>
+            <p>Assign ownership of cloud costs to specific teams or business units. When engineers see their own team's spend in real time, behavior changes organically. Chargeback and showback models both serve this purpose.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>3. Optimization</h4>
+            <p>Apply targeted techniques — rightsizing, commitment-based discounts, storage tiering, Spot/Preemptible usage — based on usage patterns identified in the visibility layer. Prioritize by potential savings and implementation effort.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>4. Governance</h4>
+            <p>Establish guardrails that prevent cost regressions: budget alerts, spending limits, approval workflows for expensive resource types, and Infrastructure as Code policies that enforce tagging and instance type constraints.</p>
+          </div>
+
+          <h2>Cloud Cost Categories</h2>
+          <p>Cloud spend clusters into five major categories. Each category requires different optimization techniques.</p>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Typical % of Bill</th>
+                  <th>Key Cost Drivers</th>
+                  <th>Primary Optimization Levers</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Compute</strong></td>
+                  <td>40–60%</td>
+                  <td>Instance size, runtime hours, OS licensing</td>
+                  <td>Rightsizing, Spot/Preemptible, Reserved/CUD</td>
+                </tr>
+                <tr>
+                  <td><strong>Storage</strong></td>
+                  <td>10–25%</td>
+                  <td>Volume size, IOPS, snapshot retention, object storage class</td>
+                  <td>Lifecycle policies, storage class tiering, snapshot cleanup</td>
+                </tr>
+                <tr>
+                  <td><strong>Network Egress</strong></td>
+                  <td>5–20%</td>
+                  <td>Cross-AZ, cross-region, and internet data transfer</td>
+                  <td>CDN caching, same-AZ architecture, VPC endpoints</td>
+                </tr>
+                <tr>
+                  <td><strong>Managed Services</strong></td>
+                  <td>10–30%</td>
+                  <td>Database instances, Kubernetes clusters, serverless invocations</td>
+                  <td>Reserved capacity, serverless for variable load, right-tier selection</td>
+                </tr>
+                <tr>
+                  <td><strong>Support &amp; Licensing</strong></td>
+                  <td>3–8%</td>
+                  <td>Support plan tier, BYOL vs. included licensing</td>
+                  <td>Review support tier against actual usage, BYOL where eligible</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>The Cost Optimization Lifecycle</h2>
+          <p>Cost optimization is a continuous loop. The following table describes each phase, its outputs, and the cadence at which it typically runs.</p>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Phase</th>
+                  <th>Activities</th>
+                  <th>Outputs</th>
+                  <th>Cadence</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Identify</strong></td>
+                  <td>Review billing dashboards, run cloud-native cost analysis tools, export billing data to analytics platform</td>
+                  <td>List of top cost drivers by service, account, and tag</td>
+                  <td>Weekly</td>
+                </tr>
+                <tr>
+                  <td><strong>Analyze</strong></td>
+                  <td>Review utilization metrics, compare instance families, model savings from Reservations/CUDs</td>
+                  <td>Prioritized opportunity backlog with estimated savings</td>
+                  <td>Bi-weekly</td>
+                </tr>
+                <tr>
+                  <td><strong>Optimize</strong></td>
+                  <td>Rightsize instances, purchase commitments, apply lifecycle policies, archive unused resources</td>
+                  <td>Reduced spend, updated IaC templates, new commitment portfolio</td>
+                  <td>Monthly sprints</td>
+                </tr>
+                <tr>
+                  <td><strong>Monitor</strong></td>
+                  <td>Track actual spend vs. budget, verify optimization effectiveness, alert on anomalies</td>
+                  <td>Cost trend reports, anomaly alerts, budget utilization dashboards</td>
+                  <td>Daily / real-time</td>
+                </tr>
+                <tr>
+                  <td><strong>Repeat</strong></td>
+                  <td>Feed monitoring insights back to Identify phase; update architecture standards and IaC modules</td>
+                  <td>Continuously improving baseline cost efficiency</td>
+                  <td>Ongoing</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Rightsizing Strategy</h2>
+          <p>
+            Rightsizing is typically the highest-impact, lowest-risk optimization. Most cloud workloads are initially overprovisioned
+            by 40–60% because engineers provision for peak load without revisiting later.
+          </p>
+
+          <h3>CPU and Memory Utilization Thresholds</h3>
+          <p>Use the following thresholds as starting points. Adjust for workloads with bursty or latency-sensitive characteristics.</p>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Threshold (Downsize candidate)</th>
+                  <th>Threshold (At risk / upsize)</th>
+                  <th>Observation Window</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Average CPU utilization</td>
+                  <td>&lt; 20%</td>
+                  <td>&gt; 80%</td>
+                  <td>14–30 days</td>
+                </tr>
+                <tr>
+                  <td>Peak CPU utilization</td>
+                  <td>&lt; 40%</td>
+                  <td>&gt; 90%</td>
+                  <td>14–30 days</td>
+                </tr>
+                <tr>
+                  <td>Average memory utilization</td>
+                  <td>&lt; 25%</td>
+                  <td>&gt; 85%</td>
+                  <td>14–30 days</td>
+                </tr>
+                <tr>
+                  <td>Network I/O</td>
+                  <td>&lt; 5% of instance baseline</td>
+                  <td>&gt; 70% of instance baseline</td>
+                  <td>7–14 days</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Rightsizing Tooling</h3>
+
+          <div class="strategy-card">
+            <h4>AWS Compute Optimizer</h4>
+            <p>Analyzes CloudWatch metrics for EC2 instances, Auto Scaling groups, EBS volumes, Lambda functions, and ECS tasks. Provides recommendations with projected savings and performance risk rating (low / medium / high). Enrollment is free; recommendations are available within 14 days of enabling.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>GCP Recommender</h4>
+            <p>GCP's built-in recommendation engine covers Compute Engine VM rightsizing, idle VM detection, disk rightsizing, and GKE node pool sizing. Recommendations are surfaced in the console and available via the Recommender API for programmatic consumption and automation.</p>
+          </div>
+
+          <div class="tip-box">
+            <strong>Tip:</strong> Do not rightsize production databases or latency-sensitive services using averages alone. Always validate peak and p99 metrics, and test in a staging environment before applying changes to production.
+          </div>
+
+          <h2>Commitment-Based Discounts Overview</h2>
+          <p>
+            Committing to a consistent level of usage in exchange for a discount is one of the most impactful cost levers available. The three major mechanisms are Reserved Instances (AWS), Savings Plans (AWS), and Committed Use Discounts (GCP).
+          </p>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Mechanism</th>
+                  <th>Cloud</th>
+                  <th>Commitment Type</th>
+                  <th>Max Discount vs On-Demand</th>
+                  <th>Flexibility</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Reserved Instances (Standard)</td>
+                  <td>AWS</td>
+                  <td>Instance family, region, OS — 1 or 3 yr</td>
+                  <td>Up to 72%</td>
+                  <td>Low — fixed instance type and region</td>
+                </tr>
+                <tr>
+                  <td>Reserved Instances (Convertible)</td>
+                  <td>AWS</td>
+                  <td>Instance family, region, OS — 1 or 3 yr</td>
+                  <td>Up to 66%</td>
+                  <td>Medium — can exchange for different family/OS</td>
+                </tr>
+                <tr>
+                  <td>Compute Savings Plans</td>
+                  <td>AWS</td>
+                  <td>$/hour spend commitment — 1 or 3 yr</td>
+                  <td>Up to 66%</td>
+                  <td>High — applies to any EC2, Fargate, Lambda</td>
+                </tr>
+                <tr>
+                  <td>EC2 Instance Savings Plans</td>
+                  <td>AWS</td>
+                  <td>Instance family + region — 1 or 3 yr</td>
+                  <td>Up to 72%</td>
+                  <td>Medium — flexible OS and size within family</td>
+                </tr>
+                <tr>
+                  <td>Resource-Based CUD</td>
+                  <td>GCP</td>
+                  <td>vCPU and memory in a region — 1 or 3 yr</td>
+                  <td>Up to 57%</td>
+                  <td>Low — locked to specific resource type</td>
+                </tr>
+                <tr>
+                  <td>Flexible CUD</td>
+                  <td>GCP</td>
+                  <td>$/hour spend in a region — 1 or 3 yr</td>
+                  <td>Up to 28%</td>
+                  <td>High — applies across N2, C2, M2, C3 families</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tip-box">
+            <strong>Best practice:</strong> Cover your stable, predictable baseline workload with the highest-discount commitment (Standard RI or Resource-Based CUD). Use flexible commitments (Compute Savings Plans, Flexible CUD) for workloads that may change instance family over the commitment period. Never commit more than your minimum guaranteed usage.
+          </div>
+
+          <h2>Spot and Preemptible Instances</h2>
+          <p>
+            Spot Instances (AWS) and Preemptible/Spot VMs (GCP) offer discounts of 60–91% compared to On-Demand pricing by using spare cloud capacity. The tradeoff is that the cloud provider can reclaim the instance with short notice (2 minutes on AWS; 30 seconds on GCP).
+          </p>
+
+          <h3>Suitable Use Cases</h3>
+          <ul>
+            <li>Batch processing jobs (data pipelines, ETL, ML training)</li>
+            <li>Stateless application tiers behind a load balancer</li>
+            <li>CI/CD build agents and test runners</li>
+            <li>Development and staging environments during business hours</li>
+            <li>Rendering, transcoding, and simulation workloads</li>
+          </ul>
+
+          <h3>Interruption Handling Strategies</h3>
+
+          <div class="strategy-card">
+            <h4>Checkpointing</h4>
+            <p>Long-running batch jobs should write progress checkpoints to durable storage (S3, GCS, EFS) at regular intervals. On interruption, the next instance picks up from the last checkpoint rather than starting from scratch.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Graceful Drain with Instance Metadata</h4>
+            <p>Poll the instance metadata service for the interruption notice (available 2 minutes before AWS reclaims a Spot instance) and use it to drain in-flight requests, flush buffers, and deregister from load balancer target groups before shutdown.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Mixed On-Demand and Spot Fleet</h4>
+            <p>Run a guaranteed minimum capacity on On-Demand instances and supplement with Spot for burst capacity. AWS Auto Scaling groups and GCP Managed Instance Groups both support mixing purchase types within a single group. A typical ratio is 20% On-Demand / 80% Spot for non-critical workloads.</p>
+          </div>
+
+          <div class="warning-box">
+            <strong>Warning:</strong> Do not run stateful workloads (databases, ZooKeeper, Kafka brokers) solely on Spot/Preemptible instances without a robust persistence and failover strategy. An unexpected interruption during a leader election or write operation can cause data loss or extended downtime.
+          </div>
+
+          <h2>Waste Identification</h2>
+          <p>
+            Before pursuing advanced optimizations, eliminate obvious waste. The following categories typically represent 15–30% of total cloud spend in organizations that have not run a structured cleanup.
+          </p>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Waste Category</th>
+                  <th>Description</th>
+                  <th>Detection Method</th>
+                  <th>Remediation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Idle Instances</strong></td>
+                  <td>Instances running with CPU &lt; 5% and no significant network traffic for 7+ days</td>
+                  <td>CloudWatch / Cloud Monitoring metrics, Compute Optimizer recommendations</td>
+                  <td>Stop or terminate; implement auto-stop schedules for non-prod</td>
+                </tr>
+                <tr>
+                  <td><strong>Orphaned Storage</strong></td>
+                  <td>EBS volumes / GCP Persistent Disks not attached to any instance; old snapshots beyond retention policy</td>
+                  <td>List unattached volumes via CLI; check snapshot age</td>
+                  <td>Delete unattached volumes after confirming no data value; enforce snapshot lifecycle policies</td>
+                </tr>
+                <tr>
+                  <td><strong>Oversized Instances</strong></td>
+                  <td>Instances with consistently low CPU and memory utilization — often the result of "safe" initial sizing</td>
+                  <td>Compute Optimizer, GCP Recommender, CloudWatch/Monitoring dashboards</td>
+                  <td>Downsize to the next smaller instance type; validate performance post-change</td>
+                </tr>
+                <tr>
+                  <td><strong>Unused Load Balancers</strong></td>
+                  <td>Load balancers with zero healthy targets or zero request count for 7+ days</td>
+                  <td>Check target group health; review access logs / Cloud Logging metrics</td>
+                  <td>Delete load balancer and associated listeners, target groups, and security group rules</td>
+                </tr>
+                <tr>
+                  <td><strong>Oversized Reserved Capacity</strong></td>
+                  <td>Reserved Instances or CUDs with low coverage rate — paying for commitment but not using it</td>
+                  <td>AWS RI Utilization reports; GCP billing export analysis</td>
+                  <td>Sell unused Standard RIs on the Marketplace; exchange Convertible RIs; let CUDs expire and right-size</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Cost Governance</h2>
+          <p>
+            Optimization without governance is unsustainable. As teams grow and infrastructure changes, spend will drift back upward without controls. A mature cost governance framework includes three components.
+          </p>
+
+          <h3>Budget Alerts</h3>
+          <p>
+            Configure budget alerts at the account/project level and at the team/environment tag level. Alerts should fire at 50%, 80%, and 100% of the monthly budget so that teams have time to investigate and respond before the budget is exhausted. Configure both email and Slack/PagerDuty notifications.
+          </p>
+
+          <h3>Approval Workflows</h3>
+          <p>
+            Require pull request approval from a cost or platform team for infrastructure changes that introduce resource types above a defined cost threshold — for example, any instance larger than <code>m5.2xlarge</code>, any NAT Gateway, or any Cross-Region Replication configuration. Enforce via IaC policy tools such as Terraform Sentinel, OPA/Conftest, or AWS Config rules.
+          </p>
+
+          <h3>Spending Limits</h3>
+          <p>
+            AWS Service Quotas and GCP Quotas can cap the number of resources a project or account can provision. While not directly a billing cap, they prevent runaway resource creation. Additionally, AWS Billing Conductor and GCP Budget controls can trigger automated remediation actions (e.g., Lambda to stop instances, Cloud Functions to delete idle resources) when thresholds are breached.
+          </p>
+
+          <div class="success-box">
+            <strong>Governance Maturity Tip:</strong> Embed cost checks into CI/CD pipelines using tools like Infracost or OpenCost. Have the pipeline post a cost estimate comment on every pull request that modifies infrastructure, making cost impact visible before code is merged.
+          </div>
+
+          <h2>Multi-Cloud Cost Comparison</h2>
+          <p>
+            While unit pricing between AWS and GCP is broadly comparable for equivalent resource types, the discount mechanisms, data transfer pricing models, and managed service pricing differ significantly. The table below provides a high-level comparison for common workload types.
+          </p>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>AWS</th>
+                  <th>GCP</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Compute On-Demand baseline</td>
+                  <td>~$0.096/hr (m5.xlarge)</td>
+                  <td>~$0.095/hr (n2-standard-4)</td>
+                  <td>Comparable for general-purpose; AMD variants are cheaper on both</td>
+                </tr>
+                <tr>
+                  <td>Sustained Use Discount</td>
+                  <td>None (must buy RI/SP)</td>
+                  <td>Automatic up to 30% for monthly usage &gt; 25%</td>
+                  <td>GCP's SUD provides baseline savings without commitment</td>
+                </tr>
+                <tr>
+                  <td>Max commitment discount (3yr)</td>
+                  <td>Up to 72% (Standard RI)</td>
+                  <td>Up to 57% (Resource CUD)</td>
+                  <td>AWS wins on max discount; GCP wins on flexibility of Flexible CUD</td>
+                </tr>
+                <tr>
+                  <td>Spot/Preemptible discount</td>
+                  <td>60–90%+ (Spot)</td>
+                  <td>~60–91% (Spot VM)</td>
+                  <td>Both highly variable; GCP Spot is newer but competitive</td>
+                </tr>
+                <tr>
+                  <td>Egress to internet (first 10 TB/mo)</td>
+                  <td>~$0.09/GB</td>
+                  <td>~$0.08/GB (Americas)</td>
+                  <td>GCP slightly cheaper; both waive first 1 GB/month</td>
+                </tr>
+                <tr>
+                  <td>Cross-region data transfer</td>
+                  <td>~$0.02/GB</td>
+                  <td>~$0.01–0.08/GB (region dependent)</td>
+                  <td>Highly route-dependent; model actual traffic patterns</td>
+                </tr>
+                <tr>
+                  <td>Managed Kubernetes (control plane)</td>
+                  <td>$0.10/hr per cluster (EKS)</td>
+                  <td>Free (GKE Autopilot/Standard)</td>
+                  <td>GCP provides free GKE control plane for Standard mode</td>
+                </tr>
+                <tr>
+                  <td>Object storage (first 1 TB/mo)</td>
+                  <td>~$0.023/GB (S3 Standard)</td>
+                  <td>~$0.020/GB (GCS Standard)</td>
+                  <td>GCP slightly cheaper; retrieval fees differ by storage class</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tip-box">
+            <strong>Multi-cloud strategy:</strong> Run cost modeling for each workload individually rather than assuming one cloud is universally cheaper. Data-intensive workloads with heavy BigQuery usage often favor GCP; Windows Server workloads with existing BYOL agreements may favor AWS. Always factor in egress costs when comparing.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

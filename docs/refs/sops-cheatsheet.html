@@ -15,7 +15,7 @@
     h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); font-size: 1.3rem; }
     h3 { color: var(--secondary-color); font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem; }
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; font-size: 0.88rem; }
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
     .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
@@ -51,7 +51,7 @@
 
         <div class="ref-section">
           <h3>Basic Operations</h3>
-          <pre><code"># Install SOPS
+          <pre><code># Install SOPS
 brew install sops
 # or download binary from https://github.com/getsops/sops/releases
 
@@ -81,7 +81,7 @@ sops updatekeys secrets.enc.yaml</code></pre>
 
         <div class="ref-section">
           <h3>AWS KMS</h3>
-          <pre><code"># Encrypt with AWS KMS key
+          <pre><code># Encrypt with AWS KMS key
 sops --kms arn:aws:kms:us-east-1:123456789012:key/mrk-abc123 \
   --encrypt secrets.yaml &gt; secrets.enc.yaml
 
@@ -110,7 +110,7 @@ aws kms create-alias \
 
         <div class="ref-section">
           <h3>GCP KMS</h3>
-          <pre><code"># Encrypt with GCP KMS
+          <pre><code># Encrypt with GCP KMS
 sops --gcp-kms \
   projects/my-project/locations/global/keyRings/sops-keyring/cryptoKeys/sops-key \
   --encrypt secrets.yaml &gt; secrets.enc.yaml
@@ -137,7 +137,7 @@ gcloud kms keys add-iam-policy-binding sops-key \
 
         <div class="ref-section">
           <h3>age Encryption</h3>
-          <pre><code"># Install age
+          <pre><code># Install age
 brew install age
 
 # Generate a key pair
@@ -166,7 +166,7 @@ sops --age age1abc...,age1def... \
 
         <div class="ref-section">
           <h3>PGP (Legacy)</h3>
-          <pre><code"># Generate GPG key (for legacy systems)
+          <pre><code># Generate GPG key (for legacy systems)
 gpg --full-generate-key
 
 # List keys
@@ -196,7 +196,7 @@ gpg&gt; quit</code></pre>
 
         <div class="ref-section">
           <h3>Partial Encryption</h3>
-          <pre><code"># Encrypt only fields ending with _secret or _password
+          <pre><code># Encrypt only fields ending with _secret or _password
 sops --encrypted-suffix "_secret" \
   --encrypt config.yaml &gt; config.enc.yaml
 
@@ -225,7 +225,7 @@ sops -d config.enc.yaml | head -20</code></pre>
       <div class="tip-box">
         <strong>Tip:</strong> Place <code>.sops.yaml</code> at the repository root. SOPS auto-discovers it by searching parent directories from the file being encrypted. This means you don't need to pass <code>--kms</code> flags manually.
       </div>
-      <pre><code"># .sops.yaml — repository root
+      <pre><code># .sops.yaml — repository root
 creation_rules:
   # Production secrets: require AWS KMS (multi-region for HA) + age fallback
   - path_regex: environments/production/.*\.yaml$
@@ -268,7 +268,7 @@ creation_rules:
     shamir_threshold: 2   # Require 2 of 3 groups</code></pre>
 
       <h2>Helm + SOPS (helm-secrets plugin)</h2>
-      <pre><code"># Install helm-secrets plugin
+      <pre><code># Install helm-secrets plugin
 helm plugin install https://github.com/jkroepke/helm-secrets
 
 # Verify installation
@@ -308,7 +308,7 @@ helmfile -e production sync
 helmfile -e production diff</code></pre>
 
       <h2>Ansible + SOPS</h2>
-      <pre><code"># Install community.sops Ansible collection
+      <pre><code># Install community.sops Ansible collection
 ansible-galaxy collection install community.sops
 
 # ansible.cfg
@@ -339,7 +339,7 @@ collections_paths = ./collections
 # sops: encrypts per-value, supports KMS/age/PGP, auditable (keys visible), Git-diff friendly</code></pre>
 
       <h2>Terraform + SOPS</h2>
-      <pre><code"># Install the community sops provider
+      <pre><code># Install the community sops provider
 # versions.tf
 terraform {
   required_providers {
@@ -389,7 +389,7 @@ AWS_PROFILE=production terraform apply</code></pre>
 
       <h2>CI/CD Integration</h2>
       <h3>GitHub Actions with SOPS</h3>
-      <pre><code"># .github/workflows/deploy.yaml
+      <pre><code># .github/workflows/deploy.yaml
 name: Deploy to Production
 
 on:
@@ -445,7 +445,7 @@ jobs:
           rm -f /tmp/secrets.yaml</code></pre>
 
       <h3>GitLab CI with SOPS</h3>
-      <pre><code"># .gitlab-ci.yml
+      <pre><code># .gitlab-ci.yml
 deploy:
   stage: deploy
   image: alpine:latest
@@ -470,7 +470,7 @@ deploy:
       <div class="warning-box">
         <strong>Important:</strong> When a KMS key is rotated or a team member with an age key leaves, you must re-encrypt all SOPS files with the new key set. Simply changing <code>.sops.yaml</code> is not enough — existing files still use the old keys until re-encrypted.
       </div>
-      <pre><code"># === Workflow: Adding a new key (e.g., new team member) ===
+      <pre><code># === Workflow: Adding a new key (e.g., new team member) ===
 
 # 1. Add new age public key to .sops.yaml
 # 2. Run updatekeys on all encrypted files
@@ -533,7 +533,7 @@ aws kms schedule-key-deletion \
       </div>
 
       <h3>Pre-commit Hook to Prevent Plaintext Secret Commits</h3>
-      <pre><code"># .pre-commit-config.yaml
+      <pre><code># .pre-commit-config.yaml
 repos:
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.4.0

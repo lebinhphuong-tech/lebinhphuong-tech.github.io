@@ -19,7 +19,7 @@
     h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
     h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
     .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
@@ -351,7 +351,7 @@ hikaricp_connections_active / hikaricp_connections_max * 100</code></pre>
           <h3>Toil Budget</h3>
           <p>Google's SRE principle: SREs should spend no more than 50% of their time on toil. Track it quarterly:</p>
 
-          <pre><code"># Toil tracking — weekly time log template
+          <pre><code># Toil tracking — weekly time log template
 # Each SRE tracks time in these categories:
 
 | Category        | Hours | % of Total |

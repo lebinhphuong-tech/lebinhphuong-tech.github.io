@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gcloud Cheatsheet | Quick Reference | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; text-decoration: none; display: block; font-size: 0.9rem; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+    .ref-section { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; }
+    .ref-section h4 { color: var(--primary-color); font-weight: 600; margin-bottom: 1rem; font-size: 1rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; }
+    .ref-section pre { margin: 0; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item active">gcloud Cheatsheet</li>
+      </ol>
+    </nav>
+
+    <div class="row g-4">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-lightning-fill me-2"></i>Quick Reference</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="docker-cheatsheet.html">Docker</a>
+            <a class="nav-link" href="kubectl-cheatsheet.html">kubectl</a>
+            <a class="nav-link" href="terraform-cheatsheet.html">Terraform</a>
+            <a class="nav-link" href="aws-cli-cheatsheet.html">AWS CLI</a>
+            <a class="nav-link active" href="gcloud-cheatsheet.html">gcloud</a>
+            <a class="nav-link" href="git-cheatsheet.html">Git</a>
+            <a class="nav-link" href="helm-cheatsheet.html">Helm</a>
+            <a class="nav-link" href="linux-cheatsheet.html">Linux</a>
+            <a class="nav-link" href="ssh-cheatsheet.html">SSH</a>
+            <a class="nav-link" href="ssl-cheatsheet.html">SSL/TLS</a>
+            <a class="nav-link" href="sops-cheatsheet.html">SOPS</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-google me-2"></i>gcloud Cheatsheet</h1>
+          <p class="text-muted">Quick reference for the Google Cloud CLI — covering Compute Engine, GKE, Cloud Storage, IAM, Cloud SQL, Networking, Secrets, and more.</p>
+
+          <div class="tip-box">
+            <strong>Tip:</strong> Install the Google Cloud CLI: <code>curl https://sdk.cloud.google.com | bash</code>. Initialize with <code>gcloud init</code>. Verify with <code>gcloud version</code>.
+          </div>
+
+          <!-- Quick Grid -->
+          <div class="ref-grid">
+
+            <div class="ref-section">
+              <h4>Auth &amp; Config</h4>
+              <pre><code>gcloud auth login
+gcloud auth application-default login
+gcloud auth list
+gcloud config list
+gcloud config set project my-project
+gcloud config set compute/region asia-southeast1
+gcloud config configurations create prod
+gcloud config configurations activate prod
+gcloud projects list</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Compute Engine</h4>
+              <pre><code>gcloud compute instances list
+gcloud compute instances describe my-vm \
+  --zone=asia-southeast1-a
+gcloud compute instances start my-vm \
+  --zone=asia-southeast1-a
+gcloud compute instances stop my-vm \
+  --zone=asia-southeast1-a
+gcloud compute instances create my-vm \
+  --machine-type=e2-medium \
+  --zone=asia-southeast1-a \
+  --image-family=debian-12 \
+  --image-project=debian-cloud
+gcloud compute ssh my-vm --zone=asia-southeast1-a
+gcloud compute disks list
+gcloud compute snapshots create my-snap \
+  --source-disk my-disk \
+  --source-disk-zone asia-southeast1-a</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>GKE</h4>
+              <pre><code>gcloud container clusters list
+gcloud container clusters describe my-cluster \
+  --region asia-southeast1
+gcloud container clusters get-credentials my-cluster \
+  --region asia-southeast1
+gcloud container clusters upgrade my-cluster \
+  --master --cluster-version 1.28 \
+  --region asia-southeast1
+gcloud container node-pools list \
+  --cluster my-cluster --region asia-southeast1
+gcloud container node-pools update my-pool \
+  --cluster my-cluster \
+  --enable-autoscaling \
+  --min-nodes 1 --max-nodes 5 \
+  --region asia-southeast1</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>GCS (Cloud Storage)</h4>
+              <pre><code>gsutil ls gs://my-bucket/
+gsutil cp file.txt gs://my-bucket/
+gsutil cp gs://my-bucket/file.txt ./
+gsutil rsync -r ./local-dir gs://my-bucket/remote-dir/
+gsutil rm gs://my-bucket/file.txt
+gsutil mb -l asia-southeast1 gs://my-new-bucket
+gsutil versioning set on gs://my-bucket
+gsutil lifecycle set lifecycle.json gs://my-bucket
+gsutil iam get gs://my-bucket</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>IAM</h4>
+              <pre><code>gcloud iam service-accounts list
+gcloud iam service-accounts create my-sa \
+  --display-name="My SA"
+gcloud iam service-accounts keys create key.json \
+  --iam-account=my-sa@project.iam.gserviceaccount.com
+gcloud projects get-iam-policy my-project \
+  --format=json
+gcloud projects add-iam-policy-binding my-project \
+  --member=serviceAccount:my-sa@project.iam.gserviceaccount.com \
+  --role=roles/storage.objectViewer
+gcloud iam roles list --project my-project
+gcloud iam roles describe roles/container.admin</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Cloud SQL</h4>
+              <pre><code>gcloud sql instances list
+gcloud sql instances describe my-db
+gcloud sql connect my-db --user=postgres
+gcloud sql backups list --instance my-db
+gcloud sql backups create --instance my-db
+gcloud sql instances patch my-db \
+  --database-flags max_connections=200</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Networking</h4>
+              <pre><code>gcloud compute networks list
+gcloud compute networks describe my-vpc
+gcloud compute firewall-rules list \
+  --filter="network=my-vpc"
+gcloud compute firewall-rules create allow-ssh \
+  --network=my-vpc \
+  --allow=tcp:22 \
+  --source-ranges=10.0.0.0/8
+gcloud compute routers list
+gcloud compute vpn-gateways list
+gcloud compute interconnects list</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Secrets &amp; Config</h4>
+              <pre><code>gcloud secrets list
+gcloud secrets create my-secret \
+  --replication-policy=automatic
+echo -n "myvalue" | gcloud secrets versions add \
+  my-secret --data-file=-
+gcloud secrets versions access latest \
+  --secret my-secret
+gcloud secrets versions list my-secret</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Logging &amp; Monitoring</h4>
+              <pre><code>gcloud logging read \
+  "resource.type=gce_instance AND severity>=ERROR" \
+  --limit=50
+gcloud logging read \
+  "resource.labels.cluster_name=my-cluster" \
+  --format=json
+gcloud monitoring dashboards list
+gcloud alpha monitoring policies list
+gcloud logging sinks list</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Artifact Registry</h4>
+              <pre><code>gcloud artifacts repositories list
+gcloud artifacts docker images list \
+  asia-southeast1-docker.pkg.dev/my-project/my-repo
+gcloud auth configure-docker \
+  asia-southeast1-docker.pkg.dev
+docker push \
+  asia-southeast1-docker.pkg.dev/my-project/my-repo/image:tag</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Useful Flags</h4>
+              <pre><code>--project=my-project
+--format=json|yaml|table|csv
+--filter="status=RUNNING"
+--sort-by=~createTime
+--limit=10
+--quiet / -q              # skip confirmation
+--async                   # return immediately
+--verbosity=debug</code></pre>
+            </div>
+
+          </div>
+
+          <!-- Auth & Config Detail -->
+          <h2 id="auth">Auth &amp; Configuration</h2>
+
+          <h3>Authentication</h3>
+          <pre><code># Login with your Google account (browser-based)
+gcloud auth login
+
+# Application Default Credentials (for local development / SDKs)
+gcloud auth application-default login
+
+# Service account impersonation
+gcloud auth login --impersonate-service-account=my-sa@project.iam.gserviceaccount.com
+
+# Activate service account key
+gcloud auth activate-service-account \
+  --key-file=key.json
+
+# List active credentials
+gcloud auth list
+
+# Revoke credentials
+gcloud auth revoke user@example.com</code></pre>
+
+          <h3>Configuration &amp; Profiles</h3>
+          <pre><code># View current config
+gcloud config list
+gcloud config list --all
+
+# Set properties
+gcloud config set project my-project
+gcloud config set compute/region asia-southeast1
+gcloud config set compute/zone asia-southeast1-a
+gcloud config set core/account user@example.com
+
+# Named configurations (like AWS profiles)
+gcloud config configurations create prod
+gcloud config configurations activate prod
+gcloud config configurations list
+gcloud config configurations describe prod
+
+# Delete a configuration
+gcloud config configurations delete staging
+
+# Projects
+gcloud projects list
+gcloud projects describe my-project
+gcloud config set project my-project</code></pre>
+
+          <!-- Compute Engine Detail -->
+          <h2 id="compute">Compute Engine</h2>
+
+          <h3>Instances</h3>
+          <pre><code># List instances
+gcloud compute instances list
+gcloud compute instances list --filter="status=RUNNING"
+gcloud compute instances list --format="table(name,zone,machineType,status,networkInterfaces[0].networkIP)"
+
+# Create instance
+gcloud compute instances create my-vm \
+  --machine-type=e2-medium \
+  --zone=asia-southeast1-a \
+  --image-family=debian-12 \
+  --image-project=debian-cloud \
+  --boot-disk-size=50GB \
+  --tags=http-server,https-server \
+  --metadata=startup-script='#!/bin/bash
+    apt-get update && apt-get install -y nginx'
+
+# Start / Stop / Delete
+gcloud compute instances start my-vm --zone=asia-southeast1-a
+gcloud compute instances stop my-vm --zone=asia-southeast1-a
+gcloud compute instances delete my-vm --zone=asia-southeast1-a
+
+# SSH into instance
+gcloud compute ssh my-vm --zone=asia-southeast1-a
+gcloud compute ssh my-vm --zone=asia-southeast1-a -- -L 8080:localhost:8080   # with port forwarding
+
+# Copy files
+gcloud compute scp my-vm:/remote/path ./local-path --zone=asia-southeast1-a
+gcloud compute scp ./local-file my-vm:/remote/path --zone=asia-southeast1-a</code></pre>
+
+          <h3>Disks &amp; Snapshots</h3>
+          <pre><code># List disks
+gcloud compute disks list
+gcloud compute disks describe my-disk --zone=asia-southeast1-a
+
+# Create snapshot
+gcloud compute snapshots create my-snap \
+  --source-disk my-disk \
+  --source-disk-zone asia-southeast1-a \
+  --description "Pre-upgrade backup"
+
+# List snapshots
+gcloud compute snapshots list
+
+# Create disk from snapshot
+gcloud compute disks create restored-disk \
+  --source-snapshot my-snap \
+  --zone=asia-southeast1-a</code></pre>
+
+          <!-- GKE Detail -->
+          <h2 id="gke">GKE (Google Kubernetes Engine)</h2>
+          <pre><code># List clusters
+gcloud container clusters list
+gcloud container clusters list --format="table(name,location,status,currentMasterVersion,currentNodeCount)"
+
+# Describe cluster
+gcloud container clusters describe my-cluster --region asia-southeast1
+
+# Get credentials (updates ~/.kube/config)
+gcloud container clusters get-credentials my-cluster --region asia-southeast1
+
+# Create cluster
+gcloud container clusters create my-cluster \
+  --region asia-southeast1 \
+  --num-nodes 3 \
+  --machine-type e2-standard-4 \
+  --enable-autoscaling \
+  --min-nodes 1 --max-nodes 10 \
+  --enable-ip-alias \
+  --workload-pool=my-project.svc.id.goog
+
+# Upgrade control plane
+gcloud container clusters upgrade my-cluster \
+  --master \
+  --cluster-version 1.28 \
+  --region asia-southeast1
+
+# Node pools
+gcloud container node-pools list \
+  --cluster my-cluster --region asia-southeast1
+gcloud container node-pools describe my-pool \
+  --cluster my-cluster --region asia-southeast1
+gcloud container node-pools update my-pool \
+  --cluster my-cluster \
+  --enable-autoscaling \
+  --min-nodes 1 --max-nodes 5 \
+  --region asia-southeast1
+
+# Upgrade node pool
+gcloud container node-pools upgrade my-pool \
+  --cluster my-cluster \
+  --region asia-southeast1</code></pre>
+
+          <!-- GCS Detail -->
+          <h2 id="gcs">GCS (Cloud Storage)</h2>
+          <pre><code># List buckets / objects
+gsutil ls
+gsutil ls gs://my-bucket/
+gsutil ls -l gs://my-bucket/           # long listing with sizes
+gsutil ls -r gs://my-bucket/           # recursive
+gsutil du -sh gs://my-bucket/          # bucket size
+
+# Copy
+gsutil cp file.txt gs://my-bucket/path/
+gsutil cp gs://my-bucket/file.txt ./
+gsutil cp -r ./local-dir gs://my-bucket/    # recursive
+
+# Sync (efficient incremental copy)
+gsutil rsync -r ./local-dir gs://my-bucket/remote-dir/
+gsutil rsync -r -d ./local-dir gs://my-bucket/   # delete extra files (mirror)
+gsutil rsync -r -x "\.git/|\.tmp$" ./local-dir gs://my-bucket/  # exclude patterns
+
+# Delete
+gsutil rm gs://my-bucket/file.txt
+gsutil rm -r gs://my-bucket/prefix/
+
+# Bucket management
+gsutil mb -l asia-southeast1 gs://my-new-bucket
+gsutil rb gs://my-bucket          # remove empty bucket
+gsutil versioning set on gs://my-bucket
+gsutil versioning get gs://my-bucket
+
+# Lifecycle policy
+gsutil lifecycle set lifecycle.json gs://my-bucket
+gsutil lifecycle get gs://my-bucket
+
+# IAM
+gsutil iam get gs://my-bucket
+gsutil iam ch serviceAccount:my-sa@project.iam.gserviceaccount.com:objectViewer gs://my-bucket</code></pre>
+
+          <!-- IAM Detail -->
+          <h2 id="iam">IAM</h2>
+          <pre><code># Service Accounts
+gcloud iam service-accounts list
+gcloud iam service-accounts describe my-sa@project.iam.gserviceaccount.com
+gcloud iam service-accounts create my-sa \
+  --display-name="My Service Account" \
+  --description="SA for my-app"
+gcloud iam service-accounts delete my-sa@project.iam.gserviceaccount.com
+
+# Service Account Keys
+gcloud iam service-accounts keys create key.json \
+  --iam-account=my-sa@project.iam.gserviceaccount.com
+gcloud iam service-accounts keys list \
+  --iam-account=my-sa@project.iam.gserviceaccount.com
+gcloud iam service-accounts keys delete KEY_ID \
+  --iam-account=my-sa@project.iam.gserviceaccount.com
+
+# Project IAM Policy
+gcloud projects get-iam-policy my-project
+gcloud projects get-iam-policy my-project --format=json
+
+# Grant / Revoke roles
+gcloud projects add-iam-policy-binding my-project \
+  --member=serviceAccount:my-sa@project.iam.gserviceaccount.com \
+  --role=roles/storage.objectViewer
+gcloud projects remove-iam-policy-binding my-project \
+  --member=serviceAccount:my-sa@project.iam.gserviceaccount.com \
+  --role=roles/storage.objectViewer
+
+# Roles
+gcloud iam roles list
+gcloud iam roles list --project my-project
+gcloud iam roles describe roles/container.admin
+gcloud iam roles create custom-role \
+  --project my-project \
+  --file=role-definition.yaml</code></pre>
+
+          <!-- Cloud SQL Detail -->
+          <h2 id="cloudsql">Cloud SQL</h2>
+          <pre><code># List instances
+gcloud sql instances list
+gcloud sql instances describe my-db
+
+# Connect
+gcloud sql connect my-db --user=postgres
+gcloud sql connect my-db --user=postgres --database=mydb
+
+# Create instance
+gcloud sql instances create my-db \
+  --database-version=POSTGRES_15 \
+  --tier=db-g1-small \
+  --region=asia-southeast1 \
+  --storage-size=20GB \
+  --storage-auto-increase
+
+# Backups
+gcloud sql backups list --instance my-db
+gcloud sql backups create --instance my-db
+gcloud sql backups describe BACKUP_ID --instance my-db
+gcloud sql backups restore BACKUP_ID --restore-instance=my-db
+
+# Maintenance / Patch
+gcloud sql instances patch my-db \
+  --database-flags max_connections=200
+gcloud sql instances patch my-db \
+  --maintenance-window-day=SUN \
+  --maintenance-window-hour=2
+
+# Users &amp; Databases
+gcloud sql users list --instance my-db
+gcloud sql users create myuser --instance my-db --password=mypass
+gcloud sql databases list --instance my-db
+gcloud sql databases create mydb --instance my-db</code></pre>
+
+          <!-- Networking Detail -->
+          <h2 id="networking">Networking</h2>
+          <pre><code># VPC Networks
+gcloud compute networks list
+gcloud compute networks describe my-vpc
+gcloud compute networks create my-vpc --subnet-mode=custom
+gcloud compute networks subnets list --network my-vpc
+gcloud compute networks subnets create my-subnet \
+  --network my-vpc \
+  --region asia-southeast1 \
+  --range 10.10.0.0/24
+
+# Firewall Rules
+gcloud compute firewall-rules list
+gcloud compute firewall-rules list --filter="network=my-vpc"
+gcloud compute firewall-rules create allow-ssh \
+  --network=my-vpc \
+  --direction=INGRESS \
+  --allow=tcp:22 \
+  --source-ranges=10.0.0.0/8 \
+  --priority=1000
+gcloud compute firewall-rules create allow-internal \
+  --network=my-vpc \
+  --allow=tcp,udp,icmp \
+  --source-ranges=10.0.0.0/8
+gcloud compute firewall-rules delete allow-ssh
+
+# Cloud Routers &amp; NAT
+gcloud compute routers list
+gcloud compute routers nats list --router=my-router --region=asia-southeast1
+
+# VPN &amp; Interconnect
+gcloud compute vpn-gateways list
+gcloud compute interconnects list
+
+# Load Balancers
+gcloud compute forwarding-rules list
+gcloud compute backend-services list
+gcloud compute url-maps list</code></pre>
+
+          <!-- Secrets & Config Detail -->
+          <h2 id="secrets">Secrets &amp; Config</h2>
+          <pre><code># List secrets
+gcloud secrets list
+gcloud secrets list --filter="labels.env=prod"
+
+# Create secret
+gcloud secrets create my-secret \
+  --replication-policy=automatic
+gcloud secrets create my-secret \
+  --replication-policy=user-managed \
+  --locations=asia-southeast1,asia-southeast2
+
+# Add secret version
+echo -n "myvalue" | gcloud secrets versions add my-secret --data-file=-
+gcloud secrets versions add my-secret --data-file=secret.txt
+
+# Access secret value
+gcloud secrets versions access latest --secret my-secret
+gcloud secrets versions access 1 --secret my-secret
+
+# Manage versions
+gcloud secrets versions list my-secret
+gcloud secrets versions describe 1 --secret my-secret
+gcloud secrets versions disable 1 --secret my-secret
+gcloud secrets versions destroy 1 --secret my-secret
+
+# Delete secret
+gcloud secrets delete my-secret</code></pre>
+
+          <!-- Logging & Monitoring Detail -->
+          <h2 id="logging">Logging &amp; Monitoring</h2>
+          <pre><code># Read logs (Cloud Logging query syntax)
+gcloud logging read \
+  "resource.type=gce_instance AND severity>=ERROR" \
+  --limit=50
+gcloud logging read \
+  "resource.labels.cluster_name=my-cluster" \
+  --format=json \
+  --limit=100
+gcloud logging read \
+  "resource.type=k8s_container AND resource.labels.namespace_name=production" \
+  --freshness=1h \
+  --format=json
+
+# Log sinks (export to GCS / BigQuery / Pub/Sub)
+gcloud logging sinks list
+gcloud logging sinks describe my-sink
+gcloud logging sinks create my-sink \
+  bigquery.googleapis.com/projects/my-project/datasets/my_dataset \
+  --log-filter='severity>=ERROR'
+
+# Metrics
+gcloud monitoring dashboards list
+gcloud alpha monitoring policies list
+gcloud alpha monitoring policies describe POLICY_ID
+
+# Uptime checks
+gcloud monitoring uptime list
+gcloud monitoring uptime describe CHECK_ID</code></pre>
+
+          <!-- Artifact Registry Detail -->
+          <h2 id="artifact-registry">Artifact Registry</h2>
+          <pre><code># List repositories
+gcloud artifacts repositories list
+gcloud artifacts repositories describe my-repo \
+  --location=asia-southeast1
+
+# Create repository
+gcloud artifacts repositories create my-repo \
+  --repository-format=docker \
+  --location=asia-southeast1 \
+  --description="Docker images for my-app"
+
+# Configure Docker authentication
+gcloud auth configure-docker asia-southeast1-docker.pkg.dev
+
+# List images
+gcloud artifacts docker images list \
+  asia-southeast1-docker.pkg.dev/my-project/my-repo
+gcloud artifacts docker images list \
+  asia-southeast1-docker.pkg.dev/my-project/my-repo \
+  --include-tags
+
+# Push &amp; Pull
+docker tag my-image:latest \
+  asia-southeast1-docker.pkg.dev/my-project/my-repo/my-image:latest
+docker push \
+  asia-southeast1-docker.pkg.dev/my-project/my-repo/my-image:latest
+docker pull \
+  asia-southeast1-docker.pkg.dev/my-project/my-repo/my-image:latest
+
+# Delete image
+gcloud artifacts docker images delete \
+  asia-southeast1-docker.pkg.dev/my-project/my-repo/my-image:latest
+
+# Clean up untagged images
+gcloud artifacts docker images list \
+  asia-southeast1-docker.pkg.dev/my-project/my-repo \
+  --filter="tags:[]" \
+  --format="get(IMAGE)" | \
+  xargs -I{} gcloud artifacts docker images delete {} --quiet</code></pre>
+
+          <div class="warning-box">
+            <strong>Security Note:</strong> Avoid using <code>gcloud iam service-accounts keys create</code> when possible. Prefer Workload Identity for GKE, or Application Default Credentials for local development. Downloaded key files should be treated as passwords.
+          </div>
+
+          <div class="success-box">
+            <strong>Pro Tips:</strong>
+            <ul class="mb-0">
+              <li>Use <code>--format="value(field)"</code> to extract a single field for scripting</li>
+              <li>Use <code>--quiet</code> or <code>-q</code> to skip confirmation prompts in automation</li>
+              <li>Set <code>CLOUDSDK_CORE_PROJECT</code> environment variable to override project for one-off commands</li>
+              <li>Use <code>gcloud beta</code> or <code>gcloud alpha</code> for preview features not yet in GA</li>
+              <li>Run <code>gcloud components update</code> regularly to stay on the latest SDK version</li>
+            </ul>
+          </div>
+
+          <p class="mt-4 text-muted">
+            <a href="aws-cli-cheatsheet.html" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>AWS CLI Cheatsheet</a>
+            &nbsp;|&nbsp;
+            <a href="../index.html" class="text-decoration-none">Back to Documents <i class="bi bi-arrow-right ms-1"></i></a>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

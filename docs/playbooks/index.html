@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incident Response Playbooks | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Incident Playbooks</a></li>
+        <li class="breadcrumb-item active">Overview &amp; Templates</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-book-half me-2"></i>Incident Playbooks</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Overview &amp; Templates</a>
+            <a class="nav-link" href="infra.html">Infrastructure Playbooks</a>
+            <a class="nav-link" href="security.html">Security Playbooks</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-book-half me-2"></i>Incident Response Playbooks</h1>
+
+          <div class="alert-info">
+            <strong>Operational Readiness</strong> — Structured playbooks, runbooks, and templates for responding to infrastructure and security incidents with speed and consistency.
+          </div>
+
+          <h2>Runbook vs Playbook vs Postmortem</h2>
+          <p>These three artefacts serve different purposes in the incident management lifecycle and are frequently confused. Understanding the distinction helps teams build the right documents for the right situations.</p>
+
+          <div class="concept-card">
+            <h4>Runbook</h4>
+            <p>A <strong>step-by-step, procedural guide</strong> for executing a specific, well-understood operational task. Runbooks are prescriptive: they assume the operator knows that they are in the right scenario and simply need to follow the numbered steps. Examples include restarting a service, rotating a certificate, or draining a Kubernetes node. Runbooks minimise cognitive load during high-stress situations.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Playbook</h4>
+            <p>A <strong>strategic, decision-tree-based guide</strong> for responding to a class of incidents. Playbooks contain multiple runbooks, escalation paths, and conditional branches. They guide the responder through diagnosis and triage before pointing to the appropriate runbook. A security breach playbook, for example, covers detection, containment, eradication, and recovery phases — each phase may invoke specific runbooks.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Postmortem (Retrospective)</h4>
+            <p>A <strong>blameless, structured retrospective document</strong> written after an incident is resolved. Its purpose is to capture what happened, why it happened, what the impact was, how it was mitigated, and — most importantly — what action items will prevent recurrence. Postmortems feed directly back into improving runbooks and playbooks.</p>
+          </div>
+
+          <h2>Runbook Structure Template</h2>
+          <p>Every runbook in this portfolio follows the same structure. This consistency allows any on-call engineer to pick up any runbook cold and execute it confidently.</p>
+
+          <pre><code># Runbook: [Short Descriptive Title]
+
+## Metadata
+- **Runbook ID**: RB-NNNN
+- **Severity**: SEV1 | SEV2 | SEV3 | SEV4
+- **Owner**: [Team Name]
+- **Last Updated**: YYYY-MM-DD
+- **Reviewed By**: [Name / Handle]
+
+## Trigger Condition
+Describe exactly what alert, symptom, or condition brings an operator to this runbook.
+Example: PagerDuty alert "PodCrashLoopBackOff" fires for pod in namespace `production`.
+
+## Impact Assessment
+- **User Impact**: [Describe visible customer/user impact]
+- **Business Impact**: [Revenue, SLA, compliance risk]
+- **Blast Radius**: [Which services / regions / tenants are affected]
+
+## Immediate Actions (Time-bound: first 5 minutes)
+1. Acknowledge the alert in PagerDuty / OpsGenie.
+2. Post in #incidents Slack channel: "Investigating [alert name] — [your handle]".
+3. Open the relevant dashboard: [link].
+4. [First containment step].
+
+## Diagnosis Steps
+1. [Command or check to confirm the issue].
+2. [Second diagnostic step with expected output].
+3. [Branching: if X, go to Resolution A; if Y, go to Resolution B].
+
+## Resolution Steps
+### Resolution A: [Cause A]
+1. [Step 1]
+2. [Step 2]
+3. [Verification step]
+
+### Resolution B: [Cause B]
+1. [Step 1]
+2. [Verification step]
+
+## Escalation Path
+- **L1 (On-call SRE)**: Attempt resolution within 15 minutes.
+- **L2 (Senior SRE / Tech Lead)**: Escalate if unresolved after 15 minutes or if SEV1.
+- **L3 (Engineering Manager / Vendor Support)**: Escalate if L2 cannot resolve within 30 minutes.
+- **Stakeholder Notification**: Notify [Product Manager / CTO] for SEV1/SEV2.
+
+## Communication Template
+See Section: Incident Communication Templates below.
+
+## Post-Incident Actions
+- [ ] Resolve the alert in PagerDuty / OpsGenie.
+- [ ] Update the incident status page to "Resolved".
+- [ ] Schedule postmortem within 48 hours (SEV1/SEV2).
+- [ ] File action items as tickets in Jira.
+- [ ] Update this runbook if steps were inaccurate or incomplete.</code></pre>
+
+          <h2>Incident Severity Matrix</h2>
+          <p>All incidents must be classified immediately upon detection. The severity level determines response time, stakeholder notification, and communication channel.</p>
+
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th>Severity</th>
+                  <th>Criteria</th>
+                  <th>Response Time</th>
+                  <th>Stakeholders</th>
+                  <th>Communication Channel</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="table-danger">
+                  <td><strong>SEV1 — Critical</strong></td>
+                  <td>Full production outage; data loss or breach; all users affected; revenue impact exceeding agreed threshold per hour</td>
+                  <td>Acknowledge within <strong>5 min</strong>; resolution target <strong>1 hour</strong></td>
+                  <td>CTO, VP Engineering, Product Manager, On-call SRE, Security (if breach)</td>
+                  <td>#incident-sev1, status page, customer email, executive bridge call</td>
+                </tr>
+                <tr class="table-warning">
+                  <td><strong>SEV2 — High</strong></td>
+                  <td>Major feature degraded; significant portion of users affected; no known workaround; payment flows impaired</td>
+                  <td>Acknowledge within <strong>15 min</strong>; resolution target <strong>4 hours</strong></td>
+                  <td>Engineering Manager, Product Manager, On-call SRE</td>
+                  <td>#incident-sev2, status page update, internal Slack</td>
+                </tr>
+                <tr class="table-info">
+                  <td><strong>SEV3 — Medium</strong></td>
+                  <td>Non-critical feature degraded; minority of users affected; workaround available; performance degradation within SLO</td>
+                  <td>Acknowledge within <strong>1 hour</strong>; resolution target <strong>next business day</strong></td>
+                  <td>Team Lead, On-call SRE</td>
+                  <td>#incidents, internal Slack thread</td>
+                </tr>
+                <tr>
+                  <td><strong>SEV4 — Low</strong></td>
+                  <td>Cosmetic bug; single-user issue; no service impact; informational alert requiring investigation</td>
+                  <td>Acknowledge within <strong>4 hours</strong>; resolution target <strong>next sprint</strong></td>
+                  <td>Assigned engineer</td>
+                  <td>Jira ticket, team standup</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>On-Call Decision Tree</h2>
+          <p>When an alert fires, the on-call engineer follows this decision tree before diving into diagnosis.</p>
+
+          <div class="concept-card">
+            <h4>Step 1 — Alert Fires</h4>
+            <p>An alert arrives via PagerDuty / OpsGenie. Acknowledge within the SLA window defined by severity. Open the alert and read the full context: affected service, region, metric value, alert rule.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Step 2 — Is it Actionable?</h4>
+            <p>Ask: "Does this alert require a human to do something right now?" If <strong>No</strong> (e.g., flapping metric that auto-resolved, or a test alert), resolve it and file a ticket to tune the alert rule. If <strong>Yes</strong>, proceed to Step 3.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Step 3 — Is it a Known Issue?</h4>
+            <p>Check the runbook index, the #incidents Slack channel history, and the ongoing incidents dashboard. If a matching runbook exists, jump directly to it. If this is a known ongoing incident already being handled, join the bridge and support the incident commander. If <strong>unknown</strong>, proceed to Step 4.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Step 4 — Apply Runbook</h4>
+            <p>Locate the runbook that best matches the alert. Follow each numbered step precisely. Do not skip steps. Document every action taken in the incident Slack thread with timestamps. If the runbook resolves the issue, proceed to post-incident actions.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Step 5 — Escalate</h4>
+            <p>If the runbook does not resolve the issue within the time defined by severity, or if you encounter a situation not covered by any runbook, escalate immediately. Do not wait until the SLA breaches. When escalating, provide: incident severity, timeline of events, steps already taken, current system state, and your hypothesis of root cause.</p>
+          </div>
+
+          <h2>Incident Communication Templates</h2>
+          <p>Consistent, timely communication reduces stakeholder anxiety during incidents. Use these templates verbatim and fill in the placeholders.</p>
+
+          <h3>Status Page Update Template</h3>
+          <pre><code>--- INVESTIGATING ---
+Title: [Service Name] Degraded Performance
+Date: YYYY-MM-DD HH:MM UTC
+Status: Investigating
+
+We are currently investigating reports of [brief description of impact, e.g.,
+"elevated error rates on the API"]. Our engineering team is actively working
+to diagnose the issue.
+
+Affected services: [list services]
+Affected regions: [list regions or "All regions"]
+
+We will provide an update within [30 minutes | 1 hour].
+
+--- UPDATE ---
+Title: [Service Name] Degraded Performance — Update #1
+Date: YYYY-MM-DD HH:MM UTC
+Status: Identified
+
+We have identified the root cause: [brief, non-technical description].
+Our team is implementing a fix. We expect resolution by [estimated time] UTC.
+
+--- RESOLVED ---
+Title: [Service Name] — Resolved
+Date: YYYY-MM-DD HH:MM UTC
+Status: Resolved
+
+This incident has been resolved. [Service name] is operating normally.
+
+Root cause: [one sentence]
+Duration: [HH:MM]
+Impact: [number of users or percentage affected]
+
+We apologize for the inconvenience. A full postmortem will be published within 5 business days.</code></pre>
+
+          <h3>Internal Slack Message Template</h3>
+          <pre><code>:rotating_light: *INCIDENT DECLARED* :rotating_light:
+*Severity*: SEV[1|2|3]
+*Service*: [Affected service name]
+*Summary*: [One sentence describing what is broken]
+*Impact*: [Who / what is affected and how many users]
+*Started*: YYYY-MM-DD HH:MM UTC
+*Incident Commander*: @[handle]
+*Bridge*: [Zoom/Meet link or "async in this thread"]
+*Runbook*: [link to runbook]
+*Status page*: [link]
+
+cc: @[engineering-manager] @[product-manager]
+
+*Updates will be posted here every 30 minutes until resolved.*</code></pre>
+
+          <h3>Customer-Facing Email Template</h3>
+          <pre><code>Subject: [ACTION REQUIRED / Service Update] Issue affecting [Product Name] — YYYY-MM-DD
+
+Dear [Customer Name / "Valued Customer"],
+
+We are writing to inform you that we are currently experiencing an issue
+affecting [Product Name / specific feature].
+
+WHAT HAPPENED
+[1–2 sentences describing the issue in plain, non-technical language.]
+
+IMPACT TO YOU
+[Describe what the customer may have experienced: errors, slow responses,
+unavailability. Be specific about timeframe.]
+
+WHAT WE ARE DOING
+Our engineering team identified the root cause at [HH:MM UTC] and has
+implemented a fix. [Service] has been fully restored as of [HH:MM UTC].
+
+WHAT YOU SHOULD DO
+[If action is needed: "Please clear your browser cache and log in again."]
+[If no action needed: "No action is required on your part."]
+
+We sincerely apologise for the disruption this may have caused. We are
+conducting a full review to prevent recurrence.
+
+If you have any questions or concerns, please contact support at [email/link].
+
+Sincerely,
+[Name]
+[Title] — [Company Name]</code></pre>
+
+          <h2>Postmortem / Retrospective Template</h2>
+          <p>Postmortems must be blameless. The goal is to improve systems and processes, not to assign fault to individuals.</p>
+
+          <pre><code># Postmortem: [Incident Title]
+
+## Incident Summary
+- **Incident ID**: INC-NNNN
+- **Severity**: SEV[1|2|3]
+- **Date**: YYYY-MM-DD
+- **Duration**: [HH:MM] (HH:MM UTC — HH:MM UTC)
+- **Incident Commander**: [Name]
+- **Authors**: [Names]
+- **Review Date**: YYYY-MM-DD
+- **Status**: Draft | In Review | Approved
+
+## Executive Summary
+[2–3 sentences: what broke, how long, what was the impact, and the single
+root cause. Write this last, for a non-technical audience.]
+
+## Timeline
+| Time (UTC) | Event |
+|------------|-------|
+| HH:MM      | Monitoring alert fires: [alert name] |
+| HH:MM      | On-call engineer acknowledges alert |
+| HH:MM      | Incident declared SEV[N] |
+| HH:MM      | [Diagnosis step / finding] |
+| HH:MM      | Root cause identified: [brief description] |
+| HH:MM      | Mitigation applied: [action taken] |
+| HH:MM      | Service restored / incident resolved |
+| HH:MM      | Incident closed, postmortem scheduled |
+
+## Root Cause Analysis
+### What happened?
+[Detailed technical description of the failure.]
+
+### Why did it happen? (5 Whys)
+1. Why? — [First level cause]
+2. Why? — [Second level cause]
+3. Why? — [Third level cause]
+4. Why? — [Fourth level cause]
+5. Why? — [Root cause]
+
+### Contributing factors
+- [Factor 1: e.g., missing alert coverage on downstream service]
+- [Factor 2: e.g., runbook was outdated]
+- [Factor 3: e.g., deploy happened during peak traffic without feature flag]
+
+## Impact
+- **Users affected**: [number / percentage]
+- **Duration of impact**: [HH:MM]
+- **SLO breach**: [Yes/No — if yes, specify error budget consumed]
+- **Revenue impact**: [estimate if applicable]
+- **Data integrity**: [Was any data lost or corrupted? Yes/No]
+
+## What Went Well
+- [e.g., Monitoring detected the issue before customer reports]
+- [e.g., Team mobilised quickly and communication was clear]
+- [e.g., Rollback procedure worked as expected]
+
+## What Could Be Improved
+- [e.g., Alert threshold was too sensitive / not sensitive enough]
+- [e.g., Runbook RB-0042 had incorrect commands]
+- [e.g., No runbook existed for this scenario]
+
+## Action Items
+| Action | Owner | Due Date | Priority | Ticket |
+|--------|-------|----------|----------|--------|
+| [Preventive action] | @[handle] | YYYY-MM-DD | P1 | JIRA-NNN |
+| [Detection improvement] | @[handle] | YYYY-MM-DD | P2 | JIRA-NNN |
+| [Runbook update] | @[handle] | YYYY-MM-DD | P2 | JIRA-NNN |
+| [Process improvement] | @[handle] | YYYY-MM-DD | P3 | JIRA-NNN |</code></pre>
+
+          <div class="success-box">
+            <strong>Best Practice:</strong> Schedule the postmortem meeting within 48 hours of incident resolution for SEV1/SEV2. All engineers involved in the incident should attend. The postmortem document should be published internally within 5 business days and shared externally (in a summarised form) within 10 business days for SEV1 incidents.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

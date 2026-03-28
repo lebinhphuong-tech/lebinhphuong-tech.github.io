@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboards &amp; Alerting | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    .method-header { font-size: 1.1rem; font-weight: 600; color: var(--secondary-color); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid"><div class="container">
+    <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+  </div></div>
+</nav>
+
+<div class="container">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+      <li class="breadcrumb-item"><a href="index.html">Observability</a></li>
+      <li class="breadcrumb-item active">Dashboards &amp; Alerting</li>
+    </ol>
+  </nav>
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="sidebar">
+        <h5><i class="bi bi-eye me-2"></i>Observability</h5>
+        <nav class="nav flex-column">
+          <a class="nav-link" href="index.html">Overview</a>
+          <a class="nav-link" href="tracing.html">Distributed Tracing</a>
+          <a class="nav-link active" href="dashboards.html">Dashboards &amp; Alerting</a>
+        </nav>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      <div class="content">
+
+        <h1><i class="bi bi-speedometer2 me-3"></i>Dashboards &amp; Alerting</h1>
+        <p class="lead">Design dashboards that answer the right questions, and build alerting that pages humans only when human judgment is actually needed.</p>
+
+        <div class="tip-box">
+          <strong><i class="bi bi-lightbulb me-2"></i>Guiding Principle:</strong> Every alert that fires should be actionable and urgent. If an alert fires and the on-call engineer's first thought is "I'll deal with this in the morning," the alert should either be deleted or downgraded to a ticket. Alert fatigue kills on-call culture.
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>Dashboard Design Principles</h2>
+        <p>Well-designed dashboards follow established methodologies rather than being built ad-hoc. Three frameworks dominate the industry.</p>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-cpu me-2"></i>USE Method — Infrastructure Focus</h4>
+          <p>Developed by Brendan Gregg, USE stands for <strong>Utilization, Saturation, and Errors</strong>. Apply it to every hardware and OS resource.</p>
+          <ul>
+            <li><strong>Utilization:</strong> Average time the resource was busy. <em>Example: CPU busy 72% of the time.</em></li>
+            <li><strong>Saturation:</strong> Degree to which the resource has extra work queued. <em>Example: CPU run queue length &gt; 1.</em></li>
+            <li><strong>Errors:</strong> Count of error events. <em>Example: NIC packet drops, disk I/O errors.</em></li>
+          </ul>
+          <p><strong>Best for:</strong> Kubernetes node dashboards, database server dashboards, network device monitoring.</p>
+          <pre><code># USE Method PromQL examples
+
+# CPU Utilization (%)
+100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+# CPU Saturation (run queue length — node_pressure_cpu_waiting_seconds on modern kernels)
+rate(node_pressure_cpu_waiting_seconds_total[5m])
+
+# Memory Saturation (page fault rate as proxy for memory pressure)
+rate(node_vmstat_pgmajfault[5m])
+
+# Disk Utilization (%)
+rate(node_disk_io_time_seconds_total{device="sda"}[5m]) * 100
+
+# Network Errors (per second)
+rate(node_network_receive_errs_total[5m]) + rate(node_network_transmit_errs_total[5m])</code></pre>
+        </div>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-arrow-repeat me-2"></i>RED Method — Service / Microservice Focus</h4>
+          <p>Developed by Tom Wilkie, RED focuses on the user-visible behavior of services. It stands for <strong>Rate, Errors, and Duration</strong>.</p>
+          <ul>
+            <li><strong>Rate:</strong> Number of requests per second the service is handling.</li>
+            <li><strong>Errors:</strong> Number of failed requests per second (4xx and 5xx).</li>
+            <li><strong>Duration:</strong> Distribution of time each request takes (p50, p95, p99).</li>
+          </ul>
+          <p><strong>Best for:</strong> Per-service dashboards in a microservices architecture. Every service gets the same three panels for instant cross-service comparison.</p>
+          <pre><code># RED Method PromQL examples (assuming standard OTel/Prometheus metrics)
+
+# Rate: requests per second by service and status
+sum by (service_name) (rate(http_server_request_duration_seconds_count[5m]))
+
+# Error rate: percentage of 5xx responses
+sum by (service_name) (
+  rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[5m])
+) /
+sum by (service_name) (
+  rate(http_server_request_duration_seconds_count[5m])
+) * 100
+
+# Duration: p99 latency by service
+histogram_quantile(0.99, sum by (service_name, le) (
+  rate(http_server_request_duration_seconds_bucket[5m])
+))</code></pre>
+        </div>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-4-circle me-2"></i>Four Golden Signals — SRE Focus</h4>
+          <p>From the Google SRE Book, the Four Golden Signals are the most critical user-facing metrics. They extend RED by adding <strong>Saturation</strong> as the fourth signal.</p>
+          <ul>
+            <li><strong>Latency:</strong> Time to serve a request. Distinguish success latency from error latency (slow errors mask real problems).</li>
+            <li><strong>Traffic:</strong> Demand on the system (req/s, transactions/s, queries/s).</li>
+            <li><strong>Errors:</strong> Rate of failing requests, both explicit (5xx) and implicit (200 with wrong data).</li>
+            <li><strong>Saturation:</strong> How full the service is. Predict performance degradation before it happens (queue depth, thread pool exhaustion, connection pool usage).</li>
+          </ul>
+          <p><strong>Best for:</strong> Executive dashboards, SLO tracking, incident command dashboards during an outage.</p>
+        </div>
+
+        <div class="strategy-card">
+          <h4><i class="bi bi-layout-three-columns me-2"></i>Dashboard Layout Best Practices</h4>
+          <ul>
+            <li><strong>Top row: overview stat panels</strong> — total requests, error %, SLO burn rate, uptime. Status at a glance.</li>
+            <li><strong>Second row: time-series graphs</strong> — rate, error rate, p99 latency over the last 1h/6h/24h.</li>
+            <li><strong>Third row: resource breakdown</strong> — per-pod CPU/memory, per-endpoint latency heatmap.</li>
+            <li><strong>Bottom rows: detailed drill-down</strong> — database query times, dependency health, log panel.</li>
+            <li><strong>Use template variables</strong> — <code>$namespace</code>, <code>$service</code>, <code>$environment</code> — so one dashboard serves all services.</li>
+            <li><strong>Add deployment annotations</strong> — mark every deploy on all time-series graphs so latency changes are immediately correlated to code changes.</li>
+          </ul>
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>Grafana Provisioning via YAML</h2>
+        <p>Dashboard and datasource configuration should be version-controlled and provisioned automatically — never configured manually through the UI.</p>
+
+        <h3>Datasource Provisioning</h3>
+        <pre><code># /etc/grafana/provisioning/datasources/observability.yaml
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus-server.monitoring.svc.cluster.local:9090
+    uid: prometheus
+    isDefault: true
+    jsonData:
+      httpMethod: POST
+      manageAlerts: true
+      alertmanagerUid: alertmanager
+      prometheusType: Prometheus
+      prometheusVersion: 2.50.0
+
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki-gateway.monitoring.svc.cluster.local:80
+    uid: loki
+    jsonData:
+      maxLines: 1000
+      derivedFields:
+        - name: TraceID
+          matcherRegex: '"trace_id":\s*"(\w+)"'
+          url: "${__value.raw}"
+          datasourceUid: tempo
+          urlDisplayLabel: View in Tempo
+
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: http://tempo-query-frontend.monitoring.svc.cluster.local:3100
+    uid: tempo
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: loki
+        filterByTraceID: true
+        customQuery: true
+        query: '{service_name="${__span.tags["service.name"]}"} | json | trace_id="${__trace.traceId}"'
+      serviceMap:
+        datasourceUid: prometheus
+      nodeGraph:
+        enabled: true
+
+  - name: AlertManager
+    type: alertmanager
+    access: proxy
+    url: http://alertmanager.monitoring.svc.cluster.local:9093
+    uid: alertmanager
+    jsonData:
+      implementation: prometheus</code></pre>
+
+        <h3>Dashboard Provisioning</h3>
+        <pre><code># /etc/grafana/provisioning/dashboards/default.yaml
+apiVersion: 1
+
+providers:
+  - name: Platform Dashboards
+    orgId: 1
+    type: file
+    disableDeletion: true        # prevent manual deletion via UI
+    updateIntervalSeconds: 30    # reload from disk every 30s
+    allowUiUpdates: false        # changes must go through Git
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true   # folder = directory name</code></pre>
+
+        <pre><code># Grafana Helm values — mount dashboards from ConfigMap
+grafana.ini:
+  analytics:
+    check_for_updates: false
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: default
+        orgId: 1
+        type: file
+        disableDeletion: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+dashboards:
+  default:
+    kubernetes-cluster:
+      gnetId: 15661     # Kubernetes cluster dashboard from grafana.com
+      revision: 1
+      datasource: Prometheus
+    node-exporter:
+      gnetId: 1860
+      revision: 37
+      datasource: Prometheus
+
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard    # auto-load ConfigMaps with this label
+    labelValue: "1"
+    searchNamespace: ALL</code></pre>
+
+        <!-- ======================================================= -->
+        <h2>AlertManager Configuration</h2>
+        <p>AlertManager handles deduplication, grouping, silencing, and routing of alerts from Prometheus. Proper configuration is critical for effective on-call operations.</p>
+
+        <h3>Core AlertManager Config</h3>
+        <pre><code># alertmanager.yaml
+global:
+  resolve_timeout: 5m
+  slack_api_url: "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXX"
+  pagerduty_url: "https://events.pagerduty.com/v2/enqueue"
+
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+route:
+  # Default grouping: alerts from the same alertname+cluster+service
+  # fire as a single notification
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 30s         # wait 30s before sending first notification (batch)
+  group_interval: 5m      # send updates every 5 minutes
+  repeat_interval: 4h     # re-notify if still firing after 4h
+  receiver: 'slack-default'
+
+  routes:
+    # Critical P1 alerts — page immediately via PagerDuty
+    - matchers:
+        - severity = "critical"
+      receiver: pagerduty-p1
+      group_wait: 0s          # page immediately, no batching
+      repeat_interval: 30m    # re-page every 30m until resolved
+
+    # SLO burn rate alerts — PagerDuty with 5-min grouping
+    - matchers:
+        - alertname =~ "SLOBurnRate.*"
+      receiver: pagerduty-slo
+      group_by: ['alertname', 'service', 'slo_name']
+      group_wait: 30s
+      repeat_interval: 1h
+
+    # Warning-level alerts — Slack only, no page
+    - matchers:
+        - severity = "warning"
+      receiver: slack-warnings
+      group_wait: 2m
+      repeat_interval: 8h
+
+    # Security alerts — dedicated security Slack + PagerDuty security team
+    - matchers:
+        - team = "security"
+      receiver: security-channel
+      group_wait: 0s
+      repeat_interval: 15m
+
+inhibit_rules:
+  # If a critical alert is firing, suppress the corresponding warning
+  - source_matchers:
+      - severity = "critical"
+    target_matchers:
+      - severity = "warning"
+    equal: ['alertname', 'cluster', 'service']
+
+receivers:
+  - name: 'slack-default'
+    slack_configs:
+      - channel: '#platform-alerts'
+        send_resolved: true
+        title: '{{ template "slack.title" . }}'
+        text: '{{ template "slack.text" . }}'
+
+  - name: 'slack-warnings'
+    slack_configs:
+      - channel: '#platform-warnings'
+        send_resolved: true
+
+  - name: 'pagerduty-p1'
+    pagerduty_configs:
+      - routing_key: '{{ .ExternalURL }}'   # use secret ref in production
+        severity: 'critical'
+        description: '{{ .CommonAnnotations.summary }}'
+        details:
+          runbook: '{{ .CommonAnnotations.runbook_url }}'
+          dashboard: '{{ .CommonAnnotations.dashboard_url }}'
+
+  - name: 'pagerduty-slo'
+    pagerduty_configs:
+      - routing_key: '{{ .ExternalURL }}'
+        severity: 'error'
+        description: 'SLO burn rate alert: {{ .CommonAnnotations.summary }}'
+
+  - name: 'security-channel'
+    slack_configs:
+      - channel: '#security-alerts'
+        send_resolved: true
+    pagerduty_configs:
+      - routing_key: 'YOUR_SECURITY_PAGERDUTY_KEY'
+        severity: 'critical'</code></pre>
+
+        <!-- ======================================================= -->
+        <h2>SLO-Based Alerting with Multiburn Rate</h2>
+        <p>SLO-based alerting moves away from arbitrary threshold alerts toward alerts that are directly tied to user impact. The multiburn rate approach (from the Google SRE Workbook) pages when the error budget is being consumed too quickly.</p>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-percent me-2"></i>Error Budget Recap</h4>
+          <p>For a 99.9% availability SLO with a 30-day window:</p>
+          <ul>
+            <li><strong>Allowed downtime:</strong> 43.8 minutes per 30 days</li>
+            <li><strong>Allowed error rate:</strong> 0.1% of requests</li>
+            <li><strong>1x burn rate</strong> = consuming budget at exactly the SLO rate (uses 100% in 30 days)</li>
+            <li><strong>14x burn rate</strong> = consuming budget 14x faster (uses 100% in ~2 days)</li>
+          </ul>
+        </div>
+
+        <h3>Multiburn Rate Alert Rules (PrometheusRule)</h3>
+        <pre><code># slo-alerts.yaml — PrometheusRule for Kubernetes
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: payment-service-slos
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+spec:
+  groups:
+    - name: payment-service.slo.rules
+      interval: 30s
+      rules:
+        # ── Recording Rules ────────────────────────────────────────
+        # 5-minute error ratio
+        - record: job:http_requests:error_ratio5m
+          expr: |
+            sum by (job) (rate(http_server_request_duration_seconds_count{
+              job="payment-service",
+              http_response_status_code=~"5.."
+            }[5m]))
+            /
+            sum by (job) (rate(http_server_request_duration_seconds_count{
+              job="payment-service"
+            }[5m]))
+
+        # 30-minute error ratio
+        - record: job:http_requests:error_ratio30m
+          expr: |
+            sum by (job) (rate(http_server_request_duration_seconds_count{
+              job="payment-service",
+              http_response_status_code=~"5.."
+            }[30m]))
+            /
+            sum by (job) (rate(http_server_request_duration_seconds_count{
+              job="payment-service"
+            }[30m]))
+
+        # 1-hour error ratio
+        - record: job:http_requests:error_ratio1h
+          expr: |
+            sum by (job) (rate(http_server_request_duration_seconds_count{
+              job="payment-service",
+              http_response_status_code=~"5.."
+            }[1h]))
+            /
+            sum by (job) (rate(http_server_request_duration_seconds_count{
+              job="payment-service"
+            }[1h]))
+
+        # 6-hour error ratio
+        - record: job:http_requests:error_ratio6h
+          expr: |
+            sum by (job) (rate(http_server_request_duration_seconds_count{
+              job="payment-service",
+              http_response_status_code=~"5.."
+            }[6h]))
+            /
+            sum by (job) (rate(http_server_request_duration_seconds_count{
+              job="payment-service"
+            }[6h]))
+
+        # ── Alert Rules ────────────────────────────────────────────
+        # P1: >14x burn rate over 5m AND 30m windows → budget gone in <2 days
+        - alert: PaymentSLOBurnRateCritical
+          expr: |
+            job:http_requests:error_ratio5m{job="payment-service"}  > (14 * 0.001)
+            and
+            job:http_requests:error_ratio30m{job="payment-service"} > (14 * 0.001)
+          for: 2m
+          labels:
+            severity: critical
+            team: platform
+            slo_name: payment-availability
+          annotations:
+            summary: "Payment service SLO critical burn rate (14x)"
+            description: >
+              Error rate is {{ $value | humanizePercentage }} over the last 5m and 30m.
+              At this rate the 30-day error budget will be exhausted in less than 2 days.
+              Current burn rate: {{ $value | humanize }}x the SLO threshold.
+            runbook_url: "https://wiki.internal.example.com/runbooks/payment-slo-burn"
+            dashboard_url: "https://grafana.internal.example.com/d/payment-slo/payment-service-slo"
+
+        # P2: >6x burn rate over 30m AND 6h windows → budget gone in <5 days
+        - alert: PaymentSLOBurnRateHigh
+          expr: |
+            job:http_requests:error_ratio30m{job="payment-service"} > (6 * 0.001)
+            and
+            job:http_requests:error_ratio6h{job="payment-service"}  > (6 * 0.001)
+          for: 15m
+          labels:
+            severity: warning
+            team: platform
+            slo_name: payment-availability
+          annotations:
+            summary: "Payment service SLO elevated burn rate (6x)"
+            description: >
+              Error rate is {{ $value | humanizePercentage }} over 30m and 6h windows.
+              Error budget will be exhausted in approximately 5 days if trend continues.
+            runbook_url: "https://wiki.internal.example.com/runbooks/payment-slo-burn"
+
+        # P3: >3x burn rate over 6h → degraded but not urgent
+        - alert: PaymentSLOBurnRateSlow
+          expr: |
+            job:http_requests:error_ratio6h{job="payment-service"} > (3 * 0.001)
+          for: 60m
+          labels:
+            severity: info
+            team: platform
+            slo_name: payment-availability
+          annotations:
+            summary: "Payment service SLO slow burn (3x) — create ticket"
+            description: >
+              Error rate has been elevated for 1 hour at {{ $value | humanizePercentage }}.
+              Error budget will be exhausted in approximately 10 days. Create a ticket.
+            runbook_url: "https://wiki.internal.example.com/runbooks/payment-slo-burn"</code></pre>
+
+        <div class="tip-box">
+          <strong><i class="bi bi-lightbulb me-2"></i>Multiburn Rate Logic:</strong> The key insight is using <strong>two windows</strong> for each alert (e.g., 5m AND 30m). The short window detects fast-moving incidents quickly. The long window confirms the signal is sustained and not a brief blip. Both must be above the threshold to fire, reducing false positives dramatically.
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>Loki Log-Based Alerting</h2>
+        <p>Not all problems surface in Prometheus metrics. Loki alert rules use LogQL to alert on log patterns — critical for detecting application errors that don't yet have corresponding metrics.</p>
+
+        <pre><code># loki-rules.yaml — Loki alerting rules (PrometheusRule format via Loki Ruler)
+groups:
+  - name: application-log-alerts
+    rules:
+      # Alert on elevated error log rate
+      - alert: HighApplicationErrorRate
+        expr: |
+          sum by (service_name) (
+            rate({namespace="production"} | json | level="ERROR" [5m])
+          ) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error log rate in {{ $labels.service_name }}"
+          description: "{{ $labels.service_name }} is logging {{ $value | humanize }} errors/s"
+          runbook_url: "https://wiki.internal.example.com/runbooks/high-error-logs"
+
+      # Alert on panic/fatal log lines — page immediately
+      - alert: ApplicationPanic
+        expr: |
+          count_over_time(
+            {namespace="production"} |= "panic" [2m]
+          ) > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Application panic detected in production"
+          description: "A panic was logged in the last 2 minutes. Immediate investigation required."
+
+      # Alert on authentication failures exceeding brute-force threshold
+      - alert: AuthBruteForceAttempt
+        expr: |
+          sum by (client_ip) (
+            rate(
+              {service_name="auth-service"} | json
+              | message="authentication failed" [5m]
+            )
+          ) > 20
+        for: 2m
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "Possible brute-force attack from {{ $labels.client_ip }}"
+          description: "{{ $value | humanize }} failed auth attempts/s from {{ $labels.client_ip }}"
+
+      # Alert on database connection pool exhaustion via log pattern
+      - alert: DatabaseConnectionPoolExhausted
+        expr: |
+          count_over_time(
+            {namespace="production"}
+            |= "connection pool exhausted" [5m]
+          ) > 5
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database connection pool exhausted"
+          description: "Connection pool exhaustion logged 5+ times in 5 minutes."
+          runbook_url: "https://wiki.internal.example.com/runbooks/db-pool-exhausted"</code></pre>
+
+        <!-- ======================================================= -->
+        <h2>PagerDuty &amp; OpsGenie Integration</h2>
+        <p>Production on-call operations require tight integration between AlertManager and incident management platforms.</p>
+
+        <h3>PagerDuty Integration</h3>
+        <pre><code># alertmanager-secrets.yaml (sealed with Sealed Secrets or External Secrets Operator)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alertmanager-pagerduty
+  namespace: monitoring
+type: Opaque
+stringData:
+  routing_key: "YOUR_PAGERDUTY_INTEGRATION_KEY_HERE"
+
+---
+# alertmanager.yaml — PagerDuty receiver with full context
+receivers:
+  - name: pagerduty-platform
+    pagerduty_configs:
+      - routing_key_file: /etc/alertmanager/secrets/pagerduty-routing-key
+        send_resolved: true
+        severity: '{{ if eq .CommonLabels.severity "critical" }}critical{{ else }}error{{ end }}'
+        description: '{{ .CommonAnnotations.summary }}'
+        details:
+          firing: '{{ .Alerts.Firing | len }} alert(s) firing'
+          alertname: '{{ .CommonLabels.alertname }}'
+          cluster: '{{ .CommonLabels.cluster }}'
+          service: '{{ .CommonLabels.service }}'
+          runbook: '{{ .CommonAnnotations.runbook_url }}'
+          dashboard: '{{ .CommonAnnotations.dashboard_url }}'
+        links:
+          - href: '{{ .CommonAnnotations.runbook_url }}'
+            text: 'Runbook'
+          - href: '{{ .CommonAnnotations.dashboard_url }}'
+            text: 'Dashboard'</code></pre>
+
+        <h3>OpsGenie Integration</h3>
+        <pre><code># alertmanager.yaml — OpsGenie receiver
+receivers:
+  - name: opsgenie-platform
+    opsgenie_configs:
+      - api_key_file: /etc/alertmanager/secrets/opsgenie-api-key
+        send_resolved: true
+        message: '{{ .CommonAnnotations.summary }}'
+        description: '{{ .CommonAnnotations.description }}'
+        priority: '{{ if eq .CommonLabels.severity "critical" }}P1{{ else if eq .CommonLabels.severity "warning" }}P2{{ else }}P3{{ end }}'
+        tags: >-
+          cluster={{ .CommonLabels.cluster }},
+          service={{ .CommonLabels.service }},
+          env={{ .CommonLabels.environment }}
+        details:
+          runbook: '{{ .CommonAnnotations.runbook_url }}'
+          dashboard: '{{ .CommonAnnotations.dashboard_url }}'
+          firing_alerts: '{{ .Alerts.Firing | len }}'
+        responders:
+          - name: platform-oncall
+            type: team</code></pre>
+
+        <!-- ======================================================= -->
+        <h2>Runbook Links in Alerts</h2>
+        <p>Every actionable alert must link to a runbook — a documented procedure telling the on-call engineer exactly what to investigate and how to resolve the issue.</p>
+
+        <div class="strategy-card">
+          <h4><i class="bi bi-book me-2"></i>Runbook Standards</h4>
+          <p>A good runbook answers five questions:</p>
+          <ol>
+            <li><strong>What does this alert mean?</strong> Plain-English description of the condition.</li>
+            <li><strong>What is the user impact?</strong> How are end users affected right now?</li>
+            <li><strong>How do I diagnose it?</strong> Step-by-step investigation with exact commands.</li>
+            <li><strong>How do I mitigate it?</strong> Rollback procedure, feature flag disable, scale-out command.</li>
+            <li><strong>Who do I escalate to?</strong> Named individuals or teams with contact info.</li>
+          </ol>
+        </div>
+
+        <pre><code># PrometheusRule — alert with full runbook annotations
+- alert: PaymentServiceHighErrorRate
+  expr: |
+    sum(rate(http_server_request_duration_seconds_count{
+      job="payment-service",
+      http_response_status_code=~"5.."
+    }[5m])) /
+    sum(rate(http_server_request_duration_seconds_count{
+      job="payment-service"
+    }[5m])) > 0.05
+  for: 5m
+  labels:
+    severity: critical
+    team: platform
+    service: payment-service
+  annotations:
+    summary: "Payment service error rate > 5% for 5 minutes"
+    description: >
+      Payment service is returning {{ $value | humanizePercentage }} errors.
+      This is above the 5% threshold. Users cannot complete purchases.
+      Affects: all checkout flows. Estimated revenue impact: HIGH.
+    runbook_url: "https://wiki.internal.example.com/runbooks/payment-high-error-rate"
+    dashboard_url: "https://grafana.internal.example.com/d/payment/payment-service?var-env=production"
+    logs_url: "https://grafana.internal.example.com/explore?orgId=1&left=%5B%22now-1h%22%2C%22now%22%2C%22Loki%22%2C%7B%22expr%22%3A%22%7Bservice_name%3D%5C%22payment-service%5C%22%7D+%7C+json+%7C+level%3D%5C%22ERROR%5C%22%22%7D%5D"
+    trace_url: "https://grafana.internal.example.com/explore?datasource=tempo"</code></pre>
+
+        <div class="tip-box">
+          <strong><i class="bi bi-lightbulb me-2"></i>Deep Links:</strong> Include pre-filtered deep links to Grafana Explore in alert annotations. Pre-populate the time range (<code>now-1h</code> to <code>now</code>), the correct datasource, and a relevant query. An engineer receiving a PagerDuty alert should be able to click one link and immediately see the relevant logs — no manual query writing required.
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>On-Call Escalation Design</h2>
+        <p>Technology alone does not make on-call sustainable. The escalation structure, rotation design, and cultural norms are equally important.</p>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-people me-2"></i>Escalation Tier Design</h4>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Tier</th>
+                  <th>Who</th>
+                  <th>Response Time</th>
+                  <th>Triggers</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>L1 (Primary)</strong></td>
+                  <td>On-call engineer (rotating weekly)</td>
+                  <td>5 minutes</td>
+                  <td>All P1/P2 alerts; acknowledge or escalate within 5 min</td>
+                </tr>
+                <tr>
+                  <td><strong>L2 (Secondary)</strong></td>
+                  <td>Team lead / senior engineer</td>
+                  <td>15 minutes</td>
+                  <td>L1 unacknowledged for 5 min, or L1 escalates manually</td>
+                </tr>
+                <tr>
+                  <td><strong>L3 (Incident Commander)</strong></td>
+                  <td>Engineering manager</td>
+                  <td>30 minutes</td>
+                  <td>L2 unacknowledged for 10 min, or incident affects &gt;10% users</td>
+                </tr>
+                <tr>
+                  <td><strong>L4 (Executive)</strong></td>
+                  <td>VP Engineering / CTO</td>
+                  <td>60 minutes</td>
+                  <td>Complete service outage &gt;15 minutes or data breach suspected</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="strategy-card">
+          <h4><i class="bi bi-calendar3 me-2"></i>Rotation Design Principles</h4>
+          <ul>
+            <li><strong>Weekly rotations</strong> — shorter rotations (daily) increase context-switching cost; longer (monthly) cause burnout.</li>
+            <li><strong>Follow-the-sun for global teams</strong> — hand off between time zones so no one receives alerts at 3 AM. Requires at least 3 geographic regions.</li>
+            <li><strong>Shadow rotations for new engineers</strong> — pair new team members with an experienced oncall for 2–4 weeks before solo shifts.</li>
+            <li><strong>Oncall load limit</strong> — no engineer should receive more than 5 actionable pages per shift on average. More than that = alert quality problem, not a staffing problem.</li>
+            <li><strong>Post-incident reviews</strong> — conduct a blameless postmortem for every P1 incident within 48 hours. Track action items in the ticket system.</li>
+          </ul>
+        </div>
+
+        <div class="strategy-card">
+          <h4><i class="bi bi-shield-check me-2"></i>Alert Quality Metrics</h4>
+          <p>Track these metrics in your weekly engineering review to continuously improve alert quality:</p>
+          <ul>
+            <li><strong>Actionability rate:</strong> % of alerts that required human action (target: &gt;80%). If lower, delete or automate resolution.</li>
+            <li><strong>Mean time to acknowledge (MTTA):</strong> Target &lt;5 minutes for P1. Track trends over time.</li>
+            <li><strong>False positive rate:</strong> Alerts that fired but required no action. Target: &lt;10%. High false positives erode trust.</li>
+            <li><strong>Alert-to-ticket ratio:</strong> What % of P3/warning alerts become actionable tickets within 48h? If low, delete the alert.</li>
+            <li><strong>Oncall interruptions per week:</strong> Count of out-of-hours pages. Target: &lt;2 per shift per week for sustainability.</li>
+          </ul>
+        </div>
+
+        <div class="success-box">
+          <strong><i class="bi bi-check-circle me-2"></i>Alerting Maturity Checklist:</strong>
+          Every alert in your system should pass this test:
+          (1) Is it actionable? (2) Does it link to a runbook? (3) Does it link to a dashboard? (4) Is the severity label correct? (5) Is there an inhibit rule to prevent duplicates during cascading failures? (6) Has it been reviewed in the last 90 days? If any answer is "no," the alert needs attention before it pages a human at 3 AM.
+        </div>
+
+      </div><!-- /.content -->
+    </div><!-- /.col-lg-9 -->
+  </div><!-- /.row -->
+</div><!-- /.container -->
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

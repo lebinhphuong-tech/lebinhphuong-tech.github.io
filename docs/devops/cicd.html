@@ -199,7 +199,7 @@ jobs:
   # ...stages defined here</code></pre>
 
           <h3>Complete CI/CD Workflow</h3>
-          <pre><code"># .github/workflows/ci-cd.yml
+          <pre><code># .github/workflows/ci-cd.yml
 
 name: CI/CD Pipeline
 
@@ -574,7 +574,7 @@ CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "
           </div>
 
           <h2>Helm Chart for Kubernetes Deployment</h2>
-          <pre><code"># helm/myapp/values.yaml — default values
+          <pre><code># helm/myapp/values.yaml — default values
 
 replicaCount: 2
 
@@ -611,7 +611,7 @@ autoscaling:
 env: production
 logLevel: info</code></pre>
 
-          <pre><code"># helm/myapp/values-staging.yaml — override for staging
+          <pre><code># helm/myapp/values-staging.yaml — override for staging
 
 replicaCount: 1
 ingress:
@@ -623,7 +623,7 @@ env: staging
 logLevel: debug</code></pre>
 
           <h2>ArgoCD — GitOps Deployment</h2>
-          <pre><code"># argocd-app.yaml — ArgoCD Application manifest
+          <pre><code># argocd-app.yaml — ArgoCD Application manifest
 
 apiVersion: argoproj.io/v1alpha1
 kind: Application

@@ -29,7 +29,7 @@
 
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
 
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; font-size: 0.88rem; }
 
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
@@ -94,7 +94,7 @@
 
         <div class="ref-section">
           <h3><i class="bi bi-gear me-1"></i>Setup</h3>
-          <pre><code"># Identity
+          <pre><code># Identity
 git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 
@@ -114,7 +114,7 @@ git config --global --list</code></pre>
 
         <div class="ref-section">
           <h3><i class="bi bi-folder me-1"></i>Basics</h3>
-          <pre><code"># Initialize / Clone
+          <pre><code># Initialize / Clone
 git init
 git clone &lt;url&gt;
 git clone &lt;url&gt; my-folder
@@ -136,7 +136,7 @@ git commit --amend           # Edit last commit (local only!)</code></pre>
 
         <div class="ref-section">
           <h3><i class="bi bi-diagram-2 me-1"></i>Branches</h3>
-          <pre><code"># Create / Switch
+          <pre><code># Create / Switch
 git branch feature/login
 git checkout feature/login
 git checkout -b feature/login   # Create and switch
@@ -158,7 +158,7 @@ git checkout --track origin/feature</code></pre>
 
         <div class="ref-section">
           <h3><i class="bi bi-cloud-arrow-up me-1"></i>Remote</h3>
-          <pre><code"># Remote management
+          <pre><code># Remote management
 git remote -v
 git remote add origin &lt;url&gt;
 git remote rename origin upstream
@@ -180,7 +180,7 @@ git push origin --delete feature/old</code></pre>
 
         <div class="ref-section">
           <h3><i class="bi bi-arrow-left-right me-1"></i>Merge & Rebase</h3>
-          <pre><code"># Merge
+          <pre><code># Merge
 git merge feature/login
 git merge --no-ff feature/login  # Always create merge commit
 git merge --squash feature       # Squash into one commit
@@ -199,7 +199,7 @@ git cherry-pick abc123..def456   # Range</code></pre>
 
         <div class="ref-section">
           <h3><i class="bi bi-clock-history me-1"></i>History & Log</h3>
-          <pre><code"># Log
+          <pre><code># Log
 git log
 git log --oneline --graph --all
 git log -n 10                    # Last 10 commits
@@ -220,7 +220,7 @@ git blame -L 10,20 file          # Lines 10-20</code></pre>
 
         <div class="ref-section">
           <h3><i class="bi bi-arrow-counterclockwise me-1"></i>Undo</h3>
-          <pre><code"># Unstage
+          <pre><code># Unstage
 git restore --staged &lt;file&gt;
 git reset HEAD &lt;file&gt;           # Same effect
 
@@ -243,7 +243,7 @@ git checkout HEAD -- deleted-file.txt</code></pre>
 
         <div class="ref-section">
           <h3><i class="bi bi-inbox me-1"></i>Stash</h3>
-          <pre><code"># Stash changes
+          <pre><code># Stash changes
 git stash
 git stash push -m "WIP: login form"
 git stash push -u              # Include untracked files
@@ -265,7 +265,7 @@ git stash branch feature/new stash@{0}</code></pre>
 
         <div class="ref-section">
           <h3><i class="bi bi-tag me-1"></i>Tags</h3>
-          <pre><code"># Create tags
+          <pre><code># Create tags
 git tag v1.0.0                           # Lightweight
 git tag -a v1.0.0 -m "Release 1.0.0"    # Annotated
 git tag -a v1.0.0 &lt;commit&gt;              # Tag past commit
@@ -286,7 +286,7 @@ git push origin --delete v1.0.0  # Remote</code></pre>
 
         <div class="ref-section">
           <h3><i class="bi bi-search me-1"></i>Search</h3>
-          <pre><code"># Search in files (current state)
+          <pre><code># Search in files (current state)
 git grep "searchterm"
 git grep -n "pattern"          # With line numbers
 git grep -l "pattern"          # Files only
@@ -311,7 +311,7 @@ git fsck --lost-found</code></pre>
       <h2>Git Workflows</h2>
 
       <h3>Feature Branch Workflow</h3>
-      <pre><code"># 1. Always start from updated main
+      <pre><code># 1. Always start from updated main
 git checkout main
 git pull origin main
 
@@ -337,7 +337,7 @@ git branch -d feature/user-authentication
 git push origin --delete feature/user-authentication</code></pre>
 
       <h3>Conventional Commits</h3>
-      <pre><code"># Format: &lt;type&gt;[optional scope]: &lt;description&gt;
+      <pre><code># Format: &lt;type&gt;[optional scope]: &lt;description&gt;
 
 feat: add user login endpoint
 fix: resolve token expiration bug
@@ -360,7 +360,7 @@ feat!: change API response format
 feat(api)!: remove deprecated /v1 endpoints</code></pre>
 
       <h3>Resolving Merge Conflicts</h3>
-      <pre><code"># When a conflict occurs during merge/rebase:
+      <pre><code># When a conflict occurs during merge/rebase:
 
 # 1. See conflicted files
 git status
@@ -385,7 +385,7 @@ git mergetool --tool=vimdiff</code></pre>
 
       <!-- .gitignore -->
       <h2>.gitignore Patterns</h2>
-      <pre><code"># .gitignore
+      <pre><code># .gitignore
 
 # OS files
 .DS_Store
@@ -432,7 +432,7 @@ htmlcov/
 
       <!-- Git Aliases -->
       <h2>Useful Git Aliases</h2>
-      <pre><code">[alias]
+      <pre><code>[alias]
     # Short status
     st = status -sb
 

@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hybrid Connectivity | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Multi-cloud &amp; Hybrid</a></li>
+        <li class="breadcrumb-item active">Hybrid Connectivity</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-clouds me-2"></i>Multi-cloud &amp; Hybrid</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="landing-zone.html">Landing Zone Design</a>
+            <a class="nav-link active" href="hybrid.html">Hybrid Connectivity</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-diagram-3 me-2"></i>Hybrid Connectivity</h1>
+
+          <div class="alert-info">
+            <strong>Scope:</strong> Hybrid connectivity covers the network paths between on-premises infrastructure and cloud environments, and between multiple cloud providers. This page details configuration for AWS and GCP connectivity options, cross-cloud BGP routing, DNS resolution, and extended compute (Outposts, Anthos).
+          </div>
+
+          <h2>Connectivity Options Comparison</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Bandwidth</th>
+                <th>Latency</th>
+                <th>SLA</th>
+                <th>Cost Model</th>
+                <th>Best For</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>IPsec VPN</strong></td>
+                <td>Up to ~1.25 Gbps per tunnel</td>
+                <td>Variable (internet-dependent); typically 10–50 ms regional</td>
+                <td>Best-effort (internet path)</td>
+                <td>Low fixed cost; pay per GB egress</td>
+                <td>Dev/test connectivity; backup path; SMB with low bandwidth needs</td>
+              </tr>
+              <tr>
+                <td><strong>AWS Direct Connect</strong></td>
+                <td>1 Gbps, 10 Gbps, or 100 Gbps dedicated ports</td>
+                <td>Consistent, sub-millisecond to a few ms (private network)</td>
+                <td>AWS provides 99.99% uptime SLA with redundant connections</td>
+                <td>Monthly port fee + data transfer; no egress charges for DX traffic</td>
+                <td>Production workloads; large data transfers; latency-sensitive apps</td>
+              </tr>
+              <tr>
+                <td><strong>GCP Cloud Interconnect</strong></td>
+                <td>10 Gbps or 100 Gbps (Dedicated); 50 Mbps–10 Gbps (Partner)</td>
+                <td>Consistent private path; 1–5 ms for regional peering</td>
+                <td>99.99% SLA with two circuits in different metros</td>
+                <td>Monthly circuit fee; reduced egress pricing for Interconnect traffic</td>
+                <td>Production workloads; GCP-heavy architectures; BigQuery bulk loads</td>
+              </tr>
+              <tr>
+                <td><strong>SD-WAN</strong></td>
+                <td>Aggregated over multiple underlay links (MPLS + internet)</td>
+                <td>Variable; intelligent path selection can optimize</td>
+                <td>Depends on underlay; SD-WAN adds reliability via path failover</td>
+                <td>License per device/site + underlay circuit costs</td>
+                <td>Branch office connectivity; replacing MPLS; multi-cloud with on-prem</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>AWS Site-to-Site VPN</h2>
+          <p>AWS Site-to-Site VPN establishes an IPsec tunnel between a customer gateway (on-premises VPN device) and a virtual private gateway (or Transit Gateway) in AWS. Each connection creates two redundant tunnels for high availability.</p>
+
+          <h3>BGP Setup and Redundant Tunnels</h3>
+          <div class="alert-info">
+            <strong>Redundancy model:</strong> AWS creates two tunnel endpoints per VPN connection, terminating in different AWS edge locations. For full redundancy, provision two VPN connections from two physically separate customer gateway devices (different ISP links). This achieves Active-Active or Active-Passive BGP failover at both the device and ISP level.
+          </div>
+
+          <pre><code># Terraform: AWS Site-to-Site VPN with BGP via Transit Gateway
+
+# Customer Gateway: your on-premises VPN device
+resource "aws_customer_gateway" "on_prem_primary" {
+  bgp_asn    = 65000          # Your on-premises ASN
+  ip_address = "203.0.113.10" # Public IP of on-prem VPN router (primary)
+  type       = "ipsec.1"
+  tags       = { Name = "cgw-onprem-primary" }
+}
+
+resource "aws_customer_gateway" "on_prem_secondary" {
+  bgp_asn    = 65000
+  ip_address = "203.0.113.20" # Second router / second ISP link
+  type       = "ipsec.1"
+  tags       = { Name = "cgw-onprem-secondary" }
+}
+
+# VPN Connection 1: primary device → Transit Gateway
+resource "aws_vpn_connection" "primary" {
+  customer_gateway_id = aws_customer_gateway.on_prem_primary.id
+  transit_gateway_id  = var.transit_gateway_id
+  type                = "ipsec.1"
+
+  # BGP inside tunnel addresses (AWS assigns from 169.254.x.x range)
+  tunnel1_inside_cidr = "169.254.10.0/30"
+  tunnel2_inside_cidr = "169.254.10.4/30"
+
+  # IKEv2 with strong ciphers
+  tunnel1_ike_versions                 = ["ikev2"]
+  tunnel1_phase1_encryption_algorithms = ["AES256"]
+  tunnel1_phase1_integrity_algorithms  = ["SHA2-256"]
+  tunnel1_phase1_dh_group_numbers      = [14, 20]
+  tunnel1_phase2_encryption_algorithms = ["AES256-GCM-16"]
+  tunnel1_phase2_dh_group_numbers      = [14, 20]
+
+  tunnel1_preshared_key = var.vpn_psk_1   # Store in AWS Secrets Manager
+  tunnel2_preshared_key = var.vpn_psk_2
+
+  tags = { Name = "vpn-onprem-primary" }
+}
+
+# VPN Connection 2: secondary device (for full redundancy)
+resource "aws_vpn_connection" "secondary" {
+  customer_gateway_id = aws_customer_gateway.on_prem_secondary.id
+  transit_gateway_id  = var.transit_gateway_id
+  type                = "ipsec.1"
+  tunnel1_inside_cidr = "169.254.10.8/30"
+  tunnel2_inside_cidr = "169.254.10.12/30"
+  tunnel1_preshared_key = var.vpn_psk_3
+  tunnel2_preshared_key = var.vpn_psk_4
+  tags = { Name = "vpn-onprem-secondary" }
+}
+
+# On-premises router BGP config (Cisco IOS-XE example):
+# router bgp 65000
+#   neighbor 169.254.10.1 remote-as 64512      ! AWS ASN
+#   neighbor 169.254.10.1 timers 10 30
+#   network 10.0.0.0 mask 255.255.0.0          ! Advertise on-prem prefix
+#   neighbor 169.254.10.1 route-map OUTBOUND out
+#
+# route-map OUTBOUND permit 10
+#   set as-path prepend 65000 65000            ! Prefer primary tunnel via lower prepend</code></pre>
+
+          <h2>AWS Direct Connect</h2>
+          <p>AWS Direct Connect provides a dedicated private network connection from your data center to an AWS Direct Connect location. Traffic never traverses the public internet, giving consistent throughput and sub-millisecond latency.</p>
+
+          <h3>Physical Setup and Virtual Interfaces</h3>
+          <div class="concept-card">
+            <h4>Physical Path</h4>
+            <p>You order a cross-connect at a Direct Connect location (colocation facility). Your router or WAN carrier connects to the AWS cage at that facility. AWS provisions a dedicated port (1G, 10G, or 100G) on their device. The physical link carries 802.1Q VLAN-tagged traffic, which is divided into Virtual Interfaces (VIFs).</p>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>VIF Type</th>
+                <th>Purpose</th>
+                <th>VLAN Tag</th>
+                <th>BGP Peer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Private VIF</strong></td>
+                <td>Access resources inside a specific VPC or via Transit Gateway</td>
+                <td>Unique per VIF; you assign</td>
+                <td>BGP session to Virtual Private Gateway or Transit Gateway</td>
+              </tr>
+              <tr>
+                <td><strong>Public VIF</strong></td>
+                <td>Access AWS public endpoints (S3, DynamoDB, SQS) over private path without NAT</td>
+                <td>Unique per VIF</td>
+                <td>BGP session to AWS public IP range; AWS advertises public prefixes</td>
+              </tr>
+              <tr>
+                <td><strong>Transit VIF</strong></td>
+                <td>Connect to a Direct Connect Gateway, which routes to multiple VPCs via Transit Gateway across regions</td>
+                <td>Unique per VIF</td>
+                <td>BGP session to Direct Connect Gateway (ASN 64512 by default)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Resiliency Models</h3>
+          <pre><code># Maximum Resilience (recommended for production):
+#
+# Data Center A               AWS Region
+# [Router A] ─── DX Location 1 ─── [DX Connection 1] ─── Transit Gateway
+# [Router A] ─── DX Location 2 ─── [DX Connection 2] ─┘
+#
+# Data Center B
+# [Router B] ─── DX Location 1 ─── [DX Connection 3] ─── Transit Gateway
+# [Router B] ─── DX Location 2 ─── [DX Connection 4] ─┘
+#
+# 4 connections, 2 DX locations, 2 physical data centers = no single point of failure
+# Tolerates: DX location failure, data center failure, router failure
+
+# High Resilience (cost-balanced):
+# Single data center, two DX connections to two separate DX locations
+# Tolerates: DX location failure, single connection failure
+
+# Development / Non-Critical:
+# Single DX connection + Site-to-Site VPN as backup
+# On BGP failure of DX, VPN tunnels take over via lower BGP preference</code></pre>
+
+          <pre><code># Terraform: Direct Connect Transit VIF → Direct Connect Gateway → Transit Gateway
+
+resource "aws_dx_gateway" "main" {
+  name            = "dxgw-main"
+  amazon_side_asn = "64512"
+}
+
+resource "aws_dx_transit_virtual_interface" "primary" {
+  connection_id    = var.dx_connection_id   # Physical DX connection ID from AWS console
+  name             = "transit-vif-primary"
+  vlan             = 100
+  address_family   = "ipv4"
+  bgp_asn          = 65000                  # Your on-prem ASN
+  amazon_address   = "169.254.200.1/30"     # AWS side of BGP session
+  customer_address = "169.254.200.2/30"     # Your router side
+  bgp_auth_key     = var.bgp_auth_key       # MD5 auth for BGP session
+  dx_gateway_id    = aws_dx_gateway.main.id
+}
+
+resource "aws_dx_gateway_association" "tgw" {
+  dx_gateway_id         = aws_dx_gateway.main.id
+  associated_gateway_id = var.transit_gateway_id
+  allowed_prefixes      = ["10.0.0.0/8", "172.16.0.0/12"]  # On-prem prefixes to allow
+}</code></pre>
+
+          <h2>GCP Cloud Interconnect</h2>
+          <p>Cloud Interconnect provides high-bandwidth, low-latency connections between your on-premises network and Google's network. Dedicated Interconnect requires a physical colocation at a Google facility; Partner Interconnect uses a service provider.</p>
+
+          <h3>Dedicated vs Partner Interconnect</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Dedicated Interconnect</th>
+                <th>Partner Interconnect</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Bandwidth per circuit</strong></td>
+                <td>10 Gbps or 100 Gbps</td>
+                <td>50 Mbps to 10 Gbps (flexible)</td>
+              </tr>
+              <tr>
+                <td><strong>Physical requirement</strong></td>
+                <td>Your router must be colocated at a Google colocation facility</td>
+                <td>Connect via a Google-approved service provider (e.g., Equinix, Tata)</td>
+              </tr>
+              <tr>
+                <td><strong>SLA</strong></td>
+                <td>99.99% with 4 circuits (2 metros × 2 per metro)</td>
+                <td>99.99% with redundant provider connections</td>
+              </tr>
+              <tr>
+                <td><strong>Provisioning time</strong></td>
+                <td>Weeks (physical cross-connect required)</td>
+                <td>Days to weeks (provider-dependent)</td>
+              </tr>
+              <tr>
+                <td><strong>Use case</strong></td>
+                <td>Large enterprise with colocation presence or high bandwidth needs</td>
+                <td>Enterprise without direct colo presence; lower bandwidth requirements</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>VLAN Attachments and Cloud Router BGP</h3>
+          <pre><code># Terraform: GCP Dedicated Interconnect with Cloud Router and BGP
+
+# Cloud Router: manages BGP sessions for the Interconnect
+resource "google_compute_router" "interconnect_router" {
+  name    = "router-interconnect-asia-se1"
+  network = var.shared_vpc_network
+  region  = "asia-southeast1"
+
+  bgp {
+    asn               = 16550          # Google-assigned ASN for Cloud Router
+    advertise_mode    = "CUSTOM"
+    advertised_groups = ["ALL_SUBNETS"]   # Advertise all VPC subnets to on-prem
+
+    # Advertise specific on-prem route summary back to other peers
+    advertised_ip_ranges {
+      range       = "10.0.0.0/8"
+      description = "On-premises supernet"
+    }
+  }
+}
+
+# Interconnect attachment (VLAN) — one per circuit for redundancy
+resource "google_compute_interconnect_attachment" "primary" {
+  name                     = "interconnect-attach-primary"
+  region                   = "asia-southeast1"
+  router                   = google_compute_router.interconnect_router.id
+  interconnect             = var.interconnect_id_primary   # Physical circuit ID
+  type                     = "DEDICATED"
+  bandwidth                = "BPS_10G"
+  vlan_tag8021q            = 100          # VLAN tag on the physical circuit
+  admin_enabled            = true
+  candidate_subnets        = ["169.254.10.0/29"]   # BGP link-local range
+}
+
+resource "google_compute_interconnect_attachment" "secondary" {
+  name          = "interconnect-attach-secondary"
+  region        = "asia-southeast1"
+  router        = google_compute_router.interconnect_router.id
+  interconnect  = var.interconnect_id_secondary
+  type          = "DEDICATED"
+  bandwidth     = "BPS_10G"
+  vlan_tag8021q = 200
+  admin_enabled = true
+  candidate_subnets = ["169.254.10.8/29"]
+}
+
+# BGP peer for primary attachment (auto-configured by GCP after attachment activation)
+resource "google_compute_router_peer" "primary_peer" {
+  name                      = "bgp-peer-primary"
+  router                    = google_compute_router.interconnect_router.name
+  region                    = "asia-southeast1"
+  interface                 = google_compute_router_interface.primary.name
+  peer_ip_address           = "169.254.10.2"     # Your router's BGP IP
+  peer_asn                  = 65000              # Your on-prem ASN
+  advertised_route_priority = 100               # Lower = higher preference (primary)
+}
+
+resource "google_compute_router_peer" "secondary_peer" {
+  name                      = "bgp-peer-secondary"
+  router                    = google_compute_router.interconnect_router.name
+  region                    = "asia-southeast1"
+  interface                 = google_compute_router_interface.secondary.name
+  peer_ip_address           = "169.254.10.10"
+  peer_asn                  = 65000
+  advertised_route_priority = 200               # Higher value = secondary/backup path
+}</code></pre>
+
+          <h2>GCP Cloud VPN — HA VPN with BGP</h2>
+          <p>HA VPN provides a 99.99% SLA by creating two VPN tunnels across two GCP-managed gateway interfaces. Combined with a Cloud Router, it runs BGP for dynamic route exchange with the remote peer.</p>
+
+          <pre><code># Terraform: GCP HA VPN with Cloud Router and BGP
+
+resource "google_compute_ha_vpn_gateway" "ha_vpn" {
+  name    = "ha-vpn-gateway-asia-se1"
+  network = var.shared_vpc_network
+  region  = "asia-southeast1"
+}
+
+resource "google_compute_router" "vpn_router" {
+  name    = "router-vpn-asia-se1"
+  network = var.shared_vpc_network
+  region  = "asia-southeast1"
+  bgp {
+    asn = 64514   # GCP Cloud Router ASN (choose a private ASN)
+  }
+}
+
+# External (on-premises) VPN gateway — registers your peer device
+resource "google_compute_external_vpn_gateway" "on_prem" {
+  name            = "ext-vpn-on-prem"
+  redundancy_type = "TWO_IPS_REDUNDANCY"   # Two on-prem routers
+  interface {
+    id         = 0
+    ip_address = "203.0.113.10"   # Primary on-prem router public IP
+  }
+  interface {
+    id         = 1
+    ip_address = "203.0.113.20"   # Secondary on-prem router public IP
+  }
+}
+
+# Tunnel 1: GCP interface 0 → on-prem interface 0
+resource "google_compute_vpn_tunnel" "tunnel1" {
+  name                            = "vpn-tunnel-1"
+  region                          = "asia-southeast1"
+  ha_vpn_gateway                  = google_compute_ha_vpn_gateway.ha_vpn.id
+  ha_vpn_gateway_interface        = 0
+  peer_external_gateway           = google_compute_external_vpn_gateway.on_prem.id
+  peer_external_gateway_interface = 0
+  router                          = google_compute_router.vpn_router.id
+  shared_secret                   = var.vpn_shared_secret_1
+  ike_version                     = 2
+}
+
+# Tunnel 2: GCP interface 1 → on-prem interface 1
+resource "google_compute_vpn_tunnel" "tunnel2" {
+  name                            = "vpn-tunnel-2"
+  region                          = "asia-southeast1"
+  ha_vpn_gateway                  = google_compute_ha_vpn_gateway.ha_vpn.id
+  ha_vpn_gateway_interface        = 1
+  peer_external_gateway           = google_compute_external_vpn_gateway.on_prem.id
+  peer_external_gateway_interface = 1
+  router                          = google_compute_router.vpn_router.id
+  shared_secret                   = var.vpn_shared_secret_2
+  ike_version                     = 2
+}
+
+# Cloud Router interfaces and BGP peers for each tunnel
+resource "google_compute_router_interface" "if1" {
+  name       = "router-if-1"
+  router     = google_compute_router.vpn_router.name
+  region     = "asia-southeast1"
+  vpn_tunnel = google_compute_vpn_tunnel.tunnel1.name
+  ip_range   = "169.254.20.1/30"
+}
+
+resource "google_compute_router_peer" "peer1" {
+  name            = "bgp-peer-1"
+  router          = google_compute_router.vpn_router.name
+  region          = "asia-southeast1"
+  interface       = google_compute_router_interface.if1.name
+  peer_ip_address = "169.254.20.2"
+  peer_asn        = 65000
+  advertised_route_priority = 100
+}</code></pre>
+
+          <h2>Cross-Cloud Connectivity: AWS to GCP via VPN</h2>
+          <p>When workloads span AWS and GCP, establish a private network path via IPsec VPN with BGP, avoiding public internet routing. The two Cloud Routers (AWS VGW and GCP Cloud Router) establish BGP sessions through the VPN tunnels.</p>
+
+          <h3>Architecture</h3>
+          <pre><code"># Cross-cloud connectivity diagram
+
+AWS VPC (10.10.0.0/16)
+  └── Virtual Private Gateway (VGW)  ASN: 64512
+        └── VPN Connection (IPsec)
+              └── [Internet / AWS-Google peering fabric]
+                    └── GCP Cloud VPN Gateway
+                          └── Cloud Router  ASN: 64514
+                                └── GCP VPC (10.20.0.0/16)
+
+# BGP route exchange:
+# AWS VGW advertises: 10.10.0.0/16 → GCP Cloud Router
+# GCP Cloud Router advertises: 10.20.0.0/16 → AWS VGW
+# After BGP convergence, instances on both clouds can communicate privately</code></pre>
+
+          <h3>Terraform: AWS Side</h3>
+          <pre><code># AWS: VGW and VPN connection to GCP
+
+resource "aws_vpn_gateway" "gcp_peer" {
+  vpc_id          = var.aws_vpc_id
+  amazon_side_asn = 64512
+  tags            = { Name = "vgw-to-gcp" }
+}
+
+resource "aws_customer_gateway" "gcp" {
+  bgp_asn    = 64514            # GCP Cloud Router ASN
+  ip_address = var.gcp_vpn_ip1  # GCP HA VPN gateway interface 0 public IP
+  type       = "ipsec.1"
+  tags       = { Name = "cgw-gcp-tunnel1" }
+}
+
+resource "aws_vpn_connection" "to_gcp" {
+  customer_gateway_id = aws_customer_gateway.gcp.id
+  vpn_gateway_id      = aws_vpn_gateway.gcp_peer.id
+  type                = "ipsec.1"
+
+  # Use static routing if BGP is not configured, or dynamic with BGP
+  static_routes_only = false    # Enable BGP
+
+  tunnel1_inside_cidr = "169.254.100.0/30"
+  tunnel2_inside_cidr = "169.254.100.4/30"
+  tunnel1_preshared_key = var.xcloud_psk_1
+  tunnel2_preshared_key = var.xcloud_psk_2
+
+  tags = { Name = "vpn-aws-to-gcp" }
+}
+
+# Route table update: route GCP VPC traffic via VGW
+resource "aws_vpn_gateway_route_propagation" "gcp_routes" {
+  vpn_gateway_id = aws_vpn_gateway.gcp_peer.id
+  route_table_id = var.aws_private_route_table_id
+}</code></pre>
+
+          <h3>Terraform: GCP Side</h3>
+          <pre><code># GCP: HA VPN to AWS VGW
+
+resource "google_compute_external_vpn_gateway" "aws_peer" {
+  name            = "ext-vpn-aws"
+  redundancy_type = "FOUR_IPS_REDUNDANCY"   # AWS creates 4 tunnel endpoints
+  interface {
+    id         = 0
+    ip_address = aws_vpn_connection.to_gcp.tunnel1_address
+  }
+  interface {
+    id         = 1
+    ip_address = aws_vpn_connection.to_gcp.tunnel2_address
+  }
+}
+
+resource "google_compute_vpn_tunnel" "to_aws_t1" {
+  name                            = "tunnel-to-aws-1"
+  region                          = "asia-southeast1"
+  ha_vpn_gateway                  = google_compute_ha_vpn_gateway.ha_vpn.id
+  ha_vpn_gateway_interface        = 0
+  peer_external_gateway           = google_compute_external_vpn_gateway.aws_peer.id
+  peer_external_gateway_interface = 0
+  router                          = google_compute_router.vpn_router.id
+  shared_secret                   = var.xcloud_psk_1
+  ike_version                     = 2
+}
+
+resource "google_compute_router_peer" "aws_peer" {
+  name            = "bgp-peer-aws"
+  router          = google_compute_router.vpn_router.name
+  region          = "asia-southeast1"
+  interface       = google_compute_router_interface.to_aws.name
+  peer_ip_address = "169.254.100.1"    # AWS tunnel1 inside IP (AWS side)
+  peer_asn        = 64512              # AWS VGW ASN
+}</code></pre>
+
+          <h2>DNS Resolution in Hybrid Environments</h2>
+          <p>Consistent DNS resolution is critical in hybrid and multi-cloud environments. Workloads in cloud must resolve on-premises internal names, and on-premises hosts must resolve cloud-internal names.</p>
+
+          <h3>AWS: Route 53 Resolver</h3>
+          <pre><code"># Terraform: Route 53 Resolver for hybrid DNS
+
+# Inbound Resolver Endpoint: accept DNS queries FROM on-premises
+# On-prem DNS forwards *.aws.internal to these IPs (in Elastic IPs in your VPC)
+resource "aws_route53_resolver_endpoint" "inbound" {
+  name      = "r53-resolver-inbound"
+  direction = "INBOUND"
+  security_group_ids = [aws_security_group.r53_resolver.id]
+
+  ip_address {
+    subnet_id = var.resolver_subnet_az1
+  }
+  ip_address {
+    subnet_id = var.resolver_subnet_az2
+  }
+}
+
+# Outbound Resolver Endpoint: send queries FROM AWS to on-premises DNS
+resource "aws_route53_resolver_endpoint" "outbound" {
+  name      = "r53-resolver-outbound"
+  direction = "OUTBOUND"
+  security_group_ids = [aws_security_group.r53_resolver.id]
+
+  ip_address {
+    subnet_id = var.resolver_subnet_az1
+  }
+  ip_address {
+    subnet_id = var.resolver_subnet_az2
+  }
+}
+
+# Forwarding rule: queries for corp.example.com → on-premises DNS
+resource "aws_route53_resolver_rule" "forward_corp" {
+  domain_name          = "corp.example.com"
+  rule_type            = "FORWARD"
+  resolver_endpoint_id = aws_route53_resolver_endpoint.outbound.id
+
+  target_ip {
+    ip   = "10.0.0.53"    # Primary on-prem DNS server
+    port = 53
+  }
+  target_ip {
+    ip   = "10.0.0.54"    # Secondary on-prem DNS server
+    port = 53
+  }
+}
+
+# Share the forwarding rule with all accounts in the Organization via RAM
+resource "aws_route53_resolver_rule_association" "vpc_association" {
+  resolver_rule_id = aws_route53_resolver_rule.forward_corp.id
+  vpc_id           = var.workload_vpc_id
+}</code></pre>
+
+          <h3>GCP: Cloud DNS Forwarding Zones</h3>
+          <pre><code># Terraform: GCP DNS forwarding for hybrid DNS
+
+# Private DNS zone for GCP-internal names (resolved within VPC only)
+resource "google_dns_managed_zone" "private_gcp" {
+  name        = "private-gcp-zone"
+  dns_name    = "gcp.internal."
+  description = "Private zone for GCP internal hostnames"
+  visibility  = "private"
+
+  private_visibility_config {
+    networks {
+      network_url = var.shared_vpc_network_url
+    }
+  }
+}
+
+# DNS peering zone: resolve on-prem names via Cloud DNS forwarding
+resource "google_dns_managed_zone" "forward_to_onprem" {
+  name        = "forward-corp-zone"
+  dns_name    = "corp.example.com."
+  description = "Forward corp.example.com queries to on-prem DNS"
+  visibility  = "private"
+
+  private_visibility_config {
+    networks {
+      network_url = var.shared_vpc_network_url
+    }
+  }
+
+  forwarding_config {
+    target_name_servers {
+      ipv4_address    = "10.0.0.53"    # On-prem DNS via Interconnect/VPN
+      forwarding_path = "private"      # Use private path (Interconnect/VPN), not internet
+    }
+    target_name_servers {
+      ipv4_address    = "10.0.0.54"
+      forwarding_path = "private"
+    }
+  }
+}
+
+# Outbound DNS policy: route all non-local queries through on-prem DNS
+# (useful when on-prem DNS is authoritative for all internal names)
+resource "google_dns_policy" "outbound_forwarding" {
+  name                      = "outbound-to-onprem"
+  enable_inbound_forwarding = true    # Allow on-prem to query GCP DNS
+
+  alternative_name_server_config {
+    target_name_servers {
+      ipv4_address    = "10.0.0.53"
+      forwarding_path = "private"
+    }
+  }
+
+  networks {
+    network_url = var.shared_vpc_network_url
+  }
+}</code></pre>
+
+          <h2>Anthos / Google Distributed Cloud</h2>
+          <p>Anthos (now part of Google Distributed Cloud) extends GKE's managed Kubernetes control plane to clusters running outside of GCP — on-premises, on AWS, on Azure, or at the edge. It provides a single operational model across all environments.</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>Anthos Attached Clusters</h4>
+                <p>Register any CNCF-conformant Kubernetes cluster (EKS, AKS, on-prem RKE2, k3s) with the GKE Fleet. The cluster becomes visible in Google Cloud Console, and you can apply Fleet-wide policies, Config Sync, and Policy Controller without re-provisioning.</p>
+                <p><strong>Use cases:</strong> Unified RBAC policy across AWS EKS and GKE; Config Sync (GitOps) across all clusters; single-pane security posture.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>Google Distributed Cloud (Hosted)</h4>
+                <p>Google-managed hardware (nodes) deployed in your data center and operated by Google. You get GKE Autopilot-equivalent experience on-premises. Google manages the hardware lifecycle, OS updates, and the Kubernetes control plane. Connectivity back to GCP is mandatory for control plane communication.</p>
+                <p><strong>Use cases:</strong> Data sovereignty (data stays on-prem); ultra-low latency edge; air-gapped environments with periodic sync.</p>
+              </div>
+            </div>
+          </div>
+
+          <pre><code"># Register an on-premises Kubernetes cluster as an Anthos Attached Cluster
+
+# Step 1: Install the Connect Agent on the cluster (run on cluster with kubectl)
+# gcloud container fleet memberships register my-onprem-cluster \
+#   --context=kubernetes-admin@my-onprem-cluster \
+#   --service-account-key-file=connect-agent-sa-key.json \
+#   --project=my-gcp-project \
+#   --location=global
+
+# Step 2: Terraform — register the membership
+resource "google_gke_hub_membership" "on_prem" {
+  membership_id = "on-prem-datacenter-cluster"
+  project       = var.gcp_project_id
+
+  endpoint {
+    on_prem_cluster {
+      resource_link = "//container.googleapis.com/projects/${var.gcp_project_id}/locations/global/memberships/on-prem-datacenter-cluster"
+    }
+  }
+}
+
+# Step 3: Enable Config Sync Fleet feature (applies GitOps to all member clusters)
+resource "google_gke_hub_feature" "config_sync" {
+  name     = "configmanagement"
+  project  = var.gcp_project_id
+  location = "global"
+}
+
+resource "google_gke_hub_feature_membership" "on_prem_config_sync" {
+  project    = var.gcp_project_id
+  location   = "global"
+  feature    = google_gke_hub_feature.config_sync.name
+  membership = google_gke_hub_membership.on_prem.membership_id
+
+  configmanagement {
+    config_sync {
+      git {
+        sync_repo   = "https://github.com/org/fleet-config"
+        sync_branch = "main"
+        policy_dir  = "clusters/on-prem-datacenter"
+        secret_type = "token"
+      }
+    }
+    policy_controller {
+      enabled                    = true
+      template_library_installed = true
+    }
+  }
+}</code></pre>
+
+          <h2>AWS Outposts</h2>
+          <p>AWS Outposts brings the same AWS hardware, APIs, and services to your on-premises data center. Workloads on Outposts use the same EC2, EKS, RDS, and ELB APIs as in the cloud — the Outpost is simply another Availability Zone extension of the parent AWS Region.</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Outposts Rack</h4>
+                <p>A full 42U rack of AWS hardware delivered and installed by AWS. Provides compute (EC2 instances), storage (EBS, S3 on Outposts), managed databases (RDS), and EKS nodes. Available in fixed configurations from 1 to 96 EC2 hosts. Requires a dedicated private network uplink back to the parent AWS Region (via Direct Connect or internet) for control plane communication.</p>
+                <p><strong>Use cases:</strong> Large on-premises workloads requiring AWS APIs; local data processing before cloud upload; latency-sensitive manufacturing or trading systems; compliance requiring physical location control.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Outposts Server</h4>
+                <p>A 1U or 2U rack-mount server for deployments where a full rack is impractical (branch office, factory floor, store). Supports EC2 instances and ECS containers. More limited instance types than the full rack, but provides consistent AWS APIs in space-constrained locations. Supports disconnected mode for brief periods if the uplink to AWS fails.</p>
+                <p><strong>Use cases:</strong> Retail point-of-presence with local compute; remote office running AWS workloads; edge inference with SageMaker Edge Manager; factory automation with IoT data local processing.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="warning-box">
+            <strong>Outposts networking requirement:</strong> Outposts must maintain low-latency connectivity to the parent AWS Region. The service link (control plane) requires a stable, low-latency connection. The local gateway (LGW) handles local traffic between Outpost subnets and on-premises networks. Data plane traffic (between instances on the Outpost and the parent VPC) can traverse the internet or Direct Connect.
+          </div>
+
+          <h2>Network Security in Hybrid Environments</h2>
+          <p>Extending the network perimeter to on-premises and across cloud providers introduces security challenges that require layered controls at each boundary.</p>
+
+          <h3>Firewall Rules and Micro-Segmentation</h3>
+          <pre><code># AWS: Security Groups for hybrid workloads
+# Best practice: reference on-prem CIDR explicitly; avoid 0.0.0.0/0 for any port
+
+resource "aws_security_group" "app_tier" {
+  name        = "sg-app-tier-${var.env}"
+  description = "App tier: allow from on-prem and load balancer only"
+  vpc_id      = var.vpc_id
+
+  # Allow HTTPS from on-premises (via Direct Connect / VPN)
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/8"]   # On-prem supernet
+    description = "HTTPS from on-premises network"
+  }
+
+  # Allow app traffic from load balancer security group only (not CIDR)
+  ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [var.alb_security_group_id]
+    description     = "App port from ALB only"
+  }
+
+  # Allow egress to on-prem database only
+  egress {
+    from_port   = 1521
+    to_port     = 1521
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.10.0/24"]   # On-prem Oracle subnet
+    description = "Oracle DB to on-premises"
+  }
+
+  # Deny all other egress by adding no default allow rule
+  # (AWS SGs are deny-all by default for custom egress rules)
+
+  tags = { Name = "sg-app-tier-${var.env}"; ManagedBy = "terraform" }
+}
+
+# GCP: VPC Firewall Rules with target tags (micro-segmentation)
+resource "google_compute_firewall" "allow_app_from_onprem" {
+  name    = "allow-app-from-onprem"
+  network = var.shared_vpc_network
+
+  allow {
+    protocol = "tcp"
+    ports    = ["443", "8080"]
+  }
+
+  source_ranges = ["10.0.0.0/8"]     # On-prem via Interconnect
+  target_tags   = ["app-tier"]       # Only VMs tagged "app-tier" receive this rule
+  priority      = 1000
+  description   = "Allow app traffic from on-premises via Interconnect"
+}
+
+resource "google_compute_firewall" "deny_all_ingress" {
+  name     = "deny-all-ingress-baseline"
+  network  = var.shared_vpc_network
+  priority = 65534                   # Lower than specific allow rules
+
+  deny {
+    protocol = "all"
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  description   = "Baseline deny-all ingress; explicit allow rules override this"
+}</code></pre>
+
+          <h3>Shared VPC Security Boundaries</h3>
+          <pre><code># GCP Shared VPC security model:
+#
+# Host Project (owns VPC, subnets, firewall rules)
+#   └── Firewall rules applied at VPC level — apply to ALL service projects
+#       Service projects cannot override host project firewall rules
+#       Service project workloads can only use subnets they are granted access to
+#
+# This enforces network security centrally:
+# - The Network/Security team controls firewall rules in the host project
+# - Product teams cannot create permissive rules in their service projects
+# - VPC Service Controls add a second layer: even if network access exists,
+#   data API calls outside the perimeter are denied
+
+# AWS: equivalent model with Network Firewall in hub account
+resource "aws_networkfirewall_firewall" "hub" {
+  name                = "network-firewall-hub"
+  firewall_policy_arn = aws_networkfirewall_firewall_policy.hub.arn
+  vpc_id              = var.hub_vpc_id
+
+  subnet_mapping {
+    subnet_id = var.firewall_subnet_az1
+  }
+  subnet_mapping {
+    subnet_id = var.firewall_subnet_az2
+  }
+}
+
+resource "aws_networkfirewall_firewall_policy" "hub" {
+  name = "hub-firewall-policy"
+
+  firewall_policy {
+    stateless_default_actions          = ["aws:forward_to_sfe"]
+    stateless_fragment_default_actions = ["aws:forward_to_sfe"]
+
+    stateful_rule_group_reference {
+      resource_arn = aws_networkfirewall_rule_group.block_malicious.arn
+    }
+  }
+}
+
+resource "aws_networkfirewall_rule_group" "block_malicious" {
+  name     = "block-malicious-domains"
+  type     = "STATEFUL"
+  capacity = 100
+
+  rule_group {
+    rules_source {
+      rules_source_list {
+        generated_rules_type = "DENYLIST"
+        target_types         = ["HTTP_HOST", "TLS_SNI"]
+        targets              = [
+          ".malware-domain.com",
+          ".phishing-domain.net"
+        ]
+      }
+    }
+  }
+}</code></pre>
+
+          <div class="tip-box">
+            <strong>Zero Trust in Hybrid Networks:</strong> Perimeter firewalls alone are insufficient. Complement network controls with workload identity (mTLS via service mesh, AWS IAM credential-based authentication), continuous authorization (BeyondCorp / AWS Verified Access), and runtime threat detection (GuardDuty, SCC) so that even traffic that has crossed the network perimeter is verified at the application layer.
+          </div>
+
+          <div class="success-box">
+            <strong>Section complete.</strong> You have covered:
+            <ul class="mb-0 mt-2">
+              <li><a href="index.html" style="color: var(--primary-color);">Multi-cloud Overview</a> — strategy, maturity model, workload placement, identity federation</li>
+              <li><a href="landing-zone.html" style="color: var(--primary-color);">Landing Zone Design</a> — OU structure, SCPs, Org Policies, Terraform modules, guardrails</li>
+              <li>Hybrid Connectivity — VPN, Direct Connect, Interconnect, cross-cloud BGP, DNS, Outposts, Anthos, network security</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

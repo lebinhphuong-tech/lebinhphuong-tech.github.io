@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADR Examples | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    .status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+    .status-accepted { background: #d4edda; color: #155724; }
+    .adr-block { border: 1px solid #dee2e6; border-radius: 12px; margin: 3rem 0; overflow: hidden; }
+    .adr-title-bar { background: var(--secondary-color); color: white; padding: 1.25rem 2rem; }
+    .adr-title-bar h2 { color: white; border: none; margin: 0; padding: 0; font-size: 1.3rem; }
+    .adr-meta { background: var(--bg-light); padding: 1rem 2rem; border-bottom: 1px solid #dee2e6; display: flex; gap: 2rem; flex-wrap: wrap; font-size: 0.9rem; }
+    .adr-meta span { color: #666; }
+    .adr-meta strong { color: var(--text-color); }
+    .adr-content { padding: 2rem; }
+    .adr-content h3 { margin-top: 1.5rem; }
+    .options-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    .options-table th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    .options-table td { padding: 0.75rem 1rem; border-bottom: 1px solid #dee2e6; vertical-align: top; }
+    .options-table tr:last-child td { border-bottom: none; }
+    .options-table tr:nth-child(even) { background: var(--bg-light); }
+    .chosen { background: #d4edda !important; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Architecture Decisions</a></li>
+        <li class="breadcrumb-item active">ADR Examples</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-journal-text me-2"></i>Architecture Decisions</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview &amp; Process</a>
+            <a class="nav-link active" href="examples.html">ADR Examples</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-file-earmark-text me-2"></i>ADR Examples</h1>
+
+          <div class="alert-info">
+            Four complete example ADRs written in MADR format. These illustrate decisions commonly encountered in cloud-native infrastructure projects and demonstrate the depth of reasoning expected in each section.
+          </div>
+
+          <!-- ADR-0001 -->
+          <div class="adr-block">
+            <div class="adr-title-bar">
+              <h2>ADR-0001: Use PostgreSQL as Primary Relational Database</h2>
+            </div>
+            <div class="adr-meta">
+              <span><strong>Status:</strong> <span class="status-badge status-accepted">Accepted</span></span>
+              <span><strong>Date:</strong> 2023-04-12</span>
+              <span><strong>Author:</strong> Lê Bình Phương</span>
+              <span><strong>File:</strong> <code>ADR-0001-use-postgresql-as-primary-database.md</code></span>
+            </div>
+            <div class="adr-content">
+
+              <h3>Context and Problem Statement</h3>
+              <p>The platform requires a relational database to store user accounts, application state, transaction records, and configuration data. The team has been using SQLite for local development, which is not suitable for production workloads. As we approach the first production release, we need to select a production-grade relational database management system (RDBMS) that will serve as the canonical data store for the foreseeable future.</p>
+              <p>The selection must account for: the team's existing expertise, operational requirements (high availability, backup, point-in-time recovery), cloud deployment on both AWS and GCP, and the need to store semi-structured data (product metadata, user preferences) alongside strictly relational data. The system is expected to handle up to 10,000 requests/second at peak with a data volume of up to 5TB in the next three years.</p>
+
+              <h3>Decision Drivers</h3>
+              <ul>
+                <li>Must be open source with a permissive licence (no per-core commercial licensing cost)</li>
+                <li>Must support ACID transactions and complex JOIN queries across normalised schemas</li>
+                <li>Must have mature, production-tested high availability solutions (multi-node, automatic failover)</li>
+                <li>Must support semi-structured data storage to avoid a secondary NoSQL database for most use cases</li>
+                <li>Team has existing experience with the chosen system or a very similar one</li>
+                <li>Must be available as a fully managed service on both AWS and GCP for future managed migration</li>
+              </ul>
+
+              <h3>Considered Options</h3>
+              <table class="options-table">
+                <thead>
+                  <tr><th>Option</th><th>Licence</th><th>JSONB Support</th><th>HA Solution</th><th>Managed Cloud</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="chosen">
+                    <td><strong>PostgreSQL 15</strong> (chosen)</td>
+                    <td>PostgreSQL Licence (permissive)</td>
+                    <td>Excellent — first-class JSONB type with indexing</td>
+                    <td>Patroni, Citus, Stolon</td>
+                    <td>Amazon RDS, Aurora, Cloud SQL</td>
+                  </tr>
+                  <tr>
+                    <td>MySQL 8 / MariaDB</td>
+                    <td>GPL / LGPL (MariaDB)</td>
+                    <td>Limited — JSON type, no GIN index equivalent</td>
+                    <td>InnoDB Cluster, Galera</td>
+                    <td>Amazon RDS, Cloud SQL</td>
+                  </tr>
+                  <tr>
+                    <td>Amazon Aurora PostgreSQL</td>
+                    <td>Proprietary (AWS-only)</td>
+                    <td>Via PostgreSQL compatibility</td>
+                    <td>Built-in Aurora HA</td>
+                    <td>AWS only (not GCP)</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3>Decision Outcome</h3>
+              <p><strong>Chosen option: PostgreSQL 15</strong>, because it uniquely satisfies all decision drivers: it is open source, has first-class JSONB support with GIN indexing (eliminating the need for a separate document store for most use cases), has a mature and well-understood HA ecosystem (Patroni), and is available as a managed service on both AWS (RDS/Aurora) and GCP (Cloud SQL).</p>
+
+              <div class="concept-card">
+                <h4>Positive Consequences</h4>
+                <ul>
+                  <li>Single database technology for both relational and semi-structured data — eliminates a second datastore for the majority of use cases</li>
+                  <li>Rich extension ecosystem: <code>PostGIS</code> for geospatial data, <code>pgvector</code> for embedding similarity search, <code>pg_cron</code> for scheduled jobs</li>
+                  <li>Strong community and a 30-year track record of production stability</li>
+                  <li>No per-core commercial licensing fees — cost scales only with compute and storage</li>
+                  <li>Portable: the same database can run on-premises, on AWS, or on GCP without application changes</li>
+                </ul>
+              </div>
+
+              <div class="warning-box">
+                <strong>Accepted Trade-offs:</strong> The team needs to build PostgreSQL-specific operational expertise: query optimisation with <code>EXPLAIN ANALYZE</code>, VACUUM tuning, connection pool management with PgBouncer. Self-managed Patroni HA requires operational investment. This is mitigated by a plan to migrate to Amazon RDS or Cloud SQL (managed) within 12 months of initial deployment.
+              </div>
+
+              <h3>Implementation Notes</h3>
+              <pre><code># High Availability: Deploy Patroni for self-managed HA
+# Patroni manages leader election and automatic failover via etcd consensus
+
+# Recommended patroni.yml snippet:
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576  # 1MB
+  pg_hba:
+    - host replication replicator 0.0.0.0/0 md5
+    - host all all 0.0.0.0/0 md5
+
+postgresql:
+  listen: 0.0.0.0:5432
+  connect_address: "${PATRONI_POSTGRESQL_CONNECT_ADDRESS}:5432"
+  data_dir: /data/patroni
+  parameters:
+    wal_level: replica
+    hot_standby: "on"
+    max_wal_senders: 5
+    max_replication_slots: 5
+    wal_log_hints: "on"
+
+# Connection pooling: PgBouncer in transaction mode
+[pgbouncer]
+listen_port = 6432
+listen_addr = *
+auth_type = md5
+pool_mode = transaction
+max_client_conn = 1000
+default_pool_size = 25</code></pre>
+
+            </div>
+          </div>
+
+          <!-- ADR-0002 -->
+          <div class="adr-block">
+            <div class="adr-title-bar">
+              <h2>ADR-0002: Use Terraform for All Cloud Infrastructure Provisioning</h2>
+            </div>
+            <div class="adr-meta">
+              <span><strong>Status:</strong> <span class="status-badge status-accepted">Accepted</span></span>
+              <span><strong>Date:</strong> 2023-06-03</span>
+              <span><strong>Author:</strong> Lê Bình Phương</span>
+              <span><strong>File:</strong> <code>ADR-0002-use-terraform-for-infrastructure-provisioning.md</code></span>
+            </div>
+            <div class="adr-content">
+
+              <h3>Context and Problem Statement</h3>
+              <p>Infrastructure has been provisioned manually through the AWS and GCP web consoles. This approach is not reproducible, not auditable, and extremely error-prone. Two incidents in the past quarter were caused by manual configuration drift between environments. As the team grows from 4 to 12 engineers over the next year, and as we add a second cloud provider (GCP), the manual approach becomes completely untenable.</p>
+              <p>We need an Infrastructure as Code (IaC) tool that allows infrastructure to be defined in version-controlled code, reviewed via pull requests, and applied automatically through a CI/CD pipeline. The solution must support both AWS and GCP, and must be adoptable by engineers without deep cloud provider API knowledge.</p>
+
+              <h3>Decision Drivers</h3>
+              <ul>
+                <li>Must support both AWS and GCP from a single codebase — we are multi-cloud and will remain so</li>
+                <li>Declarative model preferred — define desired state, let the tool figure out the diff</li>
+                <li>Remote state management with locking to enable team collaboration without conflicts</li>
+                <li>Large ecosystem of community modules to avoid reinventing common patterns</li>
+                <li>Must integrate with GitHub Actions CI/CD for automated plan and apply</li>
+                <li>Team has prior experience with the tool or the learning curve is manageable within one sprint</li>
+              </ul>
+
+              <h3>Considered Options</h3>
+              <table class="options-table">
+                <thead>
+                  <tr><th>Option</th><th>Language</th><th>Multi-cloud</th><th>Declarative</th><th>Maturity</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="chosen">
+                    <td><strong>Terraform (OpenTofu)</strong> (chosen)</td>
+                    <td>HCL (HashiCorp Configuration Language)</td>
+                    <td>Excellent — 3000+ providers</td>
+                    <td>Yes</td>
+                    <td>Very high — 10+ years, industry standard</td>
+                  </tr>
+                  <tr>
+                    <td>Pulumi</td>
+                    <td>TypeScript, Python, Go, C#</td>
+                    <td>Good — major providers covered</td>
+                    <td>Yes (imperative DSL)</td>
+                    <td>Medium — growing but smaller ecosystem</td>
+                  </tr>
+                  <tr>
+                    <td>AWS CDK</td>
+                    <td>TypeScript, Python, Java</td>
+                    <td>AWS-only (cdk8s for K8s)</td>
+                    <td>Imperative with L2 constructs</td>
+                    <td>High for AWS; not applicable for GCP</td>
+                  </tr>
+                  <tr>
+                    <td>Ansible</td>
+                    <td>YAML (Jinja2 templates)</td>
+                    <td>Good via cloud modules</td>
+                    <td>Procedural — no state management</td>
+                    <td>Very high — but better for config mgmt than IaC</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3>Decision Outcome</h3>
+              <p><strong>Chosen option: Terraform with remote state in S3 (AWS) / GCS (GCP)</strong>, because it is the industry-standard declarative IaC tool with the widest multi-cloud provider support, a large ecosystem of community modules (Terraform Registry), and the largest pool of community knowledge and job-market expertise. The team has prior Terraform experience on AWS, reducing the learning curve.</p>
+
+              <div class="concept-card">
+                <h4>Positive Consequences</h4>
+                <ul>
+                  <li>All infrastructure changes go through Git pull request review — full audit trail and peer review of every change</li>
+                  <li>Reproducible environments: staging can be created identically to production with a single variable override</li>
+                  <li>Remote state in S3/GCS with DynamoDB/Cloud Spanner locking prevents concurrent apply conflicts</li>
+                  <li>Terraform Registry provides battle-tested modules for VPC, EKS, GKE, RDS — reducing custom code</li>
+                  <li>Community size means most problems have documented solutions and StackOverflow answers</li>
+                </ul>
+              </div>
+
+              <div class="warning-box">
+                <strong>Accepted Trade-offs:</strong> HCL is not a full programming language — complex conditional logic and loops require non-obvious constructs (<code>for_each</code>, <code>dynamic</code> blocks). State management requires discipline: the state file must never be edited manually, and state migrations require care. All engineers must be trained on <code>terraform plan</code> review before being granted apply permissions. Remote state backend must be bootstrapped manually before Terraform can manage itself.
+              </div>
+
+              <h3>State Management Architecture</h3>
+              <pre><code># Remote state backend configuration (AWS)
+# backend.tf
+terraform {
+  backend "s3" {
+    bucket         = "company-terraform-state"
+    key            = "prod/us-east-1/eks/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:us-east-1:123456789:key/xxxxxxxx"
+    dynamodb_table = "terraform-state-lock"
+  }
+  required_providers {
+    aws = { source = "hashicorp/aws", version = "~> 5.0" }
+    google = { source = "hashicorp/google", version = "~> 5.0" }
+  }
+  required_version = ">= 1.6.0"
+}
+
+# Remote state backend configuration (GCP)
+# backend-gcp.tf
+terraform {
+  backend "gcs" {
+    bucket = "company-terraform-state-gcp"
+    prefix = "prod/europe-west1/gke"
+  }
+}
+
+# Workspace strategy for environment isolation
+# Use separate state files per environment, not workspaces, for blast-radius isolation
+# Structure:
+# environments/
+#   prod/
+#     us-east-1/
+#       vpc/          → terraform.tfstate in s3://.../prod/us-east-1/vpc/
+#       eks/          → terraform.tfstate in s3://.../prod/us-east-1/eks/
+#       rds/          → terraform.tfstate in s3://.../prod/us-east-1/rds/
+#   staging/
+#     us-east-1/
+#       vpc/
+#       eks/</code></pre>
+
+            </div>
+          </div>
+
+          <!-- ADR-0003 -->
+          <div class="adr-block">
+            <div class="adr-title-bar">
+              <h2>ADR-0003: Adopt GitOps with ArgoCD for Kubernetes Deployments</h2>
+            </div>
+            <div class="adr-meta">
+              <span><strong>Status:</strong> <span class="status-badge status-accepted">Accepted</span></span>
+              <span><strong>Date:</strong> 2023-09-18</span>
+              <span><strong>Author:</strong> Lê Bình Phương</span>
+              <span><strong>File:</strong> <code>ADR-0003-adopt-gitops-argocd-kubernetes-deployments.md</code></span>
+            </div>
+            <div class="adr-content">
+
+              <h3>Context and Problem Statement</h3>
+              <p>Our current CI/CD pipeline (GitHub Actions) builds container images and pushes them to ECR, then directly applies Kubernetes manifests to the cluster using <code>kubectl apply</code> with a service account token embedded in GitHub Secrets. This model has several critical problems: the CI/CD pipeline has direct write access to the production cluster (a significant security risk), there is no reconciliation loop to detect and correct configuration drift, rollbacks require re-running the pipeline, and there is no single source of truth for what is actually deployed.</p>
+              <p>Three recent incidents were caused by partial CI/CD pipeline failures that left the cluster in an inconsistent state. We need a deployment model that is observable, self-healing, auditable, and follows security best practices (principle of least privilege — the cluster pulls from Git, rather than CI/CD pushing to the cluster).</p>
+
+              <h3>Decision Drivers</h3>
+              <ul>
+                <li>Eliminate direct kubectl access from CI/CD pipelines to production clusters</li>
+                <li>Continuous reconciliation: automatically detect and correct configuration drift</li>
+                <li>Git as the single source of truth for all deployed configuration</li>
+                <li>Must support multi-cluster deployments (currently 2 clusters, expected to grow to 5+)</li>
+                <li>Must support RBAC to allow different teams to manage their own applications without cluster-admin</li>
+                <li>Web UI for visibility without requiring kubectl access for developers</li>
+              </ul>
+
+              <h3>Considered Options</h3>
+              <table class="options-table">
+                <thead>
+                  <tr><th>Option</th><th>UI</th><th>Multi-cluster</th><th>RBAC</th><th>App-of-Apps</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="chosen">
+                    <td><strong>ArgoCD</strong> (chosen)</td>
+                    <td>Excellent — rich web UI with deployment diff view</td>
+                    <td>Native — hub-and-spoke model</td>
+                    <td>RBAC via OIDC (Okta, Dex)</td>
+                    <td>Yes — App of Apps and ApplicationSets</td>
+                  </tr>
+                  <tr>
+                    <td>Flux v2</td>
+                    <td>None built-in (CLI only, Weave GitOps UI is separate)</td>
+                    <td>Yes — via multi-tenancy</td>
+                    <td>Kubernetes RBAC native</td>
+                    <td>Yes — Kustomization controller</td>
+                  </tr>
+                  <tr>
+                    <td>Jenkins X</td>
+                    <td>Basic web UI</td>
+                    <td>Limited</td>
+                    <td>Limited</td>
+                    <td>Partial</td>
+                  </tr>
+                  <tr>
+                    <td>Manual kubectl in CI</td>
+                    <td>N/A</td>
+                    <td>Via scripts</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3>Decision Outcome</h3>
+              <p><strong>Chosen option: ArgoCD</strong>, because it provides the best combination of a production-grade web UI (critical for developer visibility), native multi-cluster support via the hub-and-spoke model, OIDC-integrated RBAC, and the App of Apps / ApplicationSet patterns for managing many applications at scale. The ArgoCD community is large and the CNCF graduation status demonstrates production maturity.</p>
+
+              <div class="concept-card">
+                <h4>Positive Consequences</h4>
+                <ul>
+                  <li>GitHub Actions no longer needs direct cluster credentials — it only pushes image tags to Git; ArgoCD pulls and applies</li>
+                  <li>Continuous reconciliation detects configuration drift within 3 minutes (default sync interval) and auto-corrects it</li>
+                  <li>All deployments are recorded in Git history — rollback is a <code>git revert</code></li>
+                  <li>Developers can see the diff between desired state (Git) and live state (cluster) in the ArgoCD UI without kubectl access</li>
+                  <li>ApplicationSets allow templating of applications across environments and clusters — one template defines deployment across dev/staging/prod</li>
+                </ul>
+              </div>
+
+              <div class="warning-box">
+                <strong>Accepted Trade-offs:</strong> All Kubernetes manifests (or Helm charts / Kustomize overlays) must live in a Git repository accessible to ArgoCD — no more ad-hoc <code>kubectl apply</code>. This introduces process discipline that some engineers will initially resist. An ArgoCD cluster is itself required to be running and healthy for deployments to function — this adds an operational dependency. ArgoCD itself must be bootstrapped manually (or via Terraform) the first time.
+              </div>
+
+              <h3>Architecture</h3>
+              <pre><code># App of Apps pattern — root ArgoCD Application manages all other Applications
+# File: argocd/root-app.yaml (in the gitops-config repository)
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/company/gitops-config.git
+    targetRevision: main
+    path: apps/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# ApplicationSet for multi-environment deployment
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: microservices
+  namespace: argocd
+spec:
+  generators:
+  - matrix:
+      generators:
+      - git:
+          repoURL: https://github.com/company/gitops-config.git
+          revision: main
+          directories:
+          - path: services/*
+      - list:
+          elements:
+          - cluster: prod-us-east-1
+            url: https://prod-us-east-1.example.com
+          - cluster: staging-us-east-1
+            url: https://staging-us-east-1.example.com
+  template:
+    metadata:
+      name: '{{path.basename}}-{{cluster}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/company/gitops-config.git
+        targetRevision: main
+        path: '{{path}}/overlays/{{cluster}}'
+      destination:
+        server: '{{url}}'
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true</code></pre>
+
+            </div>
+          </div>
+
+          <!-- ADR-0004 -->
+          <div class="adr-block">
+            <div class="adr-title-bar">
+              <h2>ADR-0004: Use HashiCorp Vault for Secrets Management</h2>
+            </div>
+            <div class="adr-meta">
+              <span><strong>Status:</strong> <span class="status-badge status-accepted">Accepted</span></span>
+              <span><strong>Date:</strong> 2024-01-22</span>
+              <span><strong>Author:</strong> Lê Bình Phương</span>
+              <span><strong>File:</strong> <code>ADR-0004-use-hashicorp-vault-for-secrets-management.md</code></span>
+            </div>
+            <div class="adr-content">
+
+              <h3>Context and Problem Statement</h3>
+              <p>Application secrets (database passwords, API keys, TLS certificates, service account tokens) are currently stored in Kubernetes ConfigMaps and Secrets. While Kubernetes Secrets are base64-encoded (not encrypted at rest by default in our current setup), they are frequently synced to developer laptops, committed to Git accidentally, and shared in Slack messages. A security audit in Q4 2023 identified 12 instances of secrets committed to repositories, and a pentest found two Kubernetes Secrets containing production database credentials accessible to a compromised pod with default service account permissions.</p>
+              <p>We need a dedicated secrets management platform that provides: encryption at rest and in transit, audit logging of all secret access, dynamic secret generation (short-lived credentials), automatic rotation, and integration with our Kubernetes workloads without requiring developers to handle secret values directly.</p>
+
+              <h3>Decision Drivers</h3>
+              <ul>
+                <li>Cloud-agnostic — must work identically on AWS and GCP without vendor lock-in</li>
+                <li>Dynamic secrets — ability to generate short-lived, auto-expiring database credentials to eliminate static long-lived passwords</li>
+                <li>Full audit log of every secret read — required for PCI-DSS and SOC 2 compliance</li>
+                <li>Kubernetes-native integration — secrets injected into pods without developer code changes</li>
+                <li>PKI and certificate authority (CA) management — replaces manual certificate issuance</li>
+                <li>Must not require application code changes to consume secrets</li>
+              </ul>
+
+              <h3>Considered Options</h3>
+              <table class="options-table">
+                <thead>
+                  <tr><th>Option</th><th>Cloud-Agnostic</th><th>Dynamic Secrets</th><th>K8s Integration</th><th>Self-Hosted</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="chosen">
+                    <td><strong>HashiCorp Vault (self-hosted on K8s)</strong> (chosen)</td>
+                    <td>Yes — works everywhere</td>
+                    <td>Yes — DB, AWS, GCP, PKI, SSH</td>
+                    <td>Vault Agent Injector (sidecar)</td>
+                    <td>Yes — full control</td>
+                  </tr>
+                  <tr>
+                    <td>AWS Secrets Manager</td>
+                    <td>No — AWS-only</td>
+                    <td>Limited — RDS rotation only</td>
+                    <td>External Secrets Operator</td>
+                    <td>No — managed service</td>
+                  </tr>
+                  <tr>
+                    <td>GCP Secret Manager</td>
+                    <td>No — GCP-only</td>
+                    <td>None built-in</td>
+                    <td>External Secrets Operator</td>
+                    <td>No — managed service</td>
+                  </tr>
+                  <tr>
+                    <td>SOPS + Age/KMS</td>
+                    <td>Yes</td>
+                    <td>No</td>
+                    <td>Manual / Helm secrets plugin</td>
+                    <td>Yes — file-based</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3>Decision Outcome</h3>
+              <p><strong>Chosen option: HashiCorp Vault, self-hosted on Kubernetes using the official Helm chart</strong>, because it is the only option that satisfies all decision drivers simultaneously: full cloud-agnosticism, dynamic database secrets (eliminating static credentials), a complete PKI engine, a comprehensive audit log, and native Kubernetes integration via the Vault Agent Injector sidecar pattern — all without requiring application code changes.</p>
+
+              <div class="concept-card">
+                <h4>Positive Consequences</h4>
+                <ul>
+                  <li>Dynamic database credentials: each pod gets a unique PostgreSQL username and password with a 1-hour TTL — even if credentials are captured, they expire within the hour</li>
+                  <li>Full audit log: every <code>vault read secret/myapp/db-password</code> is logged with the Kubernetes service account, pod name, and timestamp — meets PCI-DSS Requirement 10</li>
+                  <li>Vault Agent Injector: secrets are written to the pod's filesystem as files via a sidecar init container — no changes to application code, no secrets in environment variables</li>
+                  <li>PKI engine replaces manual certificate management: Vault issues short-lived certificates signed by an internal CA, eliminating the risk of forgotten, non-rotated certificates</li>
+                  <li>Single secrets backend for all cloud providers and on-premises systems</li>
+                </ul>
+              </div>
+
+              <div class="warning-box">
+                <strong>Accepted Trade-offs:</strong> Running Vault adds operational overhead — the Vault cluster (3-node HA with Raft storage) must be maintained, upgraded, and monitored. The Vault seal/unseal lifecycle requires careful key management (we use AWS KMS auto-unseal). Vault itself must be excluded from the secrets it manages. Engineers must be trained on Vault policies, AppRole authentication, and the Kubernetes auth method. On-call engineers must be prepared to handle Vault availability incidents as a Tier 1 dependency.
+              </div>
+
+              <h3>Deployment Architecture</h3>
+              <pre><code># Deploy Vault on Kubernetes using official Helm chart
+helm repo add hashicorp https://helm.releases.hashicorp.com
+
+# values.yaml for production HA deployment
+cat &gt; vault-values.yaml &lt;&lt;'EOF'
+server:
+  ha:
+    enabled: true
+    replicas: 3
+    raft:
+      enabled: true
+      setNodeId: true
+      config: |
+        cluster_name = "production"
+        storage "raft" {
+          path = "/vault/data"
+          retry_join {
+            leader_api_addr = "http://vault-0.vault-internal:8200"
+          }
+          retry_join {
+            leader_api_addr = "http://vault-1.vault-internal:8200"
+          }
+          retry_join {
+            leader_api_addr = "http://vault-2.vault-internal:8200"
+          }
+        }
+        seal "awskms" {
+          region     = "us-east-1"
+          kms_key_id = "arn:aws:kms:us-east-1:123456789:key/xxxxxxxx"
+        }
+        listener "tcp" {
+          tls_disable = false
+          tls_cert_file = "/vault/userconfig/vault-tls/tls.crt"
+          tls_key_file  = "/vault/userconfig/vault-tls/tls.key"
+        }
+        api_addr = "https://vault.vault.svc.cluster.local:8200"
+        cluster_addr = "https://POD_IP:8201"
+  auditStorage:
+    enabled: true
+    size: 10Gi
+injector:
+  enabled: true
+  replicas: 2
+EOF
+
+helm install vault hashicorp/vault \
+  -n vault --create-namespace \
+  -f vault-values.yaml
+
+# Enable Kubernetes auth method
+vault auth enable kubernetes
+vault write auth/kubernetes/config \
+  kubernetes_host="https://$KUBERNETES_PORT_443_TCP_ADDR:443"
+
+# Example Vault Agent Injector annotations on a Pod
+# The sidecar reads the Vault path and writes the secret to /vault/secrets/
+metadata:
+  annotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/role: "myapp-prod"
+    vault.hashicorp.com/agent-inject-secret-db-creds: "database/creds/myapp-prod"
+    vault.hashicorp.com/agent-inject-template-db-creds: |
+      {{- with secret "database/creds/myapp-prod" -}}
+      DB_USERNAME={{ .Data.username }}
+      DB_PASSWORD={{ .Data.password }}
+      {{- end -}}</code></pre>
+
+              <div class="success-box">
+                <strong>Compliance Outcome:</strong> With Vault in place, the PCI-DSS Requirement 8 (unique credentials per system component) and Requirement 10 (full audit log of credential access) are satisfied by design. The security audit follow-up confirmed zero static database credentials remaining in Kubernetes Secrets after the migration.
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Technical Documents | Lê Bình Phương</title>
+  <title>Engineering Knowledge Base | Lê Bình Phương</title>
   
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
@@ -191,8 +191,8 @@
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="container">
-      <h1><i class="bi bi-book me-3"></i>Technical Documents</h1>
-      <p>Comprehensive guides and documentation for DevOps, Kubernetes, Docker, Terraform, and more</p>
+      <h1><i class="bi bi-journal-code me-3"></i>Engineering Knowledge Base</h1>
+      <p>Personal documentation on Cloud Infrastructure, Security, SRE, and Platform Engineering — built from real-world experience.</p>
     </div>
   </section>
 
@@ -316,6 +316,22 @@
           </div>
         </div>
 
+        <!-- Multi-cloud & Hybrid -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-clouds"></i>
+            </div>
+            <h3>Multi-cloud &amp; Hybrid</h3>
+            <p>Multi-cloud strategy, landing zone design, hybrid connectivity, and cross-cloud identity federation.</p>
+            <ul class="doc-list">
+              <li><a href="multicloud/"><i class="bi bi-arrow-right-circle"></i>Overview</a></li>
+              <li><a href="multicloud/landing-zone.html"><i class="bi bi-arrow-right-circle"></i>Landing Zone Design</a></li>
+              <li><a href="multicloud/hybrid.html"><i class="bi bi-arrow-right-circle"></i>Hybrid Connectivity</a></li>
+            </ul>
+          </div>
+        </div>
+
         <!-- Networking -->
         <div class="col-lg-4 col-md-6">
           <div class="doc-card">
@@ -382,6 +398,85 @@
           </div>
         </div>
 
+        <!-- Observability -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-eye"></i>
+            </div>
+            <h3>Observability</h3>
+            <p>OpenTelemetry, distributed tracing, metrics, logs, and full-stack dashboards & alerting.</p>
+            <ul class="doc-list">
+              <li><a href="observability/"><i class="bi bi-arrow-right-circle"></i>Overview</a></li>
+              <li><a href="observability/tracing.html"><i class="bi bi-arrow-right-circle"></i>Distributed Tracing</a></li>
+              <li><a href="observability/dashboards.html"><i class="bi bi-arrow-right-circle"></i>Dashboards & Alerting</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Database & Storage -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-database"></i>
+            </div>
+            <h3>Database & Storage</h3>
+            <p>PostgreSQL tuning, Redis clustering, backup strategies, RTO/RPO, and cloud managed databases.</p>
+            <ul class="doc-list">
+              <li><a href="database/"><i class="bi bi-arrow-right-circle"></i>Overview</a></li>
+              <li><a href="database/postgresql.html"><i class="bi bi-arrow-right-circle"></i>PostgreSQL</a></li>
+              <li><a href="database/redis.html"><i class="bi bi-arrow-right-circle"></i>Redis & Caching</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Cost Optimization -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-graph-down-arrow"></i>
+            </div>
+            <h3>Cost Optimization</h3>
+            <p>Reserved Instances, Savings Plans, CUDs, Spot strategies, and cloud cost governance.</p>
+            <ul class="doc-list">
+              <li><a href="cost/"><i class="bi bi-arrow-right-circle"></i>Overview</a></li>
+              <li><a href="cost/aws-cost.html"><i class="bi bi-arrow-right-circle"></i>AWS Cost Optimization</a></li>
+              <li><a href="cost/gcp-cost.html"><i class="bi bi-arrow-right-circle"></i>GCP Cost Optimization</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Incident Response Playbooks -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-book-half"></i>
+            </div>
+            <h3>Incident Playbooks</h3>
+            <p>Runbook templates, infrastructure and security incident response playbooks.</p>
+            <ul class="doc-list">
+              <li><a href="playbooks/"><i class="bi bi-arrow-right-circle"></i>Overview & Templates</a></li>
+              <li><a href="playbooks/infra.html"><i class="bi bi-arrow-right-circle"></i>Infrastructure Playbooks</a></li>
+              <li><a href="playbooks/security.html"><i class="bi bi-arrow-right-circle"></i>Security Playbooks</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Architecture Decision Records -->
+        <div class="col-lg-4 col-md-6">
+          <div class="doc-card">
+            <div class="doc-icon">
+              <i class="bi bi-journal-text"></i>
+            </div>
+            <h3>Architecture Decisions</h3>
+            <p>ADR process, MADR templates, and real-world architecture decision examples.</p>
+            <ul class="doc-list">
+              <li><a href="adr/"><i class="bi bi-arrow-right-circle"></i>Overview & Process</a></li>
+              <li><a href="adr/examples.html"><i class="bi bi-arrow-right-circle"></i>ADR Examples</a></li>
+            </ul>
+          </div>
+        </div>
+
         <!-- Quick References -->
         <div class="col-lg-4 col-md-6">
           <div class="doc-card">
@@ -393,6 +488,9 @@
             <ul class="doc-list">
               <li><a href="refs/docker-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>Docker</a></li>
               <li><a href="refs/kubectl-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>kubectl</a></li>
+              <li><a href="refs/terraform-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>Terraform</a></li>
+              <li><a href="refs/aws-cli-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>AWS CLI</a></li>
+              <li><a href="refs/gcloud-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>gcloud</a></li>
               <li><a href="refs/git-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>Git</a></li>
               <li><a href="refs/helm-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>Helm</a></li>
               <li><a href="refs/linux-cheatsheet.html"><i class="bi bi-arrow-right-circle"></i>Linux</a></li>

@@ -19,7 +19,7 @@
     h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
     h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
     .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
@@ -122,7 +122,7 @@ gcloud recommender recommendations list \
           </ol>
 
           <h3>Auto-Remediation for Dev Environments</h3>
-          <pre><code"># Lambda function to auto-rightsize dev instances (Python)
+          <pre><code># Lambda function to auto-rightsize dev instances (Python)
 # Triggered weekly by EventBridge
 
 import boto3
@@ -293,7 +293,7 @@ aws ce get-savings-plans-utilization \
           </ul>
 
           <h3>Spot Interruption Handling (AWS EC2)</h3>
-          <pre><code">#!/bin/bash
+          <pre><code>#!/bin/bash
 # /etc/spot-interruption-handler.sh
 # Runs as a background service on every Spot instance
 
@@ -332,7 +332,7 @@ done
 </code></pre>
 
           <h3>Mixed Instance Groups (EKS Node Groups)</h3>
-          <pre><code"># Terraform: EKS node group with Spot + On-Demand mix
+          <pre><code># Terraform: EKS node group with Spot + On-Demand mix
 resource "aws_eks_node_group" "mixed" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "mixed-spot-ondemand"
@@ -382,7 +382,7 @@ resource "aws_eks_node_group" "ondemand_critical" {
           <h2>5. Storage Optimization</h2>
 
           <h3>S3 Intelligent-Tiering and Lifecycle Policies</h3>
-          <pre><code"># Terraform: S3 bucket with comprehensive lifecycle rules
+          <pre><code># Terraform: S3 bucket with comprehensive lifecycle rules
 resource "aws_s3_bucket_lifecycle_configuration" "data_lifecycle" {
   bucket = aws_s3_bucket.data.id
 
@@ -441,7 +441,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "data_lifecycle" {
 </code></pre>
 
           <h3>EBS Volume Cleanup Script</h3>
-          <pre><code">#!/usr/bin/env python3
+          <pre><code>#!/usr/bin/env python3
 # Find and report unattached EBS volumes (potential waste)
 
 import boto3
@@ -500,7 +500,7 @@ if __name__ == '__main__':
           <p>Kubernetes clusters are complex cost centers — costs are driven by node provisioning, pod scheduling efficiency, namespace resource quotas, and persistent storage. These optimizations typically yield 30–50% savings on K8s infrastructure.</p>
 
           <h3>Cluster Autoscaler Configuration</h3>
-          <pre><code"># cluster-autoscaler Helm values (EKS)
+          <pre><code># cluster-autoscaler Helm values (EKS)
 helm upgrade --install cluster-autoscaler autoscaler/cluster-autoscaler \
   --namespace kube-system \
   --set autoDiscovery.clusterName=my-cluster \
@@ -514,7 +514,7 @@ helm upgrade --install cluster-autoscaler autoscaler/cluster-autoscaler \
 </code></pre>
 
           <h3>Karpenter — Next-Generation Node Autoscaling</h3>
-          <pre><code"># karpenter/provisioner.yaml — intelligent node provisioning
+          <pre><code># karpenter/provisioner.yaml — intelligent node provisioning
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
@@ -558,7 +558,7 @@ spec:
 </code></pre>
 
           <h3>Namespace Resource Quotas</h3>
-          <pre><code"># Apply resource quotas per namespace to prevent runaway costs
+          <pre><code># Apply resource quotas per namespace to prevent runaway costs
 apiVersion: v1
 kind: ResourceQuota
 metadata:
@@ -601,7 +601,7 @@ spec:
           </div>
 
           <h3>NAT Gateway vs VPC Endpoints</h3>
-          <pre><code"># VPC endpoints eliminate NAT Gateway data transfer costs for AWS services
+          <pre><code># VPC endpoints eliminate NAT Gateway data transfer costs for AWS services
 # NAT Gateway: $0.045/GB processed + $0.045/hour = expensive for S3/DynamoDB traffic
 
 # Terraform: Interface endpoint for S3 (eliminates NAT GW traffic)
@@ -649,7 +649,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
           <h2>8. Database Cost Optimization</h2>
 
           <h3>Aurora Serverless v2</h3>
-          <pre><code"># Aurora Serverless v2: scales to zero ACUs when idle, perfect for dev/staging
+          <pre><code># Aurora Serverless v2: scales to zero ACUs when idle, perfect for dev/staging
 resource "aws_rds_cluster" "aurora_serverless" {
   cluster_identifier      = "my-app-db"
   engine                  = "aurora-postgresql"
@@ -682,7 +682,7 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
           <h2>9. Automated Cost Governance</h2>
 
           <h3>Budget Alerts in Terraform</h3>
-          <pre><code"># AWS Budget with SNS alerts (Terraform)
+          <pre><code># AWS Budget with SNS alerts (Terraform)
 resource "aws_budgets_budget" "team_monthly" {
   for_each = var.teams
 
@@ -718,7 +718,7 @@ resource "aws_budgets_budget" "team_monthly" {
 </code></pre>
 
           <h3>Auto-Stop Dev Environments (EventBridge Scheduler)</h3>
-          <pre><code"># Stop all dev EC2 instances nightly at 8PM, restart at 8AM
+          <pre><code># Stop all dev EC2 instances nightly at 8PM, restart at 8AM
 resource "aws_scheduler_schedule" "stop_dev" {
   name                         = "stop-dev-instances"
   schedule_expression          = "cron(0 20 * * ? *)"  # 8PM UTC daily
@@ -760,7 +760,7 @@ resource "aws_scheduler_schedule" "start_dev" {
           <h2>10. FinOps Reporting</h2>
 
           <h3>Weekly Cost Report Script (Python)</h3>
-          <pre><code">#!/usr/bin/env python3
+          <pre><code>#!/usr/bin/env python3
 # weekly-cost-report.py — Generate and send weekly cost summary to Slack
 
 import boto3

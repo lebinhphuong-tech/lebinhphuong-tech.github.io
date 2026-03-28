@@ -19,7 +19,7 @@
     h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
     h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
     .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
@@ -89,7 +89,7 @@
           <p>
             The circuit breaker prevents cascading failures by stopping calls to a failing dependency. When the failure rate exceeds a threshold, the circuit "opens" and all calls immediately return a fallback response without hitting the failing service. After a timeout, the circuit becomes "half-open" and allows test requests through.
           </p>
-          <pre><code">// Circuit Breaker implementation in Go using sony/gobreaker
+          <pre><code>// Circuit Breaker implementation in Go using sony/gobreaker
 package main
 
 import (
@@ -144,7 +144,7 @@ func callPaymentService(payload []byte) ([]byte, error) {
 </code></pre>
 
           <h3>Retry with Exponential Backoff and Jitter</h3>
-          <pre><code">// Retry with exponential backoff and jitter (Python)
+          <pre><code>// Retry with exponential backoff and jitter (Python)
 import time
 import random
 import functools
@@ -182,7 +182,7 @@ def call_external_api(endpoint, payload):
 
           <h3>Bulkhead Pattern</h3>
           <p>The bulkhead pattern isolates failures to prevent one component from consuming all resources and bringing down the entire system. Named after the waterproof compartments in a ship's hull.</p>
-          <pre><code"># Kubernetes: implement bulkheads using namespace resource quotas
+          <pre><code># Kubernetes: implement bulkheads using namespace resource quotas
 # Each service gets its own resource limits — one service cannot starve another
 
 # payment-service has its own thread pool (Spring Boot example)
@@ -225,7 +225,7 @@ func (s *BulkheadService) Execute(ctx context.Context, fn func() error) error {
 </code></pre>
 
           <h3>Timeout Pattern</h3>
-          <pre><code">// Always set timeouts on all external calls
+          <pre><code>// Always set timeouts on all external calls
 // Without timeouts, a slow dependency can hold connections indefinitely
 
 // HTTP client with timeout (Go)
@@ -271,7 +271,7 @@ if err != nil {
             <li><strong>Special events:</strong> Product launches, marketing campaigns, holiday peaks (can be 10-50x normal traffic).</li>
           </ul>
 
-          <pre><code"># Capacity planning query: project resources needed for 2x traffic growth
+          <pre><code># Capacity planning query: project resources needed for 2x traffic growth
 # Current state:
 # - 10 pods, avg CPU: 65%, p99 latency: 180ms at 5,000 RPS
 
@@ -301,7 +301,7 @@ print(f"Projected memory at month 12: {month_12_forecast:.1f} GB")
 
           <h3>k6 Load Test — Full Script</h3>
           <p>k6 is the modern standard for load testing. It uses JavaScript for test scripts, runs efficiently, and integrates with CI/CD and Grafana.</p>
-          <pre><code">// k6/load-test.js
+          <pre><code>// k6/load-test.js
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Counter, Histogram, Rate } from 'k6/metrics';
@@ -385,7 +385,7 @@ export default function(data) {
 </code></pre>
 
           <h3>Locust Load Test (Python)</h3>
-          <pre><code">## locustfile.py
+          <pre><code>## locustfile.py
 from locust import HttpUser, task, between, events
 import json, random
 
@@ -439,7 +439,7 @@ class APIUser(HttpUser):
           <h2>Auto-Scaling</h2>
 
           <h3>Horizontal Pod Autoscaler (HPA) with Custom Metrics</h3>
-          <pre><code"># HPA scaling on CPU + memory + custom Prometheus metric
+          <pre><code># HPA scaling on CPU + memory + custom Prometheus metric
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -488,7 +488,7 @@ spec:
 </code></pre>
 
           <h3>KEDA — Kubernetes Event-Driven Autoscaling</h3>
-          <pre><code"># KEDA ScaledObject: scale on SQS queue depth
+          <pre><code># KEDA ScaledObject: scale on SQS queue depth
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
@@ -546,7 +546,7 @@ spec:
 </code></pre>
 
           <h3>Vertical Pod Autoscaler (VPA)</h3>
-          <pre><code"># VPA: automatically adjust container resource requests
+          <pre><code># VPA: automatically adjust container resource requests
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
@@ -587,7 +587,7 @@ spec:
           </ul>
 
           <h3>Real Runbook: High Error Rate Alert</h3>
-          <pre><code"># Runbook: HighErrorRate — payment-api
+          <pre><code># Runbook: HighErrorRate — payment-api
 # Alert: http_error_rate > 1% for 5 minutes
 # Severity: SEV2 | On-call paged | Response time: 15 minutes
 # Dashboard: https://grafana.company.com/d/payment-api-overview
@@ -646,7 +646,7 @@ kubectl scale deployment payment-api --replicas=30 -n production
           <h2>Graceful Degradation</h2>
           <p>Systems should degrade gracefully when dependencies fail — providing reduced functionality rather than complete failure. This is the difference between a 503 error and a "some features are temporarily unavailable" experience.</p>
 
-          <pre><code">// Feature flag + circuit breaker for graceful degradation (Go)
+          <pre><code>// Feature flag + circuit breaker for graceful degradation (Go)
 type RecommendationService struct {
     client      *http.Client
     cb          *gobreaker.CircuitBreaker
@@ -685,7 +685,7 @@ func getPopularProductsFallback() []Product {
 </code></pre>
 
           <h2>SLO Tracking Dashboard (Grafana + PromQL)</h2>
-          <pre><code"># Key Grafana panel queries for SLO tracking
+          <pre><code># Key Grafana panel queries for SLO tracking
 
 # Panel 1: Availability SLO (30-day rolling window)
 # Target: 99.9% | Shows percentage and burn rate

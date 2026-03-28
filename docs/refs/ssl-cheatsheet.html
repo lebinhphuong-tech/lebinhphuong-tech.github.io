@@ -15,7 +15,7 @@
     h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); font-size: 1.3rem; }
     h3 { color: var(--secondary-color); font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem; }
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; font-size: 0.88rem; }
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
     .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
@@ -102,7 +102,7 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem \
 
         <div class="ref-section">
           <h3>Certificate Operations</h3>
-          <pre><code"># Sign CSR with your CA
+          <pre><code># Sign CSR with your CA
 openssl x509 -req -in server.csr \
   -CA ca.crt -CAkey ca.key \
   -CAcreateserial -out server.crt \
@@ -132,7 +132,7 @@ cat server.crt intermediate.crt root.crt &gt; fullchain.pem</code></pre>
 
         <div class="ref-section">
           <h3>Verify &amp; Test</h3>
-          <pre><code"># Verify cert is signed by CA
+          <pre><code># Verify cert is signed by CA
 openssl verify -CAfile ca.crt server.crt
 openssl verify -CAfile ca-chain.pem server.crt
 
@@ -159,7 +159,7 @@ openssl s_client -connect example.com:443 -tls1_3</code></pre>
 
         <div class="ref-section">
           <h3>Remote Certificate Checks</h3>
-          <pre><code"># Check expiry of remote cert (one-liner)
+          <pre><code># Check expiry of remote cert (one-liner)
 echo | openssl s_client -connect example.com:443 \
   -servername example.com 2&gt;/dev/null \
   | openssl x509 -noout -dates
@@ -186,7 +186,7 @@ openssl s_client -connect example.com:443 \
 
         <div class="ref-section">
           <h3>STARTTLS &amp; Other Protocols</h3>
-          <pre><code"># SMTP STARTTLS
+          <pre><code># SMTP STARTTLS
 openssl s_client -connect smtp.gmail.com:587 \
   -starttls smtp
 
@@ -219,7 +219,7 @@ curl -v --tlsv1.3 https://example.com</code></pre>
       </div>
 
       <h3>Step 1 — Create Root CA</h3>
-      <pre><code"># Create directory structure
+      <pre><code># Create directory structure
 mkdir -p pki/{root-ca,intermediate-ca,certs}/{certs,crl,newcerts,private}
 chmod 700 pki/root-ca/private pki/intermediate-ca/private
 touch pki/root-ca/index.txt pki/intermediate-ca/index.txt
@@ -244,7 +244,7 @@ openssl req -config pki/openssl-root.cnf \
 # keyUsage = critical, digitalSignature, cRLSign, keyCertSign</code></pre>
 
       <h3>Step 2 — Create Intermediate CA</h3>
-      <pre><code"># Generate Intermediate CA key
+      <pre><code># Generate Intermediate CA key
 openssl genrsa -aes256 \
   -out pki/intermediate-ca/private/intermediate.key.pem 4096
 chmod 400 pki/intermediate-ca/private/intermediate.key.pem
@@ -274,7 +274,7 @@ cat pki/intermediate-ca/certs/intermediate.cert.pem \
 # keyUsage = critical, digitalSignature, cRLSign, keyCertSign</code></pre>
 
       <h3>Step 3 — Issue Leaf (Server) Certificate</h3>
-      <pre><code"># Generate server key
+      <pre><code># Generate server key
 openssl genrsa \
   -out pki/certs/example.com.key.pem 2048
 
@@ -318,7 +318,7 @@ openssl verify \
       <div class="warning-box">
         <strong>Important:</strong> Modern browsers and clients ignore the Common Name (CN) field and require Subject Alternative Names. Always include SANs — a cert with only CN will fail validation in Chrome, Firefox, and most TLS clients since 2017.
       </div>
-      <pre><code"># openssl.cnf with SAN section
+      <pre><code># openssl.cnf with SAN section
 [req]
 default_bits       = 2048
 prompt             = no
@@ -354,7 +354,7 @@ openssl req -newkey rsa:2048 -nodes \
 openssl req -text -noout -in server.csr | grep -A 5 "Subject Alternative"</code></pre>
 
       <h2>Certificate Format Conversions</h2>
-      <pre><code"># Format summary:
+      <pre><code># Format summary:
 # PEM  — Base64 encoded, -----BEGIN CERTIFICATE----- header, most common on Linux
 # DER  — Binary format, used in Java and Windows environments
 # PFX/PKCS12 — Binary, bundles cert + key + chain, used in Windows/IIS
@@ -400,7 +400,7 @@ keytool -importkeystore \
   -destkeystore keystore.jks -deststoretype jks</code></pre>
 
       <h2>Cipher Suites</h2>
-      <pre><code"># List all available ciphers in OpenSSL
+      <pre><code># List all available ciphers in OpenSSL
 openssl ciphers -v 'ALL'
 
 # List strong ciphers only (TLS 1.2+)
@@ -422,7 +422,7 @@ nmap --script ssl-enum-ciphers -p 443 example.com
 # SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:...</code></pre>
 
       <h2>cert-manager on Kubernetes</h2>
-      <pre><code"># List all certificates
+      <pre><code># List all certificates
 kubectl get certificates -A
 kubectl get cert -A
 

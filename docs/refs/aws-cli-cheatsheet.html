@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS CLI Cheatsheet | Quick Reference | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; text-decoration: none; display: block; font-size: 0.9rem; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+    .ref-section { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; }
+    .ref-section h4 { color: var(--primary-color); font-weight: 600; margin-bottom: 1rem; font-size: 1rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; }
+    .ref-section pre { margin: 0; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item active">AWS CLI Cheatsheet</li>
+      </ol>
+    </nav>
+
+    <div class="row g-4">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-lightning-fill me-2"></i>Quick Reference</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="docker-cheatsheet.html">Docker</a>
+            <a class="nav-link" href="kubectl-cheatsheet.html">kubectl</a>
+            <a class="nav-link" href="terraform-cheatsheet.html">Terraform</a>
+            <a class="nav-link active" href="aws-cli-cheatsheet.html">AWS CLI</a>
+            <a class="nav-link" href="gcloud-cheatsheet.html">gcloud</a>
+            <a class="nav-link" href="git-cheatsheet.html">Git</a>
+            <a class="nav-link" href="helm-cheatsheet.html">Helm</a>
+            <a class="nav-link" href="linux-cheatsheet.html">Linux</a>
+            <a class="nav-link" href="ssh-cheatsheet.html">SSH</a>
+            <a class="nav-link" href="ssl-cheatsheet.html">SSL/TLS</a>
+            <a class="nav-link" href="sops-cheatsheet.html">SOPS</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-cloud me-2"></i>AWS CLI Cheatsheet</h1>
+          <p class="text-muted">Quick reference for the most commonly used AWS CLI commands across EC2, S3, IAM, EKS, RDS, CloudWatch, and more.</p>
+
+          <div class="tip-box">
+            <strong>Tip:</strong> Install or update the AWS CLI: <code>pip install --upgrade awscli</code> or use the official installer. Verify with <code>aws --version</code>.
+          </div>
+
+          <!-- Quick Grid -->
+          <div class="ref-grid">
+
+            <div class="ref-section">
+              <h4>Configure &amp; Auth</h4>
+              <pre><code>aws configure
+aws configure --profile prod
+aws configure list
+aws configure list-profiles
+aws sts get-caller-identity
+aws sts assume-role \
+  --role-arn arn:aws:iam::123:role/MyRole \
+  --role-session-name session1
+export AWS_PROFILE=prod</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>EC2</h4>
+              <pre><code>aws ec2 describe-instances \
+  --query 'Reservations[*].Instances[*].[InstanceId,State.Name,PrivateIpAddress]' \
+  --output table
+aws ec2 start-instances --instance-ids i-1234567890abcdef0
+aws ec2 stop-instances --instance-ids i-1234567890abcdef0
+aws ec2 describe-instance-types \
+  --filters "Name=vcpu-info.default-vcpus,Values=4"
+aws ec2 describe-security-groups --group-ids sg-12345678
+aws ec2 create-snapshot \
+  --volume-id vol-12345 --description "backup"</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>S3</h4>
+              <pre><code>aws s3 ls s3://my-bucket/
+aws s3 cp file.txt s3://my-bucket/path/
+aws s3 cp s3://my-bucket/file.txt ./
+aws s3 sync ./local-dir s3://my-bucket/remote-dir/
+aws s3 rm s3://my-bucket/file.txt
+aws s3 rb s3://my-bucket --force
+aws s3api put-bucket-versioning \
+  --bucket my-bucket \
+  --versioning-configuration Status=Enabled
+aws s3api get-bucket-policy --bucket my-bucket</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>IAM</h4>
+              <pre><code>aws iam list-users --output table
+aws iam get-user --user-name myuser
+aws iam list-attached-user-policies --user-name myuser
+aws iam list-roles
+aws iam get-role --role-name MyRole
+aws iam list-role-policies --role-name MyRole
+aws iam create-role \
+  --role-name MyRole \
+  --assume-role-policy-document file://trust.json
+aws iam attach-role-policy \
+  --role-name MyRole \
+  --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>EKS</h4>
+              <pre><code>aws eks list-clusters
+aws eks describe-cluster --name my-cluster
+aws eks update-kubeconfig \
+  --name my-cluster --region us-east-1
+aws eks list-nodegroups --cluster-name my-cluster
+aws eks update-nodegroup-version \
+  --cluster-name my-cluster \
+  --nodegroup-name ng-1 \
+  --release-version 1.28.5-20240101</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>RDS</h4>
+              <pre><code>aws rds describe-db-instances \
+  --query 'DBInstances[*].[DBInstanceIdentifier,DBInstanceStatus,Endpoint.Address]' \
+  --output table
+aws rds create-db-snapshot \
+  --db-instance-identifier mydb \
+  --db-snapshot-identifier mydb-snap-$(date +%Y%m%d)
+aws rds restore-db-instance-from-db-snapshot \
+  --db-instance-identifier mydb-restored \
+  --db-snapshot-identifier mydb-snap
+aws rds modify-db-instance \
+  --db-instance-identifier mydb \
+  --db-instance-class db.t3.large \
+  --apply-immediately</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>CloudWatch</h4>
+              <pre><code>aws cloudwatch describe-alarms --state-value ALARM
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/EC2 \
+  --metric-name CPUUtilization \
+  --dimensions Name=InstanceId,Value=i-123 \
+  --start-time 2024-01-01T00:00:00Z \
+  --end-time 2024-01-01T01:00:00Z \
+  --period 300 --statistics Average
+aws logs describe-log-groups
+aws logs tail /aws/lambda/my-function --follow
+aws logs filter-log-events \
+  --log-group-name /aws/eks/my-cluster/cluster \
+  --filter-pattern "ERROR"</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Secrets Manager &amp; SSM</h4>
+              <pre><code>aws secretsmanager list-secrets
+aws secretsmanager get-secret-value \
+  --secret-id my-secret
+aws secretsmanager create-secret \
+  --name prod/db/password \
+  --secret-string "mypassword"
+aws ssm get-parameter \
+  --name /prod/db/password --with-decryption
+aws ssm put-parameter \
+  --name /prod/db/password \
+  --value "newpass" \
+  --type SecureString --overwrite
+aws ssm start-session \
+  --target i-1234567890abcdef0</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Route53</h4>
+              <pre><code>aws route53 list-hosted-zones
+aws route53 list-resource-record-sets \
+  --hosted-zone-id Z1234567890
+aws route53 change-resource-record-sets \
+  --hosted-zone-id Z1234 \
+  --change-batch file://changes.json</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Cost &amp; Billing</h4>
+              <pre><code>aws ce get-cost-and-usage \
+  --time-period Start=2024-01-01,End=2024-02-01 \
+  --granularity MONTHLY \
+  --metrics BlendedCost \
+  --output table
+aws ce get-rightsizing-recommendation \
+  --service EC2
+aws budgets describe-budgets \
+  --account-id 123456789012</code></pre>
+            </div>
+
+            <div class="ref-section">
+              <h4>Useful Flags</h4>
+              <pre><code>--output table|json|text|yaml
+--query 'key.path'          # JMESPath filter
+--region us-east-1
+--profile myprofile
+--no-cli-pager              # disable pager
+--dry-run                   # EC2 operations
+--no-verify-ssl             # skip SSL (corp proxy)</code></pre>
+            </div>
+
+          </div>
+
+          <!-- Configure Detail -->
+          <h2 id="configure">Configure &amp; Authentication</h2>
+
+          <h3>Credentials Setup</h3>
+          <pre><code># Interactive setup — prompts for Access Key, Secret, Region, Output format
+aws configure
+
+# Named profile
+aws configure --profile prod
+
+# View current configuration
+aws configure list
+aws configure list-profiles
+
+# Environment variables (override config file)
+export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+export AWS_DEFAULT_REGION=us-east-1
+export AWS_PROFILE=prod</code></pre>
+
+          <h3>Identity &amp; Assume Role</h3>
+          <pre><code># Who am I?
+aws sts get-caller-identity
+
+# Assume a role and export temporary credentials
+CREDS=$(aws sts assume-role \
+  --role-arn arn:aws:iam::123456789012:role/MyRole \
+  --role-session-name my-session \
+  --query 'Credentials' --output json)
+
+export AWS_ACCESS_KEY_ID=$(echo $CREDS | jq -r '.AccessKeyId')
+export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r '.SecretAccessKey')
+export AWS_SESSION_TOKEN=$(echo $CREDS | jq -r '.SessionToken')</code></pre>
+
+          <!-- EC2 Section -->
+          <h2 id="ec2">EC2</h2>
+
+          <h3>Instances</h3>
+          <pre><code># List all instances with key fields
+aws ec2 describe-instances \
+  --query 'Reservations[*].Instances[*].[InstanceId,State.Name,InstanceType,PrivateIpAddress,PublicIpAddress,Tags[?Key==`Name`].Value|[0]]' \
+  --output table
+
+# Filter by state
+aws ec2 describe-instances \
+  --filters "Name=instance-state-name,Values=running" \
+  --query 'Reservations[*].Instances[*].[InstanceId,InstanceType,PrivateIpAddress]' \
+  --output table
+
+# Start / Stop / Terminate
+aws ec2 start-instances --instance-ids i-1234567890abcdef0
+aws ec2 stop-instances --instance-ids i-1234567890abcdef0
+aws ec2 terminate-instances --instance-ids i-1234567890abcdef0
+
+# Reboot
+aws ec2 reboot-instances --instance-ids i-1234567890abcdef0</code></pre>
+
+          <h3>Security Groups &amp; Key Pairs</h3>
+          <pre><code># List security groups
+aws ec2 describe-security-groups --output table
+aws ec2 describe-security-groups --group-ids sg-12345678
+
+# Create security group
+aws ec2 create-security-group \
+  --group-name my-sg \
+  --description "My security group" \
+  --vpc-id vpc-12345678
+
+# Add inbound rule
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-12345678 \
+  --protocol tcp --port 443 \
+  --cidr 10.0.0.0/8
+
+# Key pairs
+aws ec2 describe-key-pairs
+aws ec2 create-key-pair --key-name my-key --query 'KeyMaterial' --output text > my-key.pem
+chmod 400 my-key.pem</code></pre>
+
+          <h3>Snapshots &amp; AMIs</h3>
+          <pre><code># Create snapshot
+aws ec2 create-snapshot \
+  --volume-id vol-12345678 \
+  --description "Pre-upgrade backup $(date +%Y%m%d)"
+
+# List snapshots owned by me
+aws ec2 describe-snapshots --owner-ids self --output table
+
+# Create AMI from instance
+aws ec2 create-image \
+  --instance-id i-1234567890abcdef0 \
+  --name "my-ami-$(date +%Y%m%d)" \
+  --no-reboot
+
+# List AMIs owned by me
+aws ec2 describe-images --owners self --output table</code></pre>
+
+          <!-- S3 Section -->
+          <h2 id="s3">S3</h2>
+
+          <h3>Basic Operations</h3>
+          <pre><code># List buckets / objects
+aws s3 ls
+aws s3 ls s3://my-bucket/
+aws s3 ls s3://my-bucket/prefix/ --recursive --human-readable --summarize
+
+# Copy
+aws s3 cp file.txt s3://my-bucket/path/
+aws s3 cp s3://my-bucket/file.txt ./
+aws s3 cp s3://source-bucket/ s3://dest-bucket/ --recursive
+
+# Sync (efficient incremental copy)
+aws s3 sync ./local-dir s3://my-bucket/remote-dir/
+aws s3 sync s3://my-bucket/remote-dir/ ./local-dir
+aws s3 sync ./local-dir s3://my-bucket/ --exclude "*.tmp" --exclude ".git/*"
+aws s3 sync ./local-dir s3://my-bucket/ --delete   # mirror (removes extra files)
+
+# Delete
+aws s3 rm s3://my-bucket/file.txt
+aws s3 rm s3://my-bucket/prefix/ --recursive
+aws s3 rb s3://my-bucket --force   # remove bucket (must be empty first without --force)</code></pre>
+
+          <h3>Bucket Configuration</h3>
+          <pre><code># Enable versioning
+aws s3api put-bucket-versioning \
+  --bucket my-bucket \
+  --versioning-configuration Status=Enabled
+
+# Get bucket policy
+aws s3api get-bucket-policy --bucket my-bucket
+
+# Put bucket policy
+aws s3api put-bucket-policy \
+  --bucket my-bucket \
+  --policy file://policy.json
+
+# Block public access
+aws s3api put-public-access-block \
+  --bucket my-bucket \
+  --public-access-block-configuration \
+    "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
+
+# Server-side encryption
+aws s3api put-bucket-encryption \
+  --bucket my-bucket \
+  --server-side-encryption-configuration \
+    '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"aws:kms"}}]}'</code></pre>
+
+          <!-- IAM Section -->
+          <h2 id="iam">IAM</h2>
+          <pre><code># Users
+aws iam list-users --output table
+aws iam get-user --user-name myuser
+aws iam list-attached-user-policies --user-name myuser
+aws iam create-user --user-name myuser
+aws iam delete-user --user-name myuser
+
+# Roles
+aws iam list-roles --output table
+aws iam get-role --role-name MyRole
+aws iam list-role-policies --role-name MyRole
+aws iam list-attached-role-policies --role-name MyRole
+aws iam create-role \
+  --role-name MyRole \
+  --assume-role-policy-document file://trust-policy.json
+aws iam attach-role-policy \
+  --role-name MyRole \
+  --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+aws iam delete-role --role-name MyRole
+
+# Policies
+aws iam list-policies --scope Local --output table
+aws iam get-policy --policy-arn arn:aws:iam::123:policy/MyPolicy
+aws iam create-policy \
+  --policy-name MyPolicy \
+  --policy-document file://policy.json
+aws iam delete-policy --policy-arn arn:aws:iam::123:policy/MyPolicy</code></pre>
+
+          <!-- EKS Section -->
+          <h2 id="eks">EKS</h2>
+          <pre><code># Clusters
+aws eks list-clusters
+aws eks describe-cluster --name my-cluster
+aws eks update-kubeconfig --name my-cluster --region us-east-1
+aws eks update-kubeconfig \
+  --name my-cluster --region us-east-1 \
+  --alias my-cluster-alias   # friendly context name
+
+# Node groups
+aws eks list-nodegroups --cluster-name my-cluster
+aws eks describe-nodegroup \
+  --cluster-name my-cluster \
+  --nodegroup-name ng-1
+aws eks update-nodegroup-version \
+  --cluster-name my-cluster \
+  --nodegroup-name ng-1 \
+  --release-version 1.28.5-20240101
+
+# Add-ons
+aws eks list-addons --cluster-name my-cluster
+aws eks describe-addon \
+  --cluster-name my-cluster \
+  --addon-name coredns
+aws eks update-addon \
+  --cluster-name my-cluster \
+  --addon-name coredns \
+  --addon-version v1.11.1-eksbuild.4</code></pre>
+
+          <!-- RDS Section -->
+          <h2 id="rds">RDS</h2>
+          <pre><code># List instances
+aws rds describe-db-instances \
+  --query 'DBInstances[*].[DBInstanceIdentifier,DBInstanceStatus,DBInstanceClass,Endpoint.Address,Endpoint.Port]' \
+  --output table
+
+# Snapshots
+aws rds create-db-snapshot \
+  --db-instance-identifier mydb \
+  --db-snapshot-identifier mydb-snap-$(date +%Y%m%d)
+aws rds describe-db-snapshots \
+  --db-instance-identifier mydb \
+  --output table
+aws rds restore-db-instance-from-db-snapshot \
+  --db-instance-identifier mydb-restored \
+  --db-snapshot-identifier mydb-snap-20240101
+
+# Modify instance
+aws rds modify-db-instance \
+  --db-instance-identifier mydb \
+  --db-instance-class db.t3.large \
+  --apply-immediately
+
+# Parameter groups
+aws rds describe-db-parameter-groups
+aws rds modify-db-parameter-group \
+  --db-parameter-group-name myparams \
+  --parameters "ParameterName=max_connections,ParameterValue=200,ApplyMethod=pending-reboot"</code></pre>
+
+          <!-- CloudWatch Section -->
+          <h2 id="cloudwatch">CloudWatch &amp; Logs</h2>
+          <pre><code># Alarms
+aws cloudwatch describe-alarms --state-value ALARM
+aws cloudwatch describe-alarms --state-value OK
+aws cloudwatch set-alarm-state \
+  --alarm-name my-alarm \
+  --state-value OK \
+  --state-reason "Manual reset"
+
+# Metrics
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/EC2 \
+  --metric-name CPUUtilization \
+  --dimensions Name=InstanceId,Value=i-1234567890abcdef0 \
+  --start-time 2024-01-01T00:00:00Z \
+  --end-time 2024-01-01T01:00:00Z \
+  --period 300 \
+  --statistics Average Maximum
+
+# Log groups &amp; streams
+aws logs describe-log-groups
+aws logs describe-log-streams \
+  --log-group-name /aws/eks/my-cluster/cluster
+
+# Tail logs (real-time)
+aws logs tail /aws/lambda/my-function --follow
+aws logs tail /aws/eks/my-cluster/cluster --since 1h
+
+# Filter log events
+aws logs filter-log-events \
+  --log-group-name /aws/eks/my-cluster/cluster \
+  --filter-pattern "ERROR" \
+  --start-time $(date -d '1 hour ago' +%s000)
+
+# Insights query
+aws logs start-query \
+  --log-group-name /aws/lambda/my-function \
+  --start-time $(date -d '1 hour ago' +%s) \
+  --end-time $(date +%s) \
+  --query-string 'fields @timestamp, @message | filter @message like /ERROR/ | sort @timestamp desc | limit 20'</code></pre>
+
+          <!-- Secrets Manager & SSM Section -->
+          <h2 id="secrets">Secrets Manager &amp; SSM</h2>
+          <pre><code># Secrets Manager
+aws secretsmanager list-secrets
+aws secretsmanager get-secret-value --secret-id my-secret
+aws secretsmanager get-secret-value \
+  --secret-id my-secret \
+  --query SecretString --output text
+aws secretsmanager create-secret \
+  --name prod/db/password \
+  --secret-string "mypassword"
+aws secretsmanager update-secret \
+  --secret-id prod/db/password \
+  --secret-string "newpassword"
+aws secretsmanager rotate-secret --secret-id prod/db/password
+aws secretsmanager delete-secret \
+  --secret-id prod/db/password \
+  --recovery-window-in-days 7
+
+# SSM Parameter Store
+aws ssm get-parameter \
+  --name /prod/db/password --with-decryption
+aws ssm get-parameters-by-path \
+  --path /prod/ --recursive --with-decryption
+aws ssm put-parameter \
+  --name /prod/db/password \
+  --value "newpass" \
+  --type SecureString --overwrite
+aws ssm delete-parameter --name /prod/db/password
+
+# SSM Session Manager (no SSH needed)
+aws ssm start-session --target i-1234567890abcdef0
+aws ssm start-session \
+  --target i-1234567890abcdef0 \
+  --document-name AWS-StartPortForwardingSession \
+  --parameters '{"portNumber":["3306"],"localPortNumber":["3306"]}'</code></pre>
+
+          <!-- Route53 Section -->
+          <h2 id="route53">Route53</h2>
+          <pre><code># List hosted zones
+aws route53 list-hosted-zones
+aws route53 list-hosted-zones-by-name \
+  --dns-name example.com
+
+# List records in a zone
+aws route53 list-resource-record-sets \
+  --hosted-zone-id Z1234567890ABCDEF
+
+# Upsert DNS record (change-batch file)
+aws route53 change-resource-record-sets \
+  --hosted-zone-id Z1234567890ABCDEF \
+  --change-batch file://changes.json
+
+# Example changes.json
+# {
+#   "Changes": [{
+#     "Action": "UPSERT",
+#     "ResourceRecordSet": {
+#       "Name": "api.example.com",
+#       "Type": "A",
+#       "TTL": 300,
+#       "ResourceRecords": [{"Value": "1.2.3.4"}]
+#     }
+#   }]
+# }
+
+# Health checks
+aws route53 list-health-checks
+aws route53 get-health-check-status \
+  --health-check-id abc123</code></pre>
+
+          <!-- Cost & Billing Section -->
+          <h2 id="cost">Cost &amp; Billing</h2>
+          <pre><code># Monthly cost summary
+aws ce get-cost-and-usage \
+  --time-period Start=2024-01-01,End=2024-02-01 \
+  --granularity MONTHLY \
+  --metrics BlendedCost UnblendedCost \
+  --output table
+
+# Cost by service
+aws ce get-cost-and-usage \
+  --time-period Start=2024-01-01,End=2024-02-01 \
+  --granularity MONTHLY \
+  --metrics BlendedCost \
+  --group-by Type=DIMENSION,Key=SERVICE \
+  --output table
+
+# Rightsizing recommendations
+aws ce get-rightsizing-recommendation --service EC2
+
+# Budgets
+aws budgets describe-budgets --account-id 123456789012
+aws budgets describe-budget-performance-history \
+  --account-id 123456789012 \
+  --budget-name my-budget</code></pre>
+
+          <div class="warning-box">
+            <strong>Cost Tip:</strong> Use <code>--dry-run</code> on EC2 operations to verify permissions without incurring charges. Always tag resources with <code>--tag-specifications</code> for accurate cost allocation.
+          </div>
+
+          <div class="success-box">
+            <strong>Pro Tips:</strong>
+            <ul class="mb-0">
+              <li>Use <code>--output json | jq</code> for powerful ad-hoc filtering</li>
+              <li>Set <code>AWS_PAGER=""</code> to disable the pager globally</li>
+              <li>Use <code>aws configure set cli_follow_urlparam false</code> to prevent URL parameter auto-expansion</li>
+              <li>Use <code>--no-cli-pager</code> for scripts to avoid interactive prompts</li>
+            </ul>
+          </div>
+
+          <p class="mt-4 text-muted">
+            <a href="../index.html" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to Documents</a>
+            &nbsp;|&nbsp;
+            <a href="gcloud-cheatsheet.html" class="text-decoration-none">gcloud Cheatsheet <i class="bi bi-arrow-right ms-1"></i></a>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

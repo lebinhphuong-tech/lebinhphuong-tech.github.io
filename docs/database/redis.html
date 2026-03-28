@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redis & Caching | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Database & Storage</a></li>
+        <li class="breadcrumb-item active">Redis & Caching</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-database me-2"></i>Database & Storage</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="postgresql.html">PostgreSQL</a>
+            <a class="nav-link active" href="redis.html">Redis & Caching</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-lightning me-2"></i>Redis &amp; Caching</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Redis</strong> is an in-memory data structure store used as a cache, message broker, and
+            primary database. This guide covers data structures, persistence, cluster topologies, cache design
+            patterns, eviction policies, Kubernetes deployment, and common production pitfalls.
+          </div>
+
+          <!-- ==================== DATA STRUCTURES ==================== -->
+          <h2>Redis Data Structures</h2>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Key Commands</th>
+                  <th>Use Cases</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>String</strong></td>
+                  <td>Binary-safe bytes up to 512 MB. Can hold integers, floats, or serialised objects.</td>
+                  <td><code>SET</code>, <code>GET</code>, <code>INCR</code>, <code>EXPIRE</code>, <code>SETNX</code></td>
+                  <td>Object cache, counters, distributed locks, rate limiting tokens, feature flags</td>
+                </tr>
+                <tr>
+                  <td><strong>Hash</strong></td>
+                  <td>Map of field-value pairs. Efficient for representing objects with multiple attributes.</td>
+                  <td><code>HSET</code>, <code>HGET</code>, <code>HMGET</code>, <code>HGETALL</code>, <code>HINCRBY</code></td>
+                  <td>User profile cache, session storage, entity attribute maps, shopping carts</td>
+                </tr>
+                <tr>
+                  <td><strong>List</strong></td>
+                  <td>Ordered linked list of strings. Efficient push/pop from both ends (O(1)).</td>
+                  <td><code>LPUSH</code>, <code>RPUSH</code>, <code>LPOP</code>, <code>BRPOP</code>, <code>LRANGE</code></td>
+                  <td>Message queues, task queues, activity feeds, recent items list</td>
+                </tr>
+                <tr>
+                  <td><strong>Set</strong></td>
+                  <td>Unordered collection of unique strings. O(1) membership testing.</td>
+                  <td><code>SADD</code>, <code>SISMEMBER</code>, <code>SUNION</code>, <code>SINTER</code>, <code>SDIFF</code></td>
+                  <td>Unique visitors, tags, friend lists, deduplication, online users</td>
+                </tr>
+                <tr>
+                  <td><strong>Sorted Set (ZSet)</strong></td>
+                  <td>Set where each member has a floating-point score. Members ordered by score.</td>
+                  <td><code>ZADD</code>, <code>ZRANGE</code>, <code>ZRANGEBYSCORE</code>, <code>ZRANK</code>, <code>ZINCRBY</code></td>
+                  <td>Leaderboards, priority queues, rate limiting (sliding window), scheduled jobs</td>
+                </tr>
+                <tr>
+                  <td><strong>Stream</strong></td>
+                  <td>Append-only log of entries with auto-generated IDs. Supports consumer groups.</td>
+                  <td><code>XADD</code>, <code>XREAD</code>, <code>XREADGROUP</code>, <code>XACK</code>, <code>XLEN</code></td>
+                  <td>Event sourcing, audit logs, IoT telemetry, lightweight message broker (Kafka-lite)</td>
+                </tr>
+                <tr>
+                  <td><strong>Bitmap</strong></td>
+                  <td>String type exposed with bit-level operations. Extremely space-efficient.</td>
+                  <td><code>SETBIT</code>, <code>GETBIT</code>, <code>BITCOUNT</code>, <code>BITOP</code></td>
+                  <td>Daily active users (1 bit per user per day), feature toggles, bloom filter approximation</td>
+                </tr>
+                <tr>
+                  <td><strong>HyperLogLog</strong></td>
+                  <td>Probabilistic cardinality estimation using ~12 KB regardless of set size.</td>
+                  <td><code>PFADD</code>, <code>PFCOUNT</code>, <code>PFMERGE</code></td>
+                  <td>Approximate unique visitor counting, distinct value estimation at scale</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+<pre><code># --- String: distributed rate limiter ---
+# Allow 100 requests per minute per user
+INCR rate:user:42
+EXPIRE rate:user:42 60
+# Check: if value > 100, reject request
+
+# --- Sorted Set: real-time leaderboard ---
+ZADD leaderboard:season1 1500 "player:alice"
+ZADD leaderboard:season1 2200 "player:bob"
+ZADD leaderboard:season1 1800 "player:carol"
+ZREVRANGE leaderboard:season1 0 9 WITHSCORES   # Top 10 players
+ZRANK leaderboard:season1 "player:alice"        # Alice's rank
+
+# --- Stream: event ingestion ---
+XADD events:orders * order_id 12345 customer_id 99 total 150.00 status created
+XREAD COUNT 10 BLOCK 0 STREAMS events:orders $
+
+# --- Consumer group for parallel processing ---
+XGROUP CREATE events:orders processor-group $ MKSTREAM
+XREADGROUP GROUP processor-group worker-1 COUNT 5 BLOCK 0 STREAMS events:orders >
+XACK events:orders processor-group 1711612800000-0
+</code></pre>
+
+          <!-- ==================== PERSISTENCE ==================== -->
+          <h2>Persistence Modes</h2>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>RDB (Redis Database Snapshot)</th>
+                  <th>AOF (Append-Only File)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Mechanism</strong></td>
+                  <td>Fork process periodically writes a full binary snapshot to disk</td>
+                  <td>Every write command is appended to a log file; replayed on restart</td>
+                </tr>
+                <tr>
+                  <td><strong>Data Loss Risk</strong></td>
+                  <td>Up to the interval since last snapshot (minutes of data)</td>
+                  <td>At most 1 second with <code>appendfsync everysec</code></td>
+                </tr>
+                <tr>
+                  <td><strong>Recovery Speed</strong></td>
+                  <td>Fast — load binary snapshot directly</td>
+                  <td>Slower — replay all commands (mitigated by AOF rewrite)</td>
+                </tr>
+                <tr>
+                  <td><strong>File Size</strong></td>
+                  <td>Compact binary format</td>
+                  <td>Larger; grows over time until AOF rewrite compacts it</td>
+                </tr>
+                <tr>
+                  <td><strong>Performance Impact</strong></td>
+                  <td>Fork COW pause (can be seconds on large datasets with dirty pages)</td>
+                  <td>Minimal with <code>everysec</code>; <code>always</code> mode has write latency impact</td>
+                </tr>
+                <tr>
+                  <td><strong>Best For</strong></td>
+                  <td>Disaster recovery, cold standby, analytics snapshots</td>
+                  <td>Production caches where data loss is unacceptable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+<pre><code># redis.conf — Recommended hybrid persistence for production
+
+# --- RDB Snapshots ---
+save 3600 1      # Save if at least 1 key changed in 1 hour
+save 300 100     # Save if at least 100 keys changed in 5 minutes
+save 60 10000    # Save if at least 10000 keys changed in 1 minute
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+dir /var/lib/redis
+
+# --- AOF ---
+appendonly yes
+appendfilename "appendonly.aof"
+# appendfsync always      # Every write — safest, slowest
+appendfsync everysec      # Every second — good balance (default recommendation)
+# appendfsync no          # Let OS decide — fastest, most data loss risk
+
+no-appendfsync-on-rewrite yes   # Don't fsync during AOF rewrite (reduces fork latency)
+auto-aof-rewrite-percentage 100 # Trigger rewrite when AOF grows 100% vs last rewrite
+auto-aof-rewrite-min-size 128mb
+aof-use-rdb-preamble yes        # Hybrid: start AOF with RDB snapshot for faster reload
+</code></pre>
+
+          <!-- ==================== CLUSTER VS SENTINEL ==================== -->
+          <h2>Redis Cluster vs Sentinel</h2>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <div class="strategy-card h-100">
+                <h4>Redis Sentinel</h4>
+                <p>Provides high availability for a single-shard Redis deployment. Sentinel processes monitor the
+                master and replicas; if the master fails, Sentinels elect a new master via quorum vote and update
+                clients via service discovery.</p>
+                <ul>
+                  <li>Min 3 Sentinel nodes for quorum</li>
+                  <li>Data fits on a single instance</li>
+                  <li>Clients must support Sentinel protocol</li>
+                  <li>Automatic failover in 30–60 seconds</li>
+                </ul>
+                <p class="mb-0"><strong>Use when:</strong> dataset &lt; single node RAM, simplicity preferred, vertical scaling is sufficient.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card h-100">
+                <h4>Redis Cluster</h4>
+                <p>Provides both horizontal scaling (data sharding) and HA. Data is split into 16384 hash slots
+                across multiple primary shards. Each shard has its own replica(s). Clients connect directly to
+                any node; the cluster redirects with MOVED/ASK.</p>
+                <ul>
+                  <li>Min 6 nodes (3 primary + 3 replica)</li>
+                  <li>Horizontal scale-out</li>
+                  <li>Multi-key operations limited to same slot</li>
+                  <li>No cross-slot transactions</li>
+                </ul>
+                <p class="mb-0"><strong>Use when:</strong> dataset exceeds single node RAM, write throughput must scale horizontally.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== CACHE PATTERNS ==================== -->
+          <h2>Cache Design Patterns</h2>
+
+          <div class="concept-card">
+            <h4>Cache-Aside (Lazy Loading)</h4>
+            <p>The application checks the cache first. On a miss, it reads from the database, populates the cache,
+            and returns the result. The application owns cache population logic.</p>
+            <p><strong>Pros:</strong> Simple; cache only contains requested data; tolerates cache failures (falls back to DB).<br>
+            <strong>Cons:</strong> Cold start penalty; possible stale reads between TTL expiry and next request.<br>
+            <strong>Best for:</strong> Read-heavy workloads where not all data needs to be cached.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Write-Through</h4>
+            <p>Every write goes to the cache AND the database synchronously. Cache is always consistent with the
+            database at the cost of write latency.</p>
+            <p><strong>Pros:</strong> No stale cache; strong consistency.<br>
+            <strong>Cons:</strong> Higher write latency; caches data that may never be read (cold data pollution).<br>
+            <strong>Best for:</strong> Workloads where read-after-write consistency is critical (user account balance).</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Write-Behind (Write-Back)</h4>
+            <p>Writes go to cache immediately and are asynchronously flushed to the database in the background.
+            The application gets low-latency writes.</p>
+            <p><strong>Pros:</strong> Very low write latency; batch DB writes reduce load.<br>
+            <strong>Cons:</strong> Risk of data loss if cache fails before flush; complexity in flush logic.<br>
+            <strong>Best for:</strong> High-frequency writes where eventual durability is acceptable (counters, analytics).</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Read-Through</h4>
+            <p>The cache sits in front of the database. On a cache miss, the cache itself fetches the data from
+            the database, stores it, and returns it to the application. The application only talks to the cache.</p>
+            <p><strong>Pros:</strong> Transparent to application; clean separation of concerns.<br>
+            <strong>Cons:</strong> Requires cache provider that supports read-through (e.g., Redis with a custom plugin or DAX).<br>
+            <strong>Best for:</strong> Systems using managed caches like AWS DAX (DynamoDB Accelerator).</p>
+          </div>
+
+          <!-- ==================== EVICTION POLICIES ==================== -->
+          <h2>Cache Eviction Policies</h2>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Policy</th>
+                  <th>Algorithm</th>
+                  <th>Behaviour</th>
+                  <th>Best For</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>noeviction</code></td>
+                  <td>None</td>
+                  <td>Return error when memory full</td>
+                  <td>Persistent data stores where data loss is unacceptable</td>
+                </tr>
+                <tr>
+                  <td><code>allkeys-lru</code></td>
+                  <td>Approximate LRU</td>
+                  <td>Evict least recently used keys from all keys</td>
+                  <td>General-purpose cache; you want Redis to evict the least popular items</td>
+                </tr>
+                <tr>
+                  <td><code>volatile-lru</code></td>
+                  <td>Approximate LRU</td>
+                  <td>Evict LRU keys only among those with TTL set</td>
+                  <td>Mixed cache + persistent data; protect keys without TTL</td>
+                </tr>
+                <tr>
+                  <td><code>allkeys-lfu</code></td>
+                  <td>LFU (frequency)</td>
+                  <td>Evict least frequently used keys from all keys</td>
+                  <td>Cache with skewed access patterns; hot keys stay, cold keys evicted</td>
+                </tr>
+                <tr>
+                  <td><code>volatile-lfu</code></td>
+                  <td>LFU (frequency)</td>
+                  <td>Evict LFU keys only among those with TTL set</td>
+                  <td>Mixed workload with TTL on cacheable data</td>
+                </tr>
+                <tr>
+                  <td><code>allkeys-random</code></td>
+                  <td>Random</td>
+                  <td>Evict random keys from all keys</td>
+                  <td>Uniform access distribution (rare in practice)</td>
+                </tr>
+                <tr>
+                  <td><code>volatile-ttl</code></td>
+                  <td>TTL-based</td>
+                  <td>Evict keys with shortest remaining TTL first</td>
+                  <td>Time-boxed data where expiry-imminent items are least valuable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+<pre><code># redis.conf — memory and eviction configuration
+maxmemory 12gb                    # Cap Redis at 12 GB (leave headroom for OS and fork)
+maxmemory-policy allkeys-lfu      # Evict least-frequently-used keys when memory is full
+maxmemory-samples 10              # Sample 10 keys when applying LRU/LFU (higher = more accurate, more CPU)
+
+# LFU tuning (Redis 4+)
+lfu-decay-time 1                  # Halve LFU counter every 1 minute of inactivity
+lfu-log-factor 10                 # Higher = more granular frequency counting
+</code></pre>
+
+          <!-- ==================== REDIS CLUSTER HELM ==================== -->
+          <h2>Redis Cluster on Kubernetes (Bitnami Helm)</h2>
+
+<pre><code># values-redis-cluster.yaml — Bitnami Redis Cluster Helm values
+# helm install redis-cluster bitnami/redis-cluster -f values-redis-cluster.yaml -n cache
+
+cluster:
+  enabled: true
+  nodes: 6            # 3 primary shards + 3 replicas (1 replica per shard)
+  replicas: 1
+
+# Resource allocation per node
+redis:
+  resources:
+    requests:
+      memory: 4Gi
+      cpu: 500m
+    limits:
+      memory: 6Gi
+      cpu: 2000m
+
+  # Redis configuration
+  extraEnvVars: []
+  configmap: |
+    maxmemory 4gb
+    maxmemory-policy allkeys-lfu
+    appendonly yes
+    appendfsync everysec
+    no-appendfsync-on-rewrite yes
+    tcp-keepalive 300
+    timeout 0
+    hz 20
+    aof-use-rdb-preamble yes
+
+# Persistence
+persistence:
+  enabled: true
+  storageClass: "fast-ssd"
+  size: 20Gi
+
+# Password authentication
+usePassword: true
+existingSecret: redis-cluster-secret
+existingSecretPasswordKey: redis-password
+
+# Pod anti-affinity: spread nodes across availability zones
+podAntiAffinityPreset: hard
+
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: redis-cluster
+
+# Metrics exporter for Prometheus
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+    interval: 30s
+    scrapeTimeout: 10s
+
+# Network policy
+networkPolicy:
+  enabled: true
+  allowExternal: false    # Only allow access from same namespace
+
+# Pod Disruption Budget
+pdb:
+  create: true
+  minAvailable: 4         # At least 4 of 6 nodes must be available
+</code></pre>
+
+          <!-- ==================== SENTINEL CONFIG ==================== -->
+          <h2>Redis Sentinel Configuration</h2>
+
+<pre><code># sentinel.conf — 3-node Sentinel configuration
+
+# Monitor the master named "mymaster" at 10.0.2.10:6379
+# Quorum = 2 (at least 2 Sentinels must agree to initiate failover)
+sentinel monitor mymaster 10.0.2.10 6379 2
+
+# Authentication
+sentinel auth-pass mymaster <strong_redis_password>
+
+# Failover timing
+sentinel down-after-milliseconds mymaster 5000   # Mark master as subjectively down after 5s no response
+sentinel failover-timeout mymaster 60000          # Max time for failover process: 60s
+sentinel parallel-syncs mymaster 1               # Reconfigure replicas one at a time during failover
+
+# Notification script (optional — trigger alerting on state changes)
+# sentinel notification-script mymaster /opt/redis/notify.sh
+
+# Sentinel bind address
+bind 0.0.0.0
+sentinel announce-ip 10.0.2.11     # Adjust per Sentinel node
+sentinel announce-port 26379
+</code></pre>
+
+          <!-- ==================== REDIS SENTINEL K8S ==================== -->
+          <h2>Redis Sentinel on Kubernetes</h2>
+
+<pre><code># values-redis-sentinel.yaml — Bitnami Redis (Sentinel mode)
+# helm install redis bitnami/redis -f values-redis-sentinel.yaml -n cache
+
+architecture: replication
+
+sentinel:
+  enabled: true
+  masterSet: mymaster
+  quorum: 2
+  downAfterMilliseconds: 5000
+  failoverTimeout: 60000
+  parallelSyncs: 1
+
+replica:
+  replicaCount: 3
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 250m
+    limits:
+      memory: 4Gi
+      cpu: 1000m
+  persistence:
+    enabled: true
+    storageClass: "fast-ssd"
+    size: 10Gi
+
+auth:
+  enabled: true
+  existingSecret: redis-sentinel-secret
+  existingSecretPasswordKey: redis-password
+
+# Expose a single ClusterIP Service that routes to current master
+service:
+  type: ClusterIP
+  port: 6379
+  sentinelPort: 26379
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+
+podAntiAffinityPreset: hard
+
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: redis
+</code></pre>
+
+          <!-- ==================== MONITORING ==================== -->
+          <h2>Monitoring: Key Metrics</h2>
+
+          <h3>INFO Command</h3>
+<pre><code># Connect and inspect server stats
+redis-cli -h redis-master -a $REDIS_PASSWORD INFO all
+
+# Key sections to monitor:
+
+# -- Memory --
+# used_memory_human        — actual memory used by Redis data
+# used_memory_rss_human    — memory as seen by OS (includes fragmentation)
+# mem_fragmentation_ratio  — >1.5 indicates high fragmentation; consider MEMORY PURGE or restart
+# maxmemory_human          — configured limit
+
+# -- Stats --
+# keyspace_hits            — cache hits
+# keyspace_misses          — cache misses
+# evicted_keys             — keys removed due to maxmemory policy
+# expired_keys             — keys removed due to TTL expiry
+# total_commands_processed — commands per second (use with delta)
+# instantaneous_ops_per_sec — current ops/sec
+
+# -- Replication --
+# role                     — master or slave
+# connected_slaves         — number of connected replicas
+# master_repl_offset       — WAL-equivalent offset on master
+# slave_repl_offset        — replica's current offset (delta = replication lag)
+# master_last_io_seconds_ago — seconds since last replica I/O
+
+# -- Clients --
+# connected_clients        — current client count
+# blocked_clients          — clients blocked on BRPOP/BLPOP/SUBSCRIBE
+# maxclients               — configured limit
+</code></pre>
+
+          <h3>Critical Metrics to Alert On</h3>
+<pre><code># Prometheus alert rules (example — adjust thresholds for your workload)
+
+# Cache hit rate < 80% (indicates cache is too small or keys are expiring too aggressively)
+- alert: RedisCacheHitRateLow
+  expr: |
+    rate(redis_keyspace_hits_total[5m]) /
+    (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) < 0.80
+  for: 10m
+
+# Memory usage > 90% of maxmemory
+- alert: RedisMemoryHigh
+  expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.90
+  for: 5m
+
+# Evictions occurring (should be 0 for persistent data)
+- alert: RedisEvictingKeys
+  expr: rate(redis_evicted_keys_total[5m]) > 0
+  for: 2m
+
+# Replication lag > 30 seconds
+- alert: RedisReplicationLag
+  expr: redis_connected_slaves < 1 OR redis_master_repl_offset - redis_slave_repl_offset > 1048576
+  for: 1m
+
+# Too many blocked clients
+- alert: RedisBlockedClients
+  expr: redis_blocked_clients > 50
+  for: 5m
+</code></pre>
+
+          <!-- ==================== CONNECTION PATTERNS ==================== -->
+          <h2>Connection Patterns</h2>
+
+          <h3>Connection Pooling</h3>
+          <p>
+            Redis connections are cheap compared to PostgreSQL, but each idle connection still holds a file descriptor
+            and server-side memory (~20 KB). For high-concurrency applications, use a connection pool in your client
+            library rather than creating a new connection per request.
+          </p>
+
+<pre><code># Python — redis-py with connection pool
+import redis
+
+pool = redis.ConnectionPool(
+    host='redis-master',
+    port=6379,
+    password=os.environ['REDIS_PASSWORD'],
+    max_connections=50,          # Max connections in pool
+    socket_connect_timeout=2,    # Timeout for new connections
+    socket_timeout=1,            # Timeout for read/write operations
+    health_check_interval=30,    # Periodic PING to detect stale connections
+    decode_responses=True
+)
+
+client = redis.Redis(connection_pool=pool)
+
+# For cluster mode:
+from redis.cluster import RedisCluster, ClusterConnectionPool
+
+cluster_pool = ClusterConnectionPool(
+    startup_nodes=[
+        {"host": "redis-cluster-0", "port": 6379},
+        {"host": "redis-cluster-1", "port": 6379},
+        {"host": "redis-cluster-2", "port": 6379},
+    ],
+    password=os.environ['REDIS_PASSWORD'],
+    max_connections_per_node=20,
+    decode_responses=True
+)
+cluster_client = RedisCluster(connection_pool=cluster_pool)
+</code></pre>
+
+          <h3>Circuit Breaker Pattern</h3>
+          <p>
+            When Redis is unavailable, requests should fail fast rather than queuing indefinitely. Implement a
+            circuit breaker that opens after N consecutive failures and automatically retries after a cooldown period.
+          </p>
+
+<pre><code># Using resilience4j (Java) or pybreaker (Python) — concept shown in pseudo-code
+
+# Circuit Breaker states:
+# CLOSED   — normal operation; requests pass through to Redis
+# OPEN     — Redis unreachable; requests fail fast without hitting Redis
+# HALF-OPEN — after cooldown, allow 1 probe request; if success → CLOSED, if fail → OPEN again
+
+# Configuration
+circuit_breaker_config:
+  failure_rate_threshold: 50      # Open circuit if >50% of last N calls fail
+  slow_call_rate_threshold: 80    # Open if >80% of calls are slower than slow_call_duration_threshold
+  slow_call_duration_threshold: 500ms
+  minimum_number_of_calls: 10     # Min calls to evaluate failure rate
+  wait_duration_in_open_state: 30s
+  permitted_number_of_calls_in_half_open_state: 3
+
+# Fallback: serve from database or return cached result from local in-process LRU
+def get_user_profile(user_id):
+    try:
+        return circuit_breaker.call(redis_client.get, f"user:{user_id}")
+    except (RedisError, CircuitBreakerOpenError):
+        return database.get_user_profile(user_id)   # Fallback to primary DB
+</code></pre>
+
+          <!-- ==================== COMMON PITFALLS ==================== -->
+          <h2>Common Production Pitfalls</h2>
+
+          <div class="strategy-card">
+            <h4>Cache Stampede (Thundering Herd)</h4>
+            <p>
+              When a popular cached key expires, many concurrent requests simultaneously miss the cache and hit the
+              database at the same time, causing a spike that can overload the database.
+            </p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+              <li><strong>Mutex / distributed lock:</strong> Use <code>SET key value NX PX 5000</code> (SETNX with TTL) so only one request rebuilds the cache; others wait and retry.</li>
+              <li><strong>Probabilistic early expiration (PER):</strong> Before the key expires, proactively refresh it with a probability that increases as expiry approaches. Avoids synchronised expiry.</li>
+              <li><strong>Jitter on TTL:</strong> Add random jitter to TTLs (e.g., <code>TTL = base_ttl + random(0, base_ttl * 0.1)</code>) to prevent multiple keys expiring simultaneously.</li>
+              <li><strong>Background refresh:</strong> Return the stale value immediately while asynchronously refreshing in the background (stale-while-revalidate pattern).</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Hot Keys</h4>
+            <p>
+              A single Redis key receiving disproportionately high traffic (e.g., a globally shared counter or a
+              viral product page) can saturate a single shard's CPU or network bandwidth.
+            </p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+              <li><strong>Key sharding:</strong> Split a hot key into N sub-keys (<code>counter:product:123:shard:{0..N}</code>) and aggregate reads. Route writes to a random shard.</li>
+              <li><strong>Local in-process cache:</strong> Cache hot values in application memory (e.g., Caffeine, Guava Cache) with a short TTL (1–5 seconds). Dramatically reduces Redis traffic for truly hot keys.</li>
+              <li><strong>Read replicas:</strong> Route read traffic to replicas for hot read-only keys (Redis Cluster supports this with <code>READONLY</code> mode on replica nodes).</li>
+              <li><strong>Redis 7+ hot key detection:</strong> Enable <code>hotkeys</code> via <code>redis-cli --hotkeys</code> to identify problematic keys.</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Large Keys / Big Values</h4>
+            <p>
+              Keys with very large values (e.g., a serialised 10 MB object) cause latency spikes because Redis is
+              single-threaded for command execution. DEL or EXPIRE on a large key blocks the event loop.
+            </p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+              <li>Use <code>UNLINK</code> instead of <code>DEL</code> — UNLINK is asynchronous (non-blocking).</li>
+              <li>Scan for large keys: <code>redis-cli --bigkeys</code> or <code>redis-cli --memkeys</code>.</li>
+              <li>Split large objects into smaller chunks or use a CDN/object storage for large blobs.</li>
+              <li>Compress values before storing (snappy, zstd): trade CPU for memory.</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Memory Fragmentation</h4>
+            <p>
+              Over time, after many allocations and deallocations of different sizes, Redis RSS memory (as seen by
+              the OS) grows beyond <code>used_memory</code>. A fragmentation ratio above 1.5 wastes significant RAM.
+            </p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+              <li>Enable <code>activedefrag yes</code> in redis.conf (Redis 4+) for online defragmentation.</li>
+              <li>Schedule a rolling restart of Redis nodes during low-traffic windows.</li>
+              <li>Run <code>MEMORY PURGE</code> to return freed memory to the allocator (jemalloc).</li>
+            </ul>
+          </div>
+
+          <div class="warning-box">
+            <strong>Redis is single-threaded for commands.</strong> One slow Lua script, a KEYS command on a large
+            keyspace, or a SORT on a large list will block all other commands. Never run <code>KEYS *</code> in
+            production — use <code>SCAN</code> with a cursor instead. Avoid long-running Lua scripts; set
+            <code>lua-time-limit 5000</code> and monitor for script timeouts.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

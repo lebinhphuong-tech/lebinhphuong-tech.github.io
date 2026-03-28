@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distributed Tracing | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    .antipattern-card { background: #fff5f5; border-left: 4px solid #dc3545; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; }
+    .antipattern-card h4 { color: #dc3545; margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid"><div class="container">
+    <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+  </div></div>
+</nav>
+
+<div class="container">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+      <li class="breadcrumb-item"><a href="index.html">Observability</a></li>
+      <li class="breadcrumb-item active">Distributed Tracing</li>
+    </ol>
+  </nav>
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="sidebar">
+        <h5><i class="bi bi-eye me-2"></i>Observability</h5>
+        <nav class="nav flex-column">
+          <a class="nav-link" href="index.html">Overview</a>
+          <a class="nav-link active" href="tracing.html">Distributed Tracing</a>
+          <a class="nav-link" href="dashboards.html">Dashboards &amp; Alerting</a>
+        </nav>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      <div class="content">
+
+        <h1><i class="bi bi-diagram-3 me-3"></i>Distributed Tracing</h1>
+        <p class="lead">Track the full journey of a request across every service, database call, and external dependency — transforming debugging in microservice architectures from guesswork to surgical precision.</p>
+
+        <div class="tip-box">
+          <strong><i class="bi bi-lightbulb me-2"></i>Why Tracing Matters:</strong> In a monolith, a stack trace shows you exactly where a failure occurred. In a microservices architecture with 20+ services, a single user request may touch dozens of network hops. Distributed tracing is the equivalent of a stack trace for distributed systems.
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>Core Concepts</h2>
+        <p>Understanding the vocabulary of distributed tracing is essential before deploying any tool.</p>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-share me-2"></i>Trace</h4>
+          <p>A <strong>Trace</strong> represents the complete end-to-end journey of a single request through the entire distributed system. It is identified by a globally unique <strong>TraceID</strong> (typically a 128-bit random value) that is propagated across every service boundary via HTTP headers or message metadata.</p>
+          <p><strong>Example TraceID:</strong> <code>4bf92f3577b34da6a3ce929d0e0e4736</code></p>
+        </div>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-bounding-box me-2"></i>Span</h4>
+          <p>A <strong>Span</strong> is a named, timed operation representing a single unit of work within a trace. Every span has:</p>
+          <ul>
+            <li><strong>SpanID</strong> — unique identifier for this span</li>
+            <li><strong>ParentSpanID</strong> — the SpanID of the calling span (empty for root spans)</li>
+            <li><strong>Operation name</strong> — human-readable label (e.g., <code>HTTP GET /api/orders</code>)</li>
+            <li><strong>Start time &amp; duration</strong> — precise timing information</li>
+            <li><strong>Attributes/Tags</strong> — key-value metadata (e.g., <code>http.status_code=200</code>, <code>db.type=postgresql</code>)</li>
+            <li><strong>Events</strong> — timestamped annotations within a span (e.g., cache miss, retry attempt)</li>
+            <li><strong>Status</strong> — OK, ERROR, or UNSET</li>
+          </ul>
+        </div>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-diagram-2 me-2"></i>Parent-Child Relationships</h4>
+          <p>Spans form a tree structure via parent-child relationships. The root span has no parent. Each downstream call creates a child span that references the parent's SpanID. This tree is what tracing UIs visualize as a "waterfall" or "flame graph".</p>
+          <pre><code>Trace: 4bf92f3577b34da6a3ce929d0e0e4736
+│
+└── [root] api-gateway: POST /checkout         SpanID: a1b2c3d4  ParentID: —
+    ├── auth-service: ValidateToken            SpanID: e5f6a7b8  ParentID: a1b2c3d4
+    ├── cart-service: GetCart                  SpanID: c9d0e1f2  ParentID: a1b2c3d4
+    │   └── redis: GET cart:usr_9f2a1b         SpanID: a3b4c5d6  ParentID: c9d0e1f2
+    ├── inventory-svc: ReserveItems            SpanID: e7f8a9b0  ParentID: a1b2c3d4
+    │   └── postgres: UPDATE inventory         SpanID: c1d2e3f4  ParentID: e7f8a9b0
+    └── payment-svc: ProcessPayment            SpanID: a5b6c7d8  ParentID: a1b2c3d4
+        └── stripe-api: POST /v1/charges       SpanID: e9f0a1b2  ParentID: a5b6c7d8</code></pre>
+        </div>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-tag me-2"></i>Baggage</h4>
+          <p><strong>Baggage</strong> is a mechanism for propagating arbitrary key-value metadata alongside a trace across service boundaries. Unlike span attributes (which are local to a span), baggage flows with every downstream request automatically.</p>
+          <p><strong>Common use cases:</strong> propagating tenant ID, feature flag state, A/B test cohort, or user locale for context-aware debugging.</p>
+          <div class="warning-box">
+            <strong><i class="bi bi-exclamation-triangle me-2"></i>Baggage Warning:</strong> Baggage is transmitted in HTTP headers on every downstream call. Keep values small and never put sensitive data (tokens, PII) in baggage — it propagates to all downstream services and logs.
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-arrow-left-right me-2"></i>Context Propagation</h4>
+          <p>Traces only work if the TraceID and SpanID are propagated across every service boundary. OpenTelemetry uses the <strong>W3C TraceContext</strong> standard (<code>traceparent</code> header) for HTTP and message queue propagation.</p>
+          <pre><code># W3C traceparent header format
+traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
+#            ^^ version   ^^ trace-id (128-bit)        ^^ parent-span-id  ^^ flags (sampled)</code></pre>
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>OpenTelemetry Tracing Setup</h2>
+
+        <h3>Python: Manual + Auto Instrumentation</h3>
+        <p>The following example shows both auto-instrumentation (via Flask middleware) and manual span creation for a payment service.</p>
+
+        <pre><code># requirements.txt
+opentelemetry-sdk==1.24.0
+opentelemetry-api==1.24.0
+opentelemetry-exporter-otlp-proto-grpc==1.24.0
+opentelemetry-instrumentation-flask==0.45b0
+opentelemetry-instrumentation-requests==0.45b0
+opentelemetry-instrumentation-sqlalchemy==0.45b0</code></pre>
+
+        <pre><code># tracing.py — initialize OTel tracing for the service
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+
+def init_tracing(app, db_engine):
+    resource = Resource.create({
+        "service.name": "payment-service",
+        "service.version": "2.4.1",
+        "deployment.environment": "production",
+        "cloud.region": "ap-southeast-1",
+    })
+
+    exporter = OTLPSpanExporter(
+        endpoint="http://otel-collector:4317",
+        insecure=True,
+    )
+
+    provider = TracerProvider(resource=resource)
+    provider.add_span_processor(BatchSpanProcessor(exporter))
+    trace.set_tracer_provider(provider)
+
+    # Auto-instrument Flask, outbound HTTP, and SQLAlchemy
+    FlaskInstrumentor().instrument_app(app)
+    RequestsInstrumentor().instrument()
+    SQLAlchemyInstrumentor().instrument(engine=db_engine)
+
+    return trace.get_tracer("payment-service")</code></pre>
+
+        <pre><code># app.py — manual span enrichment example
+from flask import Flask, request, jsonify
+from opentelemetry import trace, baggage
+from tracing import init_tracing
+
+app = Flask(__name__)
+tracer = init_tracing(app, db_engine)
+
+@app.route("/api/v1/charge", methods=["POST"])
+def charge():
+    # The route span is auto-created by FlaskInstrumentor
+    # Add a child span for the Stripe API call with rich attributes
+    with tracer.start_as_current_span("stripe.charge") as span:
+        span.set_attribute("payment.gateway", "stripe")
+        span.set_attribute("payment.amount_cents", request.json["amount"])
+        span.set_attribute("payment.currency", request.json["currency"])
+        span.set_attribute("customer.id", request.json["customer_id"])
+
+        try:
+            result = stripe_client.charge(request.json)
+            span.set_attribute("payment.charge_id", result["id"])
+            span.set_status(trace.StatusCode.OK)
+            return jsonify({"charge_id": result["id"]}), 200
+        except stripe.StripeError as e:
+            span.record_exception(e)
+            span.set_status(trace.StatusCode.ERROR, str(e))
+            return jsonify({"error": str(e)}), 502</code></pre>
+
+        <h3>Go: OTel SDK with gRPC Service</h3>
+        <pre><code>// tracing.go
+package tracing
+
+import (
+    "context"
+    "go.opentelemetry.io/otel"
+    "go.opentelemetry.io/otel/attribute"
+    "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+    "go.opentelemetry.io/otel/sdk/resource"
+    sdktrace "go.opentelemetry.io/otel/sdk/trace"
+    semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
+)
+
+func InitTracer(ctx context.Context) (*sdktrace.TracerProvider, error) {
+    exporter, err := otlptracegrpc.New(ctx,
+        otlptracegrpc.WithEndpoint("otel-collector:4317"),
+        otlptracegrpc.WithInsecure(),
+    )
+    if err != nil {
+        return nil, err
+    }
+
+    res := resource.NewWithAttributes(
+        semconv.SchemaURL,
+        semconv.ServiceName("order-service"),
+        semconv.ServiceVersion("1.3.0"),
+        attribute.String("deployment.environment", "production"),
+    )
+
+    tp := sdktrace.NewTracerProvider(
+        sdktrace.WithBatcher(exporter),
+        sdktrace.WithResource(res),
+        // Tail-based sampling: sample 100% of error traces, 10% of OK traces
+        sdktrace.WithSampler(sdktrace.ParentBased(
+            sdktrace.TraceIDRatioBased(0.1),
+        )),
+    )
+    otel.SetTracerProvider(tp)
+    return tp, nil
+}</code></pre>
+
+        <!-- ======================================================= -->
+        <h2>Jaeger on Kubernetes (Helm)</h2>
+        <p>Jaeger is the most widely adopted open-source distributed tracing system. The recommended production deployment uses the Jaeger Operator or the all-in-one Helm chart with an Elasticsearch backend.</p>
+
+        <pre><code># jaeger-values.yaml — Helm chart: jaegertracing/jaeger
+provisionDataStore:
+  cassandra: false
+  elasticsearch: false   # use externally managed ES
+
+storage:
+  type: elasticsearch
+  elasticsearch:
+    host: elasticsearch-master.monitoring.svc.cluster.local
+    port: 9200
+    user: jaeger
+    usePassword: true
+    existingSecret: jaeger-es-secret
+    existingSecretKey: password
+    indexPrefix: jaeger
+    nodesWanOnly: false
+
+collector:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+  # Accept OTLP gRPC, OTLP HTTP, and legacy Jaeger Thrift
+  extraEnv:
+    - name: COLLECTOR_OTLP_ENABLED
+      value: "true"
+  service:
+    otlp:
+      grpc:
+        port: 4317
+      http:
+        port: 4318
+
+query:
+  replicaCount: 1
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: jaeger-basic-auth
+    hosts:
+      - host: jaeger.internal.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+
+agent:
+  enabled: false   # use OTel Collector instead
+
+spark:
+  enabled: true    # Spark job for service dependency graph</code></pre>
+
+        <pre><code># Install Jaeger via Helm
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+helm repo update
+
+helm install jaeger jaegertracing/jaeger \
+  --namespace monitoring \
+  --create-namespace \
+  --values jaeger-values.yaml \
+  --version 0.71.14</code></pre>
+
+        <!-- ======================================================= -->
+        <h2>Grafana Tempo as Alternative</h2>
+        <p>Grafana Tempo stores traces in object storage (S3, GCS, Azure Blob) making it significantly more cost-efficient than Jaeger+Elasticsearch for high-volume environments. It integrates natively with Grafana and supports TraceQL for querying.</p>
+
+        <pre><code># tempo-values.yaml — Helm chart: grafana/tempo-distributed
+tempo:
+  reportingEnabled: false
+  storage:
+    trace:
+      backend: s3
+      s3:
+        bucket: my-tempo-traces
+        endpoint: s3.ap-southeast-1.amazonaws.com
+        region: ap-southeast-1
+        # Use IRSA (IAM Roles for Service Accounts) — no static credentials
+        insecure: false
+
+distributor:
+  replicas: 2
+  resources:
+    requests:
+      cpu: 300m
+      memory: 400Mi
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+    jaeger:
+      protocols:
+        thrift_http:
+          endpoint: 0.0.0.0:14268
+
+ingester:
+  replicas: 3
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  config:
+    replication_factor: 3
+
+compactor:
+  replicas: 1
+  config:
+    compaction:
+      block_retention: 720h    # 30 days
+
+querier:
+  replicas: 2
+
+queryFrontend:
+  replicas: 1
+
+metricsGenerator:
+  enabled: true
+  config:
+    processors:
+      - service-graphs
+      - span-metrics
+    storage:
+      path: /var/tempo/generator/wal
+      remote_write:
+        - url: http://prometheus:9090/api/v1/write</code></pre>
+
+        <h3>Grafana Datasource for Tempo</h3>
+        <pre><code># grafana-datasources.yaml — provisioned datasource
+apiVersion: 1
+datasources:
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: http://tempo-query-frontend.monitoring.svc.cluster.local:3100
+    uid: tempo
+    jsonData:
+      httpMethod: GET
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: "-1m"
+        spanEndTimeShift: "1m"
+        filterByTraceID: true
+        filterBySpanID: false
+        customQuery: true
+        query: '{service_name="${__span.tags["service.name"]}"} | json | trace_id="${__trace.traceId}"'
+      serviceMap:
+        datasourceUid: prometheus
+      nodeGraph:
+        enabled: true
+      search:
+        hide: false
+      lokiSearch:
+        datasourceUid: loki</code></pre>
+
+        <!-- ======================================================= -->
+        <h2>Sampling Strategies</h2>
+        <p>Tracing 100% of requests is often impractical at high throughput (10k+ req/s). Sampling reduces storage costs while preserving investigative value.</p>
+
+        <div class="strategy-card">
+          <h4><i class="bi bi-funnel me-2"></i>Head-Based Sampling</h4>
+          <p>The sampling decision is made at the <strong>start</strong> of a trace (at the root span), before any downstream spans are created. All child spans inherit the decision.</p>
+          <p><strong>Pros:</strong> Low overhead, simple to implement, no buffering needed.</p>
+          <p><strong>Cons:</strong> Cannot sample based on outcome (e.g., errors) because the decision is made before the request completes.</p>
+          <pre><code># OTel Collector: probabilistic head-based sampling (10%)
+processors:
+  probabilistic_sampler:
+    hash_seed: 22
+    sampling_percentage: 10.0
+
+# OTel Collector: always sample errors, 5% of successes
+processors:
+  filter/drop_success:
+    error_mode: ignore
+    traces:
+      span:
+        - 'attributes["http.status_code"] != nil and
+           attributes["http.status_code"] < 400 and
+           random() > 0.05'</code></pre>
+        </div>
+
+        <div class="strategy-card">
+          <h4><i class="bi bi-funnel-fill me-2"></i>Tail-Based Sampling</h4>
+          <p>The sampling decision is made <strong>after</strong> all spans in a trace are collected, allowing decisions based on the complete trace (e.g., sample all traces with errors or high latency).</p>
+          <p><strong>Pros:</strong> Can guarantee all error traces are captured; much more intelligent filtering.</p>
+          <p><strong>Cons:</strong> Requires buffering entire traces in memory before the decision; more complex to operate.</p>
+          <pre><code># OTel Collector: tail-based sampling configuration
+processors:
+  tail_sampling:
+    decision_wait: 30s        # wait 30s for all spans to arrive
+    num_traces: 50000         # hold up to 50k traces in memory
+    expected_new_traces_per_sec: 2000
+    policies:
+      # Always sample traces with errors
+      - name: errors-policy
+        type: status_code
+        status_code: {status_codes: [ERROR]}
+
+      # Always sample slow traces (>2s end-to-end)
+      - name: slow-traces-policy
+        type: latency
+        latency: {threshold_ms: 2000}
+
+      # Sample 5% of all other (healthy, fast) traces
+      - name: probabilistic-policy
+        type: probabilistic
+        probabilistic: {sampling_percentage: 5}
+
+      # Always sample traces for specific high-value users
+      - name: vip-user-policy
+        type: string_attribute
+        string_attribute:
+          key: customer.tier
+          values: [platinum, enterprise]</code></pre>
+        </div>
+
+        <div class="tip-box">
+          <strong><i class="bi bi-lightbulb me-2"></i>Sampling Recommendation:</strong> Use <strong>head-based sampling</strong> at low traffic volumes or when simplicity is preferred. Use <strong>tail-based sampling</strong> in production environments with high request rates where you need guaranteed capture of all error and slow traces. A common pattern: deploy the OTel Collector with tail-based sampling as a DaemonSet, buffering traces in memory before forwarding to Tempo/Jaeger.
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>Trace-to-Log Correlation</h2>
+        <p>The most powerful debugging workflow links distributed traces directly to log lines. This requires injecting <code>trace_id</code> and <code>span_id</code> into every log record.</p>
+
+        <h3>Python: Inject TraceID into Structlog</h3>
+        <pre><code># log_config.py — inject OTel context into every log record
+import structlog
+from opentelemetry import trace
+
+def add_otel_context(logger, method, event_dict):
+    """Structlog processor to inject trace context into log records."""
+    current_span = trace.get_current_span()
+    if current_span and current_span.is_recording():
+        ctx = current_span.get_span_context()
+        event_dict["trace_id"] = format(ctx.trace_id, "032x")
+        event_dict["span_id"] = format(ctx.span_id, "016x")
+        event_dict["trace_sampled"] = ctx.trace_flags.sampled
+    return event_dict
+
+structlog.configure(
+    processors=[
+        add_otel_context,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.JSONRenderer(),
+    ]
+)</code></pre>
+
+        <p>This produces structured log lines like:</p>
+        <pre><code>{
+  "timestamp": "2026-03-28T09:15:42.183Z",
+  "level": "ERROR",
+  "service": "payment-service",
+  "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+  "span_id": "a5b6c7d8e9f0a1b2",
+  "trace_sampled": true,
+  "message": "Stripe charge failed",
+  "stripe_error_code": "card_declined",
+  "customer_id": "usr_9f2a1b"
+}</code></pre>
+
+        <p>In Grafana, configure the Loki datasource's "Derived Fields" to automatically detect <code>trace_id</code> in log lines and create a clickable link that jumps directly to the trace in Tempo:</p>
+        <pre><code># Loki datasource — derived fields configuration (grafana provisioning)
+jsonData:
+  derivedFields:
+    - name: TraceID
+      matcherRegex: '"trace_id":\s*"(\w+)"'
+      url: "${__value.raw}"
+      datasourceUid: tempo
+      urlDisplayLabel: View Trace in Tempo</code></pre>
+
+        <!-- ======================================================= -->
+        <h2>Common Tracing Anti-Patterns</h2>
+        <p>Even with the right tools, teams frequently fall into these tracing pitfalls.</p>
+
+        <div class="antipattern-card">
+          <h4>Anti-Pattern 1: Missing Context Propagation</h4>
+          <p><strong>Problem:</strong> A service makes an async call (message queue, background job, cron) without propagating the trace context. The trace "breaks" at the async boundary, leaving orphan spans.</p>
+          <p><strong>Fix:</strong> Inject the W3C <code>traceparent</code> header into all message headers (Kafka, RabbitMQ, SQS). On the consumer side, extract and restore the context before processing.</p>
+          <pre><code># Kafka producer — inject trace context into message headers
+from opentelemetry.propagate import inject
+
+headers = {}
+inject(headers)   # adds "traceparent" and "tracestate" keys
+producer.send("payment-events", value=payload, headers=list(headers.items()))</code></pre>
+        </div>
+
+        <div class="antipattern-card">
+          <h4>Anti-Pattern 2: Overly Noisy Spans</h4>
+          <p><strong>Problem:</strong> Auto-instrumentation creates a span for every SQL query, Redis command, and HTTP call, resulting in traces with 500+ spans. The UI becomes unusable and storage costs spike.</p>
+          <p><strong>Fix:</strong> Use the OTel Collector's <code>filter</code> processor to drop low-value spans. Set a minimum duration threshold to remove spans shorter than 1ms (e.g., trivial Redis pings).</p>
+          <pre><code>processors:
+  filter/drop_health_checks:
+    error_mode: ignore
+    traces:
+      span:
+        - 'attributes["http.target"] == "/health"'
+        - 'attributes["http.target"] == "/metrics"'
+        - 'attributes["http.target"] == "/readyz"'
+
+  filter/drop_fast_db:
+    error_mode: ignore
+    traces:
+      span:
+        - 'duration < 1ms and attributes["db.system"] != nil'</code></pre>
+        </div>
+
+        <div class="antipattern-card">
+          <h4>Anti-Pattern 3: Sampling Everything in Development, Nothing in Production</h4>
+          <p><strong>Problem:</strong> Teams set sampling to 100% in dev and then reduce to 0.1% in production to control costs. Critical production errors become invisible because the 0.1% never captures the specific failing request.</p>
+          <p><strong>Fix:</strong> Use tail-based sampling in production with a policy that guarantees 100% capture of error and slow traces, and probabilistic sampling for the happy path (5–10%).</p>
+        </div>
+
+        <div class="antipattern-card">
+          <h4>Anti-Pattern 4: Tracing Without Attribute Standards</h4>
+          <p><strong>Problem:</strong> Service A uses <code>user_id</code>, Service B uses <code>userId</code>, Service C uses <code>customer.id</code>. Cross-service queries in Jaeger/Tempo by user become impossible.</p>
+          <p><strong>Fix:</strong> Establish and enforce a shared attribute schema based on <a href="https://opentelemetry.io/docs/concepts/semantic-conventions/" style="color: var(--primary-color);">OTel Semantic Conventions</a>. Automate validation in CI pipelines.</p>
+          <pre><code># Standardized span attributes — enforce via shared library
+SPAN_ATTR_USER_ID      = "enduser.id"
+SPAN_ATTR_TENANT_ID    = "enduser.tenant.id"
+SPAN_ATTR_HTTP_METHOD  = "http.method"          # semconv standard
+SPAN_ATTR_HTTP_STATUS  = "http.status_code"     # semconv standard
+SPAN_ATTR_DB_SYSTEM    = "db.system"            # semconv standard
+SPAN_ATTR_DB_STATEMENT = "db.statement"         # semconv standard</code></pre>
+        </div>
+
+        <div class="antipattern-card">
+          <h4>Anti-Pattern 5: No Trace Retention Policy</h4>
+          <p><strong>Problem:</strong> Traces accumulate indefinitely in Elasticsearch/S3. Storage costs grow unbounded and query performance degrades for older data.</p>
+          <p><strong>Fix:</strong> Set explicit retention policies. A common tiering strategy: keep 7 days of full traces, 30 days of error traces only, 90 days of trace metadata (TraceID + root span) for audit purposes.</p>
+        </div>
+
+        <div class="success-box">
+          <strong><i class="bi bi-check-circle me-2"></i>Tracing Checklist:</strong> Before going live with distributed tracing, verify: (1) all service-to-service HTTP calls propagate W3C headers, (2) async message producers inject trace context into headers, (3) all spans include <code>service.name</code> and <code>deployment.environment</code> resource attributes, (4) logs include <code>trace_id</code> field for correlation, (5) a tail-based sampler captures 100% of error traces.
+        </div>
+
+      </div><!-- /.content -->
+    </div><!-- /.col-lg-9 -->
+  </div><!-- /.row -->
+</div><!-- /.container -->
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

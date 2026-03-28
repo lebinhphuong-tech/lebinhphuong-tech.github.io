@@ -15,7 +15,7 @@
     h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); font-size: 1.3rem; }
     h3 { color: var(--secondary-color); font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem; }
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; font-size: 0.88rem; }
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
     .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
@@ -74,7 +74,7 @@ ssh user@host 'sudo systemctl status nginx'</code></pre>
 
         <div class="ref-section">
           <h3>Key Management</h3>
-          <pre><code"># Generate keys (prefer ed25519)
+          <pre><code># Generate keys (prefer ed25519)
 ssh-keygen -t ed25519 -C "user@company.com"
 ssh-keygen -t ed25519 -f ~/.ssh/mykey -C "deploy key"
 ssh-keygen -t rsa -b 4096 -C "legacy system key"
@@ -102,7 +102,7 @@ ssh-keygen -R [hostname]:2222</code></pre>
 
         <div class="ref-section">
           <h3>SSH Agent</h3>
-          <pre><code"># Start ssh-agent
+          <pre><code># Start ssh-agent
 eval "$(ssh-agent -s)"
 
 # Add keys to agent
@@ -127,7 +127,7 @@ fi</code></pre>
 
         <div class="ref-section">
           <h3>Port Forwarding</h3>
-          <pre><code"># Local port forwarding: -L local:remote
+          <pre><code># Local port forwarding: -L local:remote
 # Access remote service on local port
 ssh -L 8080:localhost:80 user@remotehost
 # Now: http://localhost:8080 -&gt; remotehost:80
@@ -155,7 +155,7 @@ ssh -L 5432:db:5432 \
 
         <div class="ref-section">
           <h3>File Transfer</h3>
-          <pre><code"># scp (simple copy)
+          <pre><code># scp (simple copy)
 scp file.txt user@host:/remote/path/
 scp -r ./localdir user@host:/remote/
 scp -P 2222 file.txt user@host:/tmp/
@@ -185,7 +185,7 @@ fusermount -u /mnt/remote          # Unmount</code></pre>
 
         <div class="ref-section">
           <h3>Multiplexing (Persistent Connections)</h3>
-          <pre><code"># In ~/.ssh/config — share one TCP connection
+          <pre><code># In ~/.ssh/config — share one TCP connection
 Host *
     ControlMaster auto
     ControlPath ~/.ssh/sockets/%r@%h:%p
@@ -211,7 +211,7 @@ ssh -S ~/.ssh/sockets/myhost -O exit user@host
 
         <div class="ref-section">
           <h3>Jump Hosts (Bastion)</h3>
-          <pre><code"># Single jump host
+          <pre><code># Single jump host
 ssh -J bastion.example.com user@internal-server
 
 # Specify port for jump host
@@ -244,7 +244,7 @@ ssh -J bastion \
       </div>
 
       <h2>~/.ssh/config Full Example</h2>
-      <pre><code"># ~/.ssh/config — SSH client configuration
+      <pre><code># ~/.ssh/config — SSH client configuration
 
 # Global defaults
 Host *
@@ -308,7 +308,7 @@ Host legacy-server
 
       <h2>SSH Tunneling Use Cases</h2>
       <h3>Access Internal Web App</h3>
-      <pre><code"># Make internal app available at localhost:8080
+      <pre><code># Make internal app available at localhost:8080
 ssh -L 8080:internal-app.company.internal:80 \
     -N -f -q \
     user@bastion.example.com
@@ -316,7 +316,7 @@ ssh -L 8080:internal-app.company.internal:80 \
 # Access: http://localhost:8080</code></pre>
 
       <h3>MySQL / PostgreSQL Tunnel</h3>
-      <pre><code"># Tunnel to RDS or internal DB
+      <pre><code># Tunnel to RDS or internal DB
 ssh -L 13306:mydb.rds.amazonaws.com:3306 \
     -N -f -q \
     user@bastion.example.com
@@ -326,7 +326,7 @@ mysql -h 127.0.0.1 -P 13306 -u dbuser -p
 psql -h 127.0.0.1 -p 15432 -U dbuser mydb</code></pre>
 
       <h3>SOCKS5 Proxy for Browser</h3>
-      <pre><code"># Create SOCKS5 proxy on localhost:1080
+      <pre><code># Create SOCKS5 proxy on localhost:1080
 ssh -D 1080 -N -f -q user@remotehost
 
 # Configure browser:
@@ -339,7 +339,7 @@ curl --socks5 127.0.0.1:1080 https://internal-site.company.com</code></pre>
       <div class="warning-box">
         <strong>Security Warning:</strong> Agent forwarding (<code>ForwardAgent yes</code>) allows anyone with root access on the intermediate server to use your SSH keys. Prefer <code>ProxyJump</code> instead — it connects directly without exposing your agent.
       </div>
-      <pre><code"># Agent forwarding (use with caution)
+      <pre><code># Agent forwarding (use with caution)
 ssh -A user@bastion           # Forward agent to bastion
 # From bastion, can SSH to internal servers using local keys
 
@@ -359,7 +359,7 @@ Host trusted-bastion
     ForwardAgent yes            # Only for this specific host</code></pre>
 
       <h2>sshd_config Hardening</h2>
-      <pre><code"># /etc/ssh/sshd_config — Server hardening
+      <pre><code># /etc/ssh/sshd_config — Server hardening
 
 # Port and protocol
 Port 2222                               # Change from default 22
@@ -412,7 +412,7 @@ systemctl restart sshd</code></pre>
       <div class="tip-box">
         <strong>Tip:</strong> Certificate-based auth is superior to key-based for large teams. Instead of distributing public keys to every server, servers trust your CA. When a user leaves, revoke their cert without touching any server.
       </div>
-      <pre><code"># === SSH CA Setup (one-time) ===
+      <pre><code># === SSH CA Setup (one-time) ===
 
 # Generate CA key pair (keep private key offline/in HSM)
 ssh-keygen -t ed25519 -f ssh_ca -C "SSH Certificate Authority 2026"
@@ -448,7 +448,7 @@ TrustedUserCAKeys /etc/ssh/ssh_ca.pub
 
       <h2>Troubleshooting</h2>
       <h3>Common Errors &amp; Fixes</h3>
-      <pre><code"># Error: Host key verification failed
+      <pre><code># Error: Host key verification failed
 # Fix: Remove stale key from known_hosts
 ssh-keygen -R hostname
 # Or edit ~/.ssh/known_hosts and remove the line for that host

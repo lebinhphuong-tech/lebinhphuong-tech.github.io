@@ -19,7 +19,7 @@
     h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
     h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
     .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
@@ -39,22 +39,17 @@
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light px-4">
-    <a class="navbar-brand fw-bold" style="color: var(--secondary-color);" href="../../index.html">
-      <i class="bi bi-person-circle me-2" style="color: var(--primary-color);"></i>Lê Bình Phương
-    </a>
-    <div class="ms-auto">
-      <a href="../../index.html" class="btn btn-sm btn-outline-primary">
-        <i class="bi bi-house me-1"></i>Home
-      </a>
-    </div>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
   </nav>
 
-  <div class="container-fluid px-4">
+  <div class="container">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
-        <li class="breadcrumb-item"><a href="../../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
         <li class="breadcrumb-item"><a href="index.html">Cloud</a></li>
         <li class="breadcrumb-item active">Architecture</li>
       </ol>
@@ -62,14 +57,14 @@
 
     <div class="row">
       <!-- Sidebar -->
-      <div class="col-lg-3 mb-4">
+      <div class="col-lg-3">
         <div class="sidebar">
           <h5><i class="bi bi-cloud me-2"></i>Cloud</h5>
           <nav class="nav flex-column">
-            <a class="nav-link" href="index.html"><i class="bi bi-house-door me-2"></i>Overview</a>
-            <a class="nav-link" href="aws.html"><i class="bi bi-cloud-fill me-2"></i>AWS</a>
-            <a class="nav-link" href="gcp.html"><i class="bi bi-google me-2"></i>GCP</a>
-            <a class="nav-link active" href="architecture.html"><i class="bi bi-diagram-3 me-2"></i>Architecture</a>
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="aws.html">AWS Deep Dive</a>
+            <a class="nav-link" href="gcp.html">GCP Deep Dive</a>
+            <a class="nav-link active" href="architecture.html">Cloud Architecture</a>
           </nav>
         </div>
       </div>

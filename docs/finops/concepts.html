@@ -19,7 +19,7 @@
     h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
     h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
     .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
@@ -320,7 +320,7 @@ cost_per_api_call = total_monthly_cost / total_api_calls
 </code></pre>
 
           <h3>Cost per User Calculation (SaaS Model)</h3>
-          <pre><code">## Python script to calculate unit economics from AWS CUR and metrics
+          <pre><code>## Python script to calculate unit economics from AWS CUR and metrics
 
 import boto3
 import json
@@ -428,7 +428,7 @@ curl "http://localhost:9090/model/allocation?window=7d&aggregate=namespace" | jq
 </code></pre>
 
           <h3>Shared Service Allocation Methods</h3>
-          <pre><code">## Three approaches to allocate shared infrastructure costs
+          <pre><code>## Three approaches to allocate shared infrastructure costs
 
 # Method 1: Proportional (most common)
 # Allocate based on each team's share of total workload costs
@@ -526,7 +526,7 @@ resource "google_billing_budget" "project_budget" {
 </code></pre>
 
           <h3>Slack Cost Spike Notification (Python Lambda)</h3>
-          <pre><code">import boto3
+          <pre><code>import boto3
 import json
 import urllib3
 import os
@@ -583,7 +583,7 @@ def lambda_handler(event, context):
 </code></pre>
 
           <h2>AWS Cost Explorer Saved Queries &amp; Analysis</h2>
-          <pre><code"># Useful AWS CLI queries for FinOps analysis
+          <pre><code># Useful AWS CLI queries for FinOps analysis
 
 # 1. Cost by service, last 30 days
 aws ce get-cost-and-usage \
@@ -612,7 +612,7 @@ aws ce get-cost-and-usage \
 </code></pre>
 
           <h2>GCP BigQuery Billing Export Queries</h2>
-          <pre><code">-- Query 1: Monthly cost by label (team) and service
+          <pre><code>-- Query 1: Monthly cost by label (team) and service
 SELECT
   labels.value AS team,
   service.description AS service,

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observability Overview | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    .pillar-icon { font-size: 2rem; color: var(--primary-color); margin-bottom: 0.75rem; }
+    .maturity-badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+    .maturity-reactive { background: #f8d7da; color: #721c24; }
+    .maturity-proactive { background: #fff3cd; color: #856404; }
+    .maturity-predictive { background: #d4edda; color: #155724; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid"><div class="container">
+    <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+  </div></div>
+</nav>
+
+<div class="container">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+      <li class="breadcrumb-item active">Observability</li>
+    </ol>
+  </nav>
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="sidebar">
+        <h5><i class="bi bi-eye me-2"></i>Observability</h5>
+        <nav class="nav flex-column">
+          <a class="nav-link active" href="index.html">Overview</a>
+          <a class="nav-link" href="tracing.html">Distributed Tracing</a>
+          <a class="nav-link" href="dashboards.html">Dashboards &amp; Alerting</a>
+        </nav>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      <div class="content">
+
+        <h1><i class="bi bi-eye me-3"></i>Observability</h1>
+        <p class="lead">A comprehensive guide to understanding system behavior in production — moving beyond reactive monitoring toward a truly observable infrastructure.</p>
+
+        <div class="tip-box">
+          <strong><i class="bi bi-lightbulb me-2"></i>Core Idea:</strong> Observability is the ability to understand the internal state of a system from its external outputs. If you can ask <em>any</em> question about your system without deploying new code, you have achieved observability.
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>Observability vs. Monitoring</h2>
+        <p>These two terms are frequently conflated, but they represent fundamentally different philosophies about how you interact with a production system.</p>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="concept-card">
+              <h4><i class="bi bi-bell me-2"></i>Monitoring</h4>
+              <p>Monitoring is the practice of collecting and evaluating <strong>predefined</strong> metrics and thresholds. You know in advance what you are looking for.</p>
+              <ul>
+                <li>Dashboard of known KPIs</li>
+                <li>Alerting on CPU &gt; 80%</li>
+                <li>Checking uptime every 30 seconds</li>
+                <li>Answers: "Is X broken?"</li>
+              </ul>
+              <p class="mb-0"><em>Limitation:</em> You can only detect failures you anticipated.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="concept-card">
+              <h4><i class="bi bi-binoculars me-2"></i>Observability</h4>
+              <p>Observability enables <strong>ad-hoc exploration</strong> of system behavior using high-cardinality, high-dimensionality telemetry data.</p>
+              <ul>
+                <li>Slice metrics by any attribute</li>
+                <li>Correlate logs, traces, metrics</li>
+                <li>Ask: "Why is user X experiencing latency?"</li>
+                <li>Answers: "What is broken and why?"</li>
+              </ul>
+              <p class="mb-0"><em>Strength:</em> Understand unknown-unknown failure modes.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="warning-box">
+          <strong><i class="bi bi-exclamation-triangle me-2"></i>Common Misconception:</strong> Monitoring tells you <em>that</em> something is wrong. Observability tells you <em>why</em> it is wrong. A mature platform needs both — monitoring provides the alert, observability provides the investigation capability.
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>The Three Pillars of Observability</h2>
+        <p>The three pillars — Metrics, Logs, and Traces — form the foundational telemetry data types that together enable full system observability.</p>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-graph-up me-2"></i>Pillar 1: Metrics</h4>
+          <p>Metrics are <strong>numeric time-series measurements</strong> aggregated over time. They are highly efficient to store and query, making them ideal for dashboards and alerting at scale.</p>
+          <p><strong>Examples:</strong></p>
+          <ul>
+            <li><code>http_requests_total{method="GET", status="200"}</code> — request counter</li>
+            <li><code>node_cpu_seconds_total</code> — CPU utilization gauge</li>
+            <li><code>http_request_duration_seconds</code> — latency histogram (p50, p95, p99)</li>
+            <li><code>go_goroutines</code> — runtime state gauge</li>
+          </ul>
+          <p><strong>Tools:</strong> Prometheus, InfluxDB, Datadog Metrics, CloudWatch, VictoriaMetrics</p>
+        </div>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-journal-text me-2"></i>Pillar 2: Logs</h4>
+          <p>Logs are <strong>timestamped, immutable records of discrete events</strong>. They capture the rich context of what happened at a specific point in time and are essential for root cause analysis.</p>
+          <p><strong>Examples:</strong></p>
+          <pre><code>{
+  "timestamp": "2026-03-28T08:42:11Z",
+  "level": "ERROR",
+  "service": "payment-service",
+  "trace_id": "4bf92f3577b34da6",
+  "span_id": "00f067aa0ba902b7",
+  "user_id": "usr_9f2a1b",
+  "message": "Payment gateway timeout after 5000ms",
+  "gateway": "stripe",
+  "amount_cents": 4999
+}</code></pre>
+          <p><strong>Tools:</strong> Loki, Elasticsearch, Splunk, Datadog Logs, CloudWatch Logs</p>
+        </div>
+
+        <div class="concept-card">
+          <h4><i class="bi bi-diagram-3 me-2"></i>Pillar 3: Traces</h4>
+          <p>Distributed traces track a <strong>single request as it propagates across multiple services</strong>. Each unit of work is a "span"; spans are linked into a "trace" via a shared TraceID.</p>
+          <p><strong>Example trace for a checkout request:</strong></p>
+          <pre><code>TraceID: 4bf92f3577b34da6
+│
+├── [api-gateway]         checkout POST /api/v1/order   0ms → 320ms
+│   ├── [auth-service]    ValidateJWT                   5ms → 18ms
+│   ├── [cart-service]    GetCart(user_id)              20ms → 45ms
+│   ├── [inventory-svc]   ReserveItems([sku_101])       47ms → 110ms
+│   └── [payment-svc]     ChargeCard(stripe)            112ms → 315ms  ← SLOW
+│       └── [stripe-api]  POST /v1/charges              115ms → 313ms</code></pre>
+          <p><strong>Tools:</strong> Jaeger, Grafana Tempo, Zipkin, Datadog APM, AWS X-Ray</p>
+        </div>
+
+        <div class="success-box">
+          <strong><i class="bi bi-check-circle me-2"></i>Pillar Correlation:</strong> The real power of observability comes from <strong>correlating across pillars</strong>. A Grafana panel showing a latency spike links to a Loki log query filtered by the same time window, which links to a Tempo trace via <code>trace_id</code> embedded in the log line.
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>OpenTelemetry (OTel)</h2>
+        <p>OpenTelemetry is a CNCF project that provides a <strong>vendor-neutral, standardized framework</strong> for generating, collecting, and exporting telemetry data (metrics, logs, and traces).</p>
+
+        <div class="strategy-card">
+          <h4><i class="bi bi-puzzle me-2"></i>Why OpenTelemetry?</h4>
+          <p>Before OTel, every observability vendor had its own SDK, agent, and wire protocol. Switching from Datadog to Jaeger meant rewriting instrumentation code. OpenTelemetry solves this with a single API layer.</p>
+          <ul>
+            <li><strong>Single API &amp; SDK</strong> — one instrumentation surface for all signals</li>
+            <li><strong>Auto-instrumentation</strong> — instrument popular frameworks (Flask, gRPC, Spring) with zero code changes via agents</li>
+            <li><strong>Pluggable exporters</strong> — send to Jaeger, Prometheus, Datadog, or any OTLP-compatible backend</li>
+            <li><strong>Collector</strong> — a standalone proxy/processor that receives, transforms, and exports telemetry</li>
+          </ul>
+        </div>
+
+        <h3>OTel Architecture</h3>
+        <pre><code>┌─────────────────────────────────────────────────────────┐
+│                    Your Application                      │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │  OTel SDK  (auto-instrumented or manual spans)  │    │
+│  └────────────────────┬────────────────────────────┘    │
+└───────────────────────┼─────────────────────────────────┘
+                        │ OTLP (gRPC / HTTP)
+                        ▼
+          ┌─────────────────────────┐
+          │   OTel Collector        │
+          │  ┌──────────────────┐   │
+          │  │ Receivers        │   │  ← OTLP, Jaeger, Zipkin, Prometheus
+          │  │ Processors       │   │  ← batch, filter, sample, enrich
+          │  │ Exporters        │   │  ← Jaeger, Tempo, Prometheus, Loki
+          │  └──────────────────┘   │
+          └────────────┬────────────┘
+                       │
+          ┌────────────┼────────────┐
+          ▼            ▼            ▼
+       Jaeger       Prometheus    Loki
+      (traces)      (metrics)    (logs)</code></pre>
+
+        <h3>Auto-Instrumentation Concept (Python)</h3>
+        <pre><code># Install OTel packages
+pip install opentelemetry-distro opentelemetry-exporter-otlp
+
+# Auto-instrument a Flask app — zero code changes required
+opentelemetry-instrument \
+  --traces_exporter otlp \
+  --metrics_exporter otlp \
+  --logs_exporter otlp \
+  --exporter_otlp_endpoint http://otel-collector:4317 \
+  python app.py</code></pre>
+
+        <div class="tip-box">
+          <strong><i class="bi bi-lightbulb me-2"></i>Collector as a Buffer:</strong> Always deploy the OTel Collector as an intermediary rather than sending directly from your app to the backend. The Collector provides batching, retry logic, and the freedom to change backends without touching application code.
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>MELT Framework</h2>
+        <p>MELT is an expansion of the three pillars that formally includes <strong>Events</strong> as a distinct signal type, giving a more complete picture of observable data.</p>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="concept-card">
+              <h4>M — Metrics</h4>
+              <p>Aggregated numeric time-series. Low storage cost, fast to query. Best for trends and alerting thresholds.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="concept-card">
+              <h4>E — Events</h4>
+              <p>Discrete occurrences with rich context: deployments, feature flag changes, circuit breaker trips, config changes. Acts as "change markers" on your dashboards.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="concept-card">
+              <h4>L — Logs</h4>
+              <p>Timestamped, structured event records. High storage cost, highest detail. Best for root cause analysis and audit trails.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="concept-card">
+              <h4>T — Traces</h4>
+              <p>Request-scoped, cross-service execution paths. Moderate storage cost. Best for diagnosing latency and inter-service dependencies.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>Observability Maturity Model</h2>
+        <p>Organizations typically progress through three stages of observability maturity. Understanding where your team is helps prioritize investment.</p>
+
+        <div class="strategy-card">
+          <h4><span class="maturity-badge maturity-reactive me-2">Stage 1</span> Reactive</h4>
+          <p><strong>Characteristics:</strong> Alerts fire after users report problems. Teams SSH into servers to read logs. Dashboards exist but are rarely used proactively. Every outage involves manual log tailing and guesswork.</p>
+          <p><strong>Signals:</strong> Basic uptime checks, server-level CPU/memory metrics, unstructured logs.</p>
+          <p><strong>Goal:</strong> Move from unstructured logs to structured JSON logging; centralize logs into a searchable platform (Loki or ELK).</p>
+        </div>
+
+        <div class="strategy-card">
+          <h4><span class="maturity-badge maturity-proactive me-2">Stage 2</span> Proactive</h4>
+          <p><strong>Characteristics:</strong> Teams can answer "what is broken?" without user reports. SLOs are defined and tracked. Distributed tracing exists. Runbooks are linked to alerts. Oncall rotations are structured.</p>
+          <p><strong>Signals:</strong> Application-level metrics (RED method), distributed traces, structured logs with trace correlation, SLO burn-rate alerts.</p>
+          <p><strong>Goal:</strong> Close the correlation gap between signals; implement trace-to-log and metric-to-trace linking.</p>
+        </div>
+
+        <div class="strategy-card">
+          <h4><span class="maturity-badge maturity-predictive me-2">Stage 3</span> Predictive</h4>
+          <p><strong>Characteristics:</strong> Teams can answer "what will break?" before it happens. Anomaly detection flags unusual patterns. Capacity planning uses historical telemetry. Chaos experiments validate observability coverage.</p>
+          <p><strong>Signals:</strong> Full MELT correlation, ML-based anomaly detection, synthetic monitoring, continuous profiling (Pyroscope), business-level SLIs.</p>
+          <p><strong>Goal:</strong> Instrument business metrics alongside infrastructure metrics; build feedback loops from observability data into platform decisions.</p>
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>Tool Landscape</h2>
+        <p>The modern observability ecosystem is rich. Below is a curated overview of the most widely adopted open-source and commercial tools, organized by primary function.</p>
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Category</th>
+                <th>Primary Function</th>
+                <th>Deployment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Prometheus</strong></td>
+                <td>Metrics</td>
+                <td>Time-series database with pull-based scraping and PromQL query language</td>
+                <td>Self-hosted / Managed</td>
+              </tr>
+              <tr>
+                <td><strong>Grafana</strong></td>
+                <td>Visualization</td>
+                <td>Multi-source dashboard platform; integrates with Prometheus, Loki, Tempo, and 100+ datasources</td>
+                <td>Self-hosted / Cloud</td>
+              </tr>
+              <tr>
+                <td><strong>Jaeger</strong></td>
+                <td>Tracing</td>
+                <td>CNCF distributed tracing system; Cassandra/Elasticsearch backend; native OTLP support</td>
+                <td>Self-hosted / Kubernetes</td>
+              </tr>
+              <tr>
+                <td><strong>Grafana Tempo</strong></td>
+                <td>Tracing</td>
+                <td>Cost-efficient trace backend using object storage (S3/GCS); integrates natively with Grafana</td>
+                <td>Self-hosted / Grafana Cloud</td>
+              </tr>
+              <tr>
+                <td><strong>Loki</strong></td>
+                <td>Logs</td>
+                <td>Log aggregation system inspired by Prometheus; indexes labels, not full text; uses LogQL</td>
+                <td>Self-hosted / Grafana Cloud</td>
+              </tr>
+              <tr>
+                <td><strong>OpenTelemetry</strong></td>
+                <td>Instrumentation</td>
+                <td>Vendor-neutral SDK + Collector for generating and routing MELT telemetry</td>
+                <td>SDK (in-app) + Collector</td>
+              </tr>
+              <tr>
+                <td><strong>Datadog</strong></td>
+                <td>Full-stack (Commercial)</td>
+                <td>Unified SaaS platform for metrics, logs, traces, synthetics, RUM, and security monitoring</td>
+                <td>SaaS / Agent-based</td>
+              </tr>
+              <tr>
+                <td><strong>New Relic</strong></td>
+                <td>Full-stack (Commercial)</td>
+                <td>SaaS observability platform with APM, infrastructure monitoring, browser monitoring, and NRQL</td>
+                <td>SaaS / Agent-based</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip-box">
+          <strong><i class="bi bi-lightbulb me-2"></i>Open-Source Stack Recommendation:</strong> For a cost-effective, production-grade self-hosted stack, combine <strong>Prometheus + Grafana + Loki + Tempo + OTel Collector</strong> (the "PLGT" stack). This provides full MELT coverage at near-zero licensing cost, with Grafana serving as the single pane of glass.
+        </div>
+
+        <!-- ======================================================= -->
+        <h2>Explore Further</h2>
+        <p>Dive deeper into specific observability disciplines:</p>
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="concept-card">
+              <h4><i class="bi bi-diagram-3 me-2"></i><a href="tracing.html" style="color: var(--primary-color); text-decoration: none;">Distributed Tracing</a></h4>
+              <p>OpenTelemetry SDK setup, Jaeger and Tempo deployment on Kubernetes, sampling strategies, trace-to-log correlation, and common anti-patterns.</p>
+              <a href="tracing.html" class="btn btn-sm btn-outline-primary mt-2">Read More &rarr;</a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="concept-card">
+              <h4><i class="bi bi-speedometer2 me-2"></i><a href="dashboards.html" style="color: var(--primary-color); text-decoration: none;">Dashboards &amp; Alerting</a></h4>
+              <p>Grafana dashboard design with USE/RED/Four Golden Signals, AlertManager configuration, SLO-based multiburn alerting, and on-call escalation design.</p>
+              <a href="dashboards.html" class="btn btn-sm btn-outline-primary mt-2">Read More &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.content -->
+    </div><!-- /.col-lg-9 -->
+  </div><!-- /.row -->
+</div><!-- /.container -->
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

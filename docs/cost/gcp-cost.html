@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GCP Cost Optimization | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Cost Optimization</a></li>
+        <li class="breadcrumb-item active">GCP Cost Optimization</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-piggy-bank me-2"></i>Cost Optimization</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="aws-cost.html">AWS Cost Optimization</a>
+            <a class="nav-link active" href="gcp-cost.html">GCP Cost Optimization</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-google me-2"></i>GCP Cost Optimization</h1>
+
+          <div class="alert-info">
+            <strong>GCP Cost Optimization</strong> — Google Cloud differentiates itself with automatic Sustained Use Discounts, flexible Committed Use Discounts, and native cost intelligence tools. This guide covers GCP-specific pricing mechanics and practical optimization techniques for Compute Engine, GCS, BigQuery, GKE, and Cloud SQL.
+          </div>
+
+          <h2>GCP Pricing Models</h2>
+          <p>GCP offers four distinct pricing models for Compute Engine resources. Understanding how they stack and interact is critical to building an efficient commitment portfolio.</p>
+
+          <div class="concept-card">
+            <h4>On-Demand (Pay-as-you-go)</h4>
+            <p>Per-second billing (minimum 1 minute) for most VM types. No commitment required. This is the baseline price used as the reference for all discount calculations. Custom machine types are also available at On-Demand pricing — useful for precisely matching workload requirements without paying for unused CPU or memory.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Sustained Use Discounts (SUD) — Automatic</h4>
+            <p>GCP automatically applies SUDs when you use an N1, N2, or C2 VM for more than 25% of the month. Discounts increase linearly up to <strong>30% for full-month usage</strong> with no action required. SUDs apply per-project, per-region, and are calculated on aggregate vCPU and memory consumed — not per individual VM. This means even VM instances that are created and destroyed throughout the month can accumulate SUD benefit if total resource hours are high enough.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Committed Use Discounts (CUDs)</h4>
+            <p>Purchase a commitment for 1 year or 3 years in exchange for a deeper discount beyond SUD. CUDs come in two flavors: <strong>Resource-based</strong> (commit to specific vCPU and memory in a region) and <strong>Flexible</strong> (commit to a spend level in $/hour). See the dedicated section below for a full comparison.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Preemptible VMs / Spot VMs</h4>
+            <p>Preemptible VMs (the original offering) and Spot VMs (newer, no maximum 24-hour runtime limit) provide discounts of <strong>60–91%</strong> by using spare GCP capacity. Google can terminate these VMs with a 30-second shutdown notice. Spot VMs are the recommended choice for new workloads as they have no maximum runtime restriction and support the same machine types.</p>
+          </div>
+
+          <h2>Committed Use Discounts (CUDs)</h2>
+
+          <h3>Resource-Based vs Flexible CUDs</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Attribute</th>
+                  <th>Resource-Based CUD</th>
+                  <th>Flexible CUD</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>What you commit</td>
+                  <td>Specific vCPU and memory in a region</td>
+                  <td>$/hour of compute spend in a region</td>
+                </tr>
+                <tr>
+                  <td>Max discount (1yr)</td>
+                  <td>Up to 37% (on top of SUD, combined ~57%)</td>
+                  <td>Up to 28%</td>
+                </tr>
+                <tr>
+                  <td>Max discount (3yr)</td>
+                  <td>Up to 70% vs On-Demand</td>
+                  <td>Up to 28% (3yr currently same rate as 1yr for Flexible)</td>
+                </tr>
+                <tr>
+                  <td>Machine family flexibility</td>
+                  <td>Low — bound to specific machine series (e.g., N2)</td>
+                  <td>High — applies across N2, C2, M2, C3, and more</td>
+                </tr>
+                <tr>
+                  <td>Applies to</td>
+                  <td>Compute Engine VMs (specific series)</td>
+                  <td>Most Compute Engine machine types</td>
+                </tr>
+                <tr>
+                  <td>Best for</td>
+                  <td>Stable, predictable workloads on a known machine series</td>
+                  <td>Mixed or evolving machine families; GKE node pools</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Purchasing a CUD</h3>
+          <pre><code># Purchase a 1-year resource-based CUD for N2 vCPUs in us-central1
+gcloud compute commitments create my-n2-commitment \
+  --region=us-central1 \
+  --plan=12-month \
+  --resources=vcpu=32,memory=128GB \
+  --type=GENERAL_PURPOSE_N2
+
+# List existing commitments and their utilization
+gcloud compute commitments list \
+  --filter="region:us-central1" \
+  --format="table(name,region,plan,status,startTimestamp,endTimestamp)"</code></pre>
+
+          <div class="tip-box">
+            <strong>Strategy:</strong> Stack Resource-Based CUDs and Sustained Use Discounts for maximum savings on stable N2 workloads. Use Flexible CUDs for GKE clusters where the node pool machine type may change over time. Never commit more vCPU/memory than your lowest observed monthly consumption.
+          </div>
+
+          <h2>Preemptible and Spot VMs</h2>
+
+          <h3>Key Differences</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Attribute</th>
+                  <th>Preemptible VM</th>
+                  <th>Spot VM</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Maximum runtime</td>
+                  <td>24 hours (hard limit)</td>
+                  <td>No maximum runtime</td>
+                </tr>
+                <tr>
+                  <td>Shutdown notice</td>
+                  <td>30 seconds</td>
+                  <td>30 seconds</td>
+                </tr>
+                <tr>
+                  <td>Pricing</td>
+                  <td>Fixed discount (~60–91% vs On-Demand)</td>
+                  <td>Same pricing as Preemptible; dynamic in some regions</td>
+                </tr>
+                <tr>
+                  <td>Recommendation</td>
+                  <td>Legacy; use for existing workloads only</td>
+                  <td>Preferred for new workloads; no 24-hr restart penalty</td>
+                </tr>
+                <tr>
+                  <td>Live migration</td>
+                  <td>Not supported</td>
+                  <td>Not supported</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Shutdown Script for Graceful Termination</h3>
+          <pre><code>#!/bin/bash
+# /etc/spot-shutdown.sh
+# Set as the instance's shutdown-script metadata key.
+# GCP calls this script when the VM receives a preemption notice.
+
+echo "Spot VM preemption notice received at $(date)" >> /var/log/spot-shutdown.log
+
+# Stop application gracefully
+systemctl stop myapp
+
+# Flush in-progress work to GCS (example: copy work-in-progress files)
+gsutil -m cp /var/app/in-progress/* gs://my-bucket/checkpoints/
+
+# Deregister from backend service (if not behind a managed instance group)
+INSTANCE_NAME=$(curl -s -H "Metadata-Flavor: Google" \
+  "http://metadata.google.internal/computeMetadata/v1/instance/name")
+
+ZONE=$(curl -s -H "Metadata-Flavor: Google" \
+  "http://metadata.google.internal/computeMetadata/v1/instance/zone" | awk -F/ '{print $NF}')
+
+gcloud compute backend-services remove-backend my-backend-service \
+  --instance-group=my-instance-group \
+  --instance-group-zone="$ZONE" \
+  --global 2>/dev/null || true
+
+echo "Graceful shutdown complete" >> /var/log/spot-shutdown.log</code></pre>
+
+          <h3>Managed Instance Group with Spot VMs (Terraform)</h3>
+          <pre><code>resource "google_compute_instance_template" "spot_template" {
+  name_prefix  = "spot-worker-"
+  machine_type = "n2-standard-4"
+
+  disk {
+    source_image = "debian-cloud/debian-12"
+    auto_delete  = true
+    boot         = true
+    disk_size_gb = 50
+  }
+
+  network_interface {
+    network    = "default"
+    subnetwork = var.subnet_self_link
+  }
+
+  scheduling {
+    preemptible        = true
+    automatic_restart  = false
+    provisioning_model = "SPOT"
+    instance_termination_action = "STOP"
+  }
+
+  metadata = {
+    shutdown-script = file("${path.module}/scripts/spot-shutdown.sh")
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "google_compute_instance_group_manager" "spot_mig" {
+  name               = "spot-worker-mig"
+  base_instance_name = "spot-worker"
+  zone               = var.zone
+
+  version {
+    instance_template = google_compute_instance_template.spot_template.id
+  }
+
+  target_size = 10
+
+  auto_healing_policies {
+    health_check      = google_compute_health_check.default.id
+    initial_delay_sec = 120
+  }
+}</code></pre>
+
+          <h2>Compute Engine Rightsizing with GCP Recommender</h2>
+          <p>
+            GCP Recommender continuously analyzes VM CPU and memory metrics and generates rightsizing recommendations. Recommendations are available in the console under "Recommendations Hub" and via the Recommender API and gcloud CLI.
+          </p>
+
+          <pre><code># List VM rightsizing recommendations for a project in a specific zone
+gcloud recommender recommendations list \
+  --project=my-project \
+  --location=asia-southeast1-b \
+  --recommender=google.compute.instance.MachineTypeRecommender \
+  --format="table(
+    name.basename(),
+    content.overview.resourceName,
+    content.overview.recommendation,
+    primaryImpact.costProjection.cost.units,
+    stateInfo.state
+  )"
+
+# List idle VM recommendations (candidates for shutdown or deletion)
+gcloud recommender recommendations list \
+  --project=my-project \
+  --location=asia-southeast1-b \
+  --recommender=google.compute.instance.IdleResourceRecommender \
+  --format="table(
+    name.basename(),
+    content.overview.resourceName,
+    primaryImpact.costProjection.cost.units,
+    stateInfo.state
+  )"
+
+# Mark a recommendation as claimed (indicate you are acting on it)
+gcloud recommender recommendations mark-claimed \
+  RECOMMENDATION_ID \
+  --project=my-project \
+  --location=asia-southeast1-b \
+  --recommender=google.compute.instance.MachineTypeRecommender \
+  --etag=ETAG_VALUE \
+  --state-metadata=priority=high</code></pre>
+
+          <div class="tip-box">
+            <strong>Automation tip:</strong> Use the Recommender API in a Cloud Function triggered by a Pub/Sub schedule to automatically create GitHub issues or Jira tickets for each new high-priority recommendation. This brings cost recommendations into your engineering workflow without requiring engineers to check the console.
+          </div>
+
+          <h2>GCS Cost Optimization</h2>
+
+          <h3>Storage Classes</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Storage Class</th>
+                  <th>Use Case</th>
+                  <th>Min Storage Duration</th>
+                  <th>Retrieval Cost</th>
+                  <th>Approx. Cost/GB/mo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Standard</td>
+                  <td>Frequently accessed, hot data</td>
+                  <td>None</td>
+                  <td>Free</td>
+                  <td>$0.020</td>
+                </tr>
+                <tr>
+                  <td>Nearline</td>
+                  <td>Accessed less than once per month</td>
+                  <td>30 days</td>
+                  <td>$0.01/GB</td>
+                  <td>$0.010</td>
+                </tr>
+                <tr>
+                  <td>Coldline</td>
+                  <td>Accessed less than once per quarter</td>
+                  <td>90 days</td>
+                  <td>$0.02/GB</td>
+                  <td>$0.004</td>
+                </tr>
+                <tr>
+                  <td>Archive</td>
+                  <td>Long-term retention, rarely accessed</td>
+                  <td>365 days</td>
+                  <td>$0.05/GB</td>
+                  <td>$0.0012</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>GCS Lifecycle Rule Example</h3>
+          <pre><code>{
+  "lifecycle": {
+    "rule": [
+      {
+        "action": {
+          "type": "SetStorageClass",
+          "storageClass": "NEARLINE"
+        },
+        "condition": {
+          "age": 30,
+          "matchesStorageClass": ["STANDARD"]
+        }
+      },
+      {
+        "action": {
+          "type": "SetStorageClass",
+          "storageClass": "COLDLINE"
+        },
+        "condition": {
+          "age": 90,
+          "matchesStorageClass": ["NEARLINE"]
+        }
+      },
+      {
+        "action": {
+          "type": "SetStorageClass",
+          "storageClass": "ARCHIVE"
+        },
+        "condition": {
+          "age": 365,
+          "matchesStorageClass": ["COLDLINE"]
+        }
+      },
+      {
+        "action": {
+          "type": "Delete"
+        },
+        "condition": {
+          "age": 2555,
+          "isLive": false
+        }
+      }
+    ]
+  }
+}</code></pre>
+
+          <pre><code># Apply lifecycle configuration to a GCS bucket
+gsutil lifecycle set lifecycle.json gs://my-bucket
+
+# Verify the policy was applied
+gsutil lifecycle get gs://my-bucket</code></pre>
+
+          <h2>BigQuery Cost Optimization</h2>
+          <p>
+            BigQuery costs are driven primarily by query processing (bytes scanned) and storage. On-demand pricing charges per byte scanned; slot reservations provide predictable capacity-based pricing.
+          </p>
+
+          <h3>On-Demand vs Slot Reservations</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Pricing Basis</th>
+                  <th>Best For</th>
+                  <th>Risk</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>On-Demand</td>
+                  <td>$6.25 per TB of bytes scanned</td>
+                  <td>Exploratory analysis, low query volume, unpredictable workloads</td>
+                  <td>A single poorly written query scanning petabytes can create an unexpectedly large bill</td>
+                </tr>
+                <tr>
+                  <td>Slot Reservations (Standard)</td>
+                  <td>Flat hourly rate per slot; 100-slot minimum</td>
+                  <td>Consistent, high-volume query workloads</td>
+                  <td>Unused slots are wasted; must model query concurrency to size correctly</td>
+                </tr>
+                <tr>
+                  <td>Slot Reservations (Enterprise)</td>
+                  <td>Monthly or annual commitment; autoscaling available</td>
+                  <td>Production BI platforms, large data teams with SLA requirements</td>
+                  <td>Higher commitment; requires accurate forecasting</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Partitioned Tables</h3>
+          <p>
+            Partitioning a table on a <code>DATE</code> or <code>TIMESTAMP</code> column, or on an <code>INTEGER</code> range, allows BigQuery to skip entire partitions that do not match the query's filter — dramatically reducing bytes scanned and therefore cost.
+          </p>
+
+          <pre><code>-- Create a partitioned and clustered table for optimal cost
+CREATE TABLE `my_project.my_dataset.events`
+PARTITION BY DATE(event_timestamp)
+CLUSTER BY user_id, event_type
+OPTIONS (
+  require_partition_filter = TRUE,
+  partition_expiration_days = 365
+) AS
+SELECT * FROM `my_project.my_dataset.events_raw`;
+
+-- Query that benefits from partition pruning (scans only 2026-03-28 partition)
+SELECT
+  user_id,
+  COUNT(*) AS event_count
+FROM `my_project.my_dataset.events`
+WHERE DATE(event_timestamp) = '2026-03-28'
+  AND event_type = 'purchase'
+GROUP BY user_id;
+
+-- Estimate bytes processed before running a query (dry run)
+-- Run with --dry_run flag via CLI:
+-- bq query --dry_run --use_legacy_sql=false 'SELECT ...'</code></pre>
+
+          <h3>Query Cost Estimation</h3>
+          <pre><code># Estimate bytes processed for a query before executing it
+bq query \
+  --dry_run \
+  --use_legacy_sql=false \
+  'SELECT user_id, COUNT(*) FROM `my_project.dataset.events`
+   WHERE DATE(event_timestamp) = "2026-03-28"
+   GROUP BY user_id'
+
+# Output: "Query successfully validated. Assuming the tables are not modified,
+# running this query will process X bytes."
+# Cost estimate = X bytes / 1e12 * $6.25</code></pre>
+
+          <div class="warning-box">
+            <strong>Warning:</strong> Avoid <code>SELECT *</code> on large tables in BigQuery. Always select only the columns you need. BigQuery bills per column scanned (columnar storage), so selecting 3 columns from a 200-column table can reduce scan cost by 98%.
+          </div>
+
+          <h2>GKE Cost Optimization</h2>
+
+          <h3>Cluster Autoscaler</h3>
+          <p>
+            Enable Cluster Autoscaler on all node pools to automatically add nodes when pending pods cannot be scheduled and remove underutilized nodes. Combined with Spot node pools for non-critical workloads, this is typically the single largest GKE cost reduction lever.
+          </p>
+
+          <pre><code># Enable autoscaling on a node pool (min 1, max 10 nodes)
+gcloud container clusters update my-cluster \
+  --enable-autoscaling \
+  --min-nodes=1 \
+  --max-nodes=10 \
+  --node-pool=default-pool \
+  --region=asia-southeast1
+
+# Enable the Vertical Pod Autoscaler (VPA) on the cluster
+gcloud container clusters update my-cluster \
+  --enable-vertical-pod-autoscaling \
+  --region=asia-southeast1</code></pre>
+
+          <h3>Spot Node Pools in Terraform</h3>
+          <pre><code>resource "google_container_node_pool" "spot_pool" {
+  name       = "spot-node-pool"
+  cluster    = google_container_cluster.primary.name
+  location   = var.region
+  node_count = null  # managed by autoscaler
+
+  autoscaling {
+    min_node_count = 0
+    max_node_count = 20
+  }
+
+  node_config {
+    machine_type = "n2-standard-4"
+    disk_size_gb = 50
+    disk_type    = "pd-standard"
+
+    spot = true  # Use Spot VMs for this node pool
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+
+    labels = {
+      "cloud.google.com/gke-spot" = "true"
+      environment                 = "prod"
+      team                        = "platform"
+    }
+
+    taint {
+      key    = "cloud.google.com/gke-spot"
+      value  = "true"
+      effect = "NO_SCHEDULE"
+    }
+  }
+
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
+}
+
+# In your Kubernetes workload spec, tolerate the Spot taint:
+# tolerations:
+# - key: "cloud.google.com/gke-spot"
+#   operator: "Equal"
+#   value: "true"
+#   effect: "NO_SCHEDULE"</code></pre>
+
+          <h3>Node Pool Rightsizing</h3>
+          <ul>
+            <li>Use <strong>Workload Identity</strong> and minimize daemon set resource requests to avoid reserving large amounts of node capacity for infrastructure pods.</li>
+            <li>Enable <strong>Node Auto Provisioning (NAP)</strong> to let GKE automatically select the optimal machine type and size for pending pods.</li>
+            <li>Review node utilization using: <code>kubectl top nodes</code> and the GKE Workload Metrics in Cloud Monitoring.</li>
+            <li>Set explicit <code>requests</code> and <code>limits</code> on all containers — missing resource requests cause the scheduler to place pods sub-optimally and inflate node count.</li>
+          </ul>
+
+          <h2>Network Egress Costs</h2>
+          <p>
+            GCP's network pricing is tiered by destination. Designing your architecture to minimize cross-region and internet egress is essential for data-intensive workloads.
+          </p>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Transfer Path</th>
+                  <th>Approximate Cost</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Same region, same zone (internal IP)</td>
+                  <td>Free</td>
+                  <td>Use internal IPs always for intra-region traffic</td>
+                </tr>
+                <tr>
+                  <td>Same region, different zone (internal IP)</td>
+                  <td>$0.01/GB</td>
+                  <td>Charged in both directions ($0.02/GB round-trip)</td>
+                </tr>
+                <tr>
+                  <td>Cross-region within GCP (Americas)</td>
+                  <td>~$0.01–0.02/GB</td>
+                  <td>Route-dependent; check GCP pricing calculator for specific pairs</td>
+                </tr>
+                <tr>
+                  <td>Egress to internet (first 1 TB/mo)</td>
+                  <td>$0.08/GB (Americas/EMEA)</td>
+                  <td>First 1 GB/month free; pricing varies by destination continent</td>
+                </tr>
+                <tr>
+                  <td>Egress via Cloud CDN to internet</td>
+                  <td>~$0.02–0.06/GB</td>
+                  <td>Tiered; significantly cheaper than VM direct egress at scale</td>
+                </tr>
+                <tr>
+                  <td>GCS to Compute Engine (same region)</td>
+                  <td>Free</td>
+                  <td>No egress charge for GCS-to-GCE in the same region</td>
+                </tr>
+                <tr>
+                  <td>BigQuery to Compute Engine (same region)</td>
+                  <td>Free (Storage API)</td>
+                  <td>BigQuery Storage Read API in the same region incurs no egress</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Using Cloud CDN to Reduce Egress</h3>
+          <pre><code># Enable Cloud CDN on a backend bucket (serving static assets from GCS)
+gcloud compute backend-buckets create my-static-assets \
+  --gcs-bucket-name=my-static-bucket \
+  --enable-cdn \
+  --cache-mode=CACHE_ALL_STATIC
+
+# Enable CDN on an existing HTTP(S) load balancer backend service
+gcloud compute backend-services update my-backend-service \
+  --enable-cdn \
+  --cache-mode=CACHE_ALL_STATIC \
+  --global
+
+# Check CDN cache hit rate in Cloud Monitoring
+# Use the metric: loadbalancing.googleapis.com/https/request_count
+# Split by: cache_result (HIT, MISS, BYPASS)</code></pre>
+
+          <h2>Cloud SQL Cost Optimization</h2>
+
+          <div class="strategy-card">
+            <h4>Rightsizing Cloud SQL Instances</h4>
+            <p>Cloud SQL does not have a native recommender equivalent to Compute Optimizer. Monitor CPU, memory, and disk I/O via Cloud Monitoring and manually rightsize when average CPU utilization is consistently below 20%. Use the <code>gcloud sql instances patch</code> command to change machine type; a brief restart is required.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Committed Use Discounts for Cloud SQL</h4>
+            <p>Cloud SQL supports CUDs for instances running on shared-core or dedicated-core machine types. A 1-year commitment delivers approximately 25% savings; a 3-year commitment delivers approximately 52% savings compared to On-Demand for the same instance type.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>High Availability Only for Production</h4>
+            <p>Cloud SQL HA (regional instances with standby) roughly doubles the instance cost because GCP provisions a hot standby in a second zone. Enforce a policy via Terraform variable: set <code>availability_type = "REGIONAL"</code> for production and <code>availability_type = "ZONAL"</code> for staging and development environments.</p>
+          </div>
+
+          <pre><code>resource "google_sql_database_instance" "primary" {
+  name             = "my-postgres-${var.environment}"
+  database_version = "POSTGRES_15"
+  region           = var.region
+
+  settings {
+    tier = var.environment == "prod" ? "db-custom-4-15360" : "db-custom-2-7680"
+
+    availability_type = var.environment == "prod" ? "REGIONAL" : "ZONAL"
+
+    backup_configuration {
+      enabled                        = true
+      start_time                     = "02:00"
+      point_in_time_recovery_enabled = var.environment == "prod" ? true : false
+      retained_backups               = var.environment == "prod" ? 14 : 3
+    }
+
+    insights_config {
+      query_insights_enabled = var.environment == "prod" ? true : false
+    }
+  }
+
+  deletion_protection = var.environment == "prod" ? true : false
+}</code></pre>
+
+          <h2>Budget and Billing Alerts</h2>
+          <p>
+            GCP Budget alerts are project- or billing-account-scoped. They can trigger Pub/Sub notifications for programmatic responses in addition to email alerts.
+          </p>
+
+          <pre><code># Create a monthly budget alert for a GCP project
+gcloud billing budgets create \
+  --billing-account=BILLING_ACCOUNT_ID \
+  --display-name="Monthly Project Budget - my-project" \
+  --budget-amount=5000USD \
+  --calendar-period=month \
+  --projects=projects/my-project \
+  --threshold-rule=percent=0.5,basis=CURRENT_SPEND \
+  --threshold-rule=percent=0.8,basis=CURRENT_SPEND \
+  --threshold-rule=percent=1.0,basis=CURRENT_SPEND \
+  --threshold-rule=percent=1.0,basis=FORECASTED_SPEND \
+  --notifications-rule-pubsub-topic=projects/my-project/topics/billing-alerts \
+  --notifications-rule-disable-default-iam-recipients=false
+
+# List all budgets for a billing account
+gcloud billing budgets list \
+  --billing-account=BILLING_ACCOUNT_ID \
+  --format="table(name,displayName,amount.specifiedAmount.units,thresholdRules)"</code></pre>
+
+          <div class="tip-box">
+            <strong>Automation:</strong> Connect the <code>billing-alerts</code> Pub/Sub topic to a Cloud Function that posts to your team's Slack channel with a direct link to the GCP Cost Management console. For budget overruns above 100%, trigger an automatic page via PagerDuty.
+          </div>
+
+          <h2>Cost Allocation with Labels</h2>
+          <p>
+            GCP uses labels (key-value pairs) for cost allocation rather than the tag system used by AWS. Labels applied to Compute Engine VMs, GCS buckets, BigQuery datasets, and other resources appear in billing exports.
+          </p>
+
+          <h3>Recommended Label Strategy</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Label Key</th>
+                  <th>Example Values</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>environment</code></td>
+                  <td>prod, staging, dev, sandbox</td>
+                  <td>Separate environment spend; enforce HA/non-HA policies</td>
+                </tr>
+                <tr>
+                  <td><code>team</code></td>
+                  <td>platform, backend, data, security</td>
+                  <td>Chargeback and showback by engineering team</td>
+                </tr>
+                <tr>
+                  <td><code>project</code></td>
+                  <td>customer-portal, data-lake</td>
+                  <td>Attribute spend to product initiatives</td>
+                </tr>
+                <tr>
+                  <td><code>cost-center</code></td>
+                  <td>cc-1001, cc-2003</td>
+                  <td>Align with finance billing codes</td>
+                </tr>
+                <tr>
+                  <td><code>managed-by</code></td>
+                  <td>terraform, manual, gke</td>
+                  <td>Track IaC coverage; identify drift-prone resources</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <pre><code># Apply labels to a Compute Engine instance
+gcloud compute instances add-labels my-vm \
+  --zone=asia-southeast1-b \
+  --labels=environment=prod,team=platform,project=customer-portal,cost-center=cc-1001
+
+# Apply labels to a GCS bucket
+gsutil label ch \
+  -l environment:prod \
+  -l team:data \
+  -l project:data-lake \
+  gs://my-bucket
+
+# Find unlabeled Compute Engine instances (missing 'environment' label)
+gcloud compute instances list \
+  --format="table(name,zone,status,labels)" \
+  --filter="NOT labels.environment:*"</code></pre>
+
+          <h3>Billing Export to BigQuery</h3>
+          <p>
+            Exporting GCP billing data to BigQuery enables powerful custom analysis using SQL. Enable the export in the Billing console under Billing Export → Standard Usage Cost and Detailed Usage Cost.
+          </p>
+
+          <pre><code>-- Top 10 cost drivers by service for the current month
+SELECT
+  service.description AS service,
+  SUM(cost) + SUM(IFNULL((SELECT SUM(c.amount)
+    FROM UNNEST(credits) c), 0)) AS total_net_cost_usd
+FROM `my_project.billing_export.gcp_billing_export_v1_XXXXXX`
+WHERE
+  DATE(_PARTITIONTIME) >= DATE_TRUNC(CURRENT_DATE(), MONTH)
+GROUP BY service
+ORDER BY total_net_cost_usd DESC
+LIMIT 10;
+
+-- Cost by label (team) for the current month
+SELECT
+  (SELECT value FROM UNNEST(labels) WHERE key = 'team') AS team,
+  SUM(cost) AS total_cost_usd
+FROM `my_project.billing_export.gcp_billing_export_v1_XXXXXX`
+WHERE
+  DATE(_PARTITIONTIME) >= DATE_TRUNC(CURRENT_DATE(), MONTH)
+GROUP BY team
+ORDER BY total_cost_usd DESC;
+
+-- Identify resources with no 'environment' label
+SELECT
+  DISTINCT resource.name AS resource,
+  service.description AS service,
+  SUM(cost) AS cost_usd
+FROM `my_project.billing_export.gcp_billing_export_v1_XXXXXX`
+WHERE
+  DATE(_PARTITIONTIME) >= DATE_TRUNC(CURRENT_DATE(), MONTH)
+  AND NOT EXISTS (
+    SELECT 1 FROM UNNEST(labels) l WHERE l.key = 'environment'
+  )
+GROUP BY resource, service
+HAVING cost_usd > 10
+ORDER BY cost_usd DESC;</code></pre>
+
+          <h2>Recommender API Integration</h2>
+          <p>
+            The GCP Recommender API provides programmatic access to all recommendation types. Use it to build automated cost governance workflows that integrate with your engineering processes.
+          </p>
+
+          <pre><code># List all active recommendations across all recommenders in a project/location
+gcloud recommender recommendations list \
+  --project=my-project \
+  --location=asia-southeast1-b \
+  --recommender=google.compute.instance.MachineTypeRecommender \
+  --filter="stateInfo.state=ACTIVE" \
+  --format=json | python3 -c "
+import json, sys
+recs = json.load(sys.stdin)
+for r in recs:
+    name = r.get('content', {}).get('overview', {}).get('resourceName', 'N/A')
+    savings = r.get('primaryImpact', {}).get('costProjection', {}).get('cost', {}).get('units', 'N/A')
+    print(f'Resource: {name} | Monthly savings: \${savings}')
+"
+
+# List idle persistent disk recommendations
+gcloud recommender recommendations list \
+  --project=my-project \
+  --location=asia-southeast1 \
+  --recommender=google.compute.disk.IdleResourceRecommender \
+  --format="table(
+    content.overview.resourceName,
+    primaryImpact.costProjection.cost.units,
+    stateInfo.state
+  )"
+
+# Mark a recommendation as succeeded after implementing it
+gcloud recommender recommendations mark-succeeded \
+  RECOMMENDATION_ID \
+  --project=my-project \
+  --location=asia-southeast1-b \
+  --recommender=google.compute.instance.MachineTypeRecommender \
+  --etag=ETAG_VALUE \
+  --state-metadata=implementedBy=terraform,ticket=INFRA-1234</code></pre>
+
+          <div class="success-box">
+            <strong>Best practice:</strong> Schedule a weekly Cloud Function that calls the Recommender API, aggregates all active recommendations with potential savings greater than $50/month, and posts a digest to your team's cost channel. This keeps cost optimization continuously visible without requiring manual console checks.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database & Storage Overview | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item active">Database & Storage</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-database me-2"></i>Database & Storage</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Overview</a>
+            <a class="nav-link" href="postgresql.html">PostgreSQL</a>
+            <a class="nav-link" href="redis.html">Redis & Caching</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-database me-2"></i>Database & Storage Overview</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Foundation of every system</strong> — choosing the right database engine and storage strategy is one of the most consequential architectural decisions you will make. This section covers database types, trade-offs, HA design, and cloud-managed options.
+          </div>
+
+          <!-- ==================== DATABASE TYPES ==================== -->
+          <h2>Database Type Taxonomy</h2>
+
+          <h3>Relational (RDBMS)</h3>
+          <p>
+            Relational databases organise data into tables with predefined schemas, enforcing integrity through ACID
+            transactions. They excel at complex queries, joins across normalised data, and strong consistency requirements.
+            PostgreSQL, MySQL, and Oracle are the canonical examples. SQL is the universal query language.
+          </p>
+
+          <h3>NoSQL — Document Stores</h3>
+          <p>
+            Documents (typically JSON/BSON) are the unit of storage. Each document is self-contained and can have a
+            flexible schema. MongoDB and CouchDB are representative. Document stores shine when entities naturally map
+            to nested objects — product catalogs, user profiles, CMS content.
+          </p>
+
+          <h3>NoSQL — Key-Value Stores</h3>
+          <p>
+            The simplest data model: every value is addressed by an opaque key. Redis, DynamoDB (in key-value mode), and
+            Memcached fall here. Extremely fast for single-key lookups, session storage, and caching layers. Limited
+            querying capability beyond key access.
+          </p>
+
+          <h3>NoSQL — Wide-Column Stores</h3>
+          <p>
+            Data is stored in column families rather than rows, optimised for high-write workloads and time-series data.
+            Apache Cassandra and HBase are the primary examples. Rows within a partition are sorted by a clustering key,
+            enabling efficient range scans within a partition.
+          </p>
+
+          <h3>NoSQL — Graph Databases</h3>
+          <p>
+            Entities (nodes) and their relationships (edges) are first-class citizens. Neo4j and Amazon Neptune allow
+            efficient traversal of deeply connected data — social networks, fraud detection, knowledge graphs, and
+            recommendation engines where relationship depth matters.
+          </p>
+
+          <h3>NewSQL</h3>
+          <p>
+            NewSQL systems attempt to combine the horizontal scalability of NoSQL with the ACID guarantees of traditional
+            RDBMS. CockroachDB, Google Spanner, TiDB, and YugabyteDB represent this category. They use distributed
+            consensus algorithms (Raft, Paxos) to achieve globally consistent transactions at scale.
+          </p>
+
+          <!-- ==================== COMPARISON TABLE ==================== -->
+          <h2>Database Comparison Matrix</h2>
+
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th>Database</th>
+                  <th>Type</th>
+                  <th>Consistency</th>
+                  <th>Scale Model</th>
+                  <th>Query Power</th>
+                  <th>Best For</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>PostgreSQL</strong></td>
+                  <td>RDBMS</td>
+                  <td>Strong (ACID)</td>
+                  <td>Vertical + Read replicas</td>
+                  <td>Full SQL, JSON, FTS</td>
+                  <td>Transactional apps, analytics, complex queries</td>
+                </tr>
+                <tr>
+                  <td><strong>MySQL</strong></td>
+                  <td>RDBMS</td>
+                  <td>Strong (ACID)</td>
+                  <td>Vertical + Read replicas</td>
+                  <td>Full SQL</td>
+                  <td>Web apps, CMS, e-commerce</td>
+                </tr>
+                <tr>
+                  <td><strong>MongoDB</strong></td>
+                  <td>Document</td>
+                  <td>Tunable (eventual default)</td>
+                  <td>Horizontal sharding</td>
+                  <td>Rich queries, aggregation pipeline</td>
+                  <td>Flexible schemas, catalogs, content</td>
+                </tr>
+                <tr>
+                  <td><strong>Redis</strong></td>
+                  <td>Key-Value / In-Memory</td>
+                  <td>Eventual (async repl)</td>
+                  <td>Cluster sharding</td>
+                  <td>Key access, Lua scripts</td>
+                  <td>Cache, sessions, pub/sub, leaderboards</td>
+                </tr>
+                <tr>
+                  <td><strong>Cassandra</strong></td>
+                  <td>Wide-Column</td>
+                  <td>Tunable (quorum)</td>
+                  <td>Multi-master horizontal</td>
+                  <td>CQL (partition-scoped)</td>
+                  <td>IoT time-series, write-heavy, geo-distributed</td>
+                </tr>
+                <tr>
+                  <td><strong>DynamoDB</strong></td>
+                  <td>Key-Value / Document</td>
+                  <td>Eventual / Strong (opt-in)</td>
+                  <td>Fully managed horizontal</td>
+                  <td>PK + GSI/LSI queries</td>
+                  <td>Serverless, unpredictable scale, AWS-native</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- ==================== CAP THEOREM ==================== -->
+          <h2>CAP Theorem</h2>
+
+          <p>
+            Proposed by Eric Brewer in 2000 and formally proved by Gilbert and Lynch in 2002, the CAP theorem states that
+            a distributed data store can guarantee at most <strong>two</strong> of the following three properties
+            simultaneously:
+          </p>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <div class="concept-card h-100">
+                <h4>C — Consistency</h4>
+                <p class="mb-0">Every read receives the most recent write or an error. All nodes see the same data at the same time.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="concept-card h-100">
+                <h4>A — Availability</h4>
+                <p class="mb-0">Every request receives a (non-error) response, though it may not contain the most recent write.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="concept-card h-100">
+                <h4>P — Partition Tolerance</h4>
+                <p class="mb-0">The system continues to operate despite an arbitrary number of messages being dropped between nodes.</p>
+              </div>
+            </div>
+          </div>
+
+          <p>
+            In practice, network partitions are unavoidable in any distributed system, so <strong>P is non-negotiable</strong>.
+            The real choice is between CP (consistency over availability) and AP (availability over consistency):
+          </p>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Classification</th>
+                  <th>Databases</th>
+                  <th>Behaviour During Partition</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>CP</strong></td>
+                  <td>PostgreSQL, HBase, Zookeeper, etcd, CockroachDB</td>
+                  <td>Returns an error or timeout rather than serving stale data</td>
+                </tr>
+                <tr>
+                  <td><strong>AP</strong></td>
+                  <td>Cassandra, DynamoDB (default), CouchDB, Riak</td>
+                  <td>Serves potentially stale data to remain available; reconciles later</td>
+                </tr>
+                <tr>
+                  <td><strong>CA</strong> (single node)</td>
+                  <td>Traditional RDBMS (single instance)</td>
+                  <td>Not distributed — partition tolerance is not a concern</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tip-box">
+            <strong>PACELC Extension:</strong> PACELC extends CAP to address the latency/consistency trade-off even
+            when the system is running without partitions. It asks: even Else (when running normally), do you choose
+            Latency or Consistency? DynamoDB is PA/EL; CockroachDB is PC/EC.
+          </div>
+
+          <!-- ==================== WHEN TO USE WHICH ==================== -->
+          <h2>When to Use Which Database</h2>
+
+          <div class="concept-card">
+            <h4>Strong transactional consistency required?</h4>
+            <p>Use <strong>PostgreSQL</strong> or <strong>MySQL</strong>. If global distribution is needed, consider <strong>CockroachDB</strong> or <strong>Cloud Spanner</strong>.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Flexible or rapidly evolving schema?</h4>
+            <p>Use <strong>MongoDB</strong> for document-oriented storage, or <strong>PostgreSQL JSONB</strong> if you still want SQL power alongside flexibility.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Sub-millisecond latency, caching, or session storage?</h4>
+            <p>Use <strong>Redis</strong>. Consider <strong>Memcached</strong> for pure ephemeral caching where persistence is not needed.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Massive write throughput, time-series, or IoT telemetry?</h4>
+            <p>Use <strong>Cassandra</strong> for general wide-column workloads. Consider <strong>InfluxDB</strong> or <strong>TimescaleDB</strong> for purpose-built time-series queries.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Serverless / unpredictable traffic spikes on AWS?</h4>
+            <p>Use <strong>DynamoDB</strong> with on-demand capacity mode. Pair with DAX for microsecond read latency.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Highly connected data, recommendations, fraud graphs?</h4>
+            <p>Use <strong>Neo4j</strong> (self-managed) or <strong>Amazon Neptune</strong> / <strong>Google Spanner Graph</strong> (managed).</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>OLAP / analytical queries over large datasets?</h4>
+            <p>Use <strong>BigQuery</strong>, <strong>Redshift</strong>, <strong>Snowflake</strong>, or <strong>ClickHouse</strong> — purpose-built columnar engines. Avoid running heavy analytics on OLTP databases.</p>
+          </div>
+
+          <!-- ==================== RTO/RPO ==================== -->
+          <h2>RTO &amp; RPO — Driving HA Strategy</h2>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <div class="strategy-card h-100">
+                <h4>RTO — Recovery Time Objective</h4>
+                <p>The maximum tolerable length of time that a system can be offline after a failure event before business impact becomes unacceptable. An RTO of 5 minutes means the service must be restored within 5 minutes of an outage.</p>
+                <p class="mb-0"><strong>Drives:</strong> Failover automation, standby replica topology, load balancer health checks.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card h-100">
+                <h4>RPO — Recovery Point Objective</h4>
+                <p>The maximum acceptable amount of data loss measured in time. An RPO of 1 minute means you can tolerate losing at most 1 minute of committed transactions during a disaster.</p>
+                <p class="mb-0"><strong>Drives:</strong> Replication lag targets, WAL archival frequency, backup intervals.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Tier</th>
+                  <th>RTO Target</th>
+                  <th>RPO Target</th>
+                  <th>Typical Architecture</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Tier 0 (Mission Critical)</strong></td>
+                  <td>&lt; 1 min</td>
+                  <td>0 (zero data loss)</td>
+                  <td>Synchronous replication, active-active multi-region, automatic failover</td>
+                </tr>
+                <tr>
+                  <td><strong>Tier 1 (Business Critical)</strong></td>
+                  <td>1–15 min</td>
+                  <td>&lt; 1 min</td>
+                  <td>Synchronous standby, Patroni/Aurora, continuous WAL archival</td>
+                </tr>
+                <tr>
+                  <td><strong>Tier 2 (Important)</strong></td>
+                  <td>15–60 min</td>
+                  <td>&lt; 15 min</td>
+                  <td>Asynchronous streaming replication, promoted manually, hourly snapshots</td>
+                </tr>
+                <tr>
+                  <td><strong>Tier 3 (Non-Critical)</strong></td>
+                  <td>&gt; 1 hour</td>
+                  <td>&lt; 24 hours</td>
+                  <td>Daily logical backups, restore from backup, acceptable data loss</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- ==================== BACKUP STRATEGIES ==================== -->
+          <h2>Backup Strategies</h2>
+
+          <h3>Logical vs Physical Backups</h3>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <div class="strategy-card h-100">
+                <h4>Logical Backup</h4>
+                <p>Exports data as SQL statements or structured files (CSV, JSON). Tools: <code>pg_dump</code>, <code>mysqldump</code>, <code>mongodump</code>.</p>
+                <ul class="mb-0">
+                  <li>Portable across versions and platforms</li>
+                  <li>Can restore individual tables or objects</li>
+                  <li>Slower for large databases</li>
+                  <li>Consistent point-in-time snapshot of data state</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card h-100">
+                <h4>Physical Backup</h4>
+                <p>Copies raw data files from disk. Tools: <code>pg_basebackup</code>, filesystem snapshots, LVM, EBS snapshots.</p>
+                <ul class="mb-0">
+                  <li>Much faster for large databases</li>
+                  <li>Requires same OS/architecture for restore</li>
+                  <li>Basis for Point-in-Time Recovery (PITR)</li>
+                  <li>Must be combined with WAL archival for PITR</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3>Point-in-Time Recovery (PITR)</h3>
+          <p>
+            PITR allows you to restore a database to any specific moment in time, not just the last backup. The mechanism
+            is a base backup combined with a continuous archive of Write-Ahead Log (WAL) segments. During recovery, the
+            base backup is restored first, then WAL segments are replayed forward to the target timestamp. This achieves
+            near-zero RPO for databases with continuous WAL archiving.
+          </p>
+
+          <div class="success-box">
+            <strong>Best practice:</strong> Combine physical base backups (daily) with continuous WAL archiving (to S3/GCS)
+            to achieve PITR capability. Test restores regularly — a backup you have never tested is not a backup.
+          </div>
+
+          <h3>3-2-1 Backup Rule</h3>
+          <div class="concept-card">
+            <h4>The 3-2-1 Rule</h4>
+            <p class="mb-0">Maintain <strong>3</strong> copies of data, on <strong>2</strong> different media types, with
+            <strong>1</strong> copy stored off-site. For cloud databases: primary instance + read replica (different AZ)
+            + automated backup exported to object storage in a different region.</p>
+          </div>
+
+          <!-- ==================== CLOUD MANAGED DB ==================== -->
+          <h2>Cloud Managed Database Options</h2>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Cloud</th>
+                  <th>Engine</th>
+                  <th>Key Differentiator</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Amazon RDS</strong></td>
+                  <td>AWS</td>
+                  <td>PostgreSQL, MySQL, MariaDB, Oracle, SQL Server</td>
+                  <td>Broad engine support, automated patching, Multi-AZ standby</td>
+                </tr>
+                <tr>
+                  <td><strong>Amazon Aurora</strong></td>
+                  <td>AWS</td>
+                  <td>MySQL-compatible, PostgreSQL-compatible</td>
+                  <td>Distributed storage, up to 15 read replicas, serverless v2 auto-scaling, Global Database</td>
+                </tr>
+                <tr>
+                  <td><strong>Cloud SQL</strong></td>
+                  <td>GCP</td>
+                  <td>PostgreSQL, MySQL, SQL Server</td>
+                  <td>Fully managed, integrated IAM auth, automatic storage increases</td>
+                </tr>
+                <tr>
+                  <td><strong>AlloyDB for PostgreSQL</strong></td>
+                  <td>GCP</td>
+                  <td>PostgreSQL-compatible</td>
+                  <td>4× faster than standard PostgreSQL, columnar engine for HTAP, ML-driven autovacuum</td>
+                </tr>
+                <tr>
+                  <td><strong>Cloud Spanner</strong></td>
+                  <td>GCP</td>
+                  <td>Proprietary (NewSQL)</td>
+                  <td>Unlimited horizontal scale with external consistency (TrueTime), global ACID transactions</td>
+                </tr>
+                <tr>
+                  <td><strong>Azure Database for PostgreSQL</strong></td>
+                  <td>Azure</td>
+                  <td>PostgreSQL</td>
+                  <td>Flexible Server with zone-redundant HA, Citus extension for distributed tables</td>
+                </tr>
+                <tr>
+                  <td><strong>Azure Cosmos DB</strong></td>
+                  <td>Azure</td>
+                  <td>Multi-model (API for MongoDB, Cassandra, SQL, Gremlin, Table)</td>
+                  <td>Turnkey global distribution, five consistency levels, serverless</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="warning-box">
+            <strong>Cloud DB cost watch:</strong> Managed databases typically cost 2–5× more than self-managed equivalents
+            for equivalent capacity. Factor in storage IOPS costs, data transfer fees, multi-AZ standby charges, and
+            read replica instance costs. Use Reserved Instances / Committed Use Discounts for production workloads to
+            reduce costs by 30–60%.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

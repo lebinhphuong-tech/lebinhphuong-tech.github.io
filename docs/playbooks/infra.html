@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infrastructure Playbooks | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    .runbook-header { background: var(--secondary-color); color: white; border-radius: 8px 8px 0 0; padding: 1rem 1.5rem; margin-top: 2.5rem; }
+    .runbook-header h3 { color: white; margin: 0; }
+    .runbook-body { border: 1px solid #dee2e6; border-top: none; border-radius: 0 0 8px 8px; padding: 1.5rem; margin-bottom: 2rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Incident Playbooks</a></li>
+        <li class="breadcrumb-item active">Infrastructure Playbooks</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-book-half me-2"></i>Incident Playbooks</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview &amp; Templates</a>
+            <a class="nav-link active" href="infra.html">Infrastructure Playbooks</a>
+            <a class="nav-link" href="security.html">Security Playbooks</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-server me-2"></i>Infrastructure Playbooks</h1>
+
+          <div class="alert-info">
+            <strong>Runbook Index</strong> — Seven infrastructure runbooks covering the most common production incidents encountered in cloud-native Kubernetes environments.
+          </div>
+
+          <p>Each runbook follows the standard structure: <strong>Symptom</strong>, <strong>Root Cause</strong>, <strong>Immediate Actions</strong>, <strong>Verification</strong>, and <strong>Prevention</strong>. All commands are written for a production Kubernetes cluster on AWS/GCP with standard tooling (<code>kubectl</code>, <code>awscli</code>, <code>gcloud</code>).</p>
+
+          <!-- RB-0001 -->
+          <div class="runbook-header">
+            <h3>RB-0001 — Kubernetes Pod CrashLoopBackOff</h3>
+          </div>
+          <div class="runbook-body">
+            <div class="concept-card">
+              <h4>Symptom</h4>
+              <p>Pod status shows <code>CrashLoopBackOff</code>. The pod starts, crashes immediately, and Kubernetes restarts it in an exponentially increasing back-off cycle. Users may see 503 errors if the affected pod is part of a load-balanced service.</p>
+            </div>
+            <div class="concept-card">
+              <h4>Common Root Causes</h4>
+              <ul>
+                <li>Out-of-Memory (OOM) kill — container exceeds its memory limit</li>
+                <li>Missing environment variable or ConfigMap / Secret reference</li>
+                <li>Bad container image (corrupted layer, wrong tag, non-existent registry path)</li>
+                <li>Application startup failure (misconfiguration, failed DB connection on boot)</li>
+                <li>Liveness probe misconfigured — probe kills healthy containers</li>
+              </ul>
+            </div>
+
+            <h3>Immediate Actions</h3>
+            <pre><code># 1. Identify the affected pod(s)
+kubectl get pods -n &lt;namespace&gt; | grep CrashLoopBackOff
+
+# 2. Describe the pod — look at Events section at the bottom
+kubectl describe pod &lt;pod-name&gt; -n &lt;namespace&gt;
+
+# 3. Read the current logs (may be truncated if container exited quickly)
+kubectl logs &lt;pod-name&gt; -n &lt;namespace&gt;
+
+# 4. Read logs from the previous container instance (most useful for CrashLoop)
+kubectl logs &lt;pod-name&gt; -n &lt;namespace&gt; --previous
+
+# 5. Check recent events in the namespace for broader context
+kubectl get events -n &lt;namespace&gt; --sort-by='.lastTimestamp' | tail -30</code></pre>
+
+            <h3>Diagnosis &amp; Resolution by Cause</h3>
+
+            <h3>OOM Kill</h3>
+            <p>In <code>kubectl describe pod</code> output, look for <code>OOMKilled</code> in the last state:</p>
+            <pre><code># Confirm OOM kill
+kubectl describe pod &lt;pod-name&gt; -n &lt;namespace&gt; | grep -A5 "Last State"
+# Expected: Reason: OOMKilled
+
+# Check current resource usage on the node
+kubectl top pod &lt;pod-name&gt; -n &lt;namespace&gt;
+
+# Resolution: increase memory limit in the Deployment manifest
+kubectl edit deployment &lt;deployment-name&gt; -n &lt;namespace&gt;
+# Under resources.limits.memory, increase the value (e.g., 512Mi → 1Gi)
+
+# Or patch directly without editor
+kubectl patch deployment &lt;deployment-name&gt; -n &lt;namespace&gt; \
+  --type='json' \
+  -p='[{"op":"replace","path":"/spec/template/spec/containers/0/resources/limits/memory","value":"1Gi"}]'</code></pre>
+
+            <h3>Missing ConfigMap / Secret</h3>
+            <pre><code># Logs will typically show: "env var X not set" or similar
+# Verify referenced ConfigMap exists
+kubectl get configmap &lt;configmap-name&gt; -n &lt;namespace&gt;
+
+# Verify referenced Secret exists
+kubectl get secret &lt;secret-name&gt; -n &lt;namespace&gt;
+
+# If missing, create the ConfigMap from a file
+kubectl create configmap &lt;configmap-name&gt; --from-file=config.yaml -n &lt;namespace&gt;
+
+# Or create the Secret
+kubectl create secret generic &lt;secret-name&gt; \
+  --from-literal=DB_PASSWORD='s3cur3p@ss' -n &lt;namespace&gt;</code></pre>
+
+            <h3>Bad Container Image</h3>
+            <pre><code># Check image pull status in events
+kubectl describe pod &lt;pod-name&gt; -n &lt;namespace&gt; | grep -i "image\|pull\|back-off"
+
+# Roll back to the last known good image tag
+kubectl set image deployment/&lt;deployment-name&gt; \
+  &lt;container-name&gt;=&lt;registry&gt;/&lt;image&gt;:&lt;last-good-tag&gt; \
+  -n &lt;namespace&gt;
+
+# Monitor rollout
+kubectl rollout status deployment/&lt;deployment-name&gt; -n &lt;namespace&gt;</code></pre>
+
+            <div class="success-box">
+              <strong>Verification:</strong> Run <code>kubectl get pods -n &lt;namespace&gt;</code> and confirm status is <code>Running</code> with restart count stable. Check application logs with <code>kubectl logs &lt;pod-name&gt; -n &lt;namespace&gt;</code> for no errors.
+            </div>
+
+            <div class="tip-box">
+              <strong>Prevention:</strong> Enforce resource requests and limits via LimitRange. Use Pod Disruption Budgets. Enable OOM alerting in Prometheus. Add liveness/readiness probe validation to CI pipeline.
+            </div>
+          </div>
+
+          <!-- RB-0002 -->
+          <div class="runbook-header">
+            <h3>RB-0002 — Kubernetes Node NotReady</h3>
+          </div>
+          <div class="runbook-body">
+            <div class="concept-card">
+              <h4>Symptom</h4>
+              <p>One or more nodes show <code>NotReady</code> status in <code>kubectl get nodes</code>. Pods on the affected node may be evicted or stuck in <code>Terminating</code> or <code>Unknown</code> state.</p>
+            </div>
+            <div class="concept-card">
+              <h4>Common Root Causes</h4>
+              <ul>
+                <li>Disk pressure — node disk usage exceeds eviction threshold</li>
+                <li>Memory pressure — node memory fully exhausted</li>
+                <li>Network partition — kubelet cannot communicate with the API server</li>
+                <li>kubelet crash or hang</li>
+                <li>Container runtime (containerd / Docker) failure</li>
+              </ul>
+            </div>
+
+            <h3>Immediate Actions</h3>
+            <pre><code># 1. Identify NotReady nodes
+kubectl get nodes
+
+# 2. Get detailed node conditions
+kubectl describe node &lt;node-name&gt;
+# Look at: Conditions section (DiskPressure, MemoryPressure, PIDPressure, Ready)
+# Look at: Events section at the bottom
+
+# 3. Prevent new pods from being scheduled on the affected node
+kubectl cordon &lt;node-name&gt;
+
+# 4. If node needs maintenance — drain it (evicts all pods gracefully)
+kubectl drain &lt;node-name&gt; --ignore-daemonsets --delete-emptydir-data
+
+# 5. SSH into the node to investigate (example for AWS EC2 with SSM)
+aws ssm start-session --target &lt;instance-id&gt;</code></pre>
+
+            <h3>Diagnosis on the Node</h3>
+            <pre><code># Check kubelet status
+sudo systemctl status kubelet
+
+# Restart kubelet if it has crashed
+sudo systemctl restart kubelet
+
+# Check kubelet logs
+sudo journalctl -u kubelet -n 100 --no-pager
+
+# Check container runtime
+sudo systemctl status containerd
+sudo systemctl restart containerd
+
+# Check disk usage
+df -h
+du -sh /var/log/* | sort -hr | head -20
+
+# Check memory
+free -m
+
+# Check network connectivity to API server
+curl -k https://&lt;api-server-endpoint&gt;/healthz</code></pre>
+
+            <h3>Recovery</h3>
+            <pre><code># After fixing the underlying issue, uncordon the node
+kubectl uncordon &lt;node-name&gt;
+
+# Verify node is Ready
+kubectl get nodes
+
+# Verify pods are rescheduled and running
+kubectl get pods -A | grep -v Running | grep -v Completed</code></pre>
+
+            <div class="success-box">
+              <strong>Verification:</strong> Node status shows <code>Ready</code>. No pods stuck in <code>Unknown</code> or <code>Terminating</code>. Cluster-level metrics (CPU, memory, disk) return to normal baseline.
+            </div>
+
+            <div class="tip-box">
+              <strong>Prevention:</strong> Configure node auto-repair in GKE / EKS managed node groups. Set up disk pressure alerts at 75% and 85%. Use cluster autoscaler to replace unhealthy nodes automatically. Implement log rotation to prevent disk exhaustion.
+            </div>
+          </div>
+
+          <!-- RB-0003 -->
+          <div class="runbook-header">
+            <h3>RB-0003 — High CPU / Memory on Instance</h3>
+          </div>
+          <div class="runbook-body">
+            <div class="concept-card">
+              <h4>Symptom</h4>
+              <p>CPU usage sustained above 90% or memory above 95% on a VM / EC2 instance / Compute Engine instance. Application may be slow, timing out, or returning 5xx errors. Alert fires from CloudWatch / Stackdriver / Prometheus node exporter.</p>
+            </div>
+
+            <h3>Immediate Actions</h3>
+            <pre><code># SSH into the instance
+# Identify the top CPU consumers (interactive, refreshes every 2s)
+top -c
+
+# Non-interactive snapshot — useful for scripting and logging
+ps aux --sort=-%cpu | head -20
+
+# Check memory usage
+free -m
+ps aux --sort=-%mem | head -20
+
+# Check load average (1m, 5m, 15m)
+uptime
+
+# Full resource snapshot with extended process info
+htop  # (if installed)
+
+# Check for runaway processes by specific user or service
+ps -u www-data -o pid,ppid,%cpu,%mem,comm --sort=-%cpu | head -10</code></pre>
+
+            <h3>Resolution</h3>
+            <pre><code># Option A: Kill a runaway process (use SIGTERM first, then SIGKILL)
+kill -15 &lt;PID&gt;
+# Wait 10 seconds, then if still running:
+kill -9 &lt;PID&gt;
+
+# Option B: Restart the problematic service
+sudo systemctl restart &lt;service-name&gt;
+
+# Option C: Scale out — add more instances via autoscaling group
+# AWS: manually trigger a scale-out
+aws autoscaling set-desired-capacity \
+  --auto-scaling-group-name &lt;asg-name&gt; \
+  --desired-capacity &lt;current+1&gt;
+
+# GCP: resize managed instance group
+gcloud compute instance-groups managed resize &lt;mig-name&gt; \
+  --size=&lt;new-size&gt; --zone=&lt;zone&gt;
+
+# Option D: Add CPU credits for burstable instances (AWS T-series)
+# Change instance type temporarily to a non-burstable instance
+aws ec2 modify-instance-attribute --instance-id &lt;id&gt; \
+  --instance-type '{"Value": "m5.large"}'</code></pre>
+
+            <div class="success-box">
+              <strong>Verification:</strong> CPU drops below 70%. Memory pressure resolved. Application response times return to baseline. No new 5xx errors in access logs.
+            </div>
+
+            <div class="tip-box">
+              <strong>Prevention:</strong> Configure autoscaling policies on CPU thresholds (scale out at 70%). Enable detailed CloudWatch / Stackdriver monitoring. Profile application for CPU hotspots during load testing. Set resource quotas in Kubernetes to prevent noisy-neighbour effects.
+            </div>
+          </div>
+
+          <!-- RB-0004 -->
+          <div class="runbook-header">
+            <h3>RB-0004 — Database Connection Pool Exhausted</h3>
+          </div>
+          <div class="runbook-body">
+            <div class="concept-card">
+              <h4>Symptom</h4>
+              <p>Application returns errors such as <code>FATAL: remaining connection slots are reserved</code> (PostgreSQL) or <code>Too many connections</code> (MySQL). Database metrics show connections at or near <code>max_connections</code>. New application pods fail to start because they cannot acquire a DB connection.</p>
+            </div>
+
+            <h3>Immediate Actions</h3>
+            <pre><code># Connect to PostgreSQL and inspect active connections
+psql -h &lt;host&gt; -U &lt;admin-user&gt; -d &lt;database&gt;
+
+-- View current connections grouped by state and application
+SELECT state, application_name, count(*)
+FROM pg_stat_activity
+GROUP BY state, application_name
+ORDER BY count DESC;
+
+-- View long-running queries (potential connection holders)
+SELECT pid, now() - query_start AS duration, state, query
+FROM pg_stat_activity
+WHERE state != 'idle'
+  AND query_start &lt; now() - interval '5 minutes'
+ORDER BY duration DESC;
+
+-- Terminate idle connections older than 10 minutes
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE state = 'idle'
+  AND query_start &lt; now() - interval '10 minutes';
+
+-- View max_connections setting
+SHOW max_connections;</code></pre>
+
+            <h3>Connection Pooler — PgBouncer</h3>
+            <pre><code># Check PgBouncer status
+psql -h &lt;pgbouncer-host&gt; -p 6432 -U pgbouncer pgbouncer
+
+-- View pool statistics
+SHOW POOLS;
+
+-- View client statistics
+SHOW CLIENTS;
+
+-- View server connections
+SHOW SERVERS;
+
+-- Reload PgBouncer config without full restart
+RELOAD;
+
+# Restart PgBouncer pod in Kubernetes
+kubectl rollout restart deployment/pgbouncer -n &lt;namespace&gt;</code></pre>
+
+            <h3>Application-Side Config Check</h3>
+            <pre><code># Check connection pool settings in application config
+# For Python (SQLAlchemy) — typical settings to review:
+#   pool_size=5, max_overflow=10, pool_timeout=30
+
+# For Node.js (pg / knex):
+#   min: 2, max: 10
+
+# Emergency: reduce pool size per pod to free up connections
+kubectl set env deployment/&lt;app&gt; DB_POOL_MAX=3 -n &lt;namespace&gt;
+
+# Scale down replicas temporarily to reduce connection pressure
+kubectl scale deployment/&lt;app&gt; --replicas=2 -n &lt;namespace&gt;</code></pre>
+
+            <div class="success-box">
+              <strong>Verification:</strong> Active connection count drops below 80% of <code>max_connections</code>. Application errors clear. New requests succeed. Monitor <code>pg_stat_activity</code> for 5 minutes to confirm stability.
+            </div>
+
+            <div class="tip-box">
+              <strong>Prevention:</strong> Deploy PgBouncer in transaction-pooling mode in front of all PostgreSQL instances. Alert when connections exceed 70% of max. Implement connection timeouts and idle connection reaping in all application pools. Size <code>max_connections</code> appropriately for instance memory (rule of thumb: 100 connections per GB of RAM for PostgreSQL).
+            </div>
+          </div>
+
+          <!-- RB-0005 -->
+          <div class="runbook-header">
+            <h3>RB-0005 — TLS Certificate Expired</h3>
+          </div>
+          <div class="runbook-body">
+            <div class="concept-card">
+              <h4>Symptom</h4>
+              <p>Users see browser SSL errors (<code>ERR_CERT_DATE_INVALID</code>). Load balancer health checks fail on HTTPS. Monitoring alerts fire on certificate expiry check. <code>curl</code> to the endpoint returns <code>SSL certificate problem: certificate has expired</code>.</p>
+            </div>
+
+            <h3>Immediate Actions — Diagnose</h3>
+            <pre><code># Check certificate expiry date directly from the endpoint
+echo | openssl s_client -servername &lt;domain&gt; -connect &lt;domain&gt;:443 2>/dev/null \
+  | openssl x509 -noout -dates
+
+# Check certificate details (subject, issuer, SANs)
+echo | openssl s_client -servername &lt;domain&gt; -connect &lt;domain&gt;:443 2>/dev/null \
+  | openssl x509 -noout -text | grep -A2 "Subject:\|Issuer:\|Not After\|DNS:"
+
+# Check Kubernetes TLS secret expiry (cert-manager managed)
+kubectl get certificate -A
+kubectl describe certificate &lt;cert-name&gt; -n &lt;namespace&gt;</code></pre>
+
+            <h3>Resolution — cert-manager (Kubernetes)</h3>
+            <pre><code># Trigger manual renewal of a cert-manager Certificate resource
+kubectl annotate certificate &lt;cert-name&gt; -n &lt;namespace&gt; \
+  cert-manager.io/issuse-temporary-certificate="true"
+
+# Delete the managed Secret to force cert-manager to re-issue
+kubectl delete secret &lt;tls-secret-name&gt; -n &lt;namespace&gt;
+# cert-manager will automatically recreate it
+
+# Check certificate request status
+kubectl get certificaterequest -n &lt;namespace&gt;
+kubectl describe certificaterequest &lt;cr-name&gt; -n &lt;namespace&gt;</code></pre>
+
+            <h3>Resolution — Manual Let's Encrypt (Certbot)</h3>
+            <pre><code># Renew all certificates managed by certbot
+sudo certbot renew --force-renewal
+
+# Renew a specific domain
+sudo certbot certonly --force-renewal -d &lt;domain&gt;
+
+# Reload web server / ingress after renewal
+sudo systemctl reload nginx
+# or
+sudo systemctl reload apache2
+
+# Copy renewed cert to Kubernetes secret
+kubectl create secret tls &lt;tls-secret-name&gt; \
+  --cert=/etc/letsencrypt/live/&lt;domain&gt;/fullchain.pem \
+  --key=/etc/letsencrypt/live/&lt;domain&gt;/privkey.pem \
+  -n &lt;namespace&gt; --dry-run=client -o yaml | kubectl apply -f -</code></pre>
+
+            <div class="success-box">
+              <strong>Verification:</strong> Run the <code>openssl s_client</code> command again and confirm <code>Not After</code> is a future date (typically 90 days for Let's Encrypt, 1–2 years for commercial CAs). Browser shows valid padlock.
+            </div>
+
+            <div class="tip-box">
+              <strong>Prevention:</strong> Use cert-manager with auto-renewal (renews 30 days before expiry). Implement certificate expiry monitoring alerting at 30 days and 7 days. Maintain a certificate inventory spreadsheet for manually managed certs. Enable HSTS preloading only after ensuring renewal automation is solid.
+            </div>
+          </div>
+
+          <!-- RB-0006 -->
+          <div class="runbook-header">
+            <h3>RB-0006 — S3 / GCS Bucket Accidentally Made Public</h3>
+          </div>
+          <div class="runbook-body">
+            <div class="concept-card">
+              <h4>Symptom</h4>
+              <p>Security scanning tool (AWS Macie, GCP SCC, or third-party CSPM) reports a public bucket. CloudTrail / Cloud Audit Logs show a <code>PutBucketAcl</code> or <code>SetIamPolicy</code> event granting public access. Data may have been exposed.</p>
+            </div>
+
+            <div class="warning-box">
+              <strong>Priority:</strong> This is a SEV1 security incident. Re-lock access FIRST within minutes, then investigate. Do not investigate before locking — every second of public exposure increases risk.
+            </div>
+
+            <h3>Immediate Actions — AWS S3</h3>
+            <pre><code># Step 1: Block all public access at bucket level IMMEDIATELY
+aws s3api put-public-access-block \
+  --bucket &lt;bucket-name&gt; \
+  --public-access-block-configuration \
+    "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
+
+# Step 2: Verify public access is blocked
+aws s3api get-public-access-block --bucket &lt;bucket-name&gt;
+
+# Step 3: Remove any bucket ACL grants to AllUsers or AuthenticatedUsers
+aws s3api put-bucket-acl --bucket &lt;bucket-name&gt; --acl private
+
+# Step 4: Check current bucket policy for public statements
+aws s3api get-bucket-policy --bucket &lt;bucket-name&gt; | python3 -m json.tool
+
+# Step 5: Remove the bucket policy if it grants public access
+aws s3api delete-bucket-policy --bucket &lt;bucket-name&gt;
+
+# Step 6: Check CloudTrail for who made the change and when
+aws cloudtrail lookup-events \
+  --lookup-attributes AttributeKey=ResourceName,AttributeValue=&lt;bucket-name&gt; \
+  --start-time $(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ) \
+  --query 'Events[?contains(EventName, `Bucket`) || contains(EventName, `Acl`) || contains(EventName, `Policy`)]'</code></pre>
+
+            <h3>Immediate Actions — GCP GCS</h3>
+            <pre><code># Step 1: Remove allUsers and allAuthenticatedUsers from bucket IAM policy
+gcloud storage buckets remove-iam-policy-binding gs://&lt;bucket-name&gt; \
+  --member=allUsers --role=roles/storage.objectViewer
+gcloud storage buckets remove-iam-policy-binding gs://&lt;bucket-name&gt; \
+  --member=allAuthenticatedUsers --role=roles/storage.objectViewer
+
+# Step 2: Verify current IAM policy
+gcloud storage buckets get-iam-policy gs://&lt;bucket-name&gt;
+
+# Step 3: Enable uniform bucket-level access to prevent ACL-based public access
+gcloud storage buckets update gs://&lt;bucket-name&gt; --uniform-bucket-level-access
+
+# Step 4: Check Cloud Audit Logs for the change
+gcloud logging read \
+  'protoPayload.methodName=("storage.buckets.setIamPolicy" OR "storage.buckets.update") AND resource.labels.bucket_name="&lt;bucket-name&gt;"' \
+  --limit=20 --format=json</code></pre>
+
+            <div class="success-box">
+              <strong>Verification:</strong> Re-run the public access check. Attempt to access a bucket object via anonymous HTTP request — should return 403. Confirm in CSPM tool that bucket is no longer flagged as public.
+            </div>
+
+            <div class="tip-box">
+              <strong>Prevention:</strong> Enable S3 Block Public Access at the AWS Account level. Use GCP Organization Policy <code>storage.publicAccessPrevention</code>. Implement SCPs / Org Policies to deny any action that grants public access. Enable AWS Macie or GCP SCC to continuously scan for public buckets. Add automated remediation via AWS Config Rules.
+            </div>
+          </div>
+
+          <!-- RB-0007 -->
+          <div class="runbook-header">
+            <h3>RB-0007 — Disk Space Critical</h3>
+          </div>
+          <div class="runbook-body">
+            <div class="concept-card">
+              <h4>Symptom</h4>
+              <p>Alert fires when disk usage exceeds 85% (warning) or 95% (critical). Application may fail to write logs, create temporary files, or write to database WAL. In severe cases the OS becomes unresponsive.</p>
+            </div>
+
+            <h3>Immediate Actions — Identify Space Consumers</h3>
+            <pre><code># Check disk usage across all filesystems
+df -h
+
+# Find the largest directories on the root filesystem
+du -sh /var/log/* 2>/dev/null | sort -hr | head -20
+du -sh /tmp/* 2>/dev/null | sort -hr | head -10
+du -sh /home/* 2>/dev/null | sort -hr | head -10
+
+# Find large files (>100MB) recursively
+find / -xdev -type f -size +100M -exec ls -lh {} \; 2>/dev/null | sort -k5 -hr | head -20
+
+# Check Docker / container storage
+docker system df  # If Docker is installed
+crictl images     # If containerd is the runtime</code></pre>
+
+            <h3>Resolution — Free Up Space</h3>
+            <pre><code># Rotate / compress old logs immediately
+sudo logrotate -f /etc/logrotate.conf
+
+# Remove old rotated logs
+sudo find /var/log -name "*.gz" -mtime +7 -delete
+sudo find /var/log -name "*.log.[0-9]*" -mtime +3 -delete
+
+# Clean up journal logs (keep last 100MB)
+sudo journalctl --vacuum-size=100M
+sudo journalctl --vacuum-time=3d
+
+# Clean apt/yum package cache
+sudo apt-get clean       # Debian/Ubuntu
+sudo yum clean all       # RHEL/CentOS
+
+# Remove Docker unused images, containers, volumes
+docker system prune -f
+docker image prune -a -f
+
+# Remove core dumps if present
+sudo find / -name "core" -type f -delete 2>/dev/null
+
+# Truncate (not delete) an actively-written log file
+sudo truncate -s 0 /var/log/&lt;application&gt;/&lt;large-log-file&gt;.log</code></pre>
+
+            <h3>Resolution — Extend Volume</h3>
+            <pre><code># AWS EBS — extend volume online
+# Step 1: Resize the EBS volume in AWS Console or CLI
+aws ec2 modify-volume --volume-id vol-xxxxxxxx --size &lt;new-size-gb&gt;
+
+# Step 2: Wait for optimizing state
+aws ec2 describe-volumes-modifications --volume-id vol-xxxxxxxx
+
+# Step 3: Grow the partition (for xfs filesystem)
+sudo growpart /dev/nvme0n1 1
+sudo xfs_growfs -d /
+
+# Step 3 alternative (for ext4 filesystem)
+sudo growpart /dev/xvda 1
+sudo resize2fs /dev/xvda1
+
+# GCP Persistent Disk — extend volume online
+gcloud compute disks resize &lt;disk-name&gt; --size=&lt;new-size&gt;GB --zone=&lt;zone&gt;
+# Then resize the filesystem (same growpart / resize2fs commands as above)</code></pre>
+
+            <div class="success-box">
+              <strong>Verification:</strong> Run <code>df -h</code> and confirm disk usage is below 70%. Application logs are being written successfully. No file-system-full errors in <code>/var/log/syslog</code> or <code>journalctl</code>.
+            </div>
+
+            <div class="tip-box">
+              <strong>Prevention:</strong> Alert at 75% (warning) and 85% (critical). Configure <code>logrotate</code> for all application logs. Enable automatic EBS volume extension via AWS CloudWatch alarms + Lambda. For Kubernetes, set <code>emptyDir.sizeLimit</code> and enable ephemeral storage limits on pods to prevent a single pod from exhausting node disk.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

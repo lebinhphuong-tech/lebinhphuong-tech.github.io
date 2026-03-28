@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landing Zone Design | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Multi-cloud &amp; Hybrid</a></li>
+        <li class="breadcrumb-item active">Landing Zone Design</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-clouds me-2"></i>Multi-cloud &amp; Hybrid</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link active" href="landing-zone.html">Landing Zone Design</a>
+            <a class="nav-link" href="hybrid.html">Hybrid Connectivity</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-building me-2"></i>Landing Zone Design</h1>
+
+          <div class="alert-info">
+            <strong>What is a Landing Zone?</strong> A Landing Zone is the foundational account and project structure that enforces governance, security, and operational standards from day zero — before any workload is deployed. It is the starting configuration every team inherits when they begin using the cloud.
+          </div>
+
+          <h2>Landing Zone Principles</h2>
+          <p>A well-designed Landing Zone embodies several non-negotiable principles that prevent governance drift as the organization scales.</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>Governance from Day 0</h4>
+                <p>Security controls, network segmentation, and compliance baselines are deployed before any workload. New accounts are pre-configured, not retroactively hardened.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>Separation of Concerns</h4>
+                <p>Each account or project has a single well-defined purpose. Security tooling, networking, logging, and workloads are isolated from each other by account/project boundaries — not just by IAM.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>Least Privilege by Default</h4>
+                <p>No account or service account starts with administrative access. Permissions are granted narrowly and reviewed periodically. Service Control Policies and Org Policies enforce ceilings that even account admins cannot exceed.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>Infrastructure as Code</h4>
+                <p>The entire Landing Zone — account structure, SCPs, Org Policies, VPCs, IAM roles, logging configuration — is expressed in Terraform and version-controlled in Git. All changes go through CI/CD review.</p>
+              </div>
+            </div>
+          </div>
+
+          <h2>AWS Landing Zone and Control Tower</h2>
+          <p>AWS Control Tower automates the creation of a multi-account Landing Zone built on AWS Organizations. It provisions a set of mandatory accounts, applies Service Control Policies, enables guardrails, and sets up centralized logging and audit trails.</p>
+
+          <h3>Organizational Unit Structure</h3>
+          <pre><code>Root (Management Account)
+├── Security OU
+│   ├── Audit Account          # CloudTrail, Config aggregator, Security Hub master
+│   └── Log Archive Account    # Centralized S3 log bucket (immutable, lifecycle-managed)
+│
+├── Infrastructure OU
+│   ├── Network Account        # Transit Gateway, Direct Connect, DNS
+│   └── Shared Services Account # Active Directory, internal DNS, AMI catalog, Vault
+│
+├── Workloads OU
+│   ├── Production OU
+│   │   ├── prod-app-alpha      # One AWS account per application/team in prod
+│   │   └── prod-app-beta
+│   ├── Staging OU
+│   │   ├── staging-app-alpha
+│   │   └── staging-app-beta
+│   └── Dev OU
+│       ├── dev-app-alpha
+│       └── dev-app-beta
+│
+└── Sandbox OU
+    └── sandbox-engineer-name   # Individual disposable accounts, strict cost limits</code></pre>
+
+          <h3>Service Control Policies (SCPs)</h3>
+          <p>SCPs define permission boundaries at the OU or account level. They cannot grant permissions — they can only restrict the maximum permissions any principal in the attached account may exercise, regardless of IAM policies attached to that principal.</p>
+
+          <div class="tip-box">
+            <strong>SCP Effect:</strong> Even an account's root user is subject to SCPs. This makes SCPs the strongest preventive guardrail in AWS. SCPs are evaluated before IAM policies — a Deny in an SCP cannot be overridden by any IAM Allow.
+          </div>
+
+          <pre><code>// SCP: Deny leaving the AWS Organization
+// Attach at Root OU to prevent any member account from removing itself
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyLeaveOrganization",
+      "Effect": "Deny",
+      "Action": [
+        "organizations:LeaveOrganization"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+
+          <pre><code>// SCP: Require MFA for sensitive IAM actions
+// Denies critical IAM mutations unless the request was made with MFA
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyIAMWithoutMFA",
+      "Effect": "Deny",
+      "Action": [
+        "iam:CreateUser",
+        "iam:DeleteUser",
+        "iam:AttachUserPolicy",
+        "iam:CreateAccessKey",
+        "iam:UpdateAccountPasswordPolicy"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "false"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+          <pre><code>// SCP: Deny creation of resources outside approved regions
+// Prevents accidental deployments to unmonitored regions
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyUnapprovedRegions",
+      "Effect": "Deny",
+      "NotAction": [
+        "iam:*",
+        "organizations:*",
+        "route53:*",
+        "budgets:*",
+        "waf:*",
+        "cloudfront:*",
+        "sts:*",
+        "support:*",
+        "trustedadvisor:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": [
+            "ap-southeast-1",
+            "us-east-1"
+          ]
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+          <h2>GCP Landing Zone and Resource Manager</h2>
+          <p>GCP's resource hierarchy enforces IAM and Org Policy constraints top-down. The hierarchy flows from Organization to Folders to Projects to Resources, with each level inheriting policies from all levels above it.</p>
+
+          <h3>Folder Hierarchy</h3>
+          <pre><code>Organization: example.com
+│
+├── Folder: Security
+│   ├── Project: security-audit-prod          # Security Command Center, log export
+│   └── Project: security-vault-prod          # HashiCorp Vault, KMS keys
+│
+├── Folder: Infrastructure
+│   ├── Project: net-host-prod                # Shared VPC host project (prod)
+│   ├── Project: net-host-nonprod             # Shared VPC host project (non-prod)
+│   └── Project: dns-shared                   # Cloud DNS, forwarding zones
+│
+├── Folder: Workloads
+│   ├── Folder: Production
+│   │   ├── Project: app-alpha-prod           # App Alpha production workloads
+│   │   └── Project: app-beta-prod            # App Beta production workloads
+│   ├── Folder: Staging
+│   │   ├── Project: app-alpha-staging
+│   │   └── Project: app-beta-staging
+│   └── Folder: Development
+│       ├── Project: app-alpha-dev
+│       └── Project: app-beta-dev
+│
+└── Folder: Sandbox
+    └── Project: sandbox-engineer-name        # Individual projects, budget cap applied</code></pre>
+
+          <h3>Organization Policies</h3>
+          <p>Org Policies enforce resource configuration constraints across all projects in a folder or organization. Unlike IAM, Org Policies restrict what can be created/configured, not who can do it.</p>
+
+          <pre><code># Terraform: enforce Org Policies at the organization level
+
+# Disable VM serial port access across the entire org
+resource "google_organization_policy" "disable_serial_port" {
+  org_id     = var.org_id
+  constraint = "compute.disableSerialPortAccess"
+  boolean_policy { enforced = true }
+}
+
+# Require OS Login on all Compute Engine instances
+resource "google_organization_policy" "require_os_login" {
+  org_id     = var.org_id
+  constraint = "compute.requireOsLogin"
+  boolean_policy { enforced = true }
+}
+
+# Restrict which regions resources can be created in
+resource "google_organization_policy" "allowed_regions" {
+  org_id     = var.org_id
+  constraint = "gcp.resourceLocations"
+  list_policy {
+    allow {
+      values = [
+        "in:asia-southeast1-locations",
+        "in:us-east1-locations",
+        "in:global-locations"   # required for global resources (DNS, LB)
+      ]
+    }
+    suggested_value = "asia-southeast1"
+  }
+}
+
+# Restrict domain of GCP identities that can be granted IAM roles
+resource "google_organization_policy" "domain_restriction" {
+  org_id     = var.org_id
+  constraint = "iam.allowedPolicyMemberDomains"
+  list_policy {
+    allow {
+      values = [
+        "C0xxxxxxxxx",   # Your Google Workspace Customer ID
+      ]
+    }
+  }
+}
+
+# Disable creation of default service account keys
+resource "google_organization_policy" "disable_sa_key_creation" {
+  org_id     = var.org_id
+  constraint = "iam.disableServiceAccountKeyCreation"
+  boolean_policy { enforced = true }
+}</code></pre>
+
+          <h2>Account and Project Strategy</h2>
+          <p>The following account types represent distinct functional purposes in a Landing Zone. Each type carries specific baseline controls, IAM permissions, and networking configuration.</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Account Type</th>
+                <th>Purpose</th>
+                <th>Key Controls</th>
+                <th>Who Has Access</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Management / Root</strong></td>
+                <td>AWS Organizations root; billing consolidation; Control Tower management</td>
+                <td>Restrict all workloads via SCP; no direct deployments; MFA enforced on all users</td>
+                <td>Cloud Platform team only</td>
+              </tr>
+              <tr>
+                <td><strong>Audit</strong></td>
+                <td>Centralized security findings aggregation (Security Hub, SCC); read-only Config aggregator</td>
+                <td>Read-only by default; no direct resource creation; immutable findings store</td>
+                <td>Security team (read), SIEM integration (write from other accounts)</td>
+              </tr>
+              <tr>
+                <td><strong>Log Archive</strong></td>
+                <td>Centralized, tamper-evident log storage (CloudTrail, VPC Flow Logs, access logs)</td>
+                <td>S3 Object Lock (WORM); no delete permissions; 7-year retention; access logged</td>
+                <td>Write-only from org member accounts; read by Security/Audit only</td>
+              </tr>
+              <tr>
+                <td><strong>Network (Hub)</strong></td>
+                <td>Transit Gateway (AWS) or Shared VPC host (GCP); Direct Connect / Interconnect termination; centralized NAT</td>
+                <td>Network changes require platform team approval; no workloads deployed here</td>
+                <td>Network/Platform team only</td>
+              </tr>
+              <tr>
+                <td><strong>Shared Services</strong></td>
+                <td>Internal DNS, AD/LDAP, AMI catalog, internal CA, container image registry, Vault</td>
+                <td>Hardened baseline; no internet egress except approved paths; SLA-backed</td>
+                <td>Platform team (admin); all workload accounts (read/use)</td>
+              </tr>
+              <tr>
+                <td><strong>Production</strong></td>
+                <td>Live customer-facing workloads</td>
+                <td>No manual console access (break-glass only); all changes via IaC pipeline; strict SCP</td>
+                <td>Applications (via service accounts/roles); on-call engineers (break-glass)</td>
+              </tr>
+              <tr>
+                <td><strong>Staging</strong></td>
+                <td>Pre-production environment; integration testing; performance testing</td>
+                <td>Mirrors production controls; can allow broader developer read access</td>
+                <td>Development teams (read); CI/CD pipelines (write)</td>
+              </tr>
+              <tr>
+                <td><strong>Development</strong></td>
+                <td>Feature development; unit/integration testing</td>
+                <td>Relaxed cost guardrails; no sensitive data; budget alerts; auto-shutdown schedules</td>
+                <td>Development teams (full access within account boundary)</td>
+              </tr>
+              <tr>
+                <td><strong>Sandbox</strong></td>
+                <td>Individual exploration; proof-of-concept; training</td>
+                <td>Hard budget cap ($100–500/month); auto-nuke after 30 days; no connectivity to prod</td>
+                <td>Individual engineers (full access); no shared resources</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Network Hub-and-Spoke Topology</h2>
+          <p>The hub-and-spoke model centralizes shared network services (VPN, Direct Connect, DNS, NAT) in a network hub account or project. Workload VPCs (spokes) attach to the hub for transitive routing and shared egress.</p>
+
+          <h3>AWS: Transit Gateway Hub-and-Spoke</h3>
+          <pre><code># Terraform: Transit Gateway in the Network (Hub) account
+
+resource "aws_ec2_transit_gateway" "hub" {
+  description                     = "Central TGW for Landing Zone"
+  amazon_side_asn                 = 64512
+  default_route_table_association = "disable"  # Use custom route tables
+  default_route_table_propagation = "disable"
+  auto_accept_shared_attachments  = "enable"
+
+  tags = {
+    Name        = "tgw-hub"
+    Environment = "shared"
+    ManagedBy   = "terraform"
+  }
+}
+
+# Share TGW with spoke accounts via RAM
+resource "aws_ram_resource_share" "tgw_share" {
+  name                      = "tgw-hub-share"
+  allow_external_principals = false
+}
+
+resource "aws_ram_resource_association" "tgw" {
+  resource_arn       = aws_ec2_transit_gateway.hub.arn
+  resource_share_arn = aws_ram_resource_share.tgw_share.arn
+}
+
+resource "aws_ram_principal_association" "org" {
+  principal          = data.aws_organizations_organization.current.arn
+  resource_share_arn = aws_ram_resource_share.tgw_share.arn
+}
+
+# Spoke VPC attachment (runs in each workload account)
+resource "aws_ec2_transit_gateway_vpc_attachment" "spoke" {
+  transit_gateway_id = var.transit_gateway_id   # Shared from hub account
+  vpc_id             = aws_vpc.spoke.id
+  subnet_ids         = aws_subnet.tgw_attachment[*].id
+
+  transit_gateway_default_route_table_association = false
+  transit_gateway_default_route_table_propagation = false
+
+  tags = { Name = "tgw-attach-${var.env}-${var.app_name}" }
+}
+
+# Default route in spoke VPC pointing to TGW (for internet egress via hub NAT)
+resource "aws_route" "default_via_tgw" {
+  route_table_id         = aws_route_table.private.id
+  destination_cidr_block = "0.0.0.0/0"
+  transit_gateway_id     = var.transit_gateway_id
+}</code></pre>
+
+          <h3>GCP: Shared VPC</h3>
+          <pre><code># Terraform: Shared VPC — host project and service project attachment
+
+# Enable Shared VPC in the host project
+resource "google_compute_shared_vpc_host_project" "host" {
+  project = var.host_project_id
+}
+
+# Attach a service project (workload) to the Shared VPC host
+resource "google_compute_shared_vpc_service_project" "app_alpha" {
+  host_project    = var.host_project_id
+  service_project = var.app_alpha_project_id
+
+  depends_on = [google_compute_shared_vpc_host_project.host]
+}
+
+# Grant the service project's SA permission to use specific subnets
+resource "google_compute_subnetwork_iam_member" "app_alpha_subnet" {
+  project    = var.host_project_id
+  region     = "asia-southeast1"
+  subnetwork = google_compute_subnetwork.prod_app.name
+  role       = "roles/compute.networkUser"
+  member     = "serviceAccount:${var.app_alpha_compute_sa}"
+}
+
+# Subnet in the host project — delegated to service projects
+resource "google_compute_subnetwork" "prod_app" {
+  project                  = var.host_project_id
+  name                     = "subnet-prod-app-asia-se1"
+  ip_cidr_range            = "10.10.1.0/24"
+  region                   = "asia-southeast1"
+  network                  = google_compute_network.shared_vpc.id
+  private_ip_google_access = true   # Enable access to Google APIs without internet
+
+  secondary_ip_range {
+    range_name    = "gke-pods"
+    ip_cidr_range = "10.100.0.0/18"
+  }
+  secondary_ip_range {
+    range_name    = "gke-services"
+    ip_cidr_range = "10.200.0.0/20"
+  }
+}</code></pre>
+
+          <h2>Identity: Centralized IdP with SSO</h2>
+          <p>All human access to cloud environments flows through a centralized Identity Provider (IdP). Direct IAM user creation in individual accounts or projects is prohibited by SCP/Org Policy.</p>
+
+          <h3>AWS IAM Identity Center (SSO)</h3>
+          <pre><code># Terraform: AWS IAM Identity Center — permission set and account assignment
+
+# Create a permission set (what a user can do in an account)
+resource "aws_ssoadmin_permission_set" "developer_readonly" {
+  name             = "DeveloperReadOnly"
+  description      = "Read-only access to developer resources"
+  instance_arn     = local.sso_instance_arn
+  session_duration = "PT8H"   # 8-hour session
+}
+
+resource "aws_ssoadmin_managed_policy_attachment" "ro_policy" {
+  instance_arn       = local.sso_instance_arn
+  permission_set_arn = aws_ssoadmin_permission_set.developer_readonly.arn
+  managed_policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+}
+
+# Assign the permission set to an IdP group in a specific account
+resource "aws_ssoadmin_account_assignment" "dev_team_staging" {
+  instance_arn       = local.sso_instance_arn
+  permission_set_arn = aws_ssoadmin_permission_set.developer_readonly.arn
+  principal_id       = data.aws_identitystore_group.dev_team.group_id
+  principal_type     = "GROUP"
+  target_id          = var.staging_account_id
+  target_type        = "AWS_ACCOUNT"
+}
+
+# SAML 2.0 external IdP integration (e.g., Okta, Azure AD)
+resource "aws_ssoadmin_identity_provider_configuration" "okta" {
+  instance_arn                   = local.sso_instance_arn
+  status                         = "ENABLED"
+  identity_provider_type         = "EXTERNAL"
+  federated_identity_provider {
+    issuer_url     = "https://your-org.okta.com"
+    saml_metadata  = file("okta-metadata.xml")
+  }
+}</code></pre>
+
+          <h3>GCP Cloud Identity and SAML/OIDC Federation</h3>
+          <pre><code># Terraform: GCP Workforce Identity Federation (external IdP → GCP access)
+# Enables users from Okta/Azure AD to log in to GCP without Google accounts
+
+resource "google_iam_workforce_pool" "corp_pool" {
+  workforce_pool_id = "corp-workforce-pool"
+  parent            = "organizations/${var.org_id}"
+  location          = "global"
+  display_name      = "Corporate Workforce Pool"
+  description       = "SAML federation with corporate Okta IdP"
+  session_duration  = "28800s"   # 8 hours
+}
+
+resource "google_iam_workforce_pool_provider" "okta_saml" {
+  workforce_pool_id = google_iam_workforce_pool.corp_pool.workforce_pool_id
+  location          = "global"
+  provider_id       = "okta-saml-provider"
+  display_name      = "Okta SAML"
+
+  attribute_mapping = {
+    "google.subject"       = "assertion.subject"
+    "google.groups"        = "assertion.attributes.groups"
+    "google.display_name"  = "assertion.attributes.displayName"
+    "attribute.department" = "assertion.attributes.department"
+  }
+
+  # Only allow users from specific Okta groups to federate
+  attribute_condition = "'cloud-gcp-users' in google.groups"
+
+  saml {
+    idp_metadata_xml = file("okta-saml-metadata.xml")
+  }
+}
+
+# Bind a workforce identity to a GCP IAM role
+resource "google_folder_iam_member" "dev_team_viewer" {
+  folder = var.workloads_folder_id
+  role   = "roles/viewer"
+  member = "principalSet://iam.googleapis.com/${google_iam_workforce_pool.corp_pool.name}/group/cloud-developers"
+}</code></pre>
+
+          <h2>Security Baseline</h2>
+          <p>The security baseline is deployed automatically to every new account or project provisioned by the Landing Zone pipeline. It provides the minimum detective and preventive controls required before any workload can be onboarded.</p>
+
+          <h3>AWS Security Baseline</h3>
+          <pre><code># Terraform: baseline security services enabled in every member account
+
+# Enable CloudTrail — management and data event logging
+resource "aws_cloudtrail" "baseline" {
+  name                          = "org-baseline-trail"
+  s3_bucket_name                = var.log_archive_bucket   # In Log Archive account
+  include_global_service_events = true
+  is_multi_region_trail         = true
+  enable_log_file_validation    = true   # Detect tampering via digest files
+  cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.trail.arn}:*"
+  cloud_watch_logs_role_arn     = aws_iam_role.trail_cw.arn
+
+  event_selector {
+    read_write_type           = "All"
+    include_management_events = true
+    data_resource {
+      type   = "AWS::S3::Object"
+      values = ["arn:aws:s3:::"]   # All S3 data events
+    }
+  }
+
+  tags = { ManagedBy = "terraform"; Classification = "security-baseline" }
+}
+
+# Enable AWS Config — resource configuration change tracking
+resource "aws_config_configuration_recorder" "baseline" {
+  name     = "baseline-config-recorder"
+  role_arn = aws_iam_role.config.arn
+  recording_group {
+    all_supported                 = true
+    include_global_resource_types = true
+  }
+}
+
+# Enable Security Hub — aggregates GuardDuty, Config, Inspector findings
+resource "aws_securityhub_account" "baseline" {}
+
+resource "aws_securityhub_standards_subscription" "cis" {
+  standards_arn = "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.4.0"
+  depends_on    = [aws_securityhub_account.baseline]
+}
+
+# Enable GuardDuty — threat detection (VPC Flow Logs, DNS, CloudTrail analysis)
+resource "aws_guardduty_detector" "baseline" {
+  enable = true
+  datasources {
+    s3_logs          { enable = true }
+    kubernetes { audit_logs { enable = true } }
+    malware_protection { scan_ec2_instance_with_findings { ebs_volumes { enable = true } } }
+  }
+}</code></pre>
+
+          <h3>GCP Security Baseline</h3>
+          <pre><code># Terraform: GCP security services enabled for every project
+
+# Enable Cloud Audit Logs (Data Access) — beyond default Admin Activity logs
+resource "google_project_iam_audit_config" "baseline" {
+  project = var.project_id
+  service = "allServices"
+
+  audit_log_config { log_type = "ADMIN_READ" }
+  audit_log_config { log_type = "DATA_READ" }
+  audit_log_config { log_type = "DATA_WRITE" }
+}
+
+# Export audit logs to centralized log bucket in Security project
+resource "google_logging_project_sink" "audit_export" {
+  project     = var.project_id
+  name        = "export-audit-to-security"
+  destination = "storage.googleapis.com/${var.log_archive_bucket}"
+  filter      = "logName:cloudaudit.googleapis.com"
+
+  unique_writer_identity = true
+}
+
+# Enable Security Command Center Standard tier at org level (run once at org)
+resource "google_scc_organization_custom_module" "cis_baseline" {
+  organization = var.org_id
+  display_name = "CIS GCP Benchmark"
+  enablement_state = "ENABLED"
+  module_config { severity = "HIGH" }
+}
+
+# VPC Service Controls perimeter (prevents data exfiltration from sensitive projects)
+resource "google_access_context_manager_service_perimeter" "prod_perimeter" {
+  parent = "accessPolicies/${var.access_policy_id}"
+  name   = "accessPolicies/${var.access_policy_id}/servicePerimeters/prod-perimeter"
+  title  = "Production Data Perimeter"
+  status {
+    resources           = ["projects/${var.prod_project_number}"]
+    restricted_services = [
+      "bigquery.googleapis.com",
+      "storage.googleapis.com",
+      "cloudsql.googleapis.com"
+    ]
+    ingress_policies {
+      ingress_from {
+        sources { access_level = google_access_context_manager_access_level.internal_only.name }
+        identities = ["serviceAccount:${var.cicd_sa}"]
+      }
+      ingress_to {
+        resources = ["*"]
+        operations { service_name = "storage.googleapis.com" method_selectors { method = "*" } }
+      }
+    }
+  }
+}</code></pre>
+
+          <h2>Terraform Landing Zone Module Structure</h2>
+          <p>The Landing Zone is expressed as a set of Terraform modules that compose together. A root module provisions all accounts and applies baseline configuration to each. Teams never directly provision accounts — they submit a request that triggers the IaC pipeline.</p>
+
+          <pre><code"># Landing Zone Terraform module layout (AWS example)
+
+landing-zone/
+├── main.tf                    # Root module: calls all sub-modules
+├── variables.tf               # Top-level inputs (org_id, log_bucket, etc.)
+├── outputs.tf                 # Account IDs, TGW ID, SSO instance ARN
+├── terraform.tfvars            # Environment-specific values (not secrets)
+│
+├── modules/
+│   ├── aws-account/            # Provision a member account via Organizations
+│   │   ├── main.tf             # aws_organizations_account resource
+│   │   ├── variables.tf        # account_name, email, ou_id, tags
+│   │   └── outputs.tf          # account_id
+│   │
+│   ├── aws-account-baseline/   # Apply security baseline to a member account
+│   │   ├── main.tf             # CloudTrail, Config, GuardDuty, SecurityHub
+│   │   ├── iam.tf              # Baseline IAM roles (ReadOnly, Admin, Break-glass)
+│   │   └── variables.tf        # account_id, log_archive_bucket, region
+│   │
+│   ├── aws-scp/                # SCP definitions and OU attachments
+│   │   ├── deny_regions.json
+│   │   ├── deny_leave_org.json
+│   │   ├── require_mfa.json
+│   │   └── main.tf             # aws_organizations_policy + attachment resources
+│   │
+│   ├── aws-network-hub/        # Transit Gateway, Route 53 Resolver, centralized NAT
+│   │   ├── main.tf
+│   │   ├── tgw.tf
+│   │   └── dns.tf
+│   │
+│   └── aws-sso/                # IAM Identity Center permission sets and assignments
+│       ├── main.tf
+│       └── assignments.tf
+│
+└── environments/
+    └── prod/
+        └── terraform.tfvars    # org_id, root_email, region, approved_accounts[]</code></pre>
+
+          <pre><code># modules/aws-account/main.tf — provision a member account
+
+resource "aws_organizations_account" "this" {
+  name      = var.account_name
+  email     = var.account_email
+  parent_id = var.ou_id
+
+  # Prevent Terraform from closing the account on destroy
+  # (account closure is a deliberate, manual process)
+  close_on_deletion = false
+
+  tags = merge(var.common_tags, {
+    Name        = var.account_name
+    AccountType = var.account_type
+  })
+
+  lifecycle {
+    # Prevent accidental deletion of production accounts
+    prevent_destroy = var.prevent_destroy
+    ignore_changes  = [email]  # Email cannot be changed post-creation
+  }
+}
+
+# Immediately apply the baseline after account creation
+module "baseline" {
+  source = "../aws-account-baseline"
+
+  providers = {
+    aws = aws.member  # Provider aliased to assume OrganizationAccountAccessRole in new account
+  }
+
+  account_id          = aws_organizations_account.this.id
+  log_archive_bucket  = var.log_archive_bucket
+  region              = var.primary_region
+  security_hub_master = var.security_hub_master_account_id
+}</code></pre>
+
+          <h2>Guardrails: Preventive vs Detective</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Mechanism</th>
+                <th>AWS Implementation</th>
+                <th>GCP Implementation</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Preventive</strong></td>
+                <td>Blocks the action before it happens. Cannot be bypassed by account-level principals.</td>
+                <td>Service Control Policies (SCPs)</td>
+                <td>Organization Policies</td>
+                <td>Deny creation of public S3 buckets; deny disabling of encryption at rest; deny use of non-approved AMIs</td>
+              </tr>
+              <tr>
+                <td><strong>Detective</strong></td>
+                <td>Detects and alerts on non-compliant configurations after the fact. May auto-remediate.</td>
+                <td>AWS Config Rules + Auto Remediation via Systems Manager or Lambda</td>
+                <td>Security Command Center (SCC) findings + Cloud Asset Inventory queries</td>
+                <td>Alert when an S3 bucket ACL is changed to public; flag when a firewall rule opens port 22 to 0.0.0.0/0</td>
+              </tr>
+              <tr>
+                <td><strong>Responsive</strong></td>
+                <td>Automatic remediation of detected violations, or human-in-the-loop escalation workflow.</td>
+                <td>Config Auto Remediation SSM Document; Security Hub → EventBridge → Lambda</td>
+                <td>SCC → Pub/Sub → Cloud Function → remediation action</td>
+                <td>Auto-revoke an overly permissive IAM role; auto-quarantine a compromised instance; auto-rotate exposed credentials</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="tip-box">
+            <strong>Design principle:</strong> Maximize preventive guardrails — they are always active and require no human response. Detective guardrails are a safety net for gaps not addressed preventively. Treat detective findings as signals to promote controls to the preventive layer over time.
+          </div>
+
+          <div class="success-box">
+            <strong>Next:</strong> <a href="hybrid.html" style="color: var(--primary-color);">Hybrid Connectivity</a> — Configure VPN, Direct Connect, Cloud Interconnect, cross-cloud BGP routing, and DNS resolution to connect this Landing Zone to on-premises and to a second cloud provider.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

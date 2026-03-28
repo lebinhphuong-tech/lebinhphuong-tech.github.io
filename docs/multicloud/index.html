@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-cloud & Hybrid Overview | Lê Bình Phương</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; }
+    tr:nth-child(even) { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Multi-cloud &amp; Hybrid</a></li>
+        <li class="breadcrumb-item active">Overview</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-clouds me-2"></i>Multi-cloud &amp; Hybrid</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Overview</a>
+            <a class="nav-link" href="landing-zone.html">Landing Zone Design</a>
+            <a class="nav-link" href="hybrid.html">Hybrid Connectivity</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-clouds me-2"></i>Multi-cloud &amp; Hybrid Infrastructure</h1>
+
+          <div class="alert-info">
+            <strong>Scope:</strong> This section covers multi-cloud strategy, hybrid connectivity patterns, landing zone governance, and the tooling required to operate workloads consistently across AWS, GCP, and on-premises environments.
+          </div>
+
+          <h2>Definitions and Differences</h2>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>Multi-Cloud</h4>
+                <p>The deliberate use of cloud services from two or more independent public cloud providers (e.g., AWS and GCP) to run distinct workloads or replicate workloads for resilience. Each cloud operates independently — there is no required network connectivity between them, though cross-cloud integration is common.</p>
+                <p><strong>Key trait:</strong> Multiple public cloud providers, same or different workloads per provider.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="concept-card">
+                <h4>Hybrid Cloud</h4>
+                <p>An architecture that integrates at least one public cloud environment with on-premises infrastructure (private cloud or traditional data center) through persistent, private network connectivity. Applications and data can flow between environments as a unified operational model.</p>
+                <p><strong>Key trait:</strong> On-premises + public cloud with deep network and identity integration.</p>
+              </div>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Dimension</th>
+                <th>Multi-Cloud</th>
+                <th>Hybrid Cloud</th>
+                <th>Both</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Primary goal</strong></td>
+                <td>Best-of-breed services, resilience, vendor independence</td>
+                <td>Integrate on-premises legacy with cloud scalability</td>
+                <td>Data sovereignty, disaster recovery</td>
+              </tr>
+              <tr>
+                <td><strong>Connectivity requirement</strong></td>
+                <td>Optional (workloads may be fully independent)</td>
+                <td>Mandatory (dedicated link or VPN)</td>
+                <td>Required for data federation scenarios</td>
+              </tr>
+              <tr>
+                <td><strong>Primary driver</strong></td>
+                <td>Vendor lock-in avoidance, regulatory</td>
+                <td>Legacy modernization, compliance, burst capacity</td>
+                <td>M&amp;A integration, edge computing</td>
+              </tr>
+              <tr>
+                <td><strong>Operational complexity</strong></td>
+                <td>High (multiple control planes)</td>
+                <td>High (network, identity bridging)</td>
+                <td>Very High</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Why Multi-Cloud?</h2>
+          <p>Enterprises adopt multi-cloud for business, technical, and regulatory reasons — rarely for a single motive.</p>
+
+          <div class="concept-card">
+            <h4>Avoid Vendor Lock-in</h4>
+            <p>Dependence on a single provider's proprietary services (e.g., AWS DynamoDB, GCP BigQuery) makes migration expensive and slow. A multi-cloud strategy encourages use of portable standards (Kubernetes, Terraform, open data formats) and preserves negotiation leverage at contract renewal.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Best-of-Breed Services</h4>
+            <p>No single cloud leads in every domain. GCP's BigQuery and Vertex AI are widely regarded as best-in-class for analytics and ML. AWS leads in breadth of services and global infrastructure maturity. Azure dominates in hybrid Active Directory integration and Microsoft workload licensing. Multi-cloud enables teams to use the optimal service for each workload.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Data Residency and Compliance</h4>
+            <p>Regulations such as GDPR (EU), PDPA (Thailand/Singapore), and financial sector requirements mandate that data remain within specific geographic or political boundaries. Some countries are served by only one major cloud provider's local region — operating on a second cloud can satisfy residency requirements that a single provider cannot.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>M&amp;A Integration</h4>
+            <p>Acquisitions frequently result in inheriting a different cloud provider's estate. Rather than forcing costly re-platforming, organizations operate the acquired company on its existing cloud while establishing governance bridges (federated identity, shared observability, cross-cloud networking) as an interim state during integration.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Resilience Against Provider Outages</h4>
+            <p>A major cloud provider outage affecting an entire region or global control plane (as seen in historical incidents) is mitigated when critical workloads are distributed across independent providers with separate failure domains. Active-active multi-cloud deployments can maintain availability during such events.</p>
+          </div>
+
+          <h2>Multi-Cloud Challenges</h2>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="warning-box">
+                <strong>Operational Complexity</strong>
+                <p class="mt-2 mb-0">Each cloud provider has distinct APIs, CLIs, IAM models, networking primitives, and console UIs. Platform teams must maintain expertise and tooling across multiple stacks. Incident response procedures, runbooks, and on-call rotations all multiply in scope.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="warning-box">
+                <strong>Skills and Staffing</strong>
+                <p class="mt-2 mb-0">Deep expertise in AWS and GCP simultaneously is rare. Training, certification, and hiring costs increase. Team silos can form around cloud providers, creating knowledge bottlenecks and inconsistent practices.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="warning-box">
+                <strong>Networking Complexity</strong>
+                <p class="mt-2 mb-0">Cross-cloud traffic flows over the public internet unless dedicated interconnects are established. IP address management, BGP routing, DNS resolution, and firewall rules must be coordinated across entirely different network control planes.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="warning-box">
+                <strong>Security Consistency</strong>
+                <p class="mt-2 mb-0">Applying uniform security policies (IAM least privilege, encryption standards, network micro-segmentation, vulnerability scanning) across AWS and GCP requires abstraction layers and consolidated tooling. A gap in one provider's posture creates risk for the whole estate.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="warning-box">
+                <strong>Cost Visibility</strong>
+                <p class="mt-2 mb-0">Each provider has a separate billing system, cost taxonomy, and discount model (Reserved Instances, Committed Use Discounts). Achieving a unified FinOps view requires aggregation tooling (e.g., CloudHealth, Apptio Cloudability, or self-built via billing exports to BigQuery/S3).</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="warning-box">
+                <strong>Data Egress Costs</strong>
+                <p class="mt-2 mb-0">Transferring large data sets between cloud providers generates significant egress charges. Architectures must minimize cross-cloud data movement, keeping compute close to data and using replication only where justified by availability or compliance requirements.</p>
+              </div>
+            </div>
+          </div>
+
+          <h2>Multi-Cloud Maturity Model</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Characteristics</th>
+                <th>Governance</th>
+                <th>Tooling</th>
+                <th>Typical Org</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1 — Cloud-First</strong></td>
+                <td>Single primary cloud; all new workloads go to cloud. On-premises being drained.</td>
+                <td>Basic SCPs / Org Policies per provider. Manual compliance checks.</td>
+                <td>Cloud-native CLI and console. Early Terraform adoption.</td>
+                <td>SMB or early-stage enterprise with one strategic cloud vendor</td>
+              </tr>
+              <tr>
+                <td><strong>2 — Multi-Cloud Aware</strong></td>
+                <td>Two or more clouds in production. Workloads segregated by cloud. Minimal cross-cloud integration.</td>
+                <td>Landing zones defined per cloud. Separate IAM and policy management.</td>
+                <td>Terraform for all clouds. Basic unified monitoring (Datadog or Grafana). Cloud SSO per provider.</td>
+                <td>Enterprise post-acquisition, or teams adopting GCP ML alongside AWS production</td>
+              </tr>
+              <tr>
+                <td><strong>3 — Multi-Cloud Optimized</strong></td>
+                <td>Workload placement is policy-driven. Cross-cloud networking and identity are federated. FinOps is unified.</td>
+                <td>Policy-as-code (OPA/Sentinel). Unified SCP + Org Policy framework. Automated compliance scanning across providers.</td>
+                <td>Platform engineering team. GitOps (ArgoCD). Anthos or Arc for Kubernetes. HashiCorp Vault for secrets. Unified cost dashboard.</td>
+                <td>Large enterprise with a dedicated Platform Engineering or CCoE function</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Workload Placement Decision Framework</h2>
+          <p>Deciding which cloud to place a workload on requires evaluating multiple factors systematically. Apply the following criteria as a scoring model or decision gate.</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Criterion</th>
+                <th>Prefer AWS</th>
+                <th>Prefer GCP</th>
+                <th>Either / Neutral</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ML / AI workload</strong></td>
+                <td>SageMaker (managed MLOps, broad model support)</td>
+                <td>Vertex AI, TPU access, BigQuery ML (tighter data integration)</td>
+                <td>Custom model on GPU VMs</td>
+              </tr>
+              <tr>
+                <td><strong>Analytics / Data warehouse</strong></td>
+                <td>Redshift + Glue + Lake Formation</td>
+                <td>BigQuery (serverless, petabyte-scale, lowest query latency)</td>
+                <td>Open-source (Spark on either)</td>
+              </tr>
+              <tr>
+                <td><strong>Kubernetes at scale</strong></td>
+                <td>EKS (mature managed control plane, broad add-on ecosystem)</td>
+                <td>GKE Autopilot (lowest ops overhead, Autopilot mode)</td>
+                <td>Either with Anthos/Arc unification</td>
+              </tr>
+              <tr>
+                <td><strong>Microsoft workloads (AD, SQL Server)</strong></td>
+                <td>Strong (native AD integration, RDS for SQL Server)</td>
+                <td>Possible but not optimal</td>
+                <td>Azure would be preferred over both</td>
+              </tr>
+              <tr>
+                <td><strong>Existing team expertise</strong></td>
+                <td>Team holds AWS certifications / significant AWS experience</td>
+                <td>Team holds GCP certifications / GCP background</td>
+                <td>Platform-agnostic Terraform / Kubernetes skills</td>
+              </tr>
+              <tr>
+                <td><strong>Data residency (SEA/APAC)</strong></td>
+                <td>ap-southeast-1 (Singapore), ap-southeast-2 (Sydney), local zones</td>
+                <td>asia-southeast1 (Singapore), asia-southeast2 (Jakarta)</td>
+                <td>Evaluate specific country availability per provider</td>
+              </tr>
+              <tr>
+                <td><strong>Serverless / Event-driven</strong></td>
+                <td>Lambda + SQS + EventBridge (mature, wide trigger support)</td>
+                <td>Cloud Run + Pub/Sub + Eventarc (simpler scaling model)</td>
+                <td>Both are production-grade</td>
+              </tr>
+              <tr>
+                <td><strong>Cost at scale</strong></td>
+                <td>Savings Plans + Spot flexible; better for diverse instance mix</td>
+                <td>CUDs + Spot VMs; compute pricing often lower for sustained workloads</td>
+                <td>Negotiate enterprise agreements on both</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Common Multi-Cloud Patterns</h2>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Active-Active</h4>
+                <p>Production traffic is served simultaneously from two cloud providers. A global load balancer (e.g., Cloudflare, AWS Route 53 with latency routing, or GCP Cloud Load Balancing) routes users to the nearest healthy endpoint. Both clouds carry live traffic and are continuously synchronized. Requires distributed data strategy (CRDTs, multi-master databases, or event streaming with Kafka/Pub-Sub).</p>
+                <p><strong>Use case:</strong> Mission-critical SaaS with SLA &gt; 99.99%, global user base.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Active-Passive</h4>
+                <p>Primary cloud handles all production traffic. Secondary cloud maintains a warm standby (replicated data, pre-provisioned infrastructure in a halted or minimal state). On failure, a failover procedure (automated or manual) promotes the secondary cloud. RTO is typically minutes; RPO depends on replication lag.</p>
+                <p><strong>Use case:</strong> Disaster recovery, business continuity for tier-1 applications where active-active cost is not justified.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Cloud Bursting</h4>
+                <p>Normal capacity runs on primary infrastructure (on-premises or primary cloud). During demand spikes, overflow workloads burst to a secondary cloud. Requires pre-provisioned network connectivity and identical container images or AMIs on the burst target. Kubernetes with cluster federation or KEDA-based autoscaling can orchestrate cross-cloud bursting.</p>
+                <p><strong>Use case:</strong> Batch processing, seasonal e-commerce peaks, financial end-of-day processing.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="strategy-card">
+                <h4>Data Federation</h4>
+                <p>Data is distributed across clouds or between cloud and on-premises. Query engines (BigQuery Omni, AWS Athena Federated Query, Starburst, Trino) access data in place without movement. Data catalog (DataPlex, AWS Glue Data Catalog) provides unified metadata. Minimizes egress costs while enabling cross-cloud analytics.</p>
+                <p><strong>Use case:</strong> Analytics on data that must remain in a specific cloud due to compliance, but needs to be joined with data from another provider.</p>
+              </div>
+            </div>
+          </div>
+
+          <h2>Tool Ecosystem</h2>
+          <p>A consistent toolchain across cloud providers reduces cognitive overhead and enforces standard practices.</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Category</th>
+                <th>Role in Multi-Cloud</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Terraform</strong></td>
+                <td>Infrastructure as Code</td>
+                <td>Single IaC language for AWS, GCP, and on-premises resources. Provider plugins abstract cloud-specific APIs. State management via S3/GCS backend enables shared infrastructure state across teams.</td>
+              </tr>
+              <tr>
+                <td><strong>Google Anthos / Azure Arc</strong></td>
+                <td>Kubernetes Control Plane</td>
+                <td>Extends GKE (Anthos) or Azure AKS (Arc) management to clusters running on AWS, on-premises, or edge. Unified policy, RBAC, and service mesh configuration across all registered clusters.</td>
+              </tr>
+              <tr>
+                <td><strong>HashiCorp Vault</strong></td>
+                <td>Secrets Management</td>
+                <td>Central secrets broker that speaks to both AWS IAM (dynamic credentials via AWS Secrets Engine) and GCP IAM (Service Account keys or Workload Identity). Applications retrieve short-lived credentials without storing secrets in config.</td>
+              </tr>
+              <tr>
+                <td><strong>Datadog / Grafana</strong></td>
+                <td>Observability</td>
+                <td>Unified dashboards ingesting metrics, logs, and traces from AWS CloudWatch, GCP Cloud Monitoring, and Kubernetes. Single pane of glass for cross-cloud SLO tracking and incident correlation.</td>
+              </tr>
+              <tr>
+                <td><strong>Open Policy Agent (OPA)</strong></td>
+                <td>Policy as Code</td>
+                <td>Language-agnostic policy engine. Enforce Terraform plan policies (via Conftest), Kubernetes admission (via Gatekeeper), and API authorization across environments with a single Rego policy library.</td>
+              </tr>
+              <tr>
+                <td><strong>Crossplane</strong></td>
+                <td>Cloud Resource Composition</td>
+                <td>Kubernetes-native control plane that provisions AWS and GCP resources via Custom Resource Definitions (CRDs). Teams provision cloud infrastructure through the same GitOps pipeline used for application deployment.</td>
+              </tr>
+              <tr>
+                <td><strong>SOPS / External Secrets Operator</strong></td>
+                <td>Secrets Injection</td>
+                <td>SOPS encrypts secrets in Git using AWS KMS or GCP KMS. External Secrets Operator syncs secrets from AWS Secrets Manager and GCP Secret Manager into Kubernetes Secrets at runtime.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Identity Federation: AWS IAM and GCP Workload Identity</h2>
+          <p>Federated identity eliminates long-lived credential sharing between cloud environments. AWS and GCP both support OIDC-based Workload Identity Federation.</p>
+
+          <h3>Concept: AWS to GCP Keyless Authentication</h3>
+          <p>A workload running on AWS (e.g., an EC2 instance, ECS task, or Lambda) needs to call a GCP API without storing a GCP Service Account key. The flow uses OIDC tokens issued by AWS STS and trusted by GCP's Workload Identity Federation.</p>
+
+          <div class="alert-info">
+            <strong>OIDC Token Flow (AWS workload calling GCP):</strong>
+            <ol class="mb-0 mt-2">
+              <li>AWS workload calls <code>sts:AssumeRoleWithWebIdentity</code> (or retrieves an OIDC token from the EC2 metadata endpoint).</li>
+              <li>AWS STS issues a short-lived JWT (OIDC token) signed by the AWS identity provider.</li>
+              <li>Workload exchanges the AWS OIDC token with GCP's Security Token Service endpoint: <code>https://sts.googleapis.com/v1/token</code>.</li>
+              <li>GCP STS validates the token against the trusted AWS OIDC issuer configured in the Workload Identity Pool.</li>
+              <li>GCP returns a short-lived access token (federated identity credential) scoped to the bound GCP Service Account.</li>
+              <li>Workload uses the federated token to call GCP APIs. No GCP Service Account key was created or stored.</li>
+            </ol>
+          </div>
+
+          <h3>Terraform: GCP Workload Identity Pool for AWS</h3>
+          <pre><code># Create a Workload Identity Pool
+resource "google_iam_workload_identity_pool" "aws_pool" {
+  project                   = var.gcp_project_id
+  workload_identity_pool_id = "aws-workload-pool"
+  display_name              = "AWS Workload Identity Pool"
+  description               = "Pool for AWS workloads to authenticate to GCP"
+}
+
+# Add AWS as a trusted OIDC provider within the pool
+resource "google_iam_workload_identity_pool_provider" "aws_provider" {
+  project                            = var.gcp_project_id
+  workload_identity_pool_id          = google_iam_workload_identity_pool.aws_pool.workload_identity_pool_id
+  workload_identity_pool_provider_id = "aws-provider"
+  display_name                       = "AWS Provider"
+
+  aws {
+    account_id = var.aws_account_id   # Trust tokens from this AWS account only
+  }
+
+  # Attribute mapping: map AWS caller identity to GCP subject
+  attribute_mapping = {
+    "google.subject"        = "assertion.arn"
+    "attribute.aws_account" = "assertion.account"
+    "attribute.aws_role"    = "assertion.arn.contains('assumed-role') ? assertion.arn.extract('assumed-role/{role}/') : ''"
+  }
+
+  # Condition: only allow tokens from a specific AWS role
+  attribute_condition = "attribute.aws_role == 'my-app-role'"
+}
+
+# Bind the GCP Service Account to identities from the pool
+resource "google_service_account_iam_member" "workload_binding" {
+  service_account_id = google_service_account.app_sa.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.aws_pool.name}/attribute.aws_role/my-app-role"
+}
+
+# The GCP Service Account used by the AWS workload
+resource "google_service_account" "app_sa" {
+  project      = var.gcp_project_id
+  account_id   = "aws-app-service-account"
+  display_name = "Service Account for AWS Application"
+}
+
+# Grant the SA only the permissions it needs (least privilege)
+resource "google_project_iam_member" "app_sa_storage" {
+  project = var.gcp_project_id
+  role    = "roles/storage.objectViewer"
+  member  = "serviceAccount:${google_service_account.app_sa.email}"
+}</code></pre>
+
+          <h3>GCP to AWS: Using OIDC via GCP Workload Identity</h3>
+          <pre><code># On the AWS side: create an OIDC identity provider for GCP
+resource "aws_iam_openid_connect_provider" "gcp" {
+  url             = "https://accounts.google.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["08745487e891c19e3078c1f2a07e452950ef36f6"]
+}
+
+# IAM role trusted by the GCP OIDC provider
+resource "aws_iam_role" "gcp_workload_role" {
+  name = "gcp-workload-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Federated = aws_iam_openid_connect_provider.gcp.arn }
+      Action    = "sts:AssumeRoleWithWebIdentity"
+      Condition = {
+        StringEquals = {
+          "accounts.google.com:sub" = "SERVICE_ACCOUNT_UNIQUE_ID"
+        }
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "gcp_workload_s3" {
+  role       = aws_iam_role.gcp_workload_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+}</code></pre>
+
+          <div class="success-box">
+            <strong>Continue reading:</strong>
+            <ul class="mb-0 mt-2">
+              <li><a href="landing-zone.html" style="color: var(--primary-color);">Landing Zone Design</a> — Account/project structure, guardrails, Terraform modules for multi-account AWS and GCP</li>
+              <li><a href="hybrid.html" style="color: var(--primary-color);">Hybrid Connectivity</a> — VPN, Direct Connect, Cloud Interconnect, cross-cloud BGP, DNS resolution, AWS Outposts, Anthos</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

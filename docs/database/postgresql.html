@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PostgreSQL | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Database & Storage</a></li>
+        <li class="breadcrumb-item active">PostgreSQL</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-database me-2"></i>Database & Storage</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link active" href="postgresql.html">PostgreSQL</a>
+            <a class="nav-link" href="redis.html">Redis & Caching</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-database me-2"></i>PostgreSQL</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>PostgreSQL</strong> is the world's most advanced open-source relational database. This guide covers
+            architecture internals, performance tuning, high availability with Patroni, connection pooling, backup
+            strategies, and running PostgreSQL on Kubernetes with CloudNativePG.
+          </div>
+
+          <!-- ==================== ARCHITECTURE ==================== -->
+          <h2>Architecture Overview</h2>
+
+          <h3>Process Model</h3>
+          <p>
+            PostgreSQL uses a multi-process model rather than multi-threading. Each client connection spawns a dedicated
+            backend process. The postmaster is the parent daemon that listens for connections and forks new backends.
+            Key background processes include:
+          </p>
+          <ul>
+            <li><strong>postmaster</strong> — listener, process manager, crash recovery coordinator</li>
+            <li><strong>bgwriter</strong> — proactively writes dirty shared_buffers pages to disk to reduce checkpoint pressure</li>
+            <li><strong>checkpointer</strong> — performs periodic checkpoints, writing all dirty pages and advancing the WAL checkpoint LSN</li>
+            <li><strong>walwriter</strong> — flushes WAL buffers to disk, ensuring durability</li>
+            <li><strong>autovacuum launcher + workers</strong> — reclaims dead tuples and updates visibility maps</li>
+            <li><strong>stats collector</strong> — collects activity and table-level statistics consumed by <code>pg_stat_*</code> views</li>
+            <li><strong>wal sender / wal receiver</strong> — stream WAL to standby replicas</li>
+          </ul>
+
+          <h3>Shared Memory</h3>
+          <p>
+            All backend processes share a single region of shared memory. The most important component is
+            <strong>shared_buffers</strong> — the in-memory page cache for data blocks. Other regions include the
+            WAL buffers (<code>wal_buffers</code>), lock table, and process arrays. Data flows: disk → shared_buffers → backend process local memory → query output.
+          </p>
+
+          <h3>Write-Ahead Log (WAL)</h3>
+          <p>
+            Every change is first written to the WAL (a sequential log of change records) before the actual data pages
+            are modified. This ensures durability — even if the server crashes mid-write, the WAL can replay changes
+            during recovery. WAL is also the foundation of streaming replication, logical replication, and PITR.
+          </p>
+
+          <!-- ==================== PERFORMANCE TUNING ==================== -->
+          <h2>Performance Tuning: postgresql.conf</h2>
+
+          <p>
+            The following configuration is tuned for a dedicated 32 GB RAM OLTP server. Adjust proportionally for
+            your hardware profile.
+          </p>
+
+<pre><code># ============================================================
+# postgresql.conf — Production OLTP Tuning (32 GB RAM server)
+# ============================================================
+
+# ---- Memory ----
+shared_buffers = 8GB              # ~25% of RAM; primary data page cache
+work_mem = 64MB                   # Per sort/hash operation per query node; can multiply with parallel workers
+maintenance_work_mem = 2GB        # VACUUM, CREATE INDEX, ALTER TABLE — can be large
+effective_cache_size = 24GB       # Estimate of OS + PG cache; used by planner to cost index scans
+huge_pages = try                  # Use Linux huge pages if available (reduces TLB pressure)
+
+# ---- Connections ----
+max_connections = 200             # Keep low; use PgBouncer for application pooling
+superuser_reserved_connections = 5
+
+# ---- WAL / Durability ----
+wal_level = replica               # Minimum for streaming replication; use 'logical' for logical replication
+wal_buffers = 64MB                # WAL write buffer; -1 = auto (1/32 of shared_buffers, min 64 kB)
+synchronous_commit = on           # on = wait for WAL flush before ACK; off gives ~3x write throughput at risk of data loss on crash
+max_wal_size = 4GB                # Max WAL before triggering a checkpoint; reduce checkpoint frequency
+min_wal_size = 1GB                # Keep at least this much WAL on disk
+wal_compression = on              # Compress WAL records (CPU trade for I/O savings)
+
+# ---- Checkpoints ----
+checkpoint_completion_target = 0.9  # Spread checkpoint writes over 90% of checkpoint interval
+checkpoint_timeout = 15min          # Maximum time between automatic checkpoints
+
+# ---- Planner ----
+random_page_cost = 1.1            # SSD: 1.1; HDD: 4.0; lower = planner prefers index scans
+effective_io_concurrency = 200    # SSD: 200; HDD: 2; used for bitmap heap scans
+default_statistics_target = 200   # More histogram buckets for better cardinality estimates
+
+# ---- Parallelism ----
+max_worker_processes = 16
+max_parallel_workers_per_gather = 4
+max_parallel_workers = 8
+max_parallel_maintenance_workers = 4   # Parallel CREATE INDEX, VACUUM
+
+# ---- Logging ----
+log_min_duration_statement = 1000   # Log queries taking > 1 second
+log_checkpoints = on
+log_connections = off
+log_lock_waits = on
+log_temp_files = 0                  # Log all temp file creation (0 = all, -1 = none)
+log_autovacuum_min_duration = 250   # Log autovacuum runs taking > 250ms
+
+# ---- Locale ----
+default_text_search_config = 'pg_catalog.english'
+</code></pre>
+
+          <div class="tip-box">
+            <strong>Formula shortcuts:</strong> <code>shared_buffers</code> = 25% of RAM,
+            <code>effective_cache_size</code> = 75% of RAM,
+            <code>work_mem</code> = RAM / (max_connections * 2) — use <code>pgTune</code> (pgtune.leopard.in.ua) to
+            generate a baseline configuration for your hardware.
+          </div>
+
+          <!-- ==================== INDEXING ==================== -->
+          <h2>Indexing Strategies</h2>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Index Type</th>
+                  <th>Data Structures</th>
+                  <th>Best For</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>B-tree</strong></td>
+                  <td>Default; balanced tree</td>
+                  <td>Equality, range queries, ORDER BY, LIKE 'prefix%'</td>
+                  <td>Default index type; handles NULLs; supports unique constraints</td>
+                </tr>
+                <tr>
+                  <td><strong>GIN</strong></td>
+                  <td>Generalised Inverted Index</td>
+                  <td>Full-text search (<code>tsvector</code>), JSONB containment (<code>@&gt;</code>), array operators</td>
+                  <td>Slower writes (index update is expensive); very fast reads; use <code>fastupdate</code> for bulk inserts</td>
+                </tr>
+                <tr>
+                  <td><strong>GiST</strong></td>
+                  <td>Generalised Search Tree</td>
+                  <td>Geometric types, PostGIS geography, range types, nearest-neighbour (KNN)</td>
+                  <td>Lossy by nature — requires recheck; supports <code>&lt;&lt;</code>, <code>&amp;&amp;</code>, <code>@&gt;</code> operators</td>
+                </tr>
+                <tr>
+                  <td><strong>BRIN</strong></td>
+                  <td>Block Range Index</td>
+                  <td>Very large tables with naturally ordered data (timestamps, sequential IDs, IoT sensor data)</td>
+                  <td>Tiny index footprint; only stores min/max per block range; much faster for time-series than B-tree</td>
+                </tr>
+                <tr>
+                  <td><strong>Hash</strong></td>
+                  <td>Hash table</td>
+                  <td>Equality-only lookups</td>
+                  <td>Faster than B-tree for equality since PostgreSQL 10 (now WAL-logged); no range support</td>
+                </tr>
+                <tr>
+                  <td><strong>SP-GiST</strong></td>
+                  <td>Space-partitioned GiST</td>
+                  <td>Non-balanced structures: quadtrees, k-d trees, prefix trees (text)</td>
+                  <td>Good for phone number prefix search, IP range trees</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+<pre><code>-- Partial index: only index active users (reduces index size dramatically)
+CREATE INDEX CONCURRENTLY idx_users_email_active
+  ON users (email)
+  WHERE is_active = true;
+
+-- Covering index: include extra columns to enable index-only scans
+CREATE INDEX CONCURRENTLY idx_orders_customer_created
+  ON orders (customer_id, created_at DESC)
+  INCLUDE (status, total_amount);
+
+-- GIN index for JSONB containment queries
+CREATE INDEX CONCURRENTLY idx_events_payload
+  ON events USING GIN (payload jsonb_path_ops);
+
+-- BRIN index for append-only time-series table
+CREATE INDEX idx_metrics_ts_brin
+  ON metrics USING BRIN (recorded_at)
+  WITH (pages_per_range = 128);
+
+-- Full-text search with GIN
+ALTER TABLE articles ADD COLUMN search_vector tsvector;
+UPDATE articles SET search_vector = to_tsvector('english', title || ' ' || body);
+CREATE INDEX idx_articles_fts ON articles USING GIN (search_vector);
+</code></pre>
+
+          <!-- ==================== VACUUM ==================== -->
+          <h2>VACUUM and AUTOVACUUM Tuning</h2>
+
+          <p>
+            PostgreSQL uses MVCC (Multi-Version Concurrency Control). Dead tuples from UPDATEs and DELETEs are not
+            immediately removed — they accumulate until VACUUM reclaims them. Bloat causes table scans to read
+            unnecessary pages, degrading performance. Autovacuum runs automatically but its defaults are conservative.
+          </p>
+
+          <h3>Table-Level Autovacuum Overrides</h3>
+          <p>
+            For high-churn tables, override autovacuum settings at the table level rather than globally to avoid
+            vacuuming every table aggressively:
+          </p>
+
+<pre><code>-- Global autovacuum settings in postgresql.conf
+autovacuum = on
+autovacuum_max_workers = 6               # Default: 3; increase for busy systems
+autovacuum_naptime = 30s                 # How often autovacuum launcher wakes to check tables
+autovacuum_vacuum_threshold = 50         # Min dead tuples before triggering VACUUM
+autovacuum_vacuum_scale_factor = 0.02    # + 2% of table rows (default 0.2 is too high for large tables)
+autovacuum_analyze_threshold = 50
+autovacuum_analyze_scale_factor = 0.01   # Analyze after 1% of rows change
+autovacuum_vacuum_cost_delay = 2ms       # Throttle vacuum I/O; lower = faster vacuum (more I/O)
+autovacuum_vacuum_cost_limit = 800       # Max cost per delay cycle (default 200 is conservative)
+
+-- Per-table override for a high-churn orders table
+ALTER TABLE orders SET (
+  autovacuum_vacuum_scale_factor = 0.01,
+  autovacuum_vacuum_threshold = 100,
+  autovacuum_analyze_scale_factor = 0.005,
+  autovacuum_vacuum_cost_delay = 0       -- no throttling for this table
+);
+</code></pre>
+
+<pre><code>-- Check bloat and last vacuum stats
+SELECT
+  schemaname,
+  relname AS table_name,
+  n_live_tup,
+  n_dead_tup,
+  ROUND(100.0 * n_dead_tup / NULLIF(n_live_tup + n_dead_tup, 0), 2) AS dead_pct,
+  last_autovacuum,
+  last_autoanalyze
+FROM pg_stat_user_tables
+ORDER BY n_dead_tup DESC
+LIMIT 20;
+
+-- Force manual VACUUM ANALYZE on a specific table
+VACUUM (VERBOSE, ANALYZE, PARALLEL 4) orders;
+</code></pre>
+
+          <div class="warning-box">
+            <strong>Transaction ID Wraparound:</strong> PostgreSQL uses 32-bit transaction IDs. If autovacuum cannot
+            keep up and the XID counter approaches wraparound (2 billion XIDs), PostgreSQL will enter a protection
+            mode and refuse new transactions. Monitor <code>age(datfrozenxid)</code> — alert at 1.5B, emergency vacuum
+            at 1.8B.
+          </div>
+
+          <!-- ==================== HIGH AVAILABILITY ==================== -->
+          <h2>High Availability: Patroni Cluster</h2>
+
+          <p>
+            Patroni is the de facto standard for automated PostgreSQL HA. It uses a distributed configuration store
+            (etcd, Consul, or ZooKeeper) as a DCS (Distributed Consensus Store) to manage leader election and store
+            cluster state. PgBouncer or HAProxy sits in front for connection routing.
+          </p>
+
+          <h3>Patroni Configuration (patroni.yml)</h3>
+
+<pre><code># /etc/patroni/patroni.yml
+# Node: pg-primary-1 (run equivalent configs on pg-replica-1, pg-replica-2)
+
+scope: postgres-ha-cluster
+namespace: /db/
+name: pg-primary-1
+
+restapi:
+  listen: 0.0.0.0:8008
+  connect_address: 10.0.1.10:8008
+
+etcd3:
+  hosts:
+    - etcd-1:2379
+    - etcd-2:2379
+    - etcd-3:2379
+
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576  # 1 MB; replicas lagging more than this won't become primary
+    postgresql:
+      use_pg_rewind: true
+      use_slots: true
+      parameters:
+        max_connections: 200
+        shared_buffers: 8GB
+        wal_level: replica
+        hot_standby: on
+        wal_keep_size: 2GB
+        max_replication_slots: 10
+        max_wal_senders: 10
+        synchronous_commit: on
+
+  initdb:
+    - encoding: UTF8
+    - data-checksums           # Enable page checksums to detect silent data corruption
+
+  pg_hba:
+    - host replication replicator 10.0.1.0/24 scram-sha-256
+    - host all all 0.0.0.0/0 scram-sha-256
+
+  users:
+    admin:
+      password: "{{ vault_pg_admin_password }}"
+      options: [createrole, createdb]
+    replicator:
+      password: "{{ vault_pg_replicator_password }}"
+      options: [replication]
+
+postgresql:
+  listen: 0.0.0.0:5432
+  connect_address: 10.0.1.10:5432
+  data_dir: /var/lib/postgresql/16/main
+  bin_dir: /usr/lib/postgresql/16/bin
+  pgpass: /tmp/pgpass0
+  authentication:
+    replication:
+      username: replicator
+      password: "{{ vault_pg_replicator_password }}"
+    superuser:
+      username: postgres
+      password: "{{ vault_pg_admin_password }}"
+
+watchdog:
+  mode: automatic          # Use watchdog device to prevent split-brain
+  device: /dev/watchdog
+  safety_margin: 5
+
+tags:
+  nofailover: false
+  noloadbalance: false
+  clonefrom: false
+  nosync: false
+</code></pre>
+
+          <h3>Streaming Replication Verification</h3>
+
+<pre><code>-- On primary: check replication lag
+SELECT
+  application_name,
+  client_addr,
+  state,
+  sent_lsn,
+  write_lsn,
+  flush_lsn,
+  replay_lsn,
+  (sent_lsn - replay_lsn) AS replication_lag_bytes,
+  sync_state
+FROM pg_stat_replication;
+
+-- On replica: confirm recovery state
+SELECT
+  now() - pg_last_xact_replay_timestamp() AS replication_delay,
+  pg_is_in_recovery() AS is_standby,
+  pg_last_wal_receive_lsn() AS receive_lsn,
+  pg_last_wal_replay_lsn() AS replay_lsn;
+</code></pre>
+
+          <!-- ==================== PGBOUNCER ==================== -->
+          <h2>Connection Pooling: PgBouncer</h2>
+
+          <p>
+            PostgreSQL forks a new OS process per connection (~5–10 MB RAM each). At 500 connections, that is 2.5–5 GB
+            of RAM just for idle processes. PgBouncer sits between applications and PostgreSQL, maintaining a small pool
+            of server connections and multiplexing client connections onto them.
+          </p>
+
+<pre><code># /etc/pgbouncer/pgbouncer.ini
+
+[databases]
+# Database alias = connection string to PostgreSQL (Patroni VIP or HAProxy)
+app_db = host=10.0.1.20 port=5432 dbname=app_db
+app_db_readonly = host=10.0.1.21 port=5432 dbname=app_db
+
+[pgbouncer]
+listen_addr = 0.0.0.0
+listen_port = 6432
+
+# Pool mode:
+#   session    = hold server connection for duration of client session (safest, least efficient)
+#   transaction = hold server connection only for duration of transaction (RECOMMENDED for most apps)
+#   statement  = release after each statement (dangerous: breaks multi-statement transactions)
+pool_mode = transaction
+
+max_client_conn = 2000           # Total client connections PgBouncer accepts
+default_pool_size = 25           # Server connections per database+user pair
+min_pool_size = 5
+reserve_pool_size = 10           # Extra connections if pool is exhausted
+reserve_pool_timeout = 3         # Seconds to wait before using reserve pool
+
+server_idle_timeout = 600        # Idle server connections closed after 10 min
+client_idle_timeout = 0          # 0 = never timeout idle clients
+server_lifetime = 3600           # Recycle server connections every hour
+
+auth_type = scram-sha-256
+auth_file = /etc/pgbouncer/userlist.txt
+
+# Admin interface
+admin_users = pgbouncer_admin
+stats_users = monitoring
+
+log_connections = 0
+log_disconnections = 0
+log_pooler_errors = 1
+
+# TLS to PostgreSQL
+server_tls_sslmode = require
+server_tls_ca_file = /etc/ssl/certs/ca.crt
+</code></pre>
+
+          <div class="tip-box">
+            <strong>Prepared Statements in Transaction Mode:</strong> PgBouncer transaction mode is incompatible with
+            named prepared statements (since the statement is tied to a server connection). Configure your application
+            driver to use unnamed/one-shot prepared statements, or switch to <strong>session mode</strong> if your
+            framework requires named prepared statements (e.g., older versions of ActiveRecord).
+          </div>
+
+          <!-- ==================== BACKUP & RESTORE ==================== -->
+          <h2>Backup &amp; Restore</h2>
+
+          <h3>Logical Backup with pg_dump</h3>
+<pre><code># Dump a single database in custom format (compressed, supports parallel restore)
+pg_dump \
+  --host=localhost \
+  --port=5432 \
+  --username=postgres \
+  --format=custom \
+  --compress=9 \
+  --jobs=4 \
+  --file=/backups/app_db_$(date +%Y%m%d_%H%M%S).dump \
+  app_db
+
+# Restore from custom format dump
+pg_restore \
+  --host=localhost \
+  --port=5432 \
+  --username=postgres \
+  --dbname=app_db_restored \
+  --jobs=8 \
+  --verbose \
+  /backups/app_db_20260101_020000.dump
+</code></pre>
+
+          <h3>Physical Backup with pg_basebackup</h3>
+<pre><code># Take a streaming base backup (suitable as PITR base)
+pg_basebackup \
+  --host=10.0.1.10 \
+  --port=5432 \
+  --username=replicator \
+  --pgdata=/backups/basebackup_$(date +%Y%m%d) \
+  --format=tar \
+  --compress=9 \
+  --checkpoint=fast \
+  --wal-method=stream \       # Include WAL files needed to make backup consistent
+  --label="nightly_base" \
+  --progress \
+  --verbose
+</code></pre>
+
+          <h3>PITR with pgBackRest</h3>
+<pre><code># pgbackrest.conf
+[global]
+repo1-path=/var/lib/pgbackrest
+repo1-type=s3
+repo1-s3-bucket=my-pg-backups
+repo1-s3-region=ap-southeast-1
+repo1-s3-endpoint=s3.amazonaws.com
+repo1-cipher-type=aes-256-cbc
+repo1-cipher-pass=<vault_pgbackrest_cipher>
+repo1-retention-full=4          # Keep 4 full backups
+repo1-retention-diff=14         # Keep 14 differential backups
+
+start-fast=y
+archive-async=y                 # Async WAL archiving for minimal performance impact
+archive-push-queue-max=4GiB    # Queue WAL locally if S3 is slow
+
+[prod-cluster]
+pg1-path=/var/lib/postgresql/16/main
+pg1-host=pg-primary-1
+pg1-host-user=postgres
+
+# Commands
+# Full backup
+pgbackrest --stanza=prod-cluster --type=full backup
+
+# Incremental backup
+pgbackrest --stanza=prod-cluster --type=incr backup
+
+# Point-in-time restore to specific timestamp
+pgbackrest --stanza=prod-cluster \
+  --type=time \
+  --target="2026-03-28 14:30:00+07" \
+  --target-action=promote \
+  restore
+</code></pre>
+
+          <!-- ==================== MONITORING ==================== -->
+          <h2>Monitoring Queries</h2>
+
+          <h3>Active Connections and Blocking</h3>
+<pre><code>-- Current active queries (filter out idle)
+SELECT
+  pid,
+  now() - pg_stat_activity.query_start AS duration,
+  query,
+  state,
+  wait_event_type,
+  wait_event,
+  client_addr
+FROM pg_stat_activity
+WHERE state != 'idle'
+  AND query_start < now() - interval '5 seconds'
+ORDER BY duration DESC;
+
+-- Detect blocking locks
+SELECT
+  blocked_locks.pid AS blocked_pid,
+  blocked_activity.query AS blocked_query,
+  blocking_locks.pid AS blocking_pid,
+  blocking_activity.query AS blocking_query,
+  now() - blocked_activity.query_start AS blocked_duration
+FROM pg_catalog.pg_locks AS blocked_locks
+JOIN pg_catalog.pg_stat_activity AS blocked_activity
+  ON blocked_activity.pid = blocked_locks.pid
+JOIN pg_catalog.pg_locks AS blocking_locks
+  ON blocking_locks.locktype = blocked_locks.locktype
+  AND blocking_locks.relation IS NOT DISTINCT FROM blocked_locks.relation
+  AND blocking_locks.pid != blocked_locks.pid
+  AND blocking_locks.granted
+JOIN pg_catalog.pg_stat_activity AS blocking_activity
+  ON blocking_activity.pid = blocking_locks.pid
+WHERE NOT blocked_locks.granted;
+</code></pre>
+
+          <h3>Table Statistics and Cache Hit Rate</h3>
+<pre><code>-- Buffer cache hit rates per table (aim for > 99%)
+SELECT
+  relname,
+  heap_blks_read,
+  heap_blks_hit,
+  ROUND(100.0 * heap_blks_hit / NULLIF(heap_blks_hit + heap_blks_read, 0), 2) AS cache_hit_pct,
+  idx_blks_read,
+  idx_blks_hit,
+  ROUND(100.0 * idx_blks_hit / NULLIF(idx_blks_hit + idx_blks_read, 0), 2) AS idx_cache_hit_pct
+FROM pg_statio_user_tables
+ORDER BY heap_blks_read + idx_blks_read DESC
+LIMIT 20;
+
+-- Unused indexes (candidates for removal)
+SELECT
+  schemaname,
+  relname AS table_name,
+  indexrelname AS index_name,
+  idx_scan,
+  pg_size_pretty(pg_relation_size(indexrelid)) AS index_size
+FROM pg_stat_user_indexes
+WHERE idx_scan = 0
+  AND indexrelname NOT LIKE '%_pkey'
+ORDER BY pg_relation_size(indexrelid) DESC;
+
+-- Slow query detection via pg_stat_statements
+SELECT
+  query,
+  calls,
+  ROUND(total_exec_time::numeric / calls, 2) AS avg_ms,
+  ROUND(total_exec_time::numeric, 2) AS total_ms,
+  rows,
+  shared_blks_hit,
+  shared_blks_read
+FROM pg_stat_statements
+ORDER BY total_exec_time DESC
+LIMIT 15;
+</code></pre>
+
+          <!-- ==================== KUBERNETES ==================== -->
+          <h2>PostgreSQL on Kubernetes: CloudNativePG</h2>
+
+          <p>
+            CloudNativePG (CNPG) is a CNCF sandbox operator that manages the full lifecycle of PostgreSQL clusters on
+            Kubernetes — provisioning, failover, backup, monitoring, and upgrades. It uses PostgreSQL streaming
+            replication natively, without Patroni or etcd.
+          </p>
+
+<pre><code># cloudnativepg-cluster.yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pg-production
+  namespace: databases
+spec:
+  instances: 3                  # 1 primary + 2 replicas
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.3
+
+  # Resource limits
+  resources:
+    requests:
+      memory: "8Gi"
+      cpu: "2"
+    limits:
+      memory: "16Gi"
+      cpu: "8"
+
+  # Persistent storage
+  storage:
+    size: 500Gi
+    storageClass: fast-ssd        # Use a StorageClass with WaitForFirstConsumer binding
+
+  # WAL storage on a separate volume for I/O isolation
+  walStorage:
+    size: 50Gi
+    storageClass: fast-ssd
+
+  # PostgreSQL tuning parameters
+  postgresql:
+    parameters:
+      shared_buffers: "2GB"
+      work_mem: "32MB"
+      max_connections: "200"
+      wal_level: "logical"
+      max_replication_slots: "10"
+      max_wal_senders: "10"
+      effective_cache_size: "6GB"
+      checkpoint_completion_target: "0.9"
+      random_page_cost: "1.1"
+      log_min_duration_statement: "1000"
+    pg_hba:
+      - host all all 10.0.0.0/8 scram-sha-256
+
+  # Backup to S3-compatible object storage
+  backup:
+    barmanObjectStore:
+      destinationPath: "s3://my-pg-backups/cnpg/pg-production"
+      s3Credentials:
+        accessKeyId:
+          name: pg-backup-s3-secret
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: pg-backup-s3-secret
+          key: SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+        encryption: AES256
+      data:
+        compression: gzip
+        encryption: AES256
+    retentionPolicy: "30d"
+
+  # Scheduled backups
+  scheduledBackups:
+    - name: pg-production-daily
+      schedule: "0 2 * * *"       # 02:00 daily
+      backupOwnerReference: self
+
+  # Monitoring: expose metrics for Prometheus
+  monitoring:
+    enablePodMonitor: true
+
+  # Bootstrap: init fresh or recover from backup
+  bootstrap:
+    initdb:
+      database: app_db
+      owner: app_user
+      encoding: UTF8
+
+  # Superuser secret
+  superuserSecret:
+    name: pg-superuser-secret
+</code></pre>
+
+<pre><code># scheduled-backup.yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: pg-production-weekly-full
+  namespace: databases
+spec:
+  schedule: "0 1 * * 0"          # Every Sunday at 01:00
+  cluster:
+    name: pg-production
+  method: barmanObjectStore
+  immediate: false
+</code></pre>
+
+          <div class="success-box">
+            <strong>CNPG Advantages over Patroni on K8s:</strong> No external DCS (etcd/Consul) dependency — leader
+            election uses Kubernetes lease objects. Built-in backup/restore integration. PodDisruptionBudget and
+            topology spread constraints managed automatically. Read-write and read-only Services created for you.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chaos Engineering | SRE | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th { background: var(--secondary-color); color: white; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #eee; }
+    tr:hover td { background: var(--bg-light); }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">SRE</a></li>
+        <li class="breadcrumb-item active">Chaos Engineering</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-shield-check me-2"></i>SRE</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="index.html">Overview</a>
+            <a class="nav-link" href="reliability.html">Reliability Patterns</a>
+            <a class="nav-link" href="incident.html">Incident Management</a>
+            <a class="nav-link active" href="chaos.html">Chaos Engineering</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-lightning-charge me-2"></i>Chaos Engineering</h1>
+
+          <div class="alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Chaos Engineering</strong> — deliberately inject failures into systems to build confidence in their ability to withstand turbulent, real-world conditions.
+          </div>
+
+          <p>
+            Chaos Engineering is the discipline of experimenting on a system in order to build confidence in its
+            ability to withstand turbulent conditions in production. Rather than waiting for failures to occur,
+            chaos engineering proactively discovers weaknesses before they become outages.
+          </p>
+
+          <h2>Principles of Chaos Engineering</h2>
+
+          <div class="concept-card">
+            <h4>1. Define a Steady State</h4>
+            <p>Identify a measurable output that represents normal system behavior. Use SLIs — request success rate, p99 latency, throughput. The experiment validates that steady state is maintained under failure conditions.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>2. Hypothesize Steady State Continues</h4>
+            <p>Form a testable hypothesis: <em>"If we terminate 30% of pods in the payment service, the overall checkout success rate will remain above 99.5%."</em> Clear hypothesis = clear pass/fail criteria.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>3. Vary Real-World Events</h4>
+            <p>Inject failures that mirror actual incidents: pod crashes, network latency, disk full, CPU saturation, dependency timeouts, AZ failures, DNS resolution failures, certificate expiry.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>4. Run Experiments in Production</h4>
+            <p>Staging environments don't reflect production load, data size, or interaction patterns. Start with staging, but production is the ultimate validation. Begin with blast radius = 1 pod, 1% traffic.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>5. Automate Experiments Continuously</h4>
+            <p>Manual GameDays are valuable but infrequent. Integrate chaos experiments into CI/CD pipelines. Run lightweight experiments continuously in staging; scheduled experiments in production.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>6. Minimize Blast Radius</h4>
+            <p>Always have an abort mechanism. Start small — kill 1 pod before killing 30%. Expand scope only after confidence is established. Never run experiments during peak traffic or deploys.</p>
+          </div>
+
+          <h2>Chaos Maturity Model</h2>
+
+          <div class="strategy-card">
+            <h4>Level 1 — Manual GameDays</h4>
+            <p>Planned, manually executed failure scenarios. Team assembles, injects failure, observes response. Valuable for initial discovery but infrequent and labor-intensive.</p>
+            <ul>
+              <li>Monthly or quarterly scheduled sessions</li>
+              <li>Manual kubectl delete pod, kill -9, iptables DROP</li>
+              <li>Documented playbooks and hypothesis</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Level 2 — Automated Experiments</h4>
+            <p>Chaos experiments defined as code, executed automatically on a schedule or triggered by CI/CD. Results reported to dashboards and Slack.</p>
+            <ul>
+              <li>Chaos Mesh / LitmusChaos / AWS FIS experiments as YAML</li>
+              <li>Scheduled runs in staging (nightly) and production (weekly)</li>
+              <li>Automated pass/fail based on SLO thresholds</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Level 3 — Continuous Chaos</h4>
+            <p>Low-level failures injected continuously in production (Netflix Chaos Monkey model). System must self-heal. Engineering culture fully embraces failure as learning.</p>
+            <ul>
+              <li>Random pod termination always enabled in production</li>
+              <li>Chaos integrated into every deployment pipeline</li>
+              <li>Reliability metrics tracked as engineering KPIs</li>
+            </ul>
+          </div>
+
+          <h2>Tools Comparison</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Type</th>
+                <th>K8s Native</th>
+                <th>Fault Types</th>
+                <th>Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Chaos Mesh</strong></td>
+                <td>Open Source</td>
+                <td>Yes (CRDs)</td>
+                <td>Pod, Network, Stress, HTTP, IO, Time</td>
+                <td>Free</td>
+              </tr>
+              <tr>
+                <td><strong>LitmusChaos</strong></td>
+                <td>Open Source</td>
+                <td>Yes (CRDs)</td>
+                <td>Pod, Node, Network, AWS/GCP faults</td>
+                <td>Free / Enterprise</td>
+              </tr>
+              <tr>
+                <td><strong>AWS FIS</strong></td>
+                <td>Managed SaaS</td>
+                <td>Via EKS actions</td>
+                <td>EC2, EKS, RDS, ECS, API throttling</td>
+                <td>Pay per action</td>
+              </tr>
+              <tr>
+                <td><strong>Gremlin</strong></td>
+                <td>Commercial SaaS</td>
+                <td>Yes</td>
+                <td>Resource, Network, State, Application</td>
+                <td>Paid</td>
+              </tr>
+              <tr>
+                <td><strong>Chaos Monkey</strong></td>
+                <td>Open Source</td>
+                <td>No (EC2/ASG)</td>
+                <td>Instance termination only</td>
+                <td>Free</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>AWS Fault Injection Simulator (FIS)</h2>
+
+          <h3>Experiment Template — EC2 Instance Termination</h3>
+          <pre><code># fis-terminate-instances.json
+{
+  "description": "Terminate 30% of EC2 instances in ASG to test auto-recovery",
+  "targets": {
+    "MyInstances": {
+      "resourceType": "aws:ec2:instance",
+      "resourceTags": {
+        "Environment": "staging",
+        "Service": "web-api"
+      },
+      "selectionMode": "PERCENT(30)"
+    }
+  },
+  "actions": {
+    "TerminateInstances": {
+      "actionId": "aws:ec2:terminate-instances",
+      "parameters": {},
+      "targets": {
+        "Instances": "MyInstances"
+      }
+    }
+  },
+  "stopConditions": [
+    {
+      "source": "aws:cloudwatch:alarm",
+      "value": "arn:aws:cloudwatch:ap-southeast-1:123456789:alarm/chaos-abort-alarm"
+    }
+  ],
+  "roleArn": "arn:aws:iam::123456789:role/FISExperimentRole",
+  "tags": {
+    "Purpose": "chaos-engineering"
+  }
+}</code></pre>
+
+          <h3>Experiment Template — AZ Outage Simulation</h3>
+          <pre><code># fis-az-outage.json — Stop all instances in ap-southeast-1a
+{
+  "description": "Simulate AZ failure: stop all instances in ap-southeast-1a",
+  "targets": {
+    "AZInstances": {
+      "resourceType": "aws:ec2:instance",
+      "filters": [
+        {
+          "path": "Placement.AvailabilityZone",
+          "values": ["ap-southeast-1a"]
+        },
+        {
+          "path": "State.Name",
+          "values": ["running"]
+        }
+      ],
+      "selectionMode": "ALL"
+    }
+  },
+  "actions": {
+    "StopInstances": {
+      "actionId": "aws:ec2:stop-instances",
+      "parameters": {
+        "startInstancesAfterDuration": "PT10M"
+      },
+      "targets": { "Instances": "AZInstances" }
+    }
+  },
+  "stopConditions": [
+    {
+      "source": "aws:cloudwatch:alarm",
+      "value": "arn:aws:cloudwatch:ap-southeast-1:123456789:alarm/error-rate-critical"
+    }
+  ],
+  "roleArn": "arn:aws:iam::123456789:role/FISExperimentRole"
+}</code></pre>
+
+          <h3>FIS CLI Commands</h3>
+          <pre><code># Create experiment template
+aws fis create-experiment-template \
+  --cli-input-json file://fis-terminate-instances.json \
+  --region ap-southeast-1
+
+# List templates
+aws fis list-experiment-templates
+
+# Start experiment
+aws fis start-experiment \
+  --experiment-template-id EXT1234567890abcdef \
+  --region ap-southeast-1
+
+# Monitor experiment
+aws fis get-experiment --id EXP1234567890abcdef
+
+# Stop experiment (abort)
+aws fis stop-experiment --id EXP1234567890abcdef
+
+# View experiment history
+aws fis list-experiments \
+  --filter "experimentTemplateId=EXT1234567890abcdef"</code></pre>
+
+          <h2>Chaos Mesh on Kubernetes</h2>
+
+          <h3>Installation</h3>
+          <pre><code># Add Chaos Mesh Helm repo
+helm repo add chaos-mesh https://charts.chaos-mesh.org
+helm repo update
+
+# Install Chaos Mesh (with dashboard)
+helm install chaos-mesh chaos-mesh/chaos-mesh \
+  --namespace=chaos-mesh \
+  --create-namespace \
+  --set dashboard.create=true \
+  --set chaosDaemon.runtime=containerd \
+  --set chaosDaemon.socketPath=/run/containerd/containerd.sock \
+  --version 2.6.3
+
+# Verify installation
+kubectl get pods -n chaos-mesh</code></pre>
+
+          <h3>PodChaos — Pod Kill &amp; Failure</h3>
+          <pre><code># Kill random pod in payment-service every 60 seconds
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: kill-payment-pod
+  namespace: chaos-testing
+spec:
+  action: pod-kill         # pod-kill | pod-failure | container-kill
+  mode: one                # one | all | fixed | fixed-percent | random-max-percent
+  selector:
+    namespaces:
+      - production
+    labelSelectors:
+      app: payment-service
+  scheduler:
+    cron: "@every 60s"</code></pre>
+
+          <pre><code># Inject pod failure for 5 minutes (pod stays but is in failed state)
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: payment-pod-failure
+  namespace: chaos-testing
+spec:
+  action: pod-failure
+  mode: fixed-percent
+  value: "30"              # Fail 30% of matching pods
+  duration: "5m"
+  selector:
+    namespaces: [production]
+    labelSelectors:
+      app: payment-service</code></pre>
+
+          <h3>NetworkChaos — Latency, Loss, Partition</h3>
+          <pre><code># Add 100ms ± 20ms latency between order-service and inventory-service
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: order-to-inventory-latency
+  namespace: chaos-testing
+spec:
+  action: delay
+  mode: all
+  selector:
+    namespaces: [production]
+    labelSelectors:
+      app: order-service
+  delay:
+    latency: "100ms"
+    correlation: "25"
+    jitter: "20ms"
+  direction: to
+  target:
+    mode: all
+    selector:
+      namespaces: [production]
+      labelSelectors:
+        app: inventory-service
+  duration: "10m"</code></pre>
+
+          <pre><code># 20% packet loss between services
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-packet-loss
+  namespace: chaos-testing
+spec:
+  action: loss
+  mode: all
+  selector:
+    namespaces: [production]
+    labelSelectors:
+      app: frontend
+  loss:
+    loss: "20"
+    correlation: "25"
+  direction: both
+  duration: "5m"
+
+---
+# Network partition — isolate payment-service from all outbound traffic
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: payment-isolation
+  namespace: chaos-testing
+spec:
+  action: partition
+  mode: all
+  selector:
+    namespaces: [production]
+    labelSelectors:
+      app: payment-service
+  direction: both
+  duration: "2m"</code></pre>
+
+          <h3>StressChaos — CPU &amp; Memory Pressure</h3>
+          <pre><code># CPU stress — saturate 2 CPU cores at 90% for 10 minutes
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: cpu-stress-api
+  namespace: chaos-testing
+spec:
+  mode: one
+  selector:
+    namespaces: [production]
+    labelSelectors:
+      app: api-gateway
+  stressors:
+    cpu:
+      workers: 2          # Number of CPU workers
+      load: 90            # CPU load percentage
+  duration: "10m"
+
+---
+# Memory stress — consume 512MB for 5 minutes
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: memory-stress-api
+  namespace: chaos-testing
+spec:
+  mode: one
+  selector:
+    namespaces: [production]
+    labelSelectors:
+      app: api-gateway
+  stressors:
+    memory:
+      workers: 1
+      size: "512MB"
+  duration: "5m"</code></pre>
+
+          <h3>HTTPChaos — Inject HTTP Faults</h3>
+          <pre><code># Inject 500ms delay into 50% of HTTP responses from user-service
+apiVersion: chaos-mesh.org/v1alpha1
+kind: HTTPChaos
+metadata:
+  name: user-service-delay
+  namespace: chaos-testing
+spec:
+  mode: all
+  selector:
+    namespaces: [production]
+    labelSelectors:
+      app: user-service
+  target: Response
+  port: 8080
+  path: "/api/*"
+  delay: "500ms"
+  percent: 50
+  duration: "5m"
+
+---
+# Abort 10% of requests with HTTP 503
+apiVersion: chaos-mesh.org/v1alpha1
+kind: HTTPChaos
+metadata:
+  name: user-service-abort
+  namespace: chaos-testing
+spec:
+  mode: all
+  selector:
+    namespaces: [production]
+    labelSelectors:
+      app: user-service
+  target: Response
+  port: 8080
+  abort: true
+  percent: 10
+  duration: "3m"</code></pre>
+
+          <h3>Schedule — Recurring Chaos</h3>
+          <pre><code># Run pod-kill experiment every day at 2am (staging)
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Schedule
+metadata:
+  name: daily-pod-chaos
+  namespace: chaos-testing
+spec:
+  schedule: "0 2 * * *"   # Cron: 2am daily
+  historyLimit: 5
+  type: PodChaos
+  podChaos:
+    action: pod-kill
+    mode: one
+    selector:
+      namespaces: [staging]
+      labelSelectors:
+        chaos-enabled: "true"</code></pre>
+
+          <h2>LitmusChaos</h2>
+
+          <h3>Installation</h3>
+          <pre><code># Install LitmusChaos via Helm
+helm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/
+helm repo update
+
+helm install chaos litmuschaos/litmus \
+  --namespace=litmus \
+  --create-namespace \
+  --set portal.frontend.service.type=LoadBalancer</code></pre>
+
+          <h3>ChaosEngine Example — Pod Delete</h3>
+          <pre><code># Install pod-delete experiment
+kubectl apply -f \
+  https://hub.litmuschaos.io/api/chaos/3.0.0?file=charts/generic/pod-delete/experiment.yaml
+
+---
+# ChaosEngine — define target and experiment parameters
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: payment-chaos
+  namespace: production
+spec:
+  appinfo:
+    appns: production
+    applabel: app=payment-service
+    appkind: deployment
+  chaosServiceAccount: litmus-admin
+  monitoring: true
+  jobCleanUpPolicy: retain
+  experiments:
+    - name: pod-delete
+      spec:
+        components:
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"         # seconds
+            - name: CHAOS_INTERVAL
+              value: "10"         # kill a pod every 10s
+            - name: FORCE
+              value: "false"      # graceful termination
+            - name: PODS_AFFECTED_PERC
+              value: "33"         # 33% of pods</code></pre>
+
+          <h2>GameDay Planning</h2>
+
+          <h3>GameDay Template</h3>
+
+          <div class="strategy-card">
+            <h4>1. Hypothesis</h4>
+            <pre><code>If [failure condition],
+then [expected system behavior],
+because [the mechanism that should protect us],
+and we will verify by [measurement / SLI].</code></pre>
+            <p><strong>Example:</strong> "If the primary PostgreSQL instance is unavailable for 2 minutes, then checkout requests will continue to succeed at &gt;99%, because the application uses connection retry with a 30s timeout and the replica will be promoted within 60s, and we will verify by monitoring the checkout_success_rate SLI."</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4>2. Pre-Game Checklist</h4>
+            <ul>
+              <li>✅ Monitoring dashboard open (Grafana, CloudWatch)</li>
+              <li>✅ Blast radius defined and agreed (max impact scope)</li>
+              <li>✅ Rollback/abort procedure documented and tested</li>
+              <li>✅ Stakeholders notified (not during peak hours)</li>
+              <li>✅ On-call engineer on standby</li>
+              <li>✅ Steady-state baseline captured (current SLI values)</li>
+              <li>✅ Stop condition configured (alarm that halts experiment)</li>
+            </ul>
+          </div>
+
+          <h3>Real GameDay Scenario: Primary Database Failure</h3>
+          <pre><code># Scenario: "What happens when the primary RDS instance goes down?"
+
+# Step 1: Capture steady state
+curl -s https://api.myapp.com/health | jq .
+# Checkout success rate: 99.95%
+# P95 latency: 180ms
+
+# Step 2: Start monitoring
+# Open Grafana dashboard: checkout_success_rate, db_connection_errors
+
+# Step 3: Inject failure — reboot primary RDS (AWS FIS or manual)
+aws rds reboot-db-instance \
+  --db-instance-identifier prod-postgres-primary \
+  --force-failover   # Triggers automatic failover to replica
+
+# Step 4: Observe (2-minute observation window)
+# Expected: brief connection errors during failover (~30-60s)
+# Expected: automatic failover to replica
+# Expected: success rate recovers to >99% within 90s
+
+# Step 5: Record results
+# Actual failover time: 47 seconds
+# Success rate dip: 94% for 47s (violated SLO!)
+# Root cause: connection pool not configured for retry
+
+# Step 6: Document findings and action items
+# Action 1: Configure db connection pool with retry (deadline: 1 week)
+# Action 2: Add read replica health check to load balancer
+# Action 3: Set RDS Multi-AZ for automatic failover</code></pre>
+
+          <h3>Post-GameDay Report Template</h3>
+          <pre><code># GameDay Report — YYYY-MM-DD
+# Experiment: Primary database failover
+# Team: Platform + Backend
+
+## Hypothesis
+If primary RDS fails, checkout success rate stays above 99%
+because application retries with 30s timeout.
+
+## Results
+| Metric            | Baseline | During Chaos | Recovery |
+|-------------------|----------|--------------|----------|
+| Success rate      | 99.95%   | 94%          | 99.9%    |
+| P95 latency       | 180ms    | 8200ms       | 190ms    |
+| Failover duration | N/A      | 47 seconds   | N/A      |
+
+## Hypothesis: FAILED (success rate dropped below 99%)
+
+## Root Causes
+1. Connection pool has no retry — first request to new primary fails
+2. Application timeout (5s) shorter than failover time (47s)
+
+## Action Items
+1. [P0] Add connection retry with backoff — @backend-team — due 2024-04-01
+2. [P1] Increase db connection timeout to 60s — @backend-team — due 2024-04-01
+3. [P2] Add chaos experiment to CI/CD pipeline — @platform-team — due 2024-04-15
+
+## What Went Well
+- Monitoring detected the issue immediately
+- Automatic RDS failover worked as expected
+- Team communicated effectively during the experiment</code></pre>
+
+          <h2>Chaos Engineering in CI/CD</h2>
+          <pre><code># .github/workflows/chaos-staging.yml
+
+name: Chaos Experiment — Staging
+
+on:
+  schedule:
+    - cron: "0 3 * * 1-5"   # Weekdays at 3am
+  workflow_dispatch:
+    inputs:
+      experiment:
+        description: "Experiment name"
+        required: true
+        default: "pod-kill"
+
+jobs:
+  chaos-experiment:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure kubectl
+        run: echo "${{ secrets.STAGING_KUBECONFIG }}" | base64 -d > kubeconfig
+
+      - name: Capture steady state
+        env:
+          KUBECONFIG: ./kubeconfig
+        run: |
+          SUCCESS_RATE=$(kubectl exec -n monitoring deploy/prometheus \
+            -- promtool query instant \
+            'sum(rate(http_requests_total{status!~"5.."}[5m])) / sum(rate(http_requests_total[5m]))')
+          echo "Baseline success rate: $SUCCESS_RATE"
+          echo "BASELINE=$SUCCESS_RATE" >> $GITHUB_ENV
+
+      - name: Apply chaos experiment
+        env:
+          KUBECONFIG: ./kubeconfig
+        run: |
+          kubectl apply -f chaos/staging/pod-kill-experiment.yaml
+          echo "Chaos experiment started — waiting 5 minutes..."
+          sleep 300
+
+      - name: Validate SLO during chaos
+        env:
+          KUBECONFIG: ./kubeconfig
+        run: |
+          SUCCESS_RATE=$(kubectl exec -n monitoring deploy/prometheus \
+            -- promtool query instant \
+            'sum(rate(http_requests_total{status!~"5.."}[5m])) / sum(rate(http_requests_total[5m]))')
+          echo "Success rate during chaos: $SUCCESS_RATE"
+          # Fail if below 99%
+          python3 -c "
+          rate = float('$SUCCESS_RATE')
+          if rate < 0.99:
+              print(f'SLO VIOLATION: {rate:.4f} < 0.99')
+              exit(1)
+          print(f'SLO OK: {rate:.4f}')
+          "
+
+      - name: Cleanup experiment
+        if: always()
+        env:
+          KUBECONFIG: ./kubeconfig
+        run: |
+          kubectl delete -f chaos/staging/pod-kill-experiment.yaml --ignore-not-found
+
+      - name: Post results to Slack
+        if: always()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "Chaos Experiment completed: ${{ job.status }}",
+              "blocks": [{
+                "type": "section",
+                "text": { "type": "mrkdwn",
+                  "text": "*Chaos Experiment*: pod-kill staging\n*Result*: ${{ job.status }}\n*Run*: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" }
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}</code></pre>
+
+          <div class="warning-box">
+            <strong>⚠️ Safety Rules — Never Skip These:</strong>
+            <ul>
+              <li>Always configure a <strong>stop condition</strong> (CloudWatch alarm / Prometheus alert) that automatically aborts the experiment if impact exceeds threshold</li>
+              <li>Never run chaos experiments during deployments, peak traffic hours, or maintenance windows</li>
+              <li>Always have a <strong>human abort button</strong> — someone watching dashboards with authority to stop immediately</li>
+              <li>Never run in production without first proving in staging</li>
+              <li>Communicate to all stakeholders before running production experiments</li>
+            </ul>
+          </div>
+
+          <div class="tip-box">
+            <strong>💡 Getting Started:</strong> Don't start with complex network partitions. Start simple:
+            <ol class="mb-0">
+              <li>Kill 1 pod of a non-critical service in staging</li>
+              <li>Verify auto-recovery works (Kubernetes restarts it)</li>
+              <li>Add retry logic where needed</li>
+              <li>Graduate to multi-pod, then network faults, then AZ failures</li>
+            </ol>
+          </div>
+
+          <h2>Building a Chaos Engineering Culture</h2>
+
+          <div class="success-box">
+            <strong>✅ Organizational Principles:</strong>
+            <ul>
+              <li><strong>Start with leadership buy-in</strong> — frame chaos as risk reduction, not risk creation</li>
+              <li><strong>Blameless environment</strong> — findings expose system weaknesses, not human failures</li>
+              <li><strong>Track reliability improvements</strong> — measure MTTR before/after each experiment cycle</li>
+              <li><strong>Celebrate learnings</strong> — a failed hypothesis is a successful experiment (you learned something)</li>
+              <li><strong>Publish results</strong> — share GameDay reports across engineering; build institutional knowledge</li>
+              <li><strong>Include chaos in oncall</strong> — oncall engineers run monthly GameDays to stay sharp</li>
+            </ul>
+          </div>
+
+          <h2>Next Steps</h2>
+          <ul>
+            <li><strong><a href="reliability.html">Reliability Patterns</a></strong> — Circuit breakers, retries, and capacity planning</li>
+            <li><strong><a href="incident.html">Incident Management</a></strong> — Respond effectively when chaos becomes real</li>
+            <li><strong><a href="index.html">SRE Overview</a></strong> — SLOs, error budgets, and the Four Golden Signals</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

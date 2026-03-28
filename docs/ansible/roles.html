@@ -405,7 +405,7 @@ dependencies:
           </div>
 
           <h3>Using Roles in a Playbook</h3>
-          <pre><code">---
+          <pre><code>---
 - name: Configure web servers
   hosts: webservers
   become: true
@@ -559,7 +559,7 @@ dependencies:
     state: present</code></pre>
 
           <h3>Service Management</h3>
-          <pre><code"># service — manage services (SysV / systemd)
+          <pre><code># service — manage services (SysV / systemd)
 - name: Manage Nginx service
   service:
     name: nginx
@@ -584,7 +584,7 @@ dependencies:
     - Restart MyApp</code></pre>
 
           <h3>User and Group Management</h3>
-          <pre><code"># user — manage users
+          <pre><code># user — manage users
 - name: Create application user
   user:
     name: appuser
@@ -763,7 +763,7 @@ ansible-galaxy role list
 ansible-galaxy role remove geerlingguy.nginx</code></pre>
 
           <h3>requirements.yml</h3>
-          <pre><code">---
+          <pre><code>---
 # requirements.yml
 
 roles:

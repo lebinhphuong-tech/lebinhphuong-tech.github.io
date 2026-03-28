@@ -19,7 +19,7 @@
     h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
     h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
     .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
@@ -183,7 +183,7 @@
           <h2>On-Call Best Practices</h2>
 
           <h3>PagerDuty Escalation Policy (YAML Config)</h3>
-          <pre><code"># pagerduty-terraform/main.tf
+          <pre><code># pagerduty-terraform/main.tf
 resource "pagerduty_escalation_policy" "payment_api" {
   name      = "Payment API Escalation Policy"
   num_loops = 3  # Try full escalation 3 times before giving up
@@ -286,7 +286,7 @@ resource "pagerduty_service" "payment_api" {
           <h2>Incident Communication</h2>
 
           <h3>Status Page Protocol (Statuspage.io)</h3>
-          <pre><code"># Statuspage API integration — auto-update via Lambda/Cloud Function
+          <pre><code># Statuspage API integration — auto-update via Lambda/Cloud Function
 import requests
 import os
 
@@ -347,7 +347,7 @@ update_incident(incident_id, 'resolved',
 </code></pre>
 
           <h3>Slack War-Room Protocol</h3>
-          <pre><code"># War-room channel convention: #inc-YYYYMMDD-short-description
+          <pre><code># War-room channel convention: #inc-YYYYMMDD-short-description
 # Example: #inc-20250228-payment-outage
 
 ## Pinned message template (post immediately on incident declaration):
@@ -384,7 +384,7 @@ update_incident(incident_id, 'resolved',
           </p>
 
           <h3>Post-Mortem Template</h3>
-          <pre><code"># Post-Mortem: [Brief Description of Incident]
+          <pre><code># Post-Mortem: [Brief Description of Incident]
 # Date: 2025-02-28
 # Authors: [Names]
 # Severity: SEV1
@@ -503,7 +503,7 @@ exhausted the 50-connection pool within 4 minutes of deployment.
           </table>
 
           <h3>Incident Metrics Dashboard (PromQL)</h3>
-          <pre><code"># These queries work with AlertManager/Prometheus when incidents are tracked as metrics
+          <pre><code># These queries work with AlertManager/Prometheus when incidents are tracked as metrics
 
 # 1. Incident frequency by severity (last 30 days)
 count_over_time(ALERTS{alertstate="firing", severity="critical"}[30d])

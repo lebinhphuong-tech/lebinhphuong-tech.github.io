@@ -15,7 +15,7 @@
     h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); font-size: 1.3rem; }
     h3 { color: var(--secondary-color); font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem; }
     code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
-    pre { background: var(--code-bg); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 0.8rem 0; }
     pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; font-size: 0.88rem; }
     .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
     .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
@@ -319,7 +319,7 @@ annotations:
   "helm.sh/hook-weight": "-5"           # Order (lower = earlier)
   "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded</code></pre>
       <h3>DB Migration Hook Job Example</h3>
-      <pre><code">apiVersion: batch/v1
+      <pre><code>apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "mychart.fullname" . }}-migrate
@@ -344,7 +344,7 @@ spec:
   backoffLimit: 3</code></pre>
 
       <h2>Helm Tests</h2>
-      <pre><code"># Run tests for a release
+      <pre><code># Run tests for a release
 helm test my-release -n my-ns
 helm test my-release -n my-ns --logs
 
@@ -402,7 +402,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}</code></pre>
 
       <h3>Helmfile Usage</h3>
-      <pre><code"># helmfile.yaml example
+      <pre><code># helmfile.yaml example
 repositories:
   - name: bitnami
     url: https://charts.bitnami.com/bitnami

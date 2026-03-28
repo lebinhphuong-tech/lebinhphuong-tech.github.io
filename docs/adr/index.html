@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architecture Decision Records | Lê Bình Phương</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary-color: #149ddd; --secondary-color: #173b6c; --text-color: #272829; --bg-light: #f5f8fd; --code-bg: #282c34; --code-text: #abb2bf; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
+    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
+    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+    h1 { color: var(--secondary-color); font-weight: 700; margin-bottom: 1.5rem; }
+    h2 { color: var(--primary-color); font-weight: 600; margin-top: 2.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); }
+    h3 { color: var(--secondary-color); font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+    code { background: #f8f9fa; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; color: #e83e8c; }
+    pre { background: var(--code-bg); color: var(--code-text); border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; color: var(--code-text); font-family: 'Courier New', monospace; }
+    .navbar { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--primary-color); text-decoration: none; }
+    .alert-info { background: #e7f3ff; border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .tip-box { background: #e7f3ff; border-left: 4px solid #007bff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+    .concept-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .concept-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .strategy-card { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid var(--primary-color); }
+    .strategy-card h4 { color: var(--primary-color); margin-bottom: 0.5rem; }
+    .table th { background: var(--secondary-color); color: white; }
+    .status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+    .status-proposed { background: #fff3cd; color: #856404; }
+    .status-accepted { background: #d4edda; color: #155724; }
+    .status-deprecated { background: #f8d7da; color: #721c24; }
+    .status-superseded { background: #d1ecf1; color: #0c5460; }
+    .lifecycle-flow { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0; }
+    .lifecycle-node { background: var(--bg-light); border: 2px solid var(--primary-color); border-radius: 8px; padding: 0.75rem 1.25rem; font-weight: 600; color: var(--secondary-color); }
+    .lifecycle-arrow { color: var(--primary-color); font-size: 1.5rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid"><div class="container">
+      <a class="navbar-brand" href="../../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    </div></div>
+  </nav>
+
+  <div class="container">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="../index.html">Documents</a></li>
+        <li class="breadcrumb-item"><a href="index.html">Architecture Decisions</a></li>
+        <li class="breadcrumb-item active">Overview &amp; Process</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <h5><i class="bi bi-journal-text me-2"></i>Architecture Decisions</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="index.html">Overview &amp; Process</a>
+            <a class="nav-link" href="examples.html">ADR Examples</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="content">
+          <h1><i class="bi bi-journal-text me-2"></i>Architecture Decision Records</h1>
+
+          <div class="alert-info">
+            <strong>Decision-Driven Documentation</strong> — Architecture Decision Records (ADRs) capture the why behind significant technical choices, ensuring institutional knowledge outlasts the individuals who held it.
+          </div>
+
+          <h2>What is an Architecture Decision Record?</h2>
+          <p>An Architecture Decision Record (ADR) is a short document that captures an important architectural decision made in a project, along with its context and consequences. The concept was introduced by Michael Nygard in 2011 and has become a widely adopted practice in software engineering and infrastructure teams.</p>
+
+          <p>An ADR answers three fundamental questions:</p>
+          <ul>
+            <li><strong>What did we decide?</strong> — A clear, unambiguous statement of the decision made.</li>
+            <li><strong>Why did we decide it?</strong> — The context, constraints, forces, and trade-offs that drove the decision.</li>
+            <li><strong>What are the consequences?</strong> — Both positive outcomes and accepted drawbacks that result from the decision.</li>
+          </ul>
+
+          <p>Crucially, an ADR is not a design document or a specification. It is a record of a decision that was made at a specific point in time, under specific constraints. The decision may later be superseded — and that's expected — but the historical record remains.</p>
+
+          <h2>Why Document Architecture Decisions?</h2>
+
+          <div class="concept-card">
+            <h4>Knowledge Transfer &amp; Onboarding</h4>
+            <p>When a new engineer joins the team, they inevitably ask: "Why is the system built this way?" Without ADRs, the answer is either "ask Alice — she was here when that was decided" or, if Alice has left, a shrug. ADRs make institutional knowledge explicit and accessible to anyone who reads the repository. A new team member reading through 20 ADRs understands years of architectural evolution in an hour.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Avoid Repeating Mistakes and Revisited Debates</h4>
+            <p>Without documented decisions, teams repeatedly revisit the same choices. Every few months someone proposes switching from Terraform to Pulumi, or from PostgreSQL to MongoDB, and the team relitigates the same arguments from memory — except key details are forgotten. An ADR short-circuits this by recording not just what was chosen, but what was <em>rejected and why</em>. The next person who raises the same alternative encounters a documented rationale for the rejection.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Audit Trail &amp; Accountability</h4>
+            <p>In regulated industries (financial services, healthcare, government), auditors and compliance officers may ask: "Why is customer data stored in this region? Who authorised the choice of this encryption standard?" ADRs provide a timestamped, version-controlled answer. They demonstrate that architectural choices were deliberate, considered, and approved — not accidental.</p>
+          </div>
+
+          <div class="concept-card">
+            <h4>Design Review &amp; Team Alignment</h4>
+            <p>The act of writing an ADR forces clarity. An engineer who cannot clearly articulate the context and consequences of a decision in one page has not yet fully understood the problem. The PR-based review process for ADRs creates a structured forum for architectural debate, ensuring all stakeholders have visibility and input before a decision is locked in.</p>
+          </div>
+
+          <h2>When to Write an ADR</h2>
+          <p>Not every technical choice warrants an ADR. The signal that an ADR is appropriate is when the decision:</p>
+
+          <ul>
+            <li>Involves adopting a new technology, framework, or platform for the first time</li>
+            <li>Represents a significant change to the system's structure, integration points, or data model</li>
+            <li>Involves a meaningful trade-off where reasonable engineers could disagree</li>
+            <li>Requires rejecting an alternative that others might later propose</li>
+            <li>Has consequences that will affect other teams or services</li>
+            <li>Is difficult or costly to reverse — a "one-way door" decision</li>
+          </ul>
+
+          <div class="warning-box">
+            <strong>What NOT to write an ADR for:</strong> Routine implementation details (naming a variable, choosing a specific library version patch), pure style preferences with no architectural consequence, and decisions that are trivially reversible without system-wide impact.
+          </div>
+
+          <h2>ADR Lifecycle</h2>
+          <p>Every ADR moves through a defined set of statuses. The status is always recorded in the ADR header and updated in the same Git commit that changes the status.</p>
+
+          <div class="lifecycle-flow">
+            <div class="lifecycle-node">Proposed</div>
+            <div class="lifecycle-arrow">→</div>
+            <div class="lifecycle-node">Accepted</div>
+            <div class="lifecycle-arrow">→</div>
+            <div class="lifecycle-node">Deprecated</div>
+            <div class="lifecycle-arrow"> </div>
+          </div>
+          <div class="lifecycle-flow">
+            <div class="lifecycle-node">Accepted</div>
+            <div class="lifecycle-arrow">→</div>
+            <div class="lifecycle-node">Superseded</div>
+          </div>
+
+          <div class="table-responsive mt-3">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Meaning</th>
+                  <th>Next State</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="status-badge status-proposed">Proposed</span></td>
+                  <td>The ADR has been written and submitted for review via pull request. The decision has not yet been approved.</td>
+                  <td>Accepted (PR merged) or Rejected (PR closed)</td>
+                </tr>
+                <tr>
+                  <td><span class="status-badge status-accepted">Accepted</span></td>
+                  <td>The decision has been reviewed, approved by required reviewers, and merged. The decision is in effect and the team is expected to follow it.</td>
+                  <td>Deprecated or Superseded</td>
+                </tr>
+                <tr>
+                  <td><span class="status-badge status-deprecated">Deprecated</span></td>
+                  <td>The decision is no longer relevant or in force, but has not been replaced by a specific successor decision. The system may still reflect this decision, but no new work should follow it.</td>
+                  <td>Terminal (may eventually be Superseded if a replacement is written)</td>
+                </tr>
+                <tr>
+                  <td><span class="status-badge status-superseded">Superseded</span></td>
+                  <td>This decision has been replaced by a newer ADR. The superseding ADR number must be referenced in the header. The original ADR is retained for historical context.</td>
+                  <td>Terminal</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>MADR Format</h2>
+          <p>This portfolio uses the <strong>MADR (Markdown Architectural Decision Records)</strong> format, developed by the MADR project at <a href="https://adr.github.io/madr/" style="color: var(--primary-color);">adr.github.io/madr</a>. MADR is lightweight, human-readable, and well-suited to storage in Git alongside code.</p>
+
+          <pre><code># ADR-NNNN: [Short Title of Decision]
+
+## Status
+[Proposed | Accepted | Deprecated | Superseded by ADR-NNNN]
+
+## Date
+YYYY-MM-DD
+
+## Authors
+- [Name] &lt;email&gt;
+
+## Reviewers
+- [Name] &lt;email&gt;
+
+## Context and Problem Statement
+[Describe the context and the architectural problem that necessitates this decision.
+Include relevant background: team size, system scale, regulatory constraints, timeline.
+Keep this to 2–4 paragraphs. The reader should understand WHY a decision was needed.]
+
+## Decision Drivers
+- [Primary constraint or requirement driving this decision]
+- [Secondary driver: e.g., team expertise, cost, operational burden]
+- [Non-functional requirement: performance, security, reliability]
+
+## Considered Options
+1. [Option A — preferred option]
+2. [Option B]
+3. [Option C]
+4. Do nothing / status quo
+
+## Decision Outcome
+**Chosen option:** "[Option A]", because [summarise the primary reason in one sentence].
+
+### Positive Consequences
+- [Benefit 1]
+- [Benefit 2]
+
+### Negative Consequences / Accepted Trade-offs
+- [Trade-off 1 that was accepted]
+- [Limitation or risk that must be managed]
+
+## Pros and Cons of the Options
+
+### Option A — [Name]
+**Pros:**
+- [Pro 1]
+- [Pro 2]
+
+**Cons:**
+- [Con 1]
+
+### Option B — [Name]
+**Pros:**
+- [Pro 1]
+
+**Cons:**
+- [Con 1: the reason this was not chosen]
+
+### Option C — [Name]
+**Pros:**
+- [Pro 1]
+
+**Cons:**
+- [Con 1: the reason this was not chosen]
+
+## Links
+- [Link to related ADR, RFC, Jira ticket, or design document]
+- [Link to proof-of-concept or benchmark results if applicable]</code></pre>
+
+          <h2>ADR Numbering and Naming Convention</h2>
+          <p>ADRs use a zero-padded four-digit sequential number followed by a lowercase hyphenated short title.</p>
+
+          <div class="concept-card">
+            <h4>Format: <code>ADR-NNNN-short-title.md</code></h4>
+            <p>Examples:</p>
+            <ul>
+              <li><code>ADR-0001-use-postgresql-as-primary-database.md</code></li>
+              <li><code>ADR-0002-use-terraform-for-infrastructure-provisioning.md</code></li>
+              <li><code>ADR-0015-migrate-from-jenkins-to-github-actions.md</code></li>
+              <li><code>ADR-0023-adopt-open-telemetry-for-observability.md</code></li>
+            </ul>
+            <p><strong>Rules:</strong> Numbers are sequential and never reused. If an ADR is rejected (PR closed), the number is still consumed — do not recycle numbers. Titles should be a short verb phrase (5–8 words) that reads as a decision statement, not a question.</p>
+          </div>
+
+          <h2>Where to Store ADRs</h2>
+
+          <div class="concept-card">
+            <h4>Primary Location: <code>docs/decisions/</code> in the Git Repository</h4>
+            <p>ADRs must live in version control, ideally in the same repository as the code or infrastructure they govern. This ensures that:</p>
+            <ul>
+              <li>ADRs are versioned and auditable alongside the changes they describe</li>
+              <li>Engineers reading code can reference decisions from the same repository</li>
+              <li>ADR reviews happen via the same PR workflow as code reviews</li>
+              <li>ADRs are never separated from the artefact they document</li>
+            </ul>
+          </div>
+
+          <div class="concept-card">
+            <h4>Co-location: Near the Code They Affect</h4>
+            <p>For decisions that are scoped to a specific service or component, place the ADR in that component's own <code>docs/decisions/</code> subdirectory rather than a top-level directory. This makes the ADR discoverable by engineers working on that component. Cross-cutting decisions (infrastructure, security, data architecture) should go in the top-level repository.</p>
+          </div>
+
+          <h2>ADR Review Process</h2>
+          <p>All ADRs must be reviewed and approved before they are merged with status <code>Accepted</code>. The review process mirrors the code review process: a pull request is opened, reviewers are assigned, feedback is addressed, and the PR is merged only when approval criteria are met.</p>
+
+          <div class="strategy-card">
+            <h4>Required Reviewers</h4>
+            <ul>
+              <li><strong>Technical lead</strong> of the team owning the decision (mandatory)</li>
+              <li><strong>Architect or senior engineer</strong> from an affected team (mandatory for cross-cutting decisions)</li>
+              <li><strong>Security engineer</strong> for any decision involving data storage, authentication, encryption, or network architecture</li>
+              <li><strong>At least one other team member</strong> for perspective and knowledge sharing</li>
+            </ul>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Acceptance Criteria</h4>
+            <ul>
+              <li>The problem statement clearly explains why the decision was needed</li>
+              <li>At least two alternatives were genuinely considered (not just listed as strawmen)</li>
+              <li>The rationale for the chosen option is specific — not just "it's better" but "it satisfies constraint X which options B and C do not"</li>
+              <li>Negative consequences are acknowledged honestly, not minimised</li>
+              <li>All required reviewers have approved</li>
+              <li>The ADR links to any relevant proof-of-concept, benchmark, or spike ticket</li>
+            </ul>
+          </div>
+
+          <h2>Tools</h2>
+
+          <div class="concept-card">
+            <h4>adr-tools CLI</h4>
+            <p>The <a href="https://github.com/npryce/adr-tools" style="color: var(--primary-color);"><code>adr-tools</code></a> CLI by Nat Pryce provides shell commands to create, list, and link ADRs from the command line. It automatically manages numbering and supports status transitions.</p>
+            <pre><code># Install (macOS)
+brew install adr-tools
+
+# Initialise ADR directory in current project
+adr init docs/decisions
+
+# Create a new ADR
+adr new "Use PostgreSQL as primary relational database"
+
+# List all ADRs
+adr list
+
+# Mark an ADR as superseded by a newer one
+adr supersede 3 15</code></pre>
+          </div>
+
+          <div class="concept-card">
+            <h4>log4brains</h4>
+            <p><a href="https://github.com/thomvaill/log4brains" style="color: var(--primary-color);">log4brains</a> is a static site generator for ADRs. It reads Markdown ADRs from your repository and generates a searchable, browsable web interface — similar to what you are reading now. Integrate it into your CI/CD pipeline to auto-publish ADR documentation on every merge to main.</p>
+            <pre><code># Install log4brains
+npm install -g log4brains
+
+# Initialise in project
+log4brains init
+
+# Preview ADR site locally
+log4brains preview
+
+# Build static site for deployment
+log4brains build</code></pre>
+          </div>
+
+          <div class="concept-card">
+            <h4>Confluence Decision Log</h4>
+            <p>For organisations using Atlassian Confluence, a Decision Log space (using the built-in Decision page template) provides a centralised, searchable view of ADRs with richer formatting and inline comments. The trade-off is that decisions live outside the code repository. The recommended approach is to maintain the canonical ADR in Git and sync a summary to Confluence for stakeholder visibility.</p>
+          </div>
+
+          <div class="success-box">
+            <strong>Getting Started:</strong> The best time to write your first ADR is immediately after a significant architectural decision has been made. Start with the most recent decision your team made that involved a meaningful trade-off. Use the MADR template above, fill it in from memory, and submit it as a pull request. The review process itself will surface gaps and improve the document.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
