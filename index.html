@@ -5,10 +5,10 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Lê Bình Phương | Resume </title>
-  <meta property="og:title" content="Lê Bình Phương Resume | SysDevOps Lead" />
+  <title>Lê Bình Phương | Cloud Infrastructure &amp; Security Manager</title>
+  <meta property="og:title" content="Lê Bình Phương | Cloud Infrastructure &amp; Security Manager" />
   <meta property="og:url" content="https://lebinhphuong-tech.github.io" />
-  <meta property="og:description" content="DevOps, Security, Developer, System, Network">
+  <meta property="og:description" content="Cloud Infrastructure &amp; Security Manager at 7-Eleven Vietnam — Kubernetes, AWS, GCP, DevSecOps, SRE">
   <meta property="og:image" content="https://lebinhphuong-tech.github.io/assets/img/profile-img.jpg" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
@@ -42,12 +42,441 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+
+  <style>
+    /* ======= Global Overrides ======= */
+    .section-title h2 { letter-spacing: -0.5px; }
+
+    /* ======= About ======= */
+    .about-profile-wrap { position: relative; display: inline-block; width: 100%; }
+    .about-profile-wrap img { border-radius: 16px; width: 100%; box-shadow: 0 8px 36px rgba(20,157,221,0.18); }
+    .about-profile-ring {
+      position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px;
+      border-radius: 22px; border: 2px solid rgba(20,157,221,0.25); pointer-events: none;
+    }
+    .about-role-badge {
+      position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, #149ddd, #0d7ab5); color: #fff;
+      font-size: 11px; font-weight: 700; padding: 5px 18px; border-radius: 50px;
+      white-space: nowrap; box-shadow: 0 4px 16px rgba(20,157,221,0.42); letter-spacing: 0.3px;
+    }
+
+    /* ======= Stat Cards ======= */
+    .stat-card {
+      text-align: center; padding: 18px 12px;
+      background: #fff; border-radius: 12px;
+      border: 1px solid rgba(20,157,221,0.12);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05); transition: all 0.25s ease;
+    }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(20,157,221,0.15); border-color: rgba(20,157,221,0.3); }
+    .stat-number { font-size: 28px; font-weight: 800; color: #149ddd; line-height: 1; font-family: 'Raleway', sans-serif; }
+    .stat-label { font-size: 10.5px; color: #8a9bb0; margin-top: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; }
+
+    /* ======= Tech Badges (About) ======= */
+    .tech-badge {
+      display: inline-block; padding: 4px 12px;
+      background: rgba(20,157,221,0.07); border: 1px solid rgba(20,157,221,0.2);
+      color: #149ddd; border-radius: 50px; font-size: 12px; font-weight: 500; margin: 3px 2px;
+      transition: all 0.2s; cursor: default;
+    }
+    .tech-badge:hover { background: #149ddd; color: #fff; }
+
+    /* ======= Skills ======= */
+    .skill-box {
+      background: #fff; border-radius: 14px; border: 1px solid rgba(20,157,221,0.1);
+      padding: 22px 20px; height: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      transition: all 0.25s ease;
+    }
+    .skill-box:hover { box-shadow: 0 6px 28px rgba(20,157,221,0.1); border-color: rgba(20,157,221,0.22); }
+    .skill-category-title {
+      font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.3px; color: #8a9bb0;
+      font-weight: 700; margin-bottom: 14px; padding-bottom: 10px;
+      border-bottom: 1px solid #e8f0f8; display: flex; align-items: center; gap: 6px;
+    }
+    .skill-category-title i { color: #149ddd; font-size: 14px; }
+    .skill-tag {
+      display: inline-block; padding: 5px 11px;
+      background: #f0f8ff; border: 1px solid rgba(20,157,221,0.15); color: #2c4a6e;
+      border-radius: 6px; font-size: 12px; font-weight: 500; margin: 3px 2px 3px 0;
+      transition: all 0.2s ease; cursor: default;
+    }
+    .skill-tag:hover { background: #149ddd; color: #fff; border-color: #149ddd; }
+
+    /* ======= Resume — fully custom, no template .resume-item dependency ======= */
+    .exp-card {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #e4edf9;
+      border-left: 4px solid #149ddd;
+      padding: 20px 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: box-shadow 0.22s ease, transform 0.22s ease;
+    }
+    .exp-card:hover { box-shadow: 0 6px 22px rgba(20,157,221,0.13); transform: translateX(4px); }
+    .exp-badge {
+      display: inline-block; font-size: 9.5px; font-weight: 700;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      padding: 2px 10px; border-radius: 20px; margin-bottom: 8px;
+      background: rgba(20,157,221,0.1); color: #149ddd;
+    }
+    .exp-badge-current { background: rgba(34,197,94,0.1); color: #16a34a; }
+    .exp-card h4 { font-size: 15px; font-weight: 700; color: #173b6c; margin-bottom: 4px; }
+    .exp-meta { font-size: 12px; color: #8a9bb0; margin-bottom: 6px; }
+    .exp-period {
+      display: inline-block; font-size: 11px; font-weight: 600; color: #149ddd;
+      background: rgba(20,157,221,0.07); padding: 2px 10px;
+      border-radius: 20px; margin-bottom: 12px;
+    }
+    .exp-card ul { padding-left: 16px; margin-bottom: 10px; }
+    .exp-card ul li { font-size: 13px; color: #555; margin-bottom: 4px; line-height: 1.55; }
+    .exp-tags { margin-top: 10px; }
+    .exp-tag {
+      display: inline-block; background: #f0f6fc; color: #2c4a6e;
+      font-size: 10px; padding: 2px 9px; border-radius: 4px;
+      margin: 2px 2px 2px 0; font-weight: 500; border: 1px solid #d0e4f5;
+    }
+    .resume-col-title {
+      font-size: 17px; font-weight: 700; color: #173b6c;
+      margin-bottom: 16px; padding-bottom: 8px;
+      border-bottom: 2px solid rgba(20,157,221,0.2);
+    }
+
+    /* ======= Certifications ======= */
+    .cert-card {
+      background: #fff; border-radius: 14px; padding: 24px 22px;
+      border: 1px solid rgba(20,157,221,0.1);
+      box-shadow: 0 3px 16px rgba(0,0,0,0.06);
+      transition: all 0.28s ease; height: 100%;
+      display: flex; flex-direction: column; gap: 14px;
+      position: relative; overflow: hidden;
+    }
+    .cert-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .cert-card.cert-aws::before { background: linear-gradient(90deg, #FF9900, #ffb84d); }
+    .cert-card.cert-gcp::before { background: linear-gradient(90deg, #4285f4, #34a853); }
+    .cert-card:hover { transform: translateY(-5px); box-shadow: 0 10px 32px rgba(0,0,0,0.1); }
+    .cert-provider-row { display: flex; align-items: center; gap: 10px; }
+    .cert-provider-icon {
+      width: 38px; height: 38px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .cert-aws .cert-provider-icon { background: rgba(255,153,0,0.1); color: #FF9900; }
+    .cert-gcp .cert-provider-icon { background: rgba(66,133,244,0.1); color: #4285f4; }
+    .cert-provider-name { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; }
+    .cert-name { font-size: 15px; font-weight: 700; color: #173b6c; line-height: 1.35; }
+    .cert-level {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 3px 11px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .cert-aws .cert-level { background: rgba(255,153,0,0.1); color: #cc7a00; border: 1px solid rgba(255,153,0,0.25); }
+    .cert-gcp .cert-level { background: rgba(66,133,244,0.1); color: #1a5fb4; border: 1px solid rgba(66,133,244,0.25); }
+    .cert-verified { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #22c55e; margin-top: auto; }
+    .cert-verified i { font-size: 13px; }
+
+    /* ======= Project Cards ======= */
+    .project-card {
+      background: #fff; border-radius: 14px; border: 1px solid rgba(20,157,221,0.1);
+      overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+      transition: all 0.28s ease; height: 100%; display: flex; flex-direction: column;
+    }
+    .project-card:hover { transform: translateY(-7px); box-shadow: 0 14px 44px rgba(20,157,221,0.16); border-color: rgba(20,157,221,0.28); }
+    .project-card-header {
+      background: linear-gradient(135deg, #0d1b2a 0%, #1a2f45 100%);
+      padding: 22px 22px 18px; position: relative;
+    }
+    .project-icon { font-size: 26px; color: #149ddd; }
+    .project-metric {
+      position: absolute; top: 14px; right: 14px;
+      background: rgba(20,157,221,0.18); color: #5bc8f5;
+      font-size: 10px; font-weight: 700; padding: 3px 10px;
+      border-radius: 50px; border: 1px solid rgba(20,157,221,0.28);
+    }
+    .project-card-body { padding: 18px 22px 10px; flex: 1; }
+    .project-card-body h4 { font-size: 14.5px; font-weight: 700; color: #173b6c; margin-bottom: 7px; }
+    .project-card-body p { font-size: 12.5px; color: #6c7a8d; line-height: 1.65; margin-bottom: 0; }
+    .project-card-footer { padding: 10px 22px 18px; }
+    .project-tech-tag {
+      display: inline-block; background: rgba(20,157,221,0.07); color: #149ddd;
+      font-size: 10px; padding: 3px 9px; border-radius: 4px; margin: 2px;
+      font-weight: 500; border: 1px solid rgba(20,157,221,0.15);
+    }
+
+    /* ======= Contact Section Redesign ======= */
+    .contact-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(20, 157, 221, 0.08);
+      border: 1px solid rgba(20, 157, 221, 0.28);
+      color: #149ddd;
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(1.4); }
+    }
+    .contact-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #fff;
+      border: 1px solid rgba(20, 157, 221, 0.12);
+      border-left: 3px solid #149ddd;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .contact-card:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 22px rgba(20, 157, 221, 0.13);
+      border-left-color: #0d7ab5;
+    }
+    .contact-card-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #dff3fc, #bde8f7);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      color: #149ddd;
+      flex-shrink: 0;
+    }
+    .contact-card-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8a9bb0;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .contact-card-value {
+      font-size: 14px;
+      color: #173b6c;
+      font-weight: 500;
+    }
+    .contact-card-value a {
+      color: #173b6c;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .contact-card-value a:hover { color: #149ddd; }
+
+    .contact-connect-panel {
+      background: linear-gradient(135deg, #0d1b2a 0%, #152336 50%, #1a2f45 100%);
+      border-radius: 16px;
+      padding: 36px 36px 32px;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 48px rgba(13, 27, 42, 0.28);
+    }
+    .contact-connect-panel::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(20,157,221,0.14) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .contact-connect-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(20,157,221,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .connect-terminal-prompt {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #22c55e;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      padding: 7px 14px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 18px;
+    }
+    .connect-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #e8f0f8;
+      margin-bottom: 10px;
+    }
+    .connect-desc {
+      color: #7d9ab8;
+      font-size: 13.5px;
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+    .connect-social-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .social-tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      padding: 16px 8px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      color: #7d9ab8;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      transition: all 0.25s ease;
+    }
+    .social-tile i { font-size: 22px; }
+    .social-tile:hover { transform: translateY(-4px); color: #fff; text-decoration: none; }
+    .linkedin-tile:hover  { background: rgba(10,102,194,0.28); border-color: rgba(10,102,194,0.45); }
+    .github-tile:hover    { background: rgba(200,200,200,0.1); border-color: rgba(200,200,200,0.25); }
+    .twitter-tile:hover   { background: rgba(29,161,242,0.2);  border-color: rgba(29,161,242,0.38); }
+    .facebook-tile:hover  { background: rgba(24,119,242,0.2);  border-color: rgba(24,119,242,0.38); }
+
+    .connect-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin: 0 0 24px;
+    }
+    .btn-connect-primary, .btn-connect-secondary {
+      display: inline-flex;
+      align-items: center;
+      padding: 11px 22px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      margin-right: 10px;
+      margin-bottom: 8px;
+    }
+    .btn-connect-primary {
+      background: #149ddd;
+      color: #fff;
+      border: 1px solid #149ddd;
+    }
+    .btn-connect-primary:hover {
+      background: #0d7ab5;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(20,157,221,0.38);
+      text-decoration: none;
+    }
+    .btn-connect-secondary {
+      background: rgba(255,255,255,0.05);
+      color: #9ab0c8;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .btn-connect-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border-color: rgba(255,255,255,0.28);
+      text-decoration: none;
+    }
+
+    /* ======= Theme Toggle Button ======= */
+    #theme-toggle {
+      position: fixed; top: 16px; right: 20px;
+      width: 40px; height: 40px; border-radius: 50%;
+      border: none; cursor: pointer; z-index: 9999;
+      background: linear-gradient(135deg, #149ddd, #0d7ab5);
+      color: #fff; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(20,157,221,0.4);
+      transition: all 0.25s ease;
+    }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); box-shadow: 0 6px 24px rgba(20,157,221,0.6); }
+
+    /* ======= Dark Mode ======= */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode #main { background: #0f172a; }
+
+    /* Sections */
+    body.dark-mode section { background: #0f172a; }
+    body.dark-mode .section-bg { background: #111827 !important; }
+    body.dark-mode .section-title h2 { color: #e2e8f0; }
+    body.dark-mode .section-title h2::after { background: #149ddd; }
+    body.dark-mode .section-title p { color: #94a3b8; }
+
+    /* About */
+    body.dark-mode .about-info p,
+    body.dark-mode .about-info li { color: #94a3b8; }
+    body.dark-mode .stat-card { background: #1e293b; border-color: rgba(20,157,221,0.2); box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+    body.dark-mode .stat-label { color: #64748b; }
+    body.dark-mode .tech-badge { background: rgba(20,157,221,0.12); border-color: rgba(20,157,221,0.25); }
+
+    /* Skills */
+    body.dark-mode .skill-box { background: #1e293b; border-color: rgba(20,157,221,0.18); box-shadow: 0 2px 12px rgba(0,0,0,0.25); }
+    body.dark-mode .skill-category-title { color: #64748b; border-color: #1e3a52; }
+    body.dark-mode .skill-tag { background: #1a2f48; border-color: rgba(20,157,221,0.2); color: #94c4e0; }
+    body.dark-mode .skill-tag:hover { background: #149ddd; color: #fff; }
+
+    /* Resume exp cards */
+    body.dark-mode .exp-card { background: #1e293b; border-color: #1e3a52; border-left-color: #149ddd; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+    body.dark-mode .exp-card h4 { color: #e2e8f0; }
+    body.dark-mode .exp-meta { color: #64748b; }
+    body.dark-mode .exp-card ul li { color: #94a3b8; }
+    body.dark-mode .exp-tag { background: #1a2f48; color: #7db8d8; border-color: rgba(20,157,221,0.2); }
+    body.dark-mode .resume-col-title { color: #e2e8f0; border-color: rgba(20,157,221,0.25); }
+
+    /* Certifications */
+    body.dark-mode .cert-card { background: #1e293b; border-color: rgba(20,157,221,0.18); box-shadow: 0 3px 16px rgba(0,0,0,0.3); }
+    body.dark-mode .cert-name { color: #e2e8f0; }
+    body.dark-mode .cert-provider-name { color: #64748b; }
+
+    /* Projects */
+    body.dark-mode .project-card { background: #1e293b; border-color: rgba(20,157,221,0.18); }
+    body.dark-mode .project-card h4 { color: #e2e8f0; }
+    body.dark-mode .project-card p { color: #94a3b8; }
+    body.dark-mode .project-tech-tag { background: #1a2f48; color: #7db8d8; border-color: rgba(20,157,221,0.2); }
+
+    /* Contact */
+    body.dark-mode .contact-card { background: #1e293b; border-color: rgba(20,157,221,0.18); border-left-color: #149ddd; }
+    body.dark-mode .contact-card-value { color: #cbd5e1; }
+    body.dark-mode .contact-card-value a { color: #cbd5e1; }
+    body.dark-mode .contact-status-badge { background: #1e293b; border-color: rgba(20,157,221,0.3); }
+
+    /* General text */
+    body.dark-mode h2, body.dark-mode h3 { color: #e2e8f0; }
+    body.dark-mode p { color: #94a3b8; }
+  </style>
 </head>
 
 <body>
 
   <!-- ======= Mobile nav toggle button ======= -->
   <i class="bi bi-list mobile-nav-toggle d-xl-none"></i>
+
+  <!-- ======= Theme Toggle ======= -->
+  <button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+    <i class="bi bi-moon-fill" id="theme-icon"></i>
+  </button>
 
   <!-- ======= Header ======= -->
   <header id="header">
@@ -58,10 +487,10 @@
         <h1 class="text-light"><a href="index.html">Lê Bình Phương</a></h1>
         <div class="social-links mt-3 text-center">
           <a href="https://www.linkedin.com/in/lebinhphuong/" target="_blank" class="linkedin"><i class="bx bxl-linkedin"></i></a>
-          <a href="https://github.com/" target="_blank" class="github"><i class="bx bxl-github"></i></a>
+          <a href="https://github.com/BinhPhuongIT" target="_blank" class="github"><i class="bx bxl-github"></i></a>
           <a href="https://twitter.com/phuong_lbinh" target="_blank" class="twitter"><i class="bx bxl-twitter"></i></a>
           <a href="https://www.facebook.com/mathimotmi" target="_blank" class="facebook"><i class="bx bxl-facebook"></i></a>
-          <a href="https://www.instagram.com/" target="_blank" class="instagram"><i class="bx bxl-instagram"></i></a>
+          <a href="https://www.linkedin.com/in/lebinhphuong/" target="_blank" class="instagram"><i class="bx bxl-instagram"></i></a>
           <a href="skype:binhphuong.?chat" class="skype"><i class="bx bxl-skype"></i></a>
         </div>
       </div>
@@ -70,13 +499,15 @@
         <ul>
           <li><a href="#hero" class="nav-link scrollto active"><i class="bx bx-home"></i> <span>Home</span></a></li>
           <li><a href="#about" class="nav-link scrollto"><i class="bx bx-user"></i> <span>About</span></a></li>
-          <li><a href="#resume" class="nav-link scrollto"><i class="bx bx-file-blank"></i> <span>Resume</span></a></li>
+          <!-- <li><a href="#resume" class="nav-link scrollto"><i class="bx bx-file-blank"></i> <span>Resume</span></a></li> -->
+          <li><a href="#certifications" class="nav-link scrollto"><i class="bx bx-medal"></i> <span>Certifications</span></a></li>
           <li><a href="#projects" class="nav-link scrollto"><i class="bx bx-chalkboard"></i> <span>Projects</span></a></li>
           <!-- <li><a href="#publicspeaking" class="nav-link scrollto"><i class="bx bx-slideshow"></i> <span>Public Speaking</span></a></li> -->
           <!-- <li><a href="#awards" class="nav-link scrollto"><i class="bx bx-award"></i> <span>Awards</span></a></li> -->
           <!-- <li><a href="#publications" class="nav-link scrollto"><i class="bx bx-file"></i> <span>Publications</span></a></li> -->
           <!-- <li><a href="#outreach" class="nav-link scrollto"><i class="bx bx-game"></i> <span>Outreach</span></a></li> -->
           <li><a href="#contact" class="nav-link scrollto"><i class="bx bx-envelope"></i> <span>Contact</span></a></li>
+          <li><a href="cv.html" class="nav-link"><i class="bx bx-file-blank"></i> <span>CV / Resume</span></a></li>
           <li><a href="docs/index.html" class="nav-link"><i class="bx bx-book"></i> <span>Documents</span></a></li>
         </ul>
       </nav><!-- .nav-menu -->
@@ -87,7 +518,7 @@
   <section id="hero" class="d-flex flex-column justify-content-center align-items-center">
     <div class="hero-container" data-aos="fade-in">
       <h1>Lê Bình Phương</h1>
-      <p>I'm a <span class="typed" data-typed-items="SysDevOps Lead, Systems Administrator, IT Infra TeamLead"></span></p>
+      <p>I <span class="typed" data-typed-items="build resilient cloud platforms at scale., architect multi-cloud infrastructure., lead DevSecOps &amp; security transformations., engineer 99.9% uptime systems."></span></p>
     </div>
   </section><!-- End Hero -->
 
@@ -96,28 +527,70 @@
     <!-- ======= About Section ======= -->
     <section id="about" class="about">
       <div class="container">
+        <div class="section-title"><h2>About</h2></div>
 
-        <div class="section-title">
-          <h2>About</h2>
-
-          <div class="row">
-            <div class="col-lg-4" data-aos="fade-right">
-              <img src="assets/img/profile-img.jpg" class="img-fluid" alt="">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-3 text-center" data-aos="fade-right">
+            <div class="about-profile-wrap d-inline-block" style="max-width:220px;">
+              <img src="assets/img/profile-img.jpg" class="img-fluid" alt="Lê Bình Phương">
+              <div class="about-profile-ring"></div>
+              <div class="about-role-badge">Cloud &amp; Security Manager</div>
             </div>
-            <div class="col-lg-8 pt-4 pt-lg-0 content" data-aos="fade-left">
-              <p class="mb-3">
-                Passionate about IT and dedicated to driving operational efficiency through technology, I specialize in DevOps, Security and System Administrator.
-                Currently, I play a pivotal role as a SysDevOps Lead at 7-Eleven Vietnam, where I orchestrate the integration of development and operations processes to streamline software delivery and enhance system reliability. 
-              </p>
-              <p class="mb-3">
-                This automation streamlines software delivery, enabling the rapid release of new features and enhancements.
-                I collaborate closely with cross-functional teams to implement continuous integration and continuous delivery (CI/CD) pipelines, ensuring seamless software releases and minimizing downtime.
-              </p>
-              <p>
-                With a broad expertise spanning DevOps, Security, System, and Network Administration, I bring a wealth of experience in troubleshooting, security implementation, redundancy, and performance optimization. 
-                My proactive problem-solving approach and adaptability to evolving tech trends have been instrumental in contributing to the success of the company.
-              </p>
+          </div>
 
+          <div class="col-lg-9 ps-lg-5 pt-5 pt-lg-0" data-aos="fade-left">
+            <!-- Stats row -->
+            <div class="row g-3 mb-4">
+              <div class="col-6 col-md-3">
+                <div class="stat-card">
+                  <div class="stat-number">200+</div>
+                  <div class="stat-label">K8s Nodes</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-card">
+                  <div class="stat-number">99.9%</div>
+                  <div class="stat-label">Uptime SLA</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-card">
+                  <div class="stat-number">10+</div>
+                  <div class="stat-label">Years Exp.</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-card">
+                  <div class="stat-number">4</div>
+                  <div class="stat-label">Cloud Platforms</div>
+                </div>
+              </div>
+            </div>
+
+            <p class="mb-3">
+              Cloud Infrastructure &amp; Security Manager at 7-Eleven Vietnam, where I design and operate
+              the platform that powers hundreds of convenience stores across the country. I lead a team
+              responsible for a Kubernetes fleet of 200+ worker nodes, 50+ microservices, and 30+ database
+              servers — maintaining 99.9% uptime in a mission-critical environment.
+            </p>
+            <p class="mb-4">
+              My work spans multi-cloud architecture (AWS, GCP, VNG Cloud, FPT Cloud), DevSecOps pipelines,
+              platform security, and cost optimization. I drive GitOps, IaC (Terraform/Ansible), and
+              full-stack observability (PLG, ELK, New Relic) so engineering teams ship reliably and safely.
+              I also maintain an <a href="docs/index.html">Engineering Knowledge Base</a> documenting
+              production patterns, runbooks, and SRE practices.
+            </p>
+            <div>
+              <span class="tech-badge">Kubernetes</span>
+              <span class="tech-badge">Amazon AWS</span>
+              <span class="tech-badge">Google GCP</span>
+              <span class="tech-badge">Terraform</span>
+              <span class="tech-badge">ArgoCD</span>
+              <span class="tech-badge">DevSecOps</span>
+              <span class="tech-badge">SRE</span>
+              <span class="tech-badge">Prometheus</span>
+              <span class="tech-badge">Grafana</span>
+              <span class="tech-badge">ELK Stack</span>
             </div>
           </div>
         </div>
@@ -129,697 +602,360 @@
     <!-- ======= Skills Section ======= -->
     <section id="skills" class="skills">
       <div class="container">
+        <div class="section-title"><h2>Skills</h2></div>
 
-        <div class="section-title">
-          <h2>Skills</h2>
-          <div class="row skills-content">
-
-            <div class="col-lg-3" data-aos="fade-up">
-              <p class="text-center">Container Orchestration/OSs/Cloud</p>
-              <div class="progress">
-                <span class="skill">Docker<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="97" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Kubernetes<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="97" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Linux/Windows/MacOS<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Amazone AWS<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Google GCP<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">VNG Cloud/FPT Cloud<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="97" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">VMWare/OpenStack<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-              
+        <div class="row g-3">
+          <div class="col-lg-3 col-md-6" data-aos="fade-up">
+            <div class="skill-box">
+              <div class="skill-category-title"><i class="bi bi-cloud-fill"></i> Cloud &amp; Orchestration</div>
+              <span class="skill-tag">Docker</span>
+              <span class="skill-tag">Kubernetes</span>
+              <span class="skill-tag">Amazon AWS</span>
+              <span class="skill-tag">Google GCP</span>
+              <span class="skill-tag">VNG Cloud</span>
+              <span class="skill-tag">FPT Cloud</span>
+              <span class="skill-tag">VMware</span>
+              <span class="skill-tag">OpenStack</span>
+              <span class="skill-tag">Linux</span>
+              <span class="skill-tag">Windows Server</span>
             </div>
-
-
-            <div class="col-lg-3" data-aos="fade-up">
-              <p class="text-center">Coding</p>
-              <div class="progress">
-                <span class="skill">Python<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Golang<i class="val">Advanced</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Bash<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">HTML<i class="val">Intermediate</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">JavaScript<i class="val">Advanced</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">PowerShell<i class="val">Advanced</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">DiaPlan<i class="val">Advanced</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-            </div>
-
-
-            <div class="col-lg-3" data-aos="fade-up">
-              <p class="text-center">Tech Stack</p>
-              <div class="progress">
-                <span class="skill">Git<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Kafka<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-              <div class="progress">
-                <span class="skill">Terraform, Ansible<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Jenkins, ArgoCD<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">WAF, SG, Firewall, IDS, IPS<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="97" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">PLG, ELK, Newrelic<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="97" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
           </div>
-
-          <div class="col-lg-3" data-aos="fade-up">
-            <p class="text-center">Databases</p>
-              <div class="progress">
-                <span class="skill">PostgreSQL<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="97" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">MySQL<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Mongo<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Clickhouse<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <div class="progress">
-                <span class="skill">Replication<i class="val">Proficient</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="80">
+            <div class="skill-box">
+              <div class="skill-category-title"><i class="bi bi-gear-fill"></i> DevOps &amp; IaC</div>
+              <span class="skill-tag">Terraform</span>
+              <span class="skill-tag">Ansible</span>
+              <span class="skill-tag">Jenkins</span>
+              <span class="skill-tag">ArgoCD</span>
+              <span class="skill-tag">GitOps</span>
+              <span class="skill-tag">Helm</span>
+              <span class="skill-tag">Git</span>
+              <span class="skill-tag">Kafka</span>
+              <span class="skill-tag">CI/CD</span>
+              <span class="skill-tag">GitLab CI</span>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="150">
+            <div class="skill-box">
+              <div class="skill-category-title"><i class="bi bi-shield-fill"></i> Security &amp; Observability</div>
+              <span class="skill-tag">WAF</span>
+              <span class="skill-tag">IDS/IPS</span>
+              <span class="skill-tag">Firewall</span>
+              <span class="skill-tag">Prometheus</span>
+              <span class="skill-tag">Grafana</span>
+              <span class="skill-tag">Loki</span>
+              <span class="skill-tag">ELK Stack</span>
+              <span class="skill-tag">New Relic</span>
+              <span class="skill-tag">Jaeger</span>
+              <span class="skill-tag">SAST / DAST</span>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="220">
+            <div class="skill-box">
+              <div class="skill-category-title"><i class="bi bi-code-slash"></i> Coding &amp; Databases</div>
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">Bash</span>
+              <span class="skill-tag">Golang</span>
+              <span class="skill-tag">PowerShell</span>
+              <span class="skill-tag">PostgreSQL</span>
+              <span class="skill-tag">MySQL</span>
+              <span class="skill-tag">MongoDB</span>
+              <span class="skill-tag">ClickHouse</span>
+              <span class="skill-tag">Redis</span>
+              <span class="skill-tag">Replication</span>
             </div>
           </div>
         </div>
+
       </div>
     </section>
     <!-- End Skills Section -->
 
 
     <!-- ======= Resume Section ======= -->
-    <section id="resume" class="resume section-bg">
-      <div class="container">
+    <!-- <section id=”resume” class=”section-bg” style=”padding: 60px 0;”>
+      <div class=”container”>
 
-          <div class="section-title">
-              <h2>Resume</h2>
-                <a href="https://raw.githubusercontent.com/BinhPhuongIT/binhphuongit.github.io/main/assets/CV-LeBinhPhuong-SysDevOpsLead.pdf"
-                    class="btn btn-outline-primary">Download CV
-                </a>
+        <div class=”section-title”>
+          <h2>Resume</h2>
+          <a href=”cv.html” class=”btn btn-outline-primary btn-sm me-2”>
+            <i class=”bi bi-file-person me-1”></i> View Full CV
+          </a>
+          <a href=”cv.html” onclick=”window.open('cv.html','_blank'); return false;” class=”btn btn-primary btn-sm”>
+            <i class=”bi bi-file-earmark-pdf me-1”></i> Download PDF
+          </a>
+        </div>
+
+        <div class=”row g-4”> -->
+
+          <!-- Left: Experience -->
+          <!-- <div class=”col-lg-7” data-aos=”fade-up” data-aos-delay=”100”>
+            <p class=”resume-col-title”>Professional Experience</p>
+
+            <div class=”exp-card”>
+              <span class=”exp-badge exp-badge-current”>&#9679; Current</span>
+              <h4>Cloud Infrastructure &amp; Security Manager</h4>
+              <div class=”exp-meta”><i class=”bi bi-building me-1”></i> 7-Eleven Vietnam &nbsp;&middot;&nbsp; Ho Chi Minh</div>
+              <span class=”exp-period”>2019 &mdash; Present</span>
+              <ul>
+                <li>Managed Kubernetes cluster: 200+ nodes, 600+ pods, 50+ microservices — 99.9% uptime</li>
+                <li>Architected multi-cloud platform across AWS, GCP, VNG Cloud, FPT Cloud</li>
+                <li>Built DevSecOps pipelines: SAST/DAST, WAF, IDS/IPS, compliance automation</li>
+                <li>Led cloud cost optimization — right-sizing, RI planning, Spot strategies</li>
+                <li>Deployed full-stack observability (PLG + ELK + New Relic) for 30+ DB servers</li>
+                <li>Directed DevOps team roadmap and mentored engineers</li>
+              </ul>
+              <div class=”exp-tags”>
+                <span class=”exp-tag”>Kubernetes</span>
+                <span class=”exp-tag”>AWS</span>
+                <span class=”exp-tag”>GCP</span>
+                <span class=”exp-tag”>Terraform</span>
+                <span class=”exp-tag”>ArgoCD</span>
+                <span class=”exp-tag”>Prometheus</span>
+                <span class=”exp-tag”>DevSecOps</span>
+              </div>
+            </div>
+
+            <div class=”exp-card”>
+              <span class=”exp-badge”>Previous</span>
+              <h4>IT Infrastructure TeamLead</h4>
+              <div class=”exp-meta”><i class=”bi bi-building me-1”></i> 7-Eleven Vietnam &nbsp;&middot;&nbsp; Ho Chi Minh</div>
+              <span class=”exp-period”>2017 &mdash; 2019</span>
+              <ul>
+                <li>Managed AD, DNS, File Server, Email, VPN, Backup, CCTV systems</li>
+                <li>Deployed and operated DC, office, and store network infrastructure</li>
+                <li>Automated POS and computer setup processes</li>
+                <li>Developed internal systems on Google Cloud Platform</li>
+              </ul>
+              <div class=”exp-tags”>
+                <span class=”exp-tag”>Active Directory</span>
+                <span class=”exp-tag”>GCP</span>
+                <span class=”exp-tag”>Networking</span>
+                <span class=”exp-tag”>VMware</span>
+              </div>
+            </div>
+
+            <div class=”exp-card”>
+              <span class=”exp-badge”>Previous</span>
+              <h4>VoIP Engineer</h4>
+              <div class=”exp-meta”><i class=”bi bi-building me-1”></i> ODS JSC &nbsp;&middot;&nbsp; Ho Chi Minh</div>
+              <span class=”exp-period”>2018 &mdash; 2019</span>
+              <ul>
+                <li>Built and managed PBX core integrated with FPT, Viettel, Mobifone, Vinaphone</li>
+                <li>Maintained high-availability VoIP systems for 500+ enterprise clients</li>
+              </ul>
+              <div class=”exp-tags”>
+                <span class=”exp-tag”>PBX</span>
+                <span class=”exp-tag”>VoIP / SIP</span>
+                <span class=”exp-tag”>Networking</span>
+              </div>
+            </div>
+
+            <div class=”exp-card”>
+              <span class=”exp-badge”>Previous</span>
+              <h4>IT Coordinator</h4>
+              <div class=”exp-meta”><i class=”bi bi-building me-1”></i> VinGroup &nbsp;&middot;&nbsp; Ho Chi Minh</div>
+              <span class=”exp-period”>2015 &mdash; 2018</span>
+              <ul>
+                <li>IT infrastructure rollout for new retail store locations</li>
+                <li>Network configuration: routers, switches, APs</li>
+                <li>Administered Active Directory and DNS services</li>
+              </ul>
+              <div class=”exp-tags”>
+                <span class=”exp-tag”>Active Directory</span>
+                <span class=”exp-tag”>LAN/WAN</span>
+                <span class=”exp-tag”>IT Support</span>
+              </div>
+            </div>
+          </div> -->
+
+          <!-- Right: Education + Focus -->
+          <!-- <div class=”col-lg-5” data-aos=”fade-up”>
+            <p class=”resume-col-title”>Education</p>
+
+            <div class=”exp-card”>
+              <h4>Bachelor of Information Technology</h4>
+              <div class=”exp-meta”><i class=”bi bi-mortarboard-fill me-1”></i> Ho Chi Minh City University of Food Industry</div>
+              <span class=”exp-period”>2011 &mdash; 2015</span>
+            </div>
+
+            <p class=”resume-col-title mt-4”>Focus Areas</p>
+
+            <div class=”exp-card”>
+              <ul>
+                <li>Cloud-native architecture &amp; Kubernetes at scale</li>
+                <li>Infrastructure security &amp; zero-trust networking</li>
+                <li>Site Reliability Engineering (SRE) practices</li>
+                <li>GitOps &amp; infrastructure as code (Terraform, Ansible)</li>
+                <li>Cost optimization for multi-cloud environments</li>
+                <li>Full-stack observability &amp; incident response</li>
+              </ul>
+            </div>
           </div>
 
-          <div class="row">
-              
-              <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-                  <h3 class="resume-title">Professional Experience</h3>
-                  <div class="resume-item">
-                    <h4>SysDevOps Lead</h4>
-                    <h6><i class="fas fa-building"></i> 7-Eleven
-                      <i class="me-2 fas fa-map-marker-alt ms-1"></i><em>Ho Chi Minh</em>
-                    </h6>
-                    <h5>Current</h5>
-                    <ul>Managed and optimized costs for cloud infrastructure, ensuring efficient resource allocation and cost-effective solutions.</ul>
-                    <ul>Designed, deployed, and managed microservice systems on the Kubernetes platform, enhancing scalability, resilience, as well as the high performance and reliability of server and network systems.</ul>
-                    <ul>Managed over 200 worker nodes, more than 50 microservices, over 600 pods, more than 30 database servers, over 120 tenant databases, achieving 99.9% uptime.</ul>
-                    <ul>Conducted research on new solutions to enhance performance and security, implementing innovative measures to mitigate risks and improve efficiency.</ul>
-                    <ul>Developed automation systems to optimize application deployment processes, streamlining workflows and reducing manual intervention.</ul>
-                    <ul>Established monitoring, alerting, and security systems, ensuring proactive detection and response to potential threats and vulnerabilities.</ul>
-                    <ul>Implemented robust disaster recovery systems, ensuring business continuity and minimizing downtime in case of emergencies.</ul>
-                    <ul>Provided direction and guided the development roadmap for DevOps team, fostering skill development and aligning team goals with organizational objectives.</ul>
-                </div>
-                <div class="resume-item">
-                  <h4>IT Infrastructure TeamLead</h4>
-                  <h6><i class="fas fa-building"></i> 7-Eleven
-                      <i class="me-2 fas fa-map-marker-alt ms-1"></i><em>Ho Chi Minh</em>
-                  </h6>
-                  <h5>2017 - 2019</h5>
-                  <ul>Developed and managed systems including Active Directory (AD), DNS, File server, Backup, Email, Monitoring, VPN, Camera.</ul>
-                  <ul>Deployed and managed network systems for Datacenter, Office and Stores.</ul>
-                  <ul>Identified opportunities for process optimization and automation, implementing solutions to improve efficiency and productivity.</ul>
-                  <ul>Automated setup processes for computers and point-of-sale (POS) systems.</ul>
-                  <ul>Deployed and managed asset management systems.</ul>
-                  <ul>Developed internal systems with Google Cloud Platform.</ul>
-                  <ul>Liaised with vendors for procurement, maintenance, and support of IT infrastructure components.</ul>
-                  <ul>Provided training and guidance to team members on new technologies, processes, and best practices, fostering skill development and enhancing team capabilities.</ul>
-                  <ul>Coordinated with various departments to expedite store setup and operations, ensuring efficient workflow and timely completion.</ul>
-                  <ul></ul>
-                </div>
-                <div class="resume-item">
-                    <h4>VoIP Engineer</h4>
-                    <h6><i class="fas fa-building"></i> ODS JSC
-                        <i class="me-2 fas fa-map-marker-alt ms-1"></i><em>Ho Chi Minh</em>
-                    </h6>
-                    <h5>2018 - 2019</h5>
-                    <ul>Built, managed and Integrated PBX core systems with various network providers such as FPT, Viettel, Mobifone, Vinaphone, and others, ensuring system compatibility and reliability.</ul>
-                    <ul>Ensured stable operation and high performance of VoIP systems for over 500 clients, including system management and monitoring.</ul>
-                    <ul>Worked closely with other teams such as software development, technical support, and business departments to ensure effectiveness and meet customer needs.</ul>
-
-                </div>
-                <div class="resume-item">
-                    <h4>IT Coordinator</h4>
-                    <h6><i class="fas fa-building"></i> VinGroup
-                        <i class="me-2 fas fa-map-marker-alt ms-1"></i><em>Ho Chi Minh</em>
-                    </h6>
-                    <h5>2015 - 2018</h5>
-                    <ul>Setup of new stores, ensuring all IT infrastructure and systems are installed and operational.</ul>
-                    <ul>Managing network setup and configuration for new store locations, including routers, switches, and access points.</ul>
-                    <ul>Administering and maintaining Active Directory (AD) and DNS services.</ul>
-                    <ul>Providing technical support and troubleshooting assistance to store staff for IT-related issues.</ul>
-                </div>
-              </div>
-
-              <div class="col-lg-6" data-aos="fade-up">
-                <h3 class="resume-title">Education</h3>
-                <div class="resume-item">
-                    <h4>Bachelor of Information Technology</h4>
-                    <h5>2011 - 2015</h5>
-                    <p><em>Ho Chi Minh City University of Food Industry</em><!--<i class="me-2 fas fa-map-marker-alt ms-1"></i> Ho Chi Minh City-->
-                    </p>
-                    <!-- <p>
-                        “Optimisation studies and data-driven background estimation in searches for the
-                        supersymmetric partner of the top quark with the ATLAS Detector at the LHC”.
-                        2018. <a href="http://cds.cern.ch/record/2650559"
-                            target="_blank">http://cds.cern.ch/record/2650559</a>
-                    </p> -->
-                </div>
-                <!-- <div class="resume-item">
-                    <h4>MSC in Physics</h4>
-                    <h5>2009 - 2014</h5>
-                    <p><em>Università di Catania</em><i class="me-2 fas fa-map-marker-alt ms-1"></i>Catania,
-                        Italy
-                    </p>
-                    <p>
-                        “Emissione di protoni e caratterizzazione spazio-temporale in collisioni tra ioni
-                        pesanti”.
-                    </p>
-                </div>
-                <div class="resume-item">
-                    <h4>BSc in Physics</h4>
-                    <h5>2005 - 2009</h5>
-                    <p><em>Università di Catania</em><i class="me-2 fas fa-map-marker-alt ms-1"></i>Catania,
-                        Italy
-                    </p>
-                    <p>
-                        “Spettri di neutroni in sorgenti standard <em>Am/Be</em> e <em>Pu/Be</em>”.
-                    </p>
-                </div> -->
-              </div>
-          </div>
-
+        </div>
       </div>
-    </section><!-- End Resume Section -->
+    </section> -->
+    <!-- End Resume Section -->
 
-    <!-- ======= Projects Section ======= -->
-    <section id="projects" class="services">
+      <!-- ======= Certifications Section ======= -->
+    <section id="certifications" style="padding: 60px 0;">
       <div class="container">
+        <div class="section-title"><h2>Certifications</h2></div>
 
-          <div class="section-title">
-              <h2>Projects</h2>
+        <div class="row g-4 justify-content-center">
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
+            <div class="cert-card cert-aws">
+              <div class="cert-provider-row">
+                <div class="cert-provider-icon"><i class="bi bi-cloud-fill"></i></div>
+                <div class="cert-provider-name">Amazon Web Services</div>
+              </div>
+              <div class="cert-name">Certified Solutions Architect</div>
+              <span class="cert-level">Associate</span>
+              <div class="cert-verified"><i class="bi bi-patch-check-fill"></i> Verified</div>
+            </div>
           </div>
 
-          <div class="row">
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up">
-                  <div class="icon"><i class="bi bi-diagram-3-fill"></i></div>
-                  <h4 class="title">ETL and Data Modeling</h4>
-                  <p class="description">
-                      <a href="https://lebinhphuong-tech.github.io/covid-italy-etl/" target="_blank">COVID Italy ETL [repository + PowerBI report]</a>
-                  </p>
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="80">
+            <div class="cert-card cert-aws">
+              <div class="cert-provider-row">
+                <div class="cert-provider-icon"><i class="bi bi-gear-fill"></i></div>
+                <div class="cert-provider-name">Amazon Web Services</div>
               </div>
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up">
-                  <div class="icon"><i class="bi bi-graph-up-arrow"></i></div>
-                  <h4 class="title">Data Visualization</h4>
-                  <p class="description">
-                      <a href="https://www.covidash.it/" target="_blank">COVID-19 | Italian data</a>
-                      <a href="https://lebinhphuong-tech.github.io/covidashit/" target="_blank">[repository]</a>
-                  </p>
-              </div>
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
-                  <div class="icon"><i class="bi bi-clipboard-data-fill"></i></div>
-                  <h4 class="title">Data Analytics</h4>
-                  <p class="description">
-                      <a href="https://lebinhphuong-tech.github.io/cordis-rank/" target="_blank">CORDIS Rank
-                          [repo-only]</a>
-                  </p>
-              </div>
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
-                  <div class="icon"><i class="bx bx-file"></i></div>
-                  <h4 class="title">Natural Language Processing</h4>
-                  <p class="description">
-                      <a href="https://vocabularyanalyzer.herokuapp.com/" target="_blank">Vocabulary Analyzer |
-                          Keywords and parts of speech in a given PDF</a>
-                      <a href="https://lebinhphuong-tech.github.io/VocabularyAnalyzer/"
-                          target="_blank">[repository]</a>
-                  </p>
-                  <p class="description">
-                      <a href="https://wagwanfam.herokuapp.com/" target="_blank">Wagwan | Extract topic info from
-                          Facebook post comments</a>
-                      <a href="https://lebinhphuong-tech.github.io/Wagwan/" target="_blank">[repository]</a>
-                  </p>
-              </div>
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
-                  <div class="icon"><i class="bx bx-camera"></i></div>
-                  <h4 class="title">Computer Vision</h4>
-                  <p class="description">
-                      <a href="https://lebinhphuong-tech.github.io/spot" target="_blank">Spot! | Select interesting
-                          pictures within a given dataset [repo only]</a>
-                  </p>
-              </div>
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
-                  <div class="icon"><i class="bx bx-magnet"></i></div>
-                  <h4 class="title">Scraping</h4>
-                  <p class="description">
-                      <a href="https://lebinhphuong-tech.github.io/linkedin-scraper" target="_blank">Linkedin Scraper
-                          | Scrape LinkedIn profiles and jobs [repo only]</a>
-                  </p>
-              </div>
-
+              <div class="cert-name">Certified DevOps Engineer</div>
+              <span class="cert-level">Professional</span>
+              <div class="cert-verified"><i class="bi bi-patch-check-fill"></i> Verified</div>
+            </div>
           </div>
+
+        </div>
+      </div>
+    </section>
+    <!-- End Certifications Section -->
+     
+    <!-- ======= Projects Section ======= -->
+    <section id="projects" class="services section-bg">
+      <div class="container">
+        <div class="section-title"><h2>Projects</h2></div>
+
+        <div class="row g-4">
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up">
+            <div class="project-card">
+              <div class="project-card-header">
+                <i class="bi bi-diagram-3-fill project-icon"></i>
+                <span class="project-metric">200+ nodes</span>
+              </div>
+              <div class="project-card-body">
+                <h4>Kubernetes Platform at Scale</h4>
+                <p>Designed and operated a K8s cluster with 200+ worker nodes, 50+ microservices, and 600+ pods for 7-Eleven Vietnam. Achieved 99.9% uptime with auto-scaling, rolling deployments, and multi-zone redundancy.</p>
+              </div>
+              <div class="project-card-footer">
+                <span class="project-tech-tag">Kubernetes</span>
+                <span class="project-tech-tag">Helm</span>
+                <span class="project-tech-tag">ArgoCD</span>
+                <span class="project-tech-tag">HPA</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="80">
+            <div class="project-card">
+              <div class="project-card-header">
+                <i class="bi bi-shield-lock-fill project-icon"></i>
+                <span class="project-metric">60% faster deploy</span>
+              </div>
+              <div class="project-card-body">
+                <h4>DevSecOps Pipeline</h4>
+                <p>Built end-to-end CI/CD with integrated SAST, DAST, and container image scanning. Implemented WAF, IDS/IPS, and automated compliance checks — cutting deployment time 60% while hardening security posture.</p>
+              </div>
+              <div class="project-card-footer">
+                <span class="project-tech-tag">Jenkins</span>
+                <span class="project-tech-tag">WAF</span>
+                <span class="project-tech-tag">IDS/IPS</span>
+                <span class="project-tech-tag">Trivy</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="160">
+            <div class="project-card">
+              <div class="project-card-header">
+                <i class="bi bi-cloud-arrow-up-fill project-icon"></i>
+                <span class="project-metric">4 cloud providers</span>
+              </div>
+              <div class="project-card-body">
+                <h4>Multi-Cloud Landing Zone</h4>
+                <p>Architected hybrid landing zones across AWS, GCP, VNG Cloud, and FPT Cloud using Terraform and Ansible — enabling consistent, repeatable provisioning and unified governance.</p>
+              </div>
+              <div class="project-card-footer">
+                <span class="project-tech-tag">Terraform</span>
+                <span class="project-tech-tag">Ansible</span>
+                <span class="project-tech-tag">AWS</span>
+                <span class="project-tech-tag">GCP</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="80">
+            <div class="project-card">
+              <div class="project-card-header">
+                <i class="bi bi-graph-up-arrow project-icon"></i>
+                <span class="project-metric">30+ DB servers</span>
+              </div>
+              <div class="project-card-body">
+                <h4>Observability &amp; Monitoring</h4>
+                <p>Deployed full-stack observability — PLG (Prometheus + Loki + Grafana), ELK, and New Relic. Built alerting pipelines and on-call runbooks covering 30+ database servers and 120+ tenant databases.</p>
+              </div>
+              <div class="project-card-footer">
+                <span class="project-tech-tag">Prometheus</span>
+                <span class="project-tech-tag">Grafana</span>
+                <span class="project-tech-tag">Loki</span>
+                <span class="project-tech-tag">ELK</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="160">
+            <div class="project-card">
+              <div class="project-card-header">
+                <i class="bi bi-currency-dollar project-icon"></i>
+                <span class="project-metric">Significant savings</span>
+              </div>
+              <div class="project-card-body">
+                <h4>Cloud Cost Optimization</h4>
+                <p>Led cloud cost governance — right-sizing workloads, Reserved Instance planning, and Spot instance strategies. Reduced monthly spend while maintaining full SLA compliance.</p>
+              </div>
+              <div class="project-card-footer">
+                <span class="project-tech-tag">AWS Cost Explorer</span>
+                <span class="project-tech-tag">RI / Spot</span>
+                <span class="project-tech-tag">Karpenter</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="240">
+            <div class="project-card">
+              <div class="project-card-header">
+                <i class="bi bi-journal-code project-icon"></i>
+                <span class="project-metric">Engineering KB</span>
+              </div>
+              <div class="project-card-body">
+                <h4>Engineering Knowledge Base</h4>
+                <p>Personal documentation covering Cloud, Security, SRE, Observability, Database, and Platform Engineering — built from production experience with runbooks, ADRs, and cheatsheets.</p>
+              </div>
+              <div class="project-card-footer">
+                <span class="project-tech-tag">Docs</span>
+                <span class="project-tech-tag">SRE Runbooks</span>
+                <a href="docs/index.html" class="project-tech-tag" style="text-decoration:none;">Browse →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section><!-- End Projects Section -->
-
-    <!-- ======= Public speaking Section ======= -->
-    <section id="publicspeaking" class="services section-bg">
-      <div class="container" data-aos="fade-up">
-
-          <div class="section-title">
-              <h2>Public Speaking</h2>
-          </div>
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5"  data-aos="fade-up">
-            <div class="resume-content">
-                <h3 class="mb-0">Wider Topics in Data Science seminar series</h3>
-                <div class="subheading mb-0">University of Sussex &nbsp; <i class="fas fa-map-marker-alt"
-                        aria-hidden="false"></i>
-                    Brighton, UK
-                </div>
-                <p><a href="https://www.linkedin.com/feed/update/urn:li:activity:7046898706545033217/"
-                        target="_blank">
-                        "5 YEARS LATER: Story of a transition from a PhD in Physics to a career in data science"
-                        <br>1-hour seminar on my first 5 working years after my PhD</a></p>
-                    </div>
-            <div class="resume-date text-md-right">
-                <span class="text-primary"> Mar 2023</span>
-            </div>
-        </div>
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5"  data-aos="fade-up">
-          <div class="resume-content">
-              <h3 class="mb-0">Wider Topics in Data Science seminar series</h3>
-              <div class="subheading mb-0">University of Sussex &nbsp; <i class="fas fa-map-marker-alt"
-                      aria-hidden="false"></i>
-                  Brighton, UK
-              </div>
-              <p><a href="https://www.linkedin.com/feed/update/urn:li:activity:6767448878640902144/"
-                      target="_blank">
-                      "FROM ACADEMIA TO INDUSTRY"
-                      <br>1-hour seminar my transition from academia to industry</a></p>
-                  </div>
-          <div class="resume-date text-md-right">
-              <span class="text-primary"> Feb 2021</span>
-          </div>
-      </div>
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5"  data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0">Discnet Showcase</h3>
-                  <div class="subheading mb-0">Royal Society &nbsp; <i class="fas fa-map-marker-alt"
-                          aria-hidden="false"></i>
-                      London, UK
-                  </div>
-                  <p><a href="https://fabriziomiano.wordpress.com/2018/12/10/discnet-at-royal-society/"
-                          target="_blank">
-                          "FROM PARTICLE PHYSICS TO COMPUTER VISION"
-                          <br>10-min talk on the ML tool developed for Deckchair.com</a></p>
-              </div>
-              <div class="resume-date text-md-right">
-                  <span class="text-primary"> Dec 2018</span>
-              </div>
-          </div>
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5"  data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0">HLT-UK</h3>
-                  <div class="subheading mb-0">University of Oxford &nbsp; <i class="fas fa-map-marker-alt"
-                          aria-hidden="false"></i> Oxford, UK
-                  </div>
-                  <p>
-                      “HLT TRACKING PERFORMANCE”
-                      <br>15-min talk: Presented the result of the performance of the tracking of the ATLAS Inner
-                      detector
-                  </p>
-              </div>
-              <div class="resume-date text-md-right">
-                  <span class="text-primary"> Sep 2017</span>
-              </div>
-          </div>
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5"  data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0">Phenomenology 2017</h3>
-                  <div class="subheading mb-0">University of Pittsburgh &nbsp; <i class="fas fa-map-marker-alt"
-                          aria-hidden="false"></i> Pittsburgh,
-                      PA, USA
-                  </div>
-                  <p><a href="https://cds.cern.ch/record/2263055" target="_blank">
-                          “SEARCHES FOR DIRECT PRODUCTION OF THIRD GENERATION SQUARKS WITH THE ATLAS DETECTOR”
-                          <br>5-min talk: Presented the results of the searches for third-generation squarks on
-                          behalf of
-                          the
-                          ATLAS Collaboration
-                      </a></p>
-              </div>
-              <div class="resume-date text-md-right">
-                  <span class="text-primary"> May 2017</span>
-              </div>
-          </div>
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5"  data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0">International Conference on High Energy Physics (ICHEP) 2016</h3>
-                  <div class="subheading mb-0">Sheraton Hotel &nbsp; <i class="fas fa-map-marker-alt"
-                          aria-hidden="false"></i>
-                      Chicago, IL, USA
-                  </div>
-                  <p><a href="https://pos.sissa.it/282/856/pdf" target="_blank">“THE DESIGN AND PERFORMANCE OF THE
-                          ATLAS INNER
-                          DETECTOR
-                          TRIGGER FOR RUN 2 COLLISIONS AT √s = 13 TEV”
-                          <br>
-                          Poster presented on behalf of the ATLAS Collaboration: Results of the performance of the
-                          ATLAS
-                          Inner
-                          Detector</a></p>
-              </div>
-              <div class="resume-date text-md-right">
-                  <span class="text-primary"> Aug 2016</span>
-              </div>
-          </div>
-
-      </div>
-    </section>
-    <!-- ======= End Public Speaking Section ======== -->
-
-    <!-- ======= Awards Section ======= -->
-    <section id="awards" class="services">
-      <div class="container">
-
-          <div class="section-title">
-              <h2>Awards</h2>
-          </div>
-
-          <div class="row">
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up">
-                  <div class="icon"><i class="bi bi-award-fill"></i></div>
-                  <h4 class="title">STFC Impact Acceleration Account</h4>
-                  <p class="description">2018 - Post-doctoral Fellowship</p>
-              </div>
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
-                  <div class="icon"><i class="bi bi-award-fill"></i></div>
-                  <h4 class="title">DISCnet</h4>
-                  <p class="description">2018 - 3-month Grant</p>
-              </div>
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up" data-aos-delay="200">
-                  <div class="icon"><i class="bi bi-award-fill"></i></div>
-                  <h4 class="title">University of Sussex</h4>
-                  <p class="description">2016 - Doctoral Overseas Conference Grant for Postgraduate Researchers</p>
-              </div>
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up" data-aos-delay="300">
-                  <div class="icon"><i class="bi bi-award-fill"></i></div>
-                  <h4 class="title">University of Sussex</h4>
-                  <p class="description">2015 - PhD scholarship in collaboration with CERN</p>
-              </div>
-              <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up" data-aos-delay="300">
-                  <div class="icon"><i class="bi bi-award-fill"></i></div>
-                  <h4 class="title">National Institute for Nuclear Physics</h4>
-                  <p class="description">2014 - 1-year MSc scholarship</p>
-              </div>
-          </div>
-      </div>
-    </section><!-- End Awards Section -->
-
-    <!-- ======= Publications Section ======= -->
-    <section id="publications" class="section-bg">
-      <div class="container">
-          <div class="section-title">
-              <h2>Publications</h2>
-          </div>
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5" data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0">International peer-reviewed conferences/proceedings</h3>
-                  <ol>
-                      <li>
-                          F. Miano for the ATLAS Collaboration. <br>“The design and performance of the ATLAS Inner
-                          Detector trigger for Run 2 LHC collisions at √s = 13 TeV”.
-                          In: <a href="http://cds.cern.ch/record/2228638">
-                              Proceedings, 38th International Conference on High
-                              Energy Physics (ICHEP 2016): Chicago, IL, USA, August 3-10, 2016.</a>
-                      </li>
-                  </ol>
-              </div>
-          </div>
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5" data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0">PhD Thesis</h3>
-                  <ol>
-                      <li>
-                          Lê Bình Phương and Fabrizio Salvatore. <br>“Optimisation studies and data-driven
-                          background
-                          estimation
-                          in
-                          searches for the supersymmetric partner of the top quark with the ATLAS Detector at the
-                          LHC”. Presented
-                          28
-                          Sep 2018. Sept. 2018. <a
-                              href="http://cds.cern.ch/record/2650559">http://cds.cern.ch/record/2650559</a>
-                      </li>
-                  </ol>
-              </div>
-          </div>
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5" data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0">Articles in peer-reviewed journals</h3>
-                  <ol>
-                      <li>
-                          The ATLAS Collaboration. <br>“Performance of the ATLAS trigger system in 2015”. In: The
-                          European
-                          Physical Journal
-                          C 77.5 (May 2017), p. 317. ISSN: 1434-6052. DOI: 10.1140/epjc/s10052-017-4852-3.
-                          <a
-                              href="https://doi.org/10.1140/epjc/s10052-017-4852-3">https://doi.org/10.1140/epjc/s10052-017-4852-3.</a>
-                      </li>
-                      <li>
-                          The ATLAS Collaboration. <br>“Search for a scalar partner of the top quark in the jets
-                          plus
-                          missing
-                          transverse
-                          momentum final state at √s=13 TeV with the ATLAS detector”. In: JHEP 12 (2017), p. 085.
-                          DOI:
-                          10.1007/JHEP12(2017)085.
-                          arXiv: 1709.04183 [hep-ex] <a
-                              href="https://doi.org/10.1007/JHEP12(2017)085">https://doi.org/10.1007/JHEP12(2017)085</a>
-                      </li>
-                      <li>
-                          The ATLAS Collaboration. <br>“Search for dark matter produced in association with bottom
-                          or
-                          top quarks
-                          in s
-                          = 13 TeV pp collisions with the ATLAS detector”. In: The European Physical Journal C
-                          ICHEP2016 (2016),
-                          p. 856.
-                          eprint: 1710.11412. <a
-                              href="https://doi.org/10.1140/epjc/s10052-017-5486-1">https://doi.org/10.1140/epjc/s10052-017-5486-1.</a>
-                      </li>
-                      <li>
-                          The ATLAS Collaboration. <br>“Search for the Supersymmetric Partner of the Top Quark in
-                          the
-                          Jets+E<sub>T</sub><sup>miss</sup> Final
-                          State at √s = 13 TeV”. In: <a href="http://cds.cern.ch/record/2206250">
-                              CERN Document Server (2016).</a>
-                      </li>
-                  </ol>
-              </div>
-          </div>
-      </div>
-    </section><!-- End Publications Section -->
-
-    <!-- ======= Outreach Section ======== -->
-    <section id="outreach">
-      <div class="container">
-          <div class="section-title">
-              <h2>Outreach</h2>
-          </div>
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5" data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0">#ScienceonBuses</h3>
-                  <div class="subheading mb-0"><i class="fas fa-map-marker-alt" aria-hidden="false"></i> Brighton,
-                      UK
-                  </div>
-                  <p>Participated in filming and engaged people on buses about CERN research activities</p>
-              </div>
-              <div class="resume-date text-md-right">
-                  <span class="text-primary"> Jun 2018</span>
-              </div>
-          </div>
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5" data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0"> HiSPARC</h3>
-                  <div class="subheading mb-0"><i class="fas fa-map-marker-alt" aria-hidden="false"></i> Brighton,
-                      UK
-                  </div>
-                  <p>Helped middle school student build a scintillator for cosmic-ray detection</p>
-              </div>
-              <div class="resume-date text-md-right">
-                  <span class="text-primary"> Nov 2017</span>
-              </div>
-          </div>
-
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5" data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0">CERN Master class</h3>
-                  <div class="subheading mb-0"><i class="fas fa-map-marker-alt" aria-hidden="false"></i> Geneva,
-                      Switzerland
-                  </div>
-                  <p>Talked to a high-school students audience about “The life of a PhD student at CERN”</p>
-              </div>
-              <div class="resume-date text-md-right">
-                  <span class="text-primary"> May 2016</span>
-              </div>
-          </div>
-
-
-          <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5" data-aos="fade-up">
-              <div class="resume-content">
-                  <h3 class="mb-0">Brighton Science Festival</h3>
-                  <div class="subheading mb-0"><i class="fas fa-map-marker-alt" aria-hidden="false"></i> Brighton,
-                      UK
-                  </div>
-                  <p>Engaged kids through games related to particle physics</p>
-              </div>
-              <div class="resume-date text-md-right">
-                  <span class="text-primary"> Feb 2015</span>
-              </div>
-          </div>
-
-      </div>
-    </section>
-    <!-- ======= End outreach section ====== -->
 
     <!-- ======= Contact Section ======= -->
     <section id="contact" class="contact section-bg">
@@ -829,30 +965,88 @@
           <h2>Contact</h2>
         </div>
 
-        <div class="row" data-aos="fade-in">
+        <div class="row g-4" data-aos="fade-up">
 
-          <div class="col-lg-5 d-flex align-items-stretch">
-            <div class="info">
-              <div class="address">
-                <i class="bi bi-geo-alt"></i>
-                <h4>Location:</h4>
-                <p>Ho Chi Minh City</p>
-              </div>
-
-              <div class="email">
-                <i class="bi bi-envelope"></i>
-                <h4>Email:</h4>
-                <p>info@binhphuong.io.vn</p>
-              </div>
-
-              <div class="phone">
-                <i class="bi bi-phone"></i>
-                <h4>Call:</h4>
-                <p>+84 559 522 667</p>
-              </div>
-
+          <!-- Left: Info Cards -->
+          <div class="col-lg-5">
+            <div class="contact-status-badge">
+              <span class="status-dot"></span>
+              <span>Available to connect</span>
             </div>
 
+            <div class="contact-card">
+              <div class="contact-card-icon"><i class="bi bi-geo-alt-fill"></i></div>
+              <div>
+                <div class="contact-card-label">Location</div>
+                <div class="contact-card-value">Ho Chi Minh City, Vietnam</div>
+              </div>
+            </div>
+
+            <div class="contact-card">
+              <div class="contact-card-icon"><i class="bi bi-envelope-fill"></i></div>
+              <div>
+                <div class="contact-card-label">Email</div>
+                <div class="contact-card-value"><a href="mailto:info@binhphuong.io.vn">info@binhphuong.io.vn</a></div>
+              </div>
+            </div>
+
+            <div class="contact-card">
+              <div class="contact-card-icon"><i class="bi bi-telephone-fill"></i></div>
+              <div>
+                <div class="contact-card-label">Phone</div>
+                <div class="contact-card-value"><a href="tel:+84559522667">+84 559 522 667</a></div>
+              </div>
+            </div>
+
+            <div class="contact-card">
+              <div class="contact-card-icon"><i class="bi bi-clock-fill"></i></div>
+              <div>
+                <div class="contact-card-label">Timezone</div>
+                <div class="contact-card-value">GMT+7 &mdash; Indochina Time</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Connect Panel -->
+          <div class="col-lg-7 d-flex">
+            <div class="contact-connect-panel w-100">
+              <div class="connect-terminal-prompt">$ connect --with lebinhphuong</div>
+              <div class="connect-title">Let's build something reliable.</div>
+              <p class="connect-desc">
+                Open to discussions on cloud infrastructure, platform security, DevSecOps practices,
+                or SRE challenges. Drop a message or connect via any channel below.
+              </p>
+
+              <div class="connect-social-grid">
+                <a href="https://www.linkedin.com/in/lebinhphuong/" target="_blank" class="social-tile linkedin-tile">
+                  <i class="bx bxl-linkedin"></i>
+                  <span>LinkedIn</span>
+                </a>
+                <a href="https://github.com/BinhPhuongIT" target="_blank" class="social-tile github-tile">
+                  <i class="bx bxl-github"></i>
+                  <span>GitHub</span>
+                </a>
+                <a href="https://twitter.com/phuong_lbinh" target="_blank" class="social-tile twitter-tile">
+                  <i class="bx bxl-twitter"></i>
+                  <span>Twitter</span>
+                </a>
+                <a href="https://www.facebook.com/mathimotmi" target="_blank" class="social-tile facebook-tile">
+                  <i class="bx bxl-facebook"></i>
+                  <span>Facebook</span>
+                </a>
+              </div>
+
+              <hr class="connect-divider">
+
+              <div>
+                <a href="https://www.linkedin.com/in/lebinhphuong/" target="_blank" class="btn-connect-primary">
+                  <i class="bx bxl-linkedin me-2"></i> Connect on LinkedIn
+                </a>
+                <a href="docs/index.html" class="btn-connect-secondary">
+                  <i class="bi bi-journal-code me-2"></i> Engineering Docs
+                </a>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -879,6 +1073,36 @@
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+
+  <!-- Theme Toggle -->
+  <script>
+    (function () {
+      const btn = document.getElementById('theme-toggle');
+      const icon = document.getElementById('theme-icon');
+      const body = document.body;
+
+      function applyTheme(dark) {
+        if (dark) {
+          body.classList.add('dark-mode');
+          icon.className = 'bi bi-sun-fill';
+          btn.style.background = 'linear-gradient(135deg, #1e293b, #334155)';
+        } else {
+          body.classList.remove('dark-mode');
+          icon.className = 'bi bi-moon-fill';
+          btn.style.background = 'linear-gradient(135deg, #149ddd, #0d7ab5)';
+        }
+      }
+
+      // Load saved preference, default to light
+      applyTheme(localStorage.getItem('theme') === 'dark');
+
+      btn.addEventListener('click', function () {
+        const isDark = body.classList.contains('dark-mode');
+        applyTheme(!isDark);
+        localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+      });
+    })();
+  </script>
 
 </body>
 

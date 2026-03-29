@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lê Bình Phương — CV / Resume</title>
+  <meta name="description" content="Cloud Infrastructure & Security Manager — CV of Lê Bình Phương">
+
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 13px; }
+    body { font-family: 'Inter', sans-serif; background: #dde3ea; color: #2d3748; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ===== TOP BAR (screen only) ===== */
+    .top-bar {
+      background: #0a1628;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .top-bar-left { display: flex; align-items: center; gap: 20px; }
+    .back-link {
+      color: #7d9ab8;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #fff; }
+    .top-bar-title { color: #c8daea; font-size: 13px; font-weight: 600; }
+    .top-bar-title span { color: #149ddd; }
+    .btn-pdf {
+      background: #149ddd;
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.3px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-pdf:hover { background: #0d7ab5; transform: translateY(-1px); }
+    .btn-pdf i { font-size: 14px; }
+
+    /* ===== CV WRAPPER ===== */
+    .cv-page {
+      max-width: 920px;
+      margin: 28px auto 60px;
+      display: flex;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.22);
+      min-height: 1050px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .cv-sidebar {
+      width: 272px;
+      flex-shrink: 0;
+      background: #0d1b2a;
+      padding: 36px 26px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+    .sb-profile { text-align: center; }
+    .sb-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #149ddd;
+      margin-bottom: 12px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .sb-name { font-size: 17px; font-weight: 800; color: #fff; line-height: 1.25; margin-bottom: 4px; }
+    .sb-title { font-size: 10px; font-weight: 600; color: #149ddd; text-transform: uppercase; letter-spacing: 1.2px; line-height: 1.5; }
+
+    .sb-sep { border: none; border-top: 1px solid rgba(20,157,221,0.2); }
+
+    .sb-block { display: flex; flex-direction: column; gap: 10px; }
+    .sb-head {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.6px;
+      color: #149ddd;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(20,157,221,0.2);
+    }
+
+    /* Contact */
+    .ct-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: 11px;
+      color: #9ab8d4;
+      line-height: 1.45;
+    }
+    .ct-row i { color: #149ddd; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+    .ct-row a { color: #9ab8d4; word-break: break-all; transition: color 0.2s; }
+    .ct-row a:hover { color: #fff; }
+
+    /* Skill bars */
+    .skb-item { display: flex; flex-direction: column; gap: 4px; }
+    .skb-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #b0cce0;
+    }
+    .skb-label em { font-size: 9.5px; color: #4e6e88; font-style: normal; }
+    .skb-track { height: 3px; background: rgba(255,255,255,0.07); border-radius: 3px; }
+    .skb-fill { height: 3px; border-radius: 3px; background: linear-gradient(90deg, #149ddd 0%, #5bc8f5 100%); }
+
+    /* Tag cloud */
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 5px; }
+    .sb-tag {
+      background: rgba(20,157,221,0.1);
+      color: #7dc4e8;
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 4px;
+      border: 1px solid rgba(20,157,221,0.18);
+    }
+
+    /* Lang */
+    .lang-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #9ab8d4; }
+    .lang-dots { display: flex; gap: 3px; }
+    .lang-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(20,157,221,0.2);
+      border: 1px solid rgba(20,157,221,0.3);
+    }
+    .lang-dot.on { background: #149ddd; border-color: #149ddd; }
+
+    /* ===== MAIN ===== */
+    .cv-main {
+      flex: 1;
+      background: #fff;
+      padding: 38px 34px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Section head */
+    .sec-head {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      color: #149ddd;
+      padding-bottom: 7px;
+      border-bottom: 2px solid #149ddd;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .sec-head i { font-size: 13px; }
+
+    /* Summary */
+    .summary-p { font-size: 12.5px; color: #4a5568; line-height: 1.78; }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .stat-box {
+      background: #f0f8ff;
+      border: 1px solid rgba(20,157,221,0.15);
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .stat-box .n { font-size: 18px; font-weight: 800; color: #149ddd; line-height: 1; }
+    .stat-box .l { font-size: 8.5px; color: #8a9bb0; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 3px; }
+
+    /* Experience entries */
+    .exp-block { display: flex; flex-direction: column; gap: 18px; }
+    .exp-entry { padding-bottom: 18px; border-bottom: 1px solid #f0f4f8; }
+    .exp-entry:last-child { border-bottom: none; padding-bottom: 0; }
+    .exp-row1 { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 2px; }
+    .exp-title { font-size: 13.5px; font-weight: 700; color: #173b6c; }
+    .exp-date {
+      font-size: 10px;
+      font-weight: 600;
+      color: #149ddd;
+      background: rgba(20,157,221,0.08);
+      padding: 2px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .exp-badge {
+      display: inline-block;
+      font-size: 8.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      padding: 1px 8px;
+      border-radius: 20px;
+      margin-bottom: 3px;
+    }
+    .badge-current { background: rgba(34,197,94,0.1); color: #16a34a; border: 1px solid rgba(34,197,94,0.2); }
+    .badge-prev { background: rgba(20,157,221,0.08); color: #149ddd; border: 1px solid rgba(20,157,221,0.2); }
+    .exp-company { font-size: 11.5px; color: #8a9bb0; margin-bottom: 8px; }
+    .exp-bullets { padding-left: 14px; display: flex; flex-direction: column; gap: 3px; list-style: disc; margin-bottom: 8px; }
+    .exp-bullets li { font-size: 11.5px; color: #4a5568; line-height: 1.55; }
+    .exp-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .exp-tag {
+      background: #f0f6fc;
+      color: #2c4a6e;
+      font-size: 9.5px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid #d0e4f5;
+      font-weight: 500;
+    }
+
+    /* Education */
+    .edu-entry { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .edu-degree { font-size: 13px; font-weight: 700; color: #173b6c; }
+    .edu-school { font-size: 11.5px; color: #8a9bb0; margin-top: 3px; }
+    .edu-date { font-size: 10px; font-weight: 600; color: #149ddd; background: rgba(20,157,221,0.08); padding: 2px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+
+    /* Focus areas */
+    .focus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 20px; }
+    .focus-item { display: flex; align-items: flex-start; gap: 7px; font-size: 11.5px; color: #4a5568; line-height: 1.45; }
+    .focus-item::before { content: '▸'; color: #149ddd; flex-shrink: 0; font-size: 10px; margin-top: 2px; }
+
+    /* Footer */
+    .cv-footer {
+      border-top: 1px solid #f0f4f8;
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: #aab8c8;
+      margin-top: auto;
+    }
+    .cv-footer a { color: #149ddd; }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      @page { size: A4 portrait; margin: 0; }
+      html { font-size: 11.5px; }
+      body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .top-bar { display: none !important; }
+      .cv-page {
+        margin: 0;
+        max-width: 100%;
+        width: 100%;
+        box-shadow: none;
+        min-height: 100vh;
+        page-break-inside: avoid;
+      }
+      .cv-sidebar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .exp-entry { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== TOP BAR ===== -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <a href="index.html" class="back-link">
+        <i class="bi bi-arrow-left"></i> Portfolio
+      </a>
+      <div class="top-bar-title">Lê Bình Phương &mdash; <span>CV / Resume</span></div>
+    </div>
+    <button class="btn-pdf" onclick="window.print()">
+      <i class="bi bi-file-earmark-pdf-fill"></i> Download PDF
+    </button>
+  </div>
+
+  <!-- ===== CV PAGE ===== -->
+  <div class="cv-page">
+
+    <!-- ======== SIDEBAR ======== -->
+    <div class="cv-sidebar">
+
+      <!-- Profile -->
+      <div class="sb-profile">
+        <img src="assets/img/profile-img.jpg" alt="Lê Bình Phương" class="sb-avatar">
+        <div class="sb-name">Lê Bình Phương</div>
+        <div class="sb-title">Cloud Infrastructure<br>&amp; Security Manager</div>
+      </div>
+
+      <hr class="sb-sep">
+
+      <!-- Contact -->
+      <div class="sb-block">
+        <div class="sb-head">Contact</div>
+        <div class="ct-row"><i class="bi bi-geo-alt-fill"></i><span>Ho Chi Minh City, Vietnam</span></div>
+        <div class="ct-row"><i class="bi bi-envelope-fill"></i><a href="mailto:info@binhphuong.io.vn">info@binhphuong.io.vn</a></div>
+        <div class="ct-row"><i class="bi bi-telephone-fill"></i><span>+84 559 522 667</span></div>
+        <div class="ct-row"><i class="bi bi-linkedin"></i><a href="https://www.linkedin.com/in/lebinhphuong/" target="_blank">linkedin.com/in/lebinhphuong</a></div>
+        <div class="ct-row"><i class="bi bi-github"></i><a href="https://github.com/BinhPhuongIT" target="_blank">github.com/BinhPhuongIT</a></div>
+      </div>
+
+      <hr class="sb-sep">
+
+      <!-- Core Skills -->
+      <div class="sb-block">
+        <div class="sb-head">Core Skills</div>
+        <div class="skb-item">
+          <div class="skb-label">Kubernetes / Docker <em>Expert</em></div>
+          <div class="skb-track"><div class="skb-fill" style="width:97%"></div></div>
+        </div>
+        <div class="skb-item">
+          <div class="skb-label">AWS / GCP <em>Expert</em></div>
+          <div class="skb-track"><div class="skb-fill" style="width:93%"></div></div>
+        </div>
+        <div class="skb-item">
+          <div class="skb-label">Terraform / Ansible <em>Expert</em></div>
+          <div class="skb-track"><div class="skb-fill" style="width:95%"></div></div>
+        </div>
+        <div class="skb-item">
+          <div class="skb-label">Security / DevSecOps <em>Expert</em></div>
+          <div class="skb-track"><div class="skb-fill" style="width:95%"></div></div>
+        </div>
+        <div class="skb-item">
+          <div class="skb-label">Observability (PLG/ELK) <em>Expert</em></div>
+          <div class="skb-track"><div class="skb-fill" style="width:95%"></div></div>
+        </div>
+        <div class="skb-item">
+          <div class="skb-label">Python / Bash / Go <em>Advanced</em></div>
+          <div class="skb-track"><div class="skb-fill" style="width:83%"></div></div>
+        </div>
+        <div class="skb-item">
+          <div class="skb-label">PostgreSQL / MongoDB <em>Expert</em></div>
+          <div class="skb-track"><div class="skb-fill" style="width:93%"></div></div>
+        </div>
+      </div>
+
+      <hr class="sb-sep">
+
+      <!-- Certifications -->
+      <div class="sb-block">
+        <div class="sb-head">Certifications</div>
+        <div class="ct-row" style="align-items:center;">
+          <i class="bi bi-patch-check-fill" style="color:#f59e0b;"></i>
+          <span style="color:#c8daea; font-size:11px; line-height:1.4;">AWS Certified<br><strong style="color:#fff;">Solutions Architect</strong></span>
+        </div>
+        <div class="ct-row" style="align-items:center;">
+          <i class="bi bi-patch-check-fill" style="color:#f59e0b;"></i>
+          <span style="color:#c8daea; font-size:11px; line-height:1.4;">AWS Certified<br><strong style="color:#fff;">DevOps Engineer – Professional</strong></span>
+        </div>
+      </div>
+
+      <hr class="sb-sep">
+
+      <!-- Tools -->
+      <div class="sb-block">
+        <div class="sb-head">Tools &amp; Platforms</div>
+        <div class="tag-cloud">
+          <span class="sb-tag">Helm</span>
+          <span class="sb-tag">ArgoCD</span>
+          <span class="sb-tag">Jenkins</span>
+          <span class="sb-tag">GitLab CI</span>
+          <span class="sb-tag">Kafka</span>
+          <span class="sb-tag">Prometheus</span>
+          <span class="sb-tag">Grafana</span>
+          <span class="sb-tag">Loki</span>
+          <span class="sb-tag">ELK Stack</span>
+          <span class="sb-tag">New Relic</span>
+          <span class="sb-tag">WAF</span>
+          <span class="sb-tag">IDS / IPS</span>
+          <span class="sb-tag">VNG Cloud</span>
+          <span class="sb-tag">FPT Cloud</span>
+          <span class="sb-tag">VMware</span>
+          <span class="sb-tag">OpenStack</span>
+          <span class="sb-tag">ClickHouse</span>
+          <span class="sb-tag">Redis</span>
+        </div>
+      </div>
+
+      <hr class="sb-sep">
+
+      <!-- Languages -->
+      <div class="sb-block">
+        <div class="sb-head">Languages</div>
+        <div class="lang-row">
+          <span>Vietnamese</span>
+          <div class="lang-dots">
+            <div class="lang-dot on"></div><div class="lang-dot on"></div>
+            <div class="lang-dot on"></div><div class="lang-dot on"></div><div class="lang-dot on"></div>
+          </div>
+        </div>
+        <div class="lang-row">
+          <span>English</span>
+          <div class="lang-dots">
+            <div class="lang-dot on"></div><div class="lang-dot on"></div>
+            <div class="lang-dot on"></div><div class="lang-dot"></div><div class="lang-dot"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- END SIDEBAR -->
+
+    <!-- ======== MAIN ======== -->
+    <div class="cv-main">
+
+      <!-- Summary -->
+      <div>
+        <div class="sec-head"><i class="bi bi-person-fill"></i> Professional Summary</div>
+        <p class="summary-p">
+          Cloud Infrastructure &amp; Security Manager with 10+ years of experience building and operating mission-critical platforms at scale.
+          Currently managing cross-functional teams (DevOps, Security, SRE, Network, Cloud) at 7-Eleven Vietnam — overseeing 2 production DCs,
+          1 DR site, and an active DR migration. Responsible for a Kubernetes fleet of 200+ worker nodes across AWS, GCP, VNG Cloud, and FPT Cloud
+          with 99.9% uptime SLA. Certified AWS Solutions Architect and AWS DevOps Engineer – Professional.
+        </p>
+        <div class="stats-row">
+          <div class="stat-box"><div class="n">200+</div><div class="l">K8s Nodes</div></div>
+          <div class="stat-box"><div class="n">99.9%</div><div class="l">Uptime SLA</div></div>
+          <div class="stat-box"><div class="n">10+</div><div class="l">Years Exp.</div></div>
+          <div class="stat-box"><div class="n">4</div><div class="l">Clouds</div></div>
+          <div class="stat-box"><div class="n">120+</div><div class="l">Tenant DBs</div></div>
+        </div>
+      </div>
+
+      <!-- Experience -->
+      <div>
+        <div class="sec-head"><i class="bi bi-briefcase-fill"></i> Professional Experience</div>
+        <div class="exp-block">
+
+          <div class="exp-entry">
+            <span class="exp-badge badge-current">&#9679; Current</span>
+            <div class="exp-row1">
+              <div class="exp-title">Cloud Infrastructure &amp; Security Manager</div>
+              <span class="exp-date">2025 — Present</span>
+            </div>
+            <div class="exp-company"><i class="bi bi-building me-1"></i> 7-Eleven Vietnam &nbsp;&middot;&nbsp; Ho Chi Minh City</div>
+            <ul class="exp-bullets">
+              <li>Leading cross-functional teams covering DevOps, Security, SRE, Network, and Cloud engineering</li>
+              <li>Managing 2 production Data Centers running in parallel with 1 DR site; currently leading DR migration project</li>
+              <li>Governing cloud infrastructure strategy and security posture across AWS, GCP, VNG Cloud, and FPT Cloud</li>
+              <li>Driving DevSecOps transformation: SAST/DAST pipelines, WAF, IDS/IPS, zero-trust network architecture</li>
+              <li>Overseeing multi-cloud cost governance, compliance frameworks, and capacity planning</li>
+            </ul>
+            <div class="exp-tags">
+              <span class="exp-tag">AWS</span><span class="exp-tag">GCP</span><span class="exp-tag">Security</span>
+              <span class="exp-tag">DevSecOps</span><span class="exp-tag">WAF</span><span class="exp-tag">Data Center</span>
+              <span class="exp-tag">DR / BCP</span><span class="exp-tag">Team Management</span>
+            </div>
+          </div>
+
+          <div class="exp-entry">
+            <span class="exp-badge badge-prev">Previous</span>
+            <div class="exp-row1">
+              <div class="exp-title">SysDevOps Lead</div>
+              <span class="exp-date">2021 — 2025</span>
+            </div>
+            <div class="exp-company"><i class="bi bi-building me-1"></i> 7-Eleven Vietnam &nbsp;&middot;&nbsp; Ho Chi Minh City</div>
+            <ul class="exp-bullets">
+              <li>Managed Kubernetes cluster: 200+ worker nodes, 600+ pods, 50+ microservices — 99.9% uptime SLA</li>
+              <li>Architected hybrid multi-cloud landing zones across AWS, GCP, VNG Cloud, and FPT Cloud</li>
+              <li>Built DevSecOps pipelines with SAST/DAST, WAF, IDS/IPS, and automated compliance scanning</li>
+              <li>Led cloud cost optimization: right-sizing, Reserved Instances, Spot strategies — significant OPEX reduction</li>
+              <li>Deployed full-stack observability (PLG + ELK + New Relic) for 30+ DB servers and 120+ tenant databases</li>
+              <li>Designed and implemented disaster recovery systems ensuring business continuity</li>
+            </ul>
+            <div class="exp-tags">
+              <span class="exp-tag">Kubernetes</span><span class="exp-tag">Terraform</span><span class="exp-tag">ArgoCD</span>
+              <span class="exp-tag">Helm</span><span class="exp-tag">Prometheus</span><span class="exp-tag">Grafana</span>
+              <span class="exp-tag">ELK</span><span class="exp-tag">GitOps</span><span class="exp-tag">SRE</span>
+            </div>
+          </div>
+
+          <div class="exp-entry">
+            <span class="exp-badge badge-prev">Previous</span>
+            <div class="exp-row1">
+              <div class="exp-title">IT Infrastructure TeamLead</div>
+              <span class="exp-date">Dec 2017 — 2021</span>
+            </div>
+            <div class="exp-company"><i class="bi bi-building me-1"></i> 7-Eleven Vietnam &nbsp;&middot;&nbsp; Ho Chi Minh City</div>
+            <ul class="exp-bullets">
+              <li>Managed enterprise systems: Active Directory, DNS, File Server, Email, VPN, Backup, CCTV</li>
+              <li>Deployed and operated DC, office, and retail store network infrastructure</li>
+              <li>Automated POS and workstation setup; managed full IT asset lifecycle</li>
+              <li>Developed internal productivity systems on Google Cloud Platform</li>
+            </ul>
+            <div class="exp-tags">
+              <span class="exp-tag">Active Directory</span><span class="exp-tag">GCP</span>
+              <span class="exp-tag">VMware</span><span class="exp-tag">Networking</span>
+            </div>
+          </div>
+
+          <div class="exp-entry">
+            <span class="exp-badge badge-prev">Previous</span>
+            <div class="exp-row1">
+              <div class="exp-title">VoIP Engineer</div>
+              <span class="exp-date">Sep — Dec 2017</span>
+            </div>
+            <div class="exp-company"><i class="bi bi-building me-1"></i> ODS JSC &nbsp;&middot;&nbsp; Ho Chi Minh City</div>
+            <ul class="exp-bullets">
+              <li>Built and integrated PBX core systems with FPT, Viettel, Mobifone, Vinaphone carriers</li>
+              <li>Ensured high-availability VoIP operations for 500+ enterprise clients</li>
+            </ul>
+            <div class="exp-tags">
+              <span class="exp-tag">PBX</span><span class="exp-tag">VoIP / SIP</span><span class="exp-tag">Networking</span>
+            </div>
+          </div>
+
+          <div class="exp-entry">
+            <span class="exp-badge badge-prev">Previous</span>
+            <div class="exp-row1">
+              <div class="exp-title">IT Coordinator</div>
+              <span class="exp-date">2015 — Aug 2017</span>
+            </div>
+            <div class="exp-company"><i class="bi bi-building me-1"></i> VinGroup &nbsp;&middot;&nbsp; Ho Chi Minh City</div>
+            <ul class="exp-bullets">
+              <li>IT infrastructure rollout for new retail store locations</li>
+              <li>Network configuration: routers, switches, wireless access points</li>
+              <li>Administered Active Directory and DNS services across locations</li>
+            </ul>
+            <div class="exp-tags">
+              <span class="exp-tag">Active Directory</span><span class="exp-tag">LAN/WAN</span><span class="exp-tag">IT Support</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div>
+        <div class="sec-head"><i class="bi bi-mortarboard-fill"></i> Education</div>
+        <div class="edu-entry">
+          <div>
+            <div class="edu-degree">Bachelor of Information Technology</div>
+            <div class="edu-school">Ho Chi Minh City University of Food Industry (HUFI)</div>
+          </div>
+          <span class="edu-date">2011 — 2015</span>
+        </div>
+      </div>
+
+      <!-- Focus Areas -->
+      <div>
+        <div class="sec-head"><i class="bi bi-lightning-fill"></i> Focus Areas</div>
+        <div class="focus-grid">
+          <div class="focus-item">Cloud-native architecture &amp; Kubernetes at scale</div>
+          <div class="focus-item">Infrastructure security &amp; zero-trust networking</div>
+          <div class="focus-item">Site Reliability Engineering (SRE) practices</div>
+          <div class="focus-item">GitOps &amp; Infrastructure as Code</div>
+          <div class="focus-item">Cost optimization for multi-cloud environments</div>
+          <div class="focus-item">Full-stack observability &amp; incident response</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="cv-footer">
+        <span>Lê Bình Phương &mdash; Cloud Infrastructure &amp; Security Manager</span>
+        <span>info@binhphuong.io.vn</span>
+      </div>
+
+    </div>
+    <!-- END MAIN -->
+
+  </div>
+  <!-- END CV PAGE -->
+
+</body>
+</html>
