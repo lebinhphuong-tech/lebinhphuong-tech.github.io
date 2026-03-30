@@ -162,10 +162,42 @@
         font-size: 2rem;
       }
     }
+
+    /* Theme Toggle */
+    #theme-toggle {
+      position: fixed; top: 72px; right: 20px;
+      width: 40px; height: 40px; border-radius: 50%;
+      border: none; cursor: pointer; z-index: 9999;
+      background: linear-gradient(135deg, #149ddd, #0d7ab5);
+      color: #fff; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(20,157,221,0.4);
+      transition: all 0.25s ease;
+    }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* Dark Mode */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; box-shadow: 0 2px 15px rgba(0,0,0,0.4); }
+    body.dark-mode .navbar-brand { color: #149ddd; }
+    body.dark-mode .nav-link { color: #9ab8d4 !important; }
+    body.dark-mode .hero-section { background: linear-gradient(135deg, #0d4f7a 0%, #0d1b2a 100%); }
+    body.dark-mode .doc-card { background: #1e293b; box-shadow: 0 3px 15px rgba(0,0,0,0.3); }
+    body.dark-mode .doc-card h3 { color: #e2e8f0; }
+    body.dark-mode .doc-card p { color: #94a3b8; }
+    body.dark-mode .doc-card li { color: #94a3b8; }
+    body.dark-mode .footer { background: #0d1b2a !important; }
+    body.dark-mode .section-header h2 { color: #e2e8f0; }
+    body.dark-mode .section-header p { color: #94a3b8; }
+    body.dark-mode .docs-grid { background: #0f172a; }
   </style>
 </head>
 <body>
-  
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container">
@@ -193,6 +225,9 @@
     <div class="container">
       <h1><i class="bi bi-journal-code me-3"></i>Engineering Knowledge Base</h1>
       <p>Personal documentation on Cloud Infrastructure, Security, SRE, and Platform Engineering — built from real-world experience.</p>
+      <div style="margin-top:1.5rem; display:inline-block; background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:8px 20px; font-family:'Courier New',monospace; font-size:0.9rem; color:#22c55e; letter-spacing:0.3px;">
+  $ browse docs --category all --author lebinhphuong
+</div>
     </div>
   </section>
 
@@ -203,8 +238,8 @@
         
         <!-- Kubernetes -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #326CE5;">
+            <div class="doc-icon" style="background: #326CE520; color: #326CE5;">
               <i class="bi bi-cloud-fill"></i>
             </div>
             <h3>Kubernetes</h3>
@@ -219,8 +254,8 @@
 
         <!-- Docker -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #2496ED;">
+            <div class="doc-icon" style="background: #2496ED20; color: #2496ED;">
               <i class="bi bi-box-seam"></i>
             </div>
             <h3>Docker</h3>
@@ -235,8 +270,8 @@
 
         <!-- Terraform -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #7C3AED;">
+            <div class="doc-icon" style="background: #7C3AED20; color: #7C3AED;">
               <i class="bi bi-diagram-3"></i>
             </div>
             <h3>Terraform</h3>
@@ -251,8 +286,8 @@
 
         <!-- Ansible -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #EE0000;">
+            <div class="doc-icon" style="background: #EE000020; color: #EE0000;">
               <i class="bi bi-gear"></i>
             </div>
             <h3>Ansible</h3>
@@ -267,8 +302,8 @@
 
         <!-- DevOps -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #F59E0B;">
+            <div class="doc-icon" style="background: #F59E0B20; color: #F59E0B;">
               <i class="bi bi-code-slash"></i>
             </div>
             <h3>DevOps</h3>
@@ -283,8 +318,8 @@
 
         <!-- Security -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #EF4444;">
+            <div class="doc-icon" style="background: #EF444420; color: #EF4444;">
               <i class="bi bi-shield-lock"></i>
             </div>
             <h3>Security</h3>
@@ -301,8 +336,8 @@
 
         <!-- Cloud -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #FF9900;">
+            <div class="doc-icon" style="background: #FF990020; color: #FF9900;">
               <i class="bi bi-clouds"></i>
             </div>
             <h3>Cloud</h3>
@@ -318,8 +353,8 @@
 
         <!-- Multi-cloud & Hybrid -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #6366F1;">
+            <div class="doc-icon" style="background: #6366F120; color: #6366F1;">
               <i class="bi bi-clouds"></i>
             </div>
             <h3>Multi-cloud &amp; Hybrid</h3>
@@ -334,8 +369,8 @@
 
         <!-- Networking -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #06B6D4;">
+            <div class="doc-icon" style="background: #06B6D420; color: #06B6D4;">
               <i class="bi bi-diagram-3"></i>
             </div>
             <h3>Networking</h3>
@@ -351,8 +386,8 @@
 
         <!-- FinOps -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #F97316;">
+            <div class="doc-icon" style="background: #F9731620; color: #F97316;">
               <i class="bi bi-cash-coin"></i>
             </div>
             <h3>FinOps</h3>
@@ -367,8 +402,8 @@
 
         <!-- SRE -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #22C55E;">
+            <div class="doc-icon" style="background: #22C55E20; color: #22C55E;">
               <i class="bi bi-shield-check"></i>
             </div>
             <h3>SRE</h3>
@@ -384,8 +419,8 @@
 
         <!-- Platform Engineering -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #3B82F6;">
+            <div class="doc-icon" style="background: #3B82F620; color: #3B82F6;">
               <i class="bi bi-grid-3x3-gap"></i>
             </div>
             <h3>Platform Engineering</h3>
@@ -400,8 +435,8 @@
 
         <!-- Observability -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #8B5CF6;">
+            <div class="doc-icon" style="background: #8B5CF620; color: #8B5CF6;">
               <i class="bi bi-eye"></i>
             </div>
             <h3>Observability</h3>
@@ -416,8 +451,8 @@
 
         <!-- Database & Storage -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #10B981;">
+            <div class="doc-icon" style="background: #10B98120; color: #10B981;">
               <i class="bi bi-database"></i>
             </div>
             <h3>Database & Storage</h3>
@@ -432,8 +467,8 @@
 
         <!-- Cost Optimization -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #F97316;">
+            <div class="doc-icon" style="background: #F9731620; color: #F97316;">
               <i class="bi bi-graph-down-arrow"></i>
             </div>
             <h3>Cost Optimization</h3>
@@ -448,8 +483,8 @@
 
         <!-- Incident Response Playbooks -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #EF4444;">
+            <div class="doc-icon" style="background: #EF444420; color: #EF4444;">
               <i class="bi bi-book-half"></i>
             </div>
             <h3>Incident Playbooks</h3>
@@ -464,8 +499,8 @@
 
         <!-- Architecture Decision Records -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #64748B;">
+            <div class="doc-icon" style="background: #64748B20; color: #64748B;">
               <i class="bi bi-journal-text"></i>
             </div>
             <h3>Architecture Decisions</h3>
@@ -479,8 +514,8 @@
 
         <!-- Quick References -->
         <div class="col-lg-4 col-md-6">
-          <div class="doc-card">
-            <div class="doc-icon">
+          <div class="doc-card" style="border-top: 3px solid #149ddd;">
+            <div class="doc-icon" style="background: #149ddd20; color: #149ddd;">
               <i class="bi bi-lightning-fill"></i>
             </div>
             <h3>Quick Reference</h3>
@@ -518,6 +553,31 @@
 
   <!-- Bootstrap JS -->
   <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  
+
+  <script>
+  (function() {
+    const btn = document.getElementById('theme-toggle');
+    const icon = document.getElementById('theme-icon');
+    const body = document.body;
+    function applyTheme(dark) {
+      if (dark) {
+        body.classList.add('dark-mode');
+        icon.className = 'bi bi-sun-fill';
+        btn.style.background = 'linear-gradient(135deg, #1e293b, #334155)';
+      } else {
+        body.classList.remove('dark-mode');
+        icon.className = 'bi bi-moon-fill';
+        btn.style.background = 'linear-gradient(135deg, #149ddd, #0d7ab5)';
+      }
+    }
+    applyTheme(localStorage.getItem('theme') === 'dark');
+    btn.addEventListener('click', function() {
+      const isDark = body.classList.contains('dark-mode');
+      applyTheme(!isDark);
+      localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+    });
+  })();
+  </script>
+
 </body>
 </html>

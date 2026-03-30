@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
 
   <style>
     :root {
@@ -21,10 +22,10 @@
 
     body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text-color); line-height: 1.8; }
 
-    .sidebar { position: sticky; top: 20px; background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .sidebar { position: sticky; top: 20px; background: #0d1b2a; border-radius: 12px; padding: 2rem; box-shadow: 0 3px 24px rgba(0,0,0,0.3); height: fit-content; max-height: 90vh; overflow-y: auto; }
     .sidebar h5 { color: var(--primary-color); font-weight: 600; margin-bottom: 1.5rem; }
-    .sidebar .nav-link { color: var(--text-color); padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
-    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; }
+    .sidebar .nav-link { color: #9ab8d4; padding: 0.5rem 0; border-left: 3px solid transparent; transition: all 0.3s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: var(--primary-color); border-left-color: var(--primary-color); padding-left: 1rem; background: rgba(20,157,221,0.08); border-radius: 0 4px 4px 0; }
 
     .content { background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 2rem; }
 
@@ -50,9 +51,36 @@
     .ref-section { background: var(--bg-light); border-radius: 8px; padding: 1.5rem; }
     .ref-section h4 { color: var(--primary-color); font-weight: 600; margin-bottom: 1rem; font-size: 1rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; }
     .ref-section pre { margin: 0; font-size: 0.85rem; }
+    #theme-toggle {
+      position: fixed; top: 72px; right: 20px;
+      width: 40px; height: 40px; border-radius: 50%;
+      border: none; cursor: pointer; z-index: 9999;
+      background: linear-gradient(135deg, #149ddd, #0d7ab5);
+      color: #fff; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(20,157,221,0.4);
+      transition: all 0.25s ease;
+    }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; }
+    body.dark-mode .content { background: #1e293b; color: #cbd5e1; }
+    body.dark-mode h1 { color: #e2e8f0; }
+    body.dark-mode h2 { color: #149ddd; }
+    body.dark-mode h3 { color: #93c5fd; }
+    body.dark-mode .ref-section { background: #1a2744; }
+    body.dark-mode .tip-box { background: #1e3a52; }
+    body.dark-mode .warning-box { background: #2d2416; }
+    body.dark-mode .success-box { background: #162416; }
+    body.dark-mode .alert-info { background: #1e3a52; }
+    body.dark-mode code { background: #1e293b; color: #f472b6; }
+    body.dark-mode .breadcrumb-item.active { color: #94a3b8; }
   </style>
 </head>
 <body>
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
 
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid"><div class="container">
@@ -103,7 +131,7 @@
 
             <div class="ref-section">
               <h4>Getting Started / Context</h4>
-              <pre><code>kubectl config get-contexts
+              <pre><code class="language-bash">kubectl config get-contexts
 kubectl config use-context &lt;name&gt;
 kubectl config current-context
 kubectl config set-context --current --namespace=&lt;ns&gt;
@@ -113,7 +141,7 @@ kubectl version --short</code></pre>
 
             <div class="ref-section">
               <h4>Pods</h4>
-              <pre><code>kubectl get pods -A
+              <pre><code class="language-bash">kubectl get pods -A
 kubectl get pods -n &lt;ns&gt; -o wide
 kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;
 kubectl logs &lt;pod&gt; -n &lt;ns&gt; -f
@@ -125,7 +153,7 @@ kubectl top pod -n &lt;ns&gt;</code></pre>
 
             <div class="ref-section">
               <h4>Deployments</h4>
-              <pre><code>kubectl get deploy -n &lt;ns&gt;
+              <pre><code class="language-bash">kubectl get deploy -n &lt;ns&gt;
 kubectl rollout status deploy/&lt;name&gt; -n &lt;ns&gt;
 kubectl rollout history deploy/&lt;name&gt;
 kubectl rollout undo deploy/&lt;name&gt;
@@ -136,7 +164,7 @@ kubectl restart deploy/&lt;name&gt;</code></pre>
 
             <div class="ref-section">
               <h4>Services &amp; Networking</h4>
-              <pre><code>kubectl get svc -n &lt;ns&gt;
+              <pre><code class="language-bash">kubectl get svc -n &lt;ns&gt;
 kubectl get ingress -n &lt;ns&gt;
 kubectl port-forward svc/&lt;name&gt; 8080:80 -n &lt;ns&gt;
 kubectl get endpoints -n &lt;ns&gt;
@@ -145,7 +173,7 @@ kubectl describe ingress &lt;name&gt; -n &lt;ns&gt;</code></pre>
 
             <div class="ref-section">
               <h4>ConfigMaps &amp; Secrets</h4>
-              <pre><code>kubectl get cm -n &lt;ns&gt;
+              <pre><code class="language-bash">kubectl get cm -n &lt;ns&gt;
 kubectl get secret -n &lt;ns&gt;
 kubectl describe secret &lt;name&gt; -n &lt;ns&gt;
 kubectl get secret &lt;name&gt; -o jsonpath='{.data.key}' | base64 -d
@@ -155,7 +183,7 @@ kubectl create configmap &lt;name&gt; --from-file=config.yaml</code></pre>
 
             <div class="ref-section">
               <h4>Nodes</h4>
-              <pre><code>kubectl get nodes -o wide
+              <pre><code class="language-bash">kubectl get nodes -o wide
 kubectl describe node &lt;node&gt;
 kubectl top nodes
 kubectl cordon &lt;node&gt;
@@ -166,7 +194,7 @@ kubectl taint nodes &lt;node&gt; key=value:NoSchedule</code></pre>
 
             <div class="ref-section">
               <h4>Namespaces &amp; RBAC</h4>
-              <pre><code>kubectl get ns
+              <pre><code class="language-bash">kubectl get ns
 kubectl create ns &lt;name&gt;
 kubectl get sa -n &lt;ns&gt;
 kubectl get roles,rolebindings -n &lt;ns&gt;
@@ -176,7 +204,7 @@ kubectl auth can-i list pods --as=system:serviceaccount:&lt;ns&gt;:&lt;sa&gt;</c
 
             <div class="ref-section">
               <h4>Debugging</h4>
-              <pre><code>kubectl get events -n &lt;ns&gt; --sort-by='.lastTimestamp'
+              <pre><code class="language-bash">kubectl get events -n &lt;ns&gt; --sort-by='.lastTimestamp'
 kubectl run debug --image=busybox -it --rm -- sh
 kubectl debug node/&lt;node&gt; -it --image=ubuntu
 kubectl cp &lt;pod&gt;:/path/to/file ./local-file
@@ -186,7 +214,7 @@ kubectl diff -f manifest.yaml</code></pre>
 
             <div class="ref-section">
               <h4>Output Formats</h4>
-              <pre><code>kubectl get pods -o yaml
+              <pre><code class="language-bash">kubectl get pods -o yaml
 kubectl get pods -o json
 kubectl get pods -o jsonpath='{.items[*].metadata.name}'
 kubectl get pods --sort-by='.metadata.creationTimestamp'
@@ -196,7 +224,7 @@ kubectl get pods --field-selector=status.phase=Running</code></pre>
 
             <div class="ref-section">
               <h4>Resources</h4>
-              <pre><code>kubectl get all -n &lt;ns&gt;
+              <pre><code class="language-bash">kubectl get all -n &lt;ns&gt;
 kubectl get pv,pvc -n &lt;ns&gt;
 kubectl get hpa -n &lt;ns&gt;
 kubectl api-resources
@@ -211,7 +239,7 @@ kubectl get crd</code></pre>
 
           <h3>Complete Debugging Workflow</h3>
           <p class="text-muted">Systematic approach to diagnosing a failing pod or deployment.</p>
-          <pre><code># Step 1 — Check recent events for cluster-level errors
+          <pre><code class="language-bash"># Step 1 — Check recent events for cluster-level errors
 kubectl get events -n &lt;ns&gt; --sort-by='.lastTimestamp' | tail -20
 
 # Step 2 — Describe the pod to see scheduling and container issues
@@ -234,7 +262,7 @@ kubectl rollout status deploy/&lt;name&gt; -n &lt;ns&gt;
 kubectl rollout history deploy/&lt;name&gt; -n &lt;ns&gt;</code></pre>
 
           <h3>Rolling Update with Verification</h3>
-          <pre><code># Update the container image
+          <pre><code class="language-bash"># Update the container image
 kubectl set image deploy/&lt;name&gt; app=myrepo/myapp:v2 -n &lt;ns&gt;
 
 # Watch the rollout progress in real time
@@ -251,7 +279,7 @@ kubectl rollout undo deploy/&lt;name&gt; --to-revision=2 -n &lt;ns&gt;</code></p
 
           <h3>Quick YAML Generation (Dry-run)</h3>
           <p class="text-muted">Generate resource manifests without applying them — useful for bootstrapping new configs.</p>
-          <pre><code># Generate a Deployment manifest
+          <pre><code class="language-bash"># Generate a Deployment manifest
 kubectl create deploy nginx --image=nginx --dry-run=client -o yaml
 
 # Generate a Service manifest
@@ -291,5 +319,24 @@ kubectl create serviceaccount my-sa -n &lt;ns&gt; --dry-run=client -o yaml</code
   </div>
 
   <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function() {
+      const btn = document.getElementById('theme-toggle');
+      const icon = document.getElementById('theme-icon');
+      const body = document.body;
+      function applyTheme(dark) {
+        if (dark) { body.classList.add('dark-mode'); icon.className = 'bi bi-sun-fill'; btn.style.background = 'linear-gradient(135deg, #1e293b, #334155)'; }
+        else { body.classList.remove('dark-mode'); icon.className = 'bi bi-moon-fill'; btn.style.background = 'linear-gradient(135deg, #149ddd, #0d7ab5)'; }
+      }
+      applyTheme(localStorage.getItem('theme') === 'dark');
+      btn.addEventListener('click', function() {
+        const isDark = body.classList.contains('dark-mode');
+        applyTheme(!isDark);
+        localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+      });
+    })();
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>
