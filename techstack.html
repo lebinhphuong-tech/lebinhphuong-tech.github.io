@@ -1,0 +1,3144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech Sharing | Lê Bình Phương</title>
+  <meta name="description" content="Technology sharing by Lê Bình Phương — open-source tools, cloud-native platforms, and technologies worth knowing across Cloud, DevOps, Observability, Security, and more.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────── */
+    :root {
+      --primary:   #149ddd;
+      --secondary: #173b6c;
+      --text:      #272829;
+      --bg-light:  #f5f8fd;
+      --sidebar-bg: #0d1b2a;
+    }
+
+    /* ── Base ──────────────────────────────────────────────────── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    /* ── Navbar ────────────────────────────────────────────────── */
+    .navbar {
+      background: #fff;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.09);
+      padding: 0.85rem 0;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a {
+      font-size: 12.5px; font-weight: 600; padding: 5px 14px;
+      border-radius: 20px; color: #555; text-decoration: none;
+      border: 1px solid #e0e8f0; transition: all 0.2s;
+    }
+    .nav-pills-custom a:hover,
+    .nav-pills-custom a.active {
+      background: var(--primary); color: #fff; border-color: var(--primary);
+    }
+
+    /* ── Breadcrumb ────────────────────────────────────────────── */
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    /* ── Sidebar ───────────────────────────────────────────────── */
+    .sidebar {
+      position: sticky; top: 20px;
+      background: var(--sidebar-bg);
+      border-radius: 14px;
+      padding: 1.8rem 1.5rem;
+      box-shadow: 0 4px 28px rgba(0,0,0,0.28);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .sidebar-title {
+      color: var(--primary); font-weight: 700; font-size: 13px;
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 1.2rem; padding-bottom: 0.7rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .sidebar .nav-link {
+      color: #9ab8d4; padding: 6px 10px;
+      border-left: 3px solid transparent;
+      border-radius: 0 4px 4px 0;
+      font-size: 13px; transition: all 0.25s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sidebar .nav-link i { font-size: 15px; flex-shrink: 0; }
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary);
+      border-left-color: var(--primary);
+      padding-left: 16px;
+      background: rgba(20,157,221,0.08);
+    }
+    .sidebar-section-label {
+      font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.5px; color: #5bc8f5;
+      padding: 14px 10px 4px; margin-top: 4px;
+    }
+
+    /* ── Main content wrapper ──────────────────────────────────── */
+    .content-wrap {
+      background: #fff; border-radius: 14px; padding: 2.4rem 2.6rem;
+      box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem;
+    }
+
+    /* ── Page hero ─────────────────────────────────────────────── */
+    .page-hero {
+      background: linear-gradient(135deg, #0d1b2a 0%, #1a2f45 60%, #0d4f7a 100%);
+      border-radius: 14px; padding: 2.8rem 2.4rem 2.2rem;
+      margin-bottom: 2rem; position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: ''; position: absolute;
+      top: -60px; right: -60px; width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(20,157,221,0.18) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .page-hero::after {
+      content: ''; position: absolute;
+      bottom: -50px; left: 20%;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(20,157,221,0.09) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: #22c55e;
+      background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25);
+      padding: 4px 14px; border-radius: 20px; display: inline-block;
+      margin-bottom: 14px;
+    }
+    .page-hero h1 {
+      font-family: 'Raleway', sans-serif; font-size: 2.1rem; font-weight: 800;
+      color: #e8f0f8; margin-bottom: 10px;
+    }
+    .page-hero p {
+      color: #7d9ab8; font-size: 14px; max-width: 620px; line-height: 1.75;
+    }
+    .hero-stats {
+      display: flex; gap: 28px; margin-top: 24px; flex-wrap: wrap;
+    }
+    .hero-stat-item { text-align: center; }
+    .hero-stat-num {
+      font-family: 'Raleway', sans-serif; font-size: 26px; font-weight: 800;
+      color: var(--primary); line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: 11px; color: #4a6480; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.6px; margin-top: 3px;
+    }
+
+    /* ── Section heading ───────────────────────────────────────── */
+    .section-heading {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 1.4rem; padding-bottom: 0.7rem;
+      border-bottom: 2px solid var(--bg-light);
+    }
+    .section-heading-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: rgba(20,157,221,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--primary); flex-shrink: 0;
+    }
+    .section-heading h2 {
+      font-size: 17px; font-weight: 700; color: var(--secondary); margin: 0;
+    }
+    .section-heading .tool-count {
+      font-size: 11px; font-weight: 700; color: #8a9bb0;
+      background: var(--bg-light); padding: 2px 10px; border-radius: 20px;
+      margin-left: auto; flex-shrink: 0;
+    }
+
+    /* ── Tool card ─────────────────────────────────────────────── */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 14px;
+      margin-bottom: 2.4rem;
+    }
+    .tool-card {
+      background: #fff; border: 1px solid rgba(20,157,221,0.1);
+      border-radius: 12px; padding: 18px 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: all 0.25s ease;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .tool-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(20,157,221,0.14);
+      border-color: rgba(20,157,221,0.28);
+    }
+    .tool-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .tool-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .tool-icon.cloud    { background: rgba(20,157,221,0.1);  color: #149ddd; }
+    .tool-icon.container{ background: rgba(6,182,212,0.1);   color: #0891b2; }
+    .tool-icon.cicd     { background: rgba(139,92,246,0.1);  color: #7c3aed; }
+    .tool-icon.iac      { background: rgba(99,102,241,0.1);  color: #4f46e5; }
+    .tool-icon.observ   { background: rgba(234,88,12,0.1);   color: #ea580c; }
+    .tool-icon.security { background: rgba(239,68,68,0.1);   color: #dc2626; }
+    .tool-icon.database { background: rgba(16,185,129,0.1);  color: #059669; }
+    .tool-icon.network  { background: rgba(245,158,11,0.1);  color: #d97706; }
+    .tool-icon.lang     { background: rgba(20,157,221,0.08); color: #0369a1; }
+
+    .proficiency {
+      font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.6px; padding: 3px 9px; border-radius: 20px;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .p-expert   { background: rgba(34,197,94,0.12);  color: #15803d; border: 1px solid rgba(34,197,94,0.25); }
+    .p-advanced { background: rgba(20,157,221,0.1);  color: #0369a1; border: 1px solid rgba(20,157,221,0.25); }
+    .p-proficient{background: rgba(139,92,246,0.1); color: #6d28d9; border: 1px solid rgba(139,92,246,0.25); }
+
+    .tool-name  { font-size: 14px; font-weight: 700; color: var(--secondary); }
+    .tool-desc  { font-size: 12px; color: #6c7a8d; line-height: 1.6; flex: 1; }
+    .tool-meta  { font-size: 10.5px; color: #8a9bb0; display: flex; align-items: center; gap: 5px; }
+    .tool-meta i{ font-size: 12px; }
+
+    /* ── Legend ────────────────────────────────────────────────── */
+    .legend-bar {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 2rem;
+      padding: 14px 18px; background: var(--bg-light);
+      border-radius: 10px; border: 1px solid #e4eef8;
+    }
+    .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #555; }
+    .legend-dot  { width: 10px; height: 10px; border-radius: 50%; }
+    .ld-expert   { background: #22c55e; }
+    .ld-advanced { background: #149ddd; }
+    .ld-proficient{background: #8b5cf6; }
+
+    /* ── Info box ──────────────────────────────────────────────── */
+    .info-box {
+      background: #e7f3ff; border-left: 4px solid var(--primary);
+      border-radius: 8px; padding: 1rem 1.4rem; margin-bottom: 1.6rem;
+      font-size: 13.5px; color: #2c4a6e;
+    }
+
+    /* ── Theme toggle ──────────────────────────────────────────── */
+    #theme-toggle {
+      position: fixed; top: 72px; right: 16px;
+      width: 40px; height: 40px; border-radius: 50%;
+      border: none; cursor: pointer; z-index: 9999;
+      background: linear-gradient(135deg, #149ddd, #0d7ab5);
+      color: #fff; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(20,157,221,0.4);
+      transition: all 0.25s ease;
+    }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* ── Dark mode ─────────────────────────────────────────────── */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar        { background: #0d1b2a !important; box-shadow: 0 2px 15px rgba(0,0,0,0.4); }
+    body.dark-mode .navbar-brand  { color: var(--primary); }
+    body.dark-mode .nav-pills-custom a { background: #1e293b; color: #94a3b8; border-color: #1e3a52; }
+    body.dark-mode .nav-pills-custom a:hover,
+    body.dark-mode .nav-pills-custom a.active { background: var(--primary); color: #fff; }
+
+    body.dark-mode .content-wrap  { background: #1e293b; box-shadow: 0 3px 18px rgba(0,0,0,0.35); }
+    body.dark-mode .page-hero     { background: linear-gradient(135deg, #0a1120 0%, #0d1b2a 60%, #0a3050 100%); }
+
+    body.dark-mode .section-heading   { border-color: #1e3a52; }
+    body.dark-mode .section-heading h2{ color: #e2e8f0; }
+    body.dark-mode .section-heading .tool-count { background: #0f172a; color: #64748b; }
+    body.dark-mode .section-heading-icon { background: rgba(20,157,221,0.12); }
+
+    body.dark-mode .tool-card     { background: #162032; border-color: rgba(20,157,221,0.14); box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+    body.dark-mode .tool-card:hover{ box-shadow: 0 8px 28px rgba(20,157,221,0.18); border-color: rgba(20,157,221,0.32); }
+    body.dark-mode .tool-name     { color: #e2e8f0; }
+    body.dark-mode .tool-desc     { color: #64748b; }
+    body.dark-mode .tool-meta     { color: #4a6480; }
+
+    body.dark-mode .legend-bar    { background: #0f172a; border-color: #1e3a52; }
+    body.dark-mode .legend-item   { color: #94a3b8; }
+    body.dark-mode .info-box      { background: #1e3a52; border-left-color: var(--primary); color: #94c4e0; }
+    body.dark-mode [style*="border-top: 1px solid #e8f0f8"] { border-top-color: #1e3a52 !important; }
+    body.dark-mode .tool-icon.cloud     { background: rgba(20,157,221,0.12);  }
+    body.dark-mode .tool-icon.container { background: rgba(6,182,212,0.12);   }
+    body.dark-mode .tool-icon.cicd      { background: rgba(139,92,246,0.12);  }
+    body.dark-mode .tool-icon.iac       { background: rgba(99,102,241,0.12);  }
+    body.dark-mode .tool-icon.observ    { background: rgba(234,88,12,0.12);   }
+    body.dark-mode .tool-icon.security  { background: rgba(239,68,68,0.12);   }
+    body.dark-mode .tool-icon.database  { background: rgba(16,185,129,0.12);  }
+    body.dark-mode .tool-icon.network   { background: rgba(245,158,11,0.12);  }
+    body.dark-mode .tool-icon.lang      { background: rgba(20,157,221,0.1);   }
+    body.dark-mode .breadcrumb a  { color: var(--primary); }
+    body.dark-mode .breadcrumb-item.active { color: #64748b; }
+    body.dark-mode .breadcrumb-item + .breadcrumb-item::before { color: #334155; }
+
+    /* ── Responsive ────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .content-wrap { padding: 1.5rem 1.2rem; }
+      .page-hero    { padding: 2rem 1.5rem 1.5rem; }
+      .page-hero h1 { font-size: 1.6rem; }
+      .tools-grid   { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+      .hero-stats   { gap: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">
+      <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+    </a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="index.html">Portfolio</a>
+      <a href="docs/index.html">Documents</a>
+      <a href="techstack.html" class="active">Tech Stack</a>
+      <a href="cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+      <li class="breadcrumb-item active">Tech Stack</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+
+    <!-- ── Sidebar ──────────────────────────────────────────── -->
+    <div class="col-lg-3">
+      <div class="sidebar">
+        <div class="sidebar-title"><i class="bi bi-stack me-2"></i>Tech Sharing</div>
+
+        <div class="sidebar-section-label">— Overview</div>
+        <nav class="nav flex-column">
+          <a class="nav-link active" href="#overview">
+            <i class="bi bi-grid-3x3-gap"></i> Overview
+          </a>
+        </nav>
+
+        <div class="sidebar-section-label">— Infrastructure</div>
+        <nav class="nav flex-column">
+          <a class="nav-link" href="#cloud">
+            <i class="bi bi-cloud-fill"></i> Cloud Platforms
+          </a>
+          <a class="nav-link" href="#network">
+            <i class="bi bi-diagram-3-fill"></i> Networking & Service Mesh
+          </a>
+        </nav>
+
+        <div class="sidebar-section-label">— Platform & Delivery</div>
+        <nav class="nav flex-column">
+          <a class="nav-link" href="#container">
+            <i class="bi bi-boxes"></i> Container & Orchestration
+          </a>
+          <a class="nav-link" href="#iac">
+            <i class="bi bi-code-square"></i> Infrastructure as Code
+          </a>
+          <a class="nav-link" href="#cicd">
+            <i class="bi bi-arrow-repeat"></i> CI/CD & GitOps
+          </a>
+          <a class="nav-link" href="#artifact">
+            <i class="bi bi-box-seam-fill"></i> Artifact & Registry
+          </a>
+        </nav>
+
+        <div class="sidebar-section-label">— Data</div>
+        <nav class="nav flex-column">
+          <a class="nav-link" href="#database">
+            <i class="bi bi-database-fill"></i> Databases & Storage
+          </a>
+          <a class="nav-link" href="#messaging">
+            <i class="bi bi-broadcast"></i> Messaging & Streaming
+          </a>
+        </nav>
+
+        <div class="sidebar-section-label">— Observability</div>
+        <nav class="nav flex-column">
+          <a class="nav-link" href="#observability">
+            <i class="bi bi-bar-chart-line"></i> Observability Stack
+          </a>
+          <a class="nav-link" href="#infra-monitoring">
+            <i class="bi bi-pc-display"></i> Infrastructure Monitoring
+          </a>
+        </nav>
+
+        <div class="sidebar-section-label">— Security</div>
+        <nav class="nav flex-column">
+          <a class="nav-link" href="#security">
+            <i class="bi bi-shield-fill-check"></i> Security Tooling
+          </a>
+          <a class="nav-link" href="#firewall">
+            <i class="bi bi-fire"></i> Firewall Technologies
+          </a>
+          <a class="nav-link" href="#netmon">
+            <i class="bi bi-activity"></i> Network Security & Analysis
+          </a>
+          <a class="nav-link" href="#siem">
+            <i class="bi bi-shield-exclamation"></i> SIEM & Threat Intel
+          </a>
+          <a class="nav-link" href="#pentest">
+            <i class="bi bi-bug-fill"></i> Pentesting & Security Research
+          </a>
+          <a class="nav-link" href="#encryption">
+            <i class="bi bi-lock-fill"></i> Encryption & Cryptography
+          </a>
+        </nav>
+
+        <div class="sidebar-section-label">— Developer Workflow</div>
+        <nav class="nav flex-column">
+          <a class="nav-link" href="#lang">
+            <i class="bi bi-terminal-fill"></i> Languages & Scripting
+          </a>
+          <a class="nav-link" href="#devtools">
+            <i class="bi bi-code-slash"></i> Developer Tools & IDE
+          </a>
+          <a class="nav-link" href="#cli">
+            <i class="bi bi-terminal"></i> CLI & Kubernetes Tools
+          </a>
+          <a class="nav-link" href="#apitesting">
+            <i class="bi bi-send-fill"></i> API & Load Testing
+          </a>
+        </nav>
+
+        <div class="sidebar-section-label">— Operations</div>
+        <nav class="nav flex-column">
+          <a class="nav-link" href="#finops">
+            <i class="bi bi-currency-dollar"></i> FinOps & Cost
+          </a>
+          <a class="nav-link" href="#platform">
+            <i class="bi bi-building-gear"></i> Platform Engineering
+          </a>
+          <a class="nav-link" href="#docs">
+            <i class="bi bi-journals"></i> Docs & Knowledge Base
+          </a>
+        </nav>
+
+        <div class="sidebar-section-label">— Đang Khám Phá</div>
+        <nav class="nav flex-column">
+          <a class="nav-link" href="#radar">
+            <i class="bi bi-binoculars-fill"></i> On My Radar
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ── Main content ─────────────────────────────────────── -->
+    <div class="col-lg-9">
+
+      <!-- Page Hero -->
+      <div class="page-hero" id="overview">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px;">
+          <div class="hero-label"><i class="bi bi-share me-1"></i>Knowledge Sharing</div>
+          <div style="font-size:11px;color:#4a6480;font-weight:600;letter-spacing:0.5px;">
+            <i class="bi bi-calendar3 me-1"></i>Updated: April 2026
+          </div>
+        </div>
+        <h1><i class="bi bi-broadcast me-2"></i>Tech Sharing</h1>
+        <p>
+          Chia sẻ về các công nghệ, open-source tools, và cloud-native platforms —
+          bao gồm những thứ đang dùng thực tế lẫn những thứ đang tìm hiểu và thấy đáng chú ý.
+          Không phải "stack của tôi", mà là góc nhìn của tôi về hệ sinh thái.
+        </p>
+        <div class="hero-stats">
+          <div class="hero-stat-item">
+            <div class="hero-stat-num">200+</div>
+            <div class="hero-stat-label">Technologies</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-num">24</div>
+            <div class="hero-stat-label">Domains</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-num">OSS</div>
+            <div class="hero-stat-label">Mostly Open Source</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-num">∞</div>
+            <div class="hero-stat-label">Still Learning</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content card -->
+      <div class="content-wrap">
+
+        <!-- Status legend -->
+        <div class="legend-bar">
+          <span style="font-size:12px;font-weight:600;color:#555;margin-right:4px;">Trạng thái:</span>
+          <span class="legend-item"><span class="legend-dot ld-expert"></span> <strong>In Use</strong> — đang dùng thực tế, có kinh nghiệm sâu</span>
+          <span class="legend-item"><span class="legend-dot ld-advanced"></span> <strong>Hands-on</strong> — đã làm việc, hiểu rõ cách hoạt động</span>
+          <span class="legend-item"><span class="legend-dot ld-proficient"></span> <strong>Exploring</strong> — đang tìm hiểu, thấy đáng chú ý</span>
+        </div>
+
+        <!-- ══ Cloud Platforms ════════════════════════════════ -->
+        <div id="cloud">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-cloud-fill"></i></div>
+            <h2>Cloud Platforms</h2>
+            <span class="tool-count">7 tools</span>
+
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cloud"><i class="bi bi-amazon"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Amazon AWS</div>
+              <div class="tool-desc">Primary public cloud. Use EKS, EC2, RDS, S3, CloudFront, Route 53, IAM, VPC, and Cost Explorer in production daily.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 7+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cloud"><i class="bi bi-google"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Google GCP</div>
+              <div class="tool-desc">GKE, Cloud SQL, BigQuery, Cloud Storage, Cloud Armor, Firebase, and Workspace integration for internal systems.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 7+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cloud"><i class="bi bi-building"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">VNG Cloud</div>
+              <div class="tool-desc">Local cloud provider with IaaS and PaaS services. vServer, vStorage, vDB, and vLB — good option for data residency and low-latency requirements in Southeast Asia.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cloud"><i class="bi bi-building"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">FPT Cloud</div>
+              <div class="tool-desc">Local cloud provider used for compliance-sensitive workloads. Compute, object storage, and CDN services.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cloud"><i class="bi bi-server"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">VMware vSphere</div>
+              <div class="tool-desc">On-premise virtualization for the data center tier. vCenter, ESXi, vSAN, NSX-T for networking and micro-segmentation.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cloud"><i class="bi bi-cpu"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">OpenStack</div>
+              <div class="tool-desc">Private cloud orchestration. Nova, Neutron, Cinder, and Keystone for on-prem IaaS workloads.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cloud"><i class="bi bi-hdd-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Linux (RHEL / Ubuntu)</div>
+              <div class="tool-desc">Core OS for all production servers. RHEL/CentOS for enterprise tier, Ubuntu for K8s nodes. systemd, eBPF, cgroups, kernel tuning.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Container & Orchestration ══════════════════════ -->
+        <div id="container">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-boxes"></i></div>
+            <h2>Container &amp; Orchestration</h2>
+            <span class="tool-count">13 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-diagram-2-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Kubernetes</div>
+              <div class="tool-desc">Container orchestration at scale. Deep experience in cluster upgrades, RBAC, network policies, resource management, and building custom controllers with client-go.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-box-seam"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Docker</div>
+              <div class="tool-desc">Container runtime and image build pipeline. Multi-stage builds, distroless images, BuildKit, and Docker Compose for dev environments.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 7+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-bar-chart-steps"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Helm</div>
+              <div class="tool-desc">Kubernetes package manager. Maintain internal chart repository, template complex multi-chart deployments, and version application releases.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-lightning-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Karpenter</div>
+              <div class="tool-desc">Node auto-provisioning for EKS. Replaced Cluster Autoscaler — achieved 40% cost reduction through Spot and right-sized node pools.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-share-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Istio</div>
+              <div class="tool-desc">Service mesh for east-west traffic encryption, mTLS, traffic shaping, circuit breaking, and distributed tracing integration.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-tools"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">containerd / CRI-O</div>
+              <div class="tool-desc">Low-level container runtimes. Migrated from dockershim to containerd, tuned image pull policy and garbage collection settings.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-box2-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Podman</div>
+              <div class="tool-desc">Daemonless container runtime, rootless by default. Drop-in Docker replacement for dev environments — tiết kiệm tài nguyên, không cần daemon chạy background.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-lightning-charge"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">K3s</div>
+              <div class="tool-desc">Lightweight Kubernetes phù hợp cho edge, IoT, và môi trường dev. Cài đặt dưới 1 phút, binary &lt;100MB, tích hợp sẵn SQLite và Traefik.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-grid-3x3"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Rancher</div>
+              <div class="tool-desc">Multi-cluster Kubernetes management platform. Cung cấp UI, RBAC trung tâm, và fleet management cho nhiều cluster ở nhiều cloud khác nhau.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-arrow-up-circle-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Argo Rollouts</div>
+              <div class="tool-desc">Progressive delivery controller — Canary, Blue/Green, và Analysis templates tích hợp với Prometheus metrics. Rollback tự động khi metric vượt ngưỡng.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-cpu-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">KEDA</div>
+              <div class="tool-desc">Kubernetes Event-Driven Autoscaling — scale workloads dựa trên Kafka lag, queue depth, cron schedule, hay custom metrics. Bổ sung cho HPA tiêu chuẩn.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-hdd-stack"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Longhorn</div>
+              <div class="tool-desc">Cloud-native distributed block storage cho Kubernetes. Persistent Volume với replication, snapshot, backup tới S3 — đơn giản hơn Ceph cho workload nhỏ-vừa.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 1+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Infrastructure as Code ════════════════════════ -->
+        <div id="iac">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-code-square"></i></div>
+            <h2>Infrastructure as Code</h2>
+            <span class="tool-count">7 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-file-earmark-code-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Terraform</div>
+              <div class="tool-desc">Primary IaC tool. Manage multi-cloud resources across AWS, GCP, VNG, and FPT. Terraform Cloud for remote state, modules for reuse, and Atlantis for PR-based apply.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-gear-wide-connected"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Ansible</div>
+              <div class="tool-desc">Configuration management and OS automation. Playbooks for K8s node bootstrapping, OS baseline hardening, application deployment, and zero-downtime rolling updates.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-layers-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Packer</div>
+              <div class="tool-desc">Golden AMI / machine image build pipeline. Immutable infrastructure pattern — pre-baked images with all agents and config baked in before launch.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-braces-asterisk"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Crossplane</div>
+              <div class="tool-desc">Kubernetes-native infrastructure provisioning. Used for self-service cloud resource requests via GitOps without direct Terraform access.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 1+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-arrow-right-circle-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">OpenTofu</div>
+              <div class="tool-desc">Open-source fork của Terraform (Linux Foundation). Drop-in replacement, tương thích provider ecosystem — giải pháp khi cần tránh BSL license.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang theo dõi</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-diagram-2"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Terragrunt</div>
+              <div class="tool-desc">Thin wrapper cho Terraform — DRY configuration, remote state management, và dependency ordering giữa nhiều module. Hữu ích khi Terraform workspace không đủ.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-check2-circle"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Checkov / tfsec</div>
+              <div class="tool-desc">Static analysis cho IaC — scan Terraform, CloudFormation, K8s manifest phát hiện misconfig và security issue trước khi apply. Tích hợp vào CI pipeline.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ CI/CD & GitOps ════════════════════════════════ -->
+        <div id="cicd">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-arrow-repeat"></i></div>
+            <h2>CI/CD &amp; GitOps</h2>
+            <span class="tool-count">11 tools</span>
+          </div>
+
+          <div class="info-box">
+            <i class="bi bi-info-circle me-2"></i>
+            All deployments are GitOps-driven — no manual <code>kubectl apply</code> in production. Git is the single source of truth.
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-arrow-clockwise"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">ArgoCD</div>
+              <div class="tool-desc">GitOps engine for Kubernetes. Manages all app deployments across environments. ApplicationSets for multi-cluster, App-of-Apps pattern, and RBAC per team.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-diagram-3"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Jenkins</div>
+              <div class="tool-desc">Primary CI engine. Declarative pipelines, shared library, dynamic agents on Kubernetes (JCasC), and integration with SonarQube and Nexus.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-gitlab"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">GitLab CI</div>
+              <div class="tool-desc">Used for smaller service pipelines. DAG pipelines, GitLab Container Registry, GitLab Environments for review apps and staging promotion gates.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-play-circle-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Argo Workflows</div>
+              <div class="tool-desc">DAG-based workflow engine on K8s. Used for data pipeline orchestration, DB migration jobs, and post-deploy smoke test automation.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-github"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">GitHub Actions</div>
+              <div class="tool-desc">Used for open-source and documentation workflows. Matrix builds, reusable workflows, and OIDC-based cloud authentication without static secrets.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-patch-check-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Atlantis</div>
+              <div class="tool-desc">Pull Request automation for Terraform. Enables peer review of infra changes, plan output in PR comments, and apply on merge — no manual terraform commands.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-arrow-counterclockwise"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">FluxCD</div>
+              <div class="tool-desc">GitOps operator cho Kubernetes, hướng tiếp cận pull-based — cluster tự kéo state từ Git. Bộ tứ: Source, Kustomize, Helm, Notification controller.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-robot"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Renovate Bot</div>
+              <div class="tool-desc">Tự động tạo PR cập nhật dependency — Docker image, Helm chart, npm, pip. Giảm rủi ro CVE từ package lỗi thời mà không cần manual tracking.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-kanban-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Tekton</div>
+              <div class="tool-desc">Kubernetes-native CI/CD framework. Pipeline được định nghĩa dưới dạng K8s CRD — Tasks, Steps, Pipelines, và Triggers. Nền tảng của nhiều enterprise CI platform.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-git"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Git / GitLab / GitHub</div>
+              <div class="tool-desc">Version control và collaboration platform. Branching strategy (GitFlow, trunk-based), merge request workflow, protected branches, và webhook integrations.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Observability ══════════════════════════════════ -->
+        <div id="observability">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-bar-chart-line"></i></div>
+            <h2>Observability Stack</h2>
+            <span class="tool-count">14 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-activity"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Prometheus</div>
+              <div class="tool-desc">Metrics collection for the full stack — Kubernetes, apps, databases, and network. Custom exporters, recording rules, and multi-tenant federation.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-graph-up"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Grafana</div>
+              <div class="tool-desc">Visualization layer. 50+ dashboards for infra, SLO tracking, cost, and business KPIs. Grafana Alerting with on-call routing to PagerDuty and Slack.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-card-list"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Loki</div>
+              <div class="tool-desc">Log aggregation for K8s and systemd. Promtail agent for collection, LogQL for queries. Replaces ELK for K8s logs — significantly lower cost and simpler ops.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-search"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">ELK Stack</div>
+              <div class="tool-desc">Elasticsearch + Logstash + Kibana for centralized log management. Used for application audit logs, security events, and compliance reporting dashboards.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-speedometer2"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">New Relic</div>
+              <div class="tool-desc">APM and full-stack observability. Used for application performance monitoring, distributed tracing, and SLA dashboards for business stakeholders.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-bezier2"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Jaeger</div>
+              <div class="tool-desc">Distributed tracing across microservices. Integrated with Istio for automatic span injection and used to diagnose latency regressions across service calls.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-reception-4"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">OpenTelemetry</div>
+              <div class="tool-desc">Vendor-neutral instrumentation. Migrating apps from proprietary agents to OTel SDK — single collector pipeline to Loki, Prometheus, and Jaeger.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-bell-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Alertmanager</div>
+              <div class="tool-desc">Alert routing engine for Prometheus. Grouping, inhibition rules, and silence management. Integrated với PagerDuty cho P1/P2 và Slack cho informational alerts.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-bezier"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Grafana Tempo</div>
+              <div class="tool-desc">Distributed tracing backend tích hợp với Grafana. Lưu trữ trace mà không cần index — giá lưu trữ rẻ hơn Jaeger nhiều khi scale lớn.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 1+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-fire"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Pyroscope</div>
+              <div class="tool-desc">Continuous profiling platform — CPU, memory, goroutine flamegraph liên tục trong production. Giúp tìm bottleneck mà metrics thông thường không thấy được.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-database-up"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Grafana Mimir</div>
+              <div class="tool-desc">Horizontally scalable, long-term storage cho Prometheus metrics. Thay thế Thanos — đơn giản hơn về operations, hiệu năng tốt hơn ở petabyte scale.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang đánh giá</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-reception-4"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Thanos</div>
+              <div class="tool-desc">Highly available Prometheus với unlimited retention. Sidecar/Receive model, global query view across clusters, và compaction cho long-term object storage.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-diagram-3"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Grafana OnCall / PagerDuty</div>
+              <div class="tool-desc">On-call management và incident escalation. Rotation schedule, override, escalation policy, và integration với Alertmanager + Slack để notify đúng người.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-layers-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">SigNoz</div>
+              <div class="tool-desc">Open-source APM và observability platform — traces, metrics, logs trong một UI duy nhất. OpenTelemetry-native, self-hosted alternative cho Datadog/New Relic. ClickHouse backend.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 1+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Security ══════════════════════════════════════ -->
+        <div id="security">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-shield-fill-check"></i></div>
+            <h2>Security Tooling</h2>
+            <span class="tool-count">12 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-shield-shaded"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">WAF (AWS / GCP)</div>
+              <div class="tool-desc">Web Application Firewall for PCI-DSS compliance. Custom rule groups, rate limiting, geo-blocking, and managed rule sets for OWASP Top 10.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-radar"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">IDS / IPS</div>
+              <div class="tool-desc">Suricata and Snort-based intrusion detection. Network-level threat detection with custom signatures for retail and payment threat vectors.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-bug-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Trivy / Snyk</div>
+              <div class="tool-desc">Container and dependency vulnerability scanning in CI pipelines. Block builds on CRITICAL CVEs, automated PR comments with remediation hints.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-eye-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">SAST / DAST</div>
+              <div class="tool-desc">SonarQube for static analysis, OWASP ZAP for dynamic testing integrated in CI. Shift-left security gating before any code reaches staging.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-key-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">HashiCorp Vault</div>
+              <div class="tool-desc">Secrets management for K8s workloads. Dynamic DB credentials, PKI engine for cert issuance, and Vault Agent Injector for sidecar secret delivery.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-file-check-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">OPA / Kyverno</div>
+              <div class="tool-desc">Policy-as-code for Kubernetes. Enforce image registry allowlist, resource limits, label schemas, and PSS compliance across all namespaces.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-pen-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Cosign / Sigstore</div>
+              <div class="tool-desc">Supply chain security — ký số container image và artifact. Keyless signing dùng OIDC, verify image trước khi deploy để phòng chống image tampering.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 1+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-person-lock"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">AWS IAM / GCP IAM</div>
+              <div class="tool-desc">Identity and Access Management cho cloud. Least-privilege policy design, role chaining, service account mapping với K8s IRSA/Workload Identity, và SCPs.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 7+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-eye"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Falco</div>
+              <div class="tool-desc">Runtime security cho Kubernetes — phát hiện hành vi bất thường ở syscall level bằng eBPF kernel module. Rất hiệu quả cho container escape detection.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-lock-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Secrets Manager (AWS/GCP)</div>
+              <div class="tool-desc">Managed secret storage trên cloud. External Secrets Operator để sync vào K8s Secret, rotation tự động, và audit log cho compliance.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Firewall Technologies ══════════════════════════ -->
+        <div id="firewall">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-fire"></i></div>
+            <h2>Firewall Technologies</h2>
+            <span class="tool-count">19 tools</span>
+          </div>
+          <div class="tools-grid">
+
+            <!-- Kernel / Packet Filter -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-cpu"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">iptables</div>
+              <div class="tool-desc">Linux kernel packet filtering dùng Netfilter framework. Công cụ nền tảng để tạo NAT, stateful inspection, và chain rule cho IPv4. Tiền thân của nftables.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-cpu-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">nftables</div>
+              <div class="tool-desc">Thế hệ mới thay thế iptables/ip6tables/arptables. Cú pháp thống nhất, hiệu năng cao hơn nhờ JIT compilation, hỗ trợ sets/maps cho rule đơn giản hơn.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-hdd-network"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">PF (Packet Filter)</div>
+              <div class="tool-desc">BSD packet filter — cốt lõi của pfSense/OPNsense. Cú pháp rõ ràng, hỗ trợ traffic shaping (ALTQ), scrubbing, stateful tracking và anchors cho module hóa rule.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-shield"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">IPFilter (ipf)</div>
+              <div class="tool-desc">Packet filter cross-platform cho Solaris, BSD. Hỗ trợ stateful filtering, NAT, address pools. Được dùng trong một số network appliance và Solaris zones.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-shield-shaded"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">ipfw</div>
+              <div class="tool-desc">FreeBSD/macOS packet filter tích hợp sẵn trong kernel. Hỗ trợ traffic shaping (dummynet), NAT, stateful rules và pipe-based bandwidth control.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <!-- Linux Management Frontends -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-toggles"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">firewalld</div>
+              <div class="tool-desc">Dynamic firewall manager cho Linux — frontend cho iptables/nftables với zone-based policy. Mặc định trên RHEL/CentOS/Fedora, hỗ trợ D-Bus API và runtime reload không gián đoạn.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-toggles2"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">UFW (Uncomplicated Firewall)</div>
+              <div class="tool-desc">Frontend đơn giản cho iptables trên Ubuntu/Debian. Cú pháp human-readable, profiles cho common service, và Gufw GUI wrapper. Lý tưởng cho server Linux single-host.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-list-check"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Shorewall</div>
+              <div class="tool-desc">Abstraction layer cao cho iptables — cấu hình bằng file text dạng bảng (zones, policies, rules). Tốt cho multi-interface gateway và router setup phức tạp.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <!-- BSD-Based Distributions -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-router-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">pfSense</div>
+              <div class="tool-desc">FreeBSD-based firewall/router distribution phổ biến nhất. Web GUI đầy đủ, hỗ trợ HA failover (CARP), package ecosystem (Suricata, ntopng, HAProxy), và VPN gateway.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-router"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">OPNsense</div>
+              <div class="tool-desc">Fork của pfSense với release cycle nhanh hơn, UI hiện đại hơn và security focus. Tích hợp Zenarmor (NGFW), Netflow, và IDS/IPS Suricata. Community mạnh, open-source thuần.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <!-- Linux-Based Distributions -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-fire"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">IPFire</div>
+              <div class="tool-desc">Linux firewall distro hardened security-focused với IDS (Suricata), Location Block, QoS, và web proxy (Squid). Cập nhật liên tục, cộng đồng nhỏ nhưng dedicated.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-shield-lock"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">SmoothWall</div>
+              <div class="tool-desc">Linux-based firewall distro từ early 2000s — đơn giản, web GUI, tập trung vào SOHO. SmoothWall Express là open-source; SmoothWall Systems là commercial edition.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-layers"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">LEAF Project</div>
+              <div class="tool-desc">Linux Embedded Appliance Framework — bootable Linux firewall/router cho phần cứng cũ, floppy/CF card. Tiền thân của nhiều embedded network distro hiện đại.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <!-- Network OS -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-diagram-3-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">VyOS</div>
+              <div class="tool-desc">Open-source network OS dựa trên Debian — router/firewall enterprise-grade. CLI kiểu Junos, hỗ trợ BGP/OSPF, MPLS, WireGuard, IPsec VPN và SD-WAN. Chạy tốt trên VM/cloud.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-diagram-3"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Vyatta</div>
+              <div class="tool-desc">Tiền thân của VyOS — network OS mở đầu tiên với CLI kiểu Juniper/Cisco. Bị Brocade/AT&T mua lại; branch open-source tiếp tục dưới tên VyOS. Quan trọng về lịch sử SDN.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <!-- Legacy / Niche -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-archive"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">M0n0wall</div>
+              <div class="tool-desc">BSD-based embedded firewall tiên phong — cấu hình lưu trên XML, khởi động từ CF card. Đã ngừng phát triển 2015, nhưng là nguồn cảm hứng trực tiếp cho pfSense.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Historical</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-lightning"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Firestarter</div>
+              <div class="tool-desc">GTK-based GUI firewall cho Linux desktop (early 2000s). Wrapper cho iptables với wizard setup, real-time event monitoring. Đã ngừng phát triển nhưng là case study UI/UX firewall.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Historical</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-person-slash"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">PeerGuardian</div>
+              <div class="tool-desc">IP blocklist-based firewall — block known malicious IP ranges (P2P anti-monitoring, malware C2). Linux port là PeerGuardian 2/Moblock. Concept basis của modern threat intelligence feeds.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-slash-circle"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Rope</div>
+              <div class="tool-desc">Minimalist Linux firewall script framework — shell-based rule management cho iptables. Lightweight alternative cho Shorewall khi chỉ cần rule generation đơn giản không cần daemon.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ══ Databases & Storage ════════════════════════════ -->
+        <div id="database">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-database-fill"></i></div>
+            <h2>Databases &amp; Storage</h2>
+            <span class="tool-count">11 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-table"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">PostgreSQL</div>
+              <div class="tool-desc">Primary relational DB. High-availability with Patroni, logical replication, PgBouncer connection pooling, and automated failover for 30+ production instances.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 7+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-table"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">MySQL</div>
+              <div class="tool-desc">Legacy application databases. InnoDB, read replicas, Group Replication, and ProxySQL for query routing and connection management.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-lightning-charge-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Redis</div>
+              <div class="tool-desc">Caching and session management. Redis Cluster and Sentinel for HA, Redis Streams for event sourcing, and Keyspace notifications for cache invalidation.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-collection-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">MongoDB</div>
+              <div class="tool-desc">Document store for flexible-schema workloads. Replica sets, Atlas cloud, aggregation pipelines, and change streams for event-driven architectures.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-bar-chart-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">ClickHouse</div>
+              <div class="tool-desc">Columnar OLAP engine for analytics. Sales and inventory data pipelines, materialized views, and ReplicatedMergeTree with multi-shard setup.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-cloud-upload-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">MinIO</div>
+              <div class="tool-desc">S3-compatible object storage on-premise. Multi-site replication for DR, erasure coding, and tiering to cold cloud storage for aged data.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-hdd-network-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Elasticsearch</div>
+              <div class="tool-desc">Full-text search and log analytics. Managed in ELK stack, ILM policies for index lifecycle, and snapshot-based backup to S3.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-hexagon-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Apache Cassandra</div>
+              <div class="tool-desc">Wide-column NoSQL database — write-optimized, linearly scalable, không có single point of failure. Phù hợp cho time-series và high-write workloads ở petabyte scale.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang đọc</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-distribute-vertical"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Vitess</div>
+              <div class="tool-desc">Database clustering system cho MySQL — horizontal sharding, online schema changes, và query serving không cần thay đổi app code. YouTube, Slack đang dùng.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang đọc</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-shield-check"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Velero</div>
+              <div class="tool-desc">Kubernetes backup và disaster recovery. Backup toàn cluster, namespace, hoặc label-selector — restore sang cluster mới cho DR testing và migration.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-arrow-repeat"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Database Replication</div>
+              <div class="tool-desc">HA patterns: Patroni cho PostgreSQL, Group Replication cho MySQL, Redis Sentinel/Cluster. Failover tự động, replication lag monitoring, và split-brain prevention.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 7+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Networking & Messaging ═════════════════════════ -->
+        <div id="network">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-diagram-3-fill"></i></div>
+            <h2>Networking, Proxy &amp; Service Mesh</h2>
+            <span class="tool-count">8 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-globe2"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Nginx</div>
+              <div class="tool-desc">Ingress controller and reverse proxy for Kubernetes. Rate limiting, request routing, SSL termination, and custom error pages for all external services.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-shuffle"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">HAProxy</div>
+              <div class="tool-desc">Layer 4/7 load balancer for database traffic. ProxySQL-like TCP routing for MySQL and PostgreSQL. Used where Nginx is insufficient for connection handling.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-router-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">CoreDNS / ExternalDNS</div>
+              <div class="tool-desc">DNS management inside and outside Kubernetes. ExternalDNS syncs K8s Services and Ingresses to Route 53 and Cloud DNS automatically.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-lock-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">cert-manager</div>
+              <div class="tool-desc">Automated TLS certificate lifecycle. Let's Encrypt and internal CA issuers. Wildcard certificates for internal services, auto-renewal with zero downtime.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-signpost-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Envoy Proxy</div>
+              <div class="tool-desc">High-performance L7 proxy — data plane cho Istio service mesh. xDS API, dynamic routing, circuit breaking, retry logic và observability built-in.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-heptagon-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Kong API Gateway</div>
+              <div class="tool-desc">API Gateway và service management. Plugin ecosystem (rate limit, auth, transform), declarative config với deck, và Kong Ingress Controller cho K8s.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-sign-intersection-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Traefik</div>
+              <div class="tool-desc">Modern reverse proxy và load balancer — tự động phát hiện service qua Docker/K8s labels. Middleware chain, ACME cert, và dashboard built-in.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-share"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Linkerd</div>
+              <div class="tool-desc">Lightweight service mesh — ultra-low overhead so với Istio. mTLS tự động, L7 metrics per route, circuit breaking — phù hợp khi Istio quá nặng.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ══ Messaging & Streaming ══════════════════════════ -->
+        <div id="messaging">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-broadcast"></i></div>
+            <h2>Messaging &amp; Streaming</h2>
+            <span class="tool-count">3 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-broadcast"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Apache Kafka</div>
+              <div class="tool-desc">Distributed event streaming — topics, consumer groups, compaction, Schema Registry. Durable, ordered, replayable message log. Backbone của event-driven và stream processing architecture.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-reception-2"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">RabbitMQ</div>
+              <div class="tool-desc">Message broker với AMQP protocol. Exchange types (direct, fanout, topic), DLQ, priority queue, và clustering cho HA — phù hợp task queue và event-driven patterns.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-broadcast-pin"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">NATS</div>
+              <div class="tool-desc">High-performance messaging system — sub-millisecond latency, pub/sub, queue groups, JetStream cho persistence. Nhẹ và nhanh hơn Kafka cho use case request-reply.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang thử</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Languages & Scripting ══════════════════════════ -->
+        <div id="lang">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-terminal-fill"></i></div>
+            <h2>Languages &amp; Scripting</h2>
+            <span class="tool-count">8 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-filetype-py"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Python</div>
+              <div class="tool-desc">Automation scripts, internal tooling, AWS Lambda functions, and data pipeline glue code. Libraries: boto3, fabric, FastAPI, pandas, asyncio.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-terminal"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Bash / Shell</div>
+              <div class="tool-desc">Day-to-day operations scripting — K8s automation, deploy hooks, backup scripts, and CI pipeline steps. Strict mode, trapping, and idempotency by default.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-code-slash"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Golang</div>
+              <div class="tool-desc">Internal CLI tools, Kubernetes operators and custom controllers, and performance-sensitive automation. goroutines for concurrent infrastructure checks.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-microsoft"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">PowerShell</div>
+              <div class="tool-desc">Windows Server and Active Directory automation. Group Policy management, endpoint provisioning, scheduled tasks, and hybrid cloud automation via Azure PowerShell modules.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-braces"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">HCL / YAML / Jinja2</div>
+              <div class="tool-desc">Configuration languages daily. Terraform HCL for IaC, YAML cho K8s manifests và Helm values, Jinja2 cho Ansible templates và config generation.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-filter-square-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">jq / yq / awk</div>
+              <div class="tool-desc">Data transformation trong shell. jq cho JSON parsing, yq cho YAML, awk cho text processing. Không thể thiếu khi làm việc với API response và K8s output.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-filetype-sql"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">SQL</div>
+              <div class="tool-desc">Query và tối ưu hóa database — window functions, CTE, explain plan analysis, index design. Viết migration script và stored procedure cho PostgreSQL, MySQL.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-speedometer"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Rust</div>
+              <div class="tool-desc">Systems programming language — memory safe, zero-cost abstractions, không có GC. Thú vị cho tooling nội bộ hiệu năng cao và WebAssembly compilation.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang học</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Artifact & Registry ════════════════════════════ -->
+        <div id="artifact">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-box-seam-fill"></i></div>
+            <h2>Artifact &amp; Registry</h2>
+            <span class="tool-count">5 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-shield-lock"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Harbor</div>
+              <div class="tool-desc">OSS container registry với security scanning tích hợp (Trivy), content trust, và project-based access control. Self-hosted alternative cho Docker Hub.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-archive-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Nexus Repository</div>
+              <div class="tool-desc">Universal artifact manager — Maven, npm, PyPI, Docker, Helm chart. Proxy cache cho external registry, giúp tiết kiệm bandwidth và đảm bảo availability.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-layers"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">JFrog Artifactory</div>
+              <div class="tool-desc">Enterprise artifact platform. Build info tracking, Xray security scanning, virtual/remote/local repo concept, và tích hợp với Jenkins, GitLab CI.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-copy"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Skopeo</div>
+              <div class="tool-desc">Tool copy, inspect, delete container image không cần Docker daemon. Hữu ích trong air-gapped environments và mirror image giữa các registry.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-patch-check"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">OCI Artifacts</div>
+              <div class="tool-desc">Open Container Initiative standard — lưu trữ Helm chart, OPA policy, Cosign signature trong container registry. Thống nhất artifact storage thay vì nhiều hệ thống riêng.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ FinOps & Cost Engineering ═════════════════════ -->
+        <div id="finops">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-currency-dollar"></i></div>
+            <h2>FinOps &amp; Cost Engineering</h2>
+            <span class="tool-count">5 tools</span>
+          </div>
+
+          <div class="info-box">
+            <i class="bi bi-info-circle me-2"></i>
+            FinOps không phải chỉ là cắt giảm chi phí — mà là <strong>visibility, accountability, và optimization</strong>. Engineering team cần biết họ đang chi tiêu gì để ra quyết định đúng.
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-bar-chart-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">AWS Cost Explorer</div>
+              <div class="tool-desc">Native AWS cost analysis — breakdown theo service, tag, account, region. RI recommendation, Savings Plans analysis, và anomaly detection để catch cost spike sớm.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-graph-down-arrow"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Kubecost</div>
+              <div class="tool-desc">Cost monitoring cho Kubernetes — breakdown chi phí theo namespace, deployment, label. Giúp team engineering thấy ứng dụng của họ tốn bao nhiêu tiền mỗi tháng.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-currency-exchange"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Infracost</div>
+              <div class="tool-desc">Cloud cost estimation trước khi deploy — tích hợp vào CI/CD, hiển thị cost diff trong PR comment khi Terraform thay đổi. Shift-left cho cost awareness.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 1+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-sliders"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Goldilocks / VPA</div>
+              <div class="tool-desc">Right-sizing recommendation cho K8s — Vertical Pod Autoscaler ở recommendation mode, Goldilocks UI visualize resource request/limit đang over hay under-provisioned.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-lightning-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Spot Instances / Preemptible VM</div>
+              <div class="tool-desc">AWS Spot + GCP Preemptible cho workload tolerant interruption — batch job, CI runner, stateless service. Giảm 60-80% compute cost khi kết hợp với Karpenter.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Platform Engineering ═══════════════════════════ -->
+        <div id="platform">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-building-gear"></i></div>
+            <h2>Platform Engineering &amp; IT Ops</h2>
+            <span class="tool-count">5 tools</span>
+          </div>
+
+          <div class="info-box">
+            <i class="bi bi-info-circle me-2"></i>
+            Platform Engineering là discipline xây dựng <strong>Internal Developer Platform (IDP)</strong> — giúp developer tự phục vụ hạ tầng mà không cần ticket ops. "Paved road" thay vì "golden path" cứng nhắc.
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-mortarboard-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Backstage</div>
+              <div class="tool-desc">Spotify's open-source IDP framework — service catalog, TechDocs, scaffolding template cho project mới, và plugin ecosystem. Nền tảng cho việc xây dựng developer portal.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang tìm hiểu</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-layers-half"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Port</div>
+              <div class="tool-desc">SaaS Internal Developer Portal — data model linh hoạt, scorecards, self-service action. Nhanh hơn Backstage để setup nhưng ít customizable hơn.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang đánh giá</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-box-arrow-in-right"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Service Catalog / CMDB</div>
+              <div class="tool-desc">Tracking ownership, dependencies, và metadata của services — ai owns cái gì, service này dùng database nào, alert đi đâu. Nền tảng cho incident routing đúng team.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-file-earmark-ruled"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">ADR / Runbook / Playbook</div>
+              <div class="tool-desc">Architecture Decision Records, operational runbooks, và incident playbooks — documentation là infrastructure. Không có docs tốt, không thể scale team hay on-call hiệu quả.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-pc-display-horizontal"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Snipe-IT</div>
+              <div class="tool-desc">Open-source IT Asset Management — tracking hardware, software license, consumable. Barcode/QR check-in/out, depreciation, audit log. REST API để tích hợp với CMDB và Ansible inventory.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Developer Tools & IDE ════════════════════════════ -->
+        <div id="devtools">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-code-slash"></i></div>
+            <h2>Developer Tools &amp; IDE</h2>
+            <span class="tool-count">9 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-braces-asterisk"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Visual Studio Code</div>
+              <div class="tool-desc">Primary editor cho hầu hết mọi thứ — Python, Go, Bash, YAML, HCL. Extensions thiết yếu: Remote SSH, Kubernetes, Docker, Terraform, GitLens, Ruff.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-robot"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Claude Code</div>
+              <div class="tool-desc">AI coding CLI từ Anthropic — pair programming cho infra automation, viết script, debug pipeline, và review code. Chạy trong terminal, hiểu cả codebase context.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 1+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-stars"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Cursor</div>
+              <div class="tool-desc">AI-first code editor dựa trên VS Code — Cmd+K để edit với natural language, codebase-aware chat, multi-file edit. Tăng tốc đáng kể việc viết automation script.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 1+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-terminal-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Neovim</div>
+              <div class="tool-desc">Terminal editor cho SSH sessions và server-side editing. LSP, Treesitter, lazy.nvim plugin manager — không cần GUI khi làm việc remote trên K8s nodes hay cloud instances.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-gem"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">JetBrains GoLand / PyCharm</div>
+              <div class="tool-desc">IDE cho Go và Python development. Database tools, remote interpreter, profiler built-in — dùng khi cần debug phức tạp mà VS Code không đủ.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-magic"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">GitHub Copilot</div>
+              <div class="tool-desc">AI code completion trong IDE — suggest boilerplate, unit test, docstring. Tích hợp VS Code, Neovim. Hữu ích cho repetitive infra code.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-layout-split"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">tmux</div>
+              <div class="tool-desc">Terminal multiplexer — session persistence qua SSH disconnect, split pane cho multi-task, session sharing cho pair debugging. Không thể làm việc remote mà không có tmux.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-palette2"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Zsh + Oh My Zsh</div>
+              <div class="tool-desc">Shell setup với plugins: zsh-autosuggestions, zsh-syntax-highlighting, kubectx prompt, fzf integration. Drastically tăng tốc terminal workflow hàng ngày.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 7+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-proxy"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">mitmproxy / Proxyman</div>
+              <div class="tool-desc">CLI và GUI HTTP/HTTPS proxy để debug API traffic — intercept, modify, replay request. Hữu ích khi debug microservice integration, phân tích SDK behavior.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ CLI & Kubernetes Tools ═════════════════════════ -->
+        <div id="cli">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-terminal"></i></div>
+            <h2>CLI &amp; Kubernetes Tools</h2>
+            <span class="tool-count">12 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-command"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">kubectl</div>
+              <div class="tool-desc">K8s CLI chính — apply, exec, logs, port-forward, debug. Kết hợp với aliases và shell functions để tăng tốc: kgp, kgn, klf, kex. Công cụ không thể thiếu hàng ngày.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-grid-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">k9s</div>
+              <div class="tool-desc">Terminal UI cho Kubernetes — real-time cluster view, log streaming, exec vào pod, xem resource YAML. Nhanh hơn nhiều so với gõ kubectl từng lệnh.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-arrow-left-right"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">kubectx / kubens</div>
+              <div class="tool-desc">Nhanh chóng switch giữa K8s context và namespace. Kết hợp với fzf để fuzzy search cluster/namespace khi quản lý nhiều môi trường cùng lúc.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-card-list"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Stern</div>
+              <div class="tool-desc">Multi-pod log streaming với color-coding theo pod. Tương đương kubectl logs -f nhưng cho nhiều pod khớp pattern — không thể thiếu khi debug microservices.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-binoculars"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">krew + kubectl plugins</div>
+              <div class="tool-desc">Plugin manager cho kubectl. Plugins hữu ích: neat (clean YAML), resource-capacity, node-shell, df-pv, oomd, view-secret, cert-manager kubectl plugin.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-bug"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">kubectl debug / ephemeral containers</div>
+              <div class="tool-desc">Debug distroless container bằng cách inject ephemeral container — netshoot, busybox. Không cần rebuild image để có debugging tools trong production.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-search"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">fzf</div>
+              <div class="tool-desc">Fuzzy finder cho shell — Ctrl+R history search, Ctrl+T file search, ssh host completion. Pipeline với kubectl, git, docker để interactive select mọi thứ.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-file-earmark-text"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">bat / eza / delta</div>
+              <div class="tool-desc">Modern CLI replacements: bat (cat với syntax highlight), eza (ls với icons/tree), delta (diff với syntax highlight). Aliased vào cat/ls/diff trong shell config.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-git"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">lazygit</div>
+              <div class="tool-desc">Terminal UI cho Git — interactive staging, stash, rebase, cherry-pick. Thao tác complex git operation mà không cần nhớ syntax, nhanh hơn GUI client.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-speedometer2"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">htop / btop / glances</div>
+              <div class="tool-desc">System resource monitoring trong terminal. btop cho GPU/CPU/memory/network realtime view. glances cho remote monitoring qua browser. Dùng hàng ngày trên servers.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-book"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Glow</div>
+              <div class="tool-desc">CLI Markdown renderer — đọc README, runbook, docs trong terminal với formatting đẹp. Tích hợp tốt với fzf để browse và search documentation từ command line.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-send"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">curl / httpie / xh</div>
+              <div class="tool-desc">HTTP testing từ CLI. curl cho scripting, httpie/xh cho interactive testing với output đẹp. Dùng để test API, webhook, và health check endpoint.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Network Monitoring & Analysis ══════════════════ -->
+        <div id="netmon">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-activity"></i></div>
+            <h2>Network Security &amp; Analysis</h2>
+            <span class="tool-count">7 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-graph-up"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">ntopng</div>
+              <div class="tool-desc">Network traffic monitoring và analysis — real-time flow visualization, top talkers, protocol breakdown, và geo-mapping. Giao diện web trực quan, hỗ trợ NetFlow/sFlow/IPFIX.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-eye-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Wireshark / tshark</div>
+              <div class="tool-desc">Packet capture và protocol analysis — dissect TCP, TLS, HTTP/2, gRPC, DNS, QUIC. tshark cho CLI và scripting. Không thể thiếu khi debug network issues.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-broadcast"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Suricata</div>
+              <div class="tool-desc">Network IDS/IPS/NSM engine — rule-based detection, protocol parsing, EVE JSON logging tích hợp với ELK/Wazuh. Hỗ trợ Lua scripting cho custom detection logic.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-radar"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">nmap / naabu / masscan</div>
+              <div class="tool-desc">Network discovery và port scanning — nmap cho detailed service detection, masscan cho fast internet-scale scan, naabu cho modern Go-based scanning pipeline.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-speedometer"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">iperf3 / netperf</div>
+              <div class="tool-desc">Network bandwidth và latency testing giữa nodes. Dùng để benchmark mạng DC, kiểm tra throughput K8s CNI, và xác minh QoS sau thay đổi network config.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-diagram-3"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">NetFlow / sFlow / IPFIX</div>
+              <div class="tool-desc">Flow-based network monitoring — collect traffic metadata từ router/switch, phân tích bandwidth usage per IP/port/protocol. Tích hợp với ntopng và ELK để visualization.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-tools"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">tcpdump / ss / ip</div>
+              <div class="tool-desc">Low-level network CLI tools — tcpdump cho packet capture trong terminal, ss cho socket statistics, ip cho routing/interface management. Nền tảng Linux networking.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ══ Infrastructure Monitoring ════════════════════════ -->
+        <div id="infra-monitoring">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-pc-display"></i></div>
+            <h2>Infrastructure Monitoring</h2>
+            <span class="tool-count">3 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-house-check"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Zabbix</div>
+              <div class="tool-desc">Enterprise monitoring platform — SNMP polling, agent-based check, trigger/action engine. Tốt cho on-prem server, network device, hardware khi Prometheus agent không triển khai được.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-check2-all"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">CheckMK</div>
+              <div class="tool-desc">Hybrid infrastructure monitoring — agent và SNMP-based, service discovery tự động, check plugin ecosystem phong phú. Hỗ trợ tốt cho môi trường hybrid on-prem + cloud.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-bell-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Nagios / Icinga2</div>
+              <div class="tool-desc">Classic monitoring engine — host/service check, notification chain, dependency graph. Icinga2 là fork hiện đại với REST API, clustering, và module ecosystem. Phổ biến ở on-prem legacy.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ SIEM & Threat Intelligence ════════════════════ -->
+        <div id="siem">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-shield-exclamation"></i></div>
+            <h2>SIEM &amp; Threat Intelligence</h2>
+            <span class="tool-count">8 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-shield-fill-check"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Wazuh</div>
+              <div class="tool-desc">Open-source SIEM, HIDS, FIM, và vulnerability detection — agent-based, tích hợp MITRE ATT&CK, log collection từ cloud + on-prem. Dashboard trên OpenSearch.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-bug-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">OpenVAS / Greenbone</div>
+              <div class="tool-desc">Open-source vulnerability scanner — full và delta scan, CVE mapping, compliance report. Chạy scheduled scan để phát hiện CVE mới trên asset inventory.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-diagram-2"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">MITRE ATT&amp;CK</div>
+              <div class="tool-desc">Framework phân tích TTP (Tactics, Techniques, Procedures) của attacker. Dùng để map detection rule, đánh giá coverage, và structured threat modeling cho hạ tầng.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-virus"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">VirusTotal / AbuseIPDB</div>
+              <div class="tool-desc">IOC (Indicator of Compromise) lookup — hash, IP, domain reputation check. Tích hợp API vào SIEM để tự động enrich alert với threat intelligence context.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-globe"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Shodan</div>
+              <div class="tool-desc">Internet-facing asset discovery — tìm exposed service, open port, misconfigured devices. Dùng để audit own perimeter và giả lập cái nhìn của attacker về hạ tầng.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-link-45deg"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">OpenCTI</div>
+              <div class="tool-desc">Cyber Threat Intelligence platform — aggregate IOC từ nhiều feed (MISP, AlienVault OTX, etc.), visualize relationship giữa threat actor, campaign, và TTPs.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang tìm hiểu</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-file-earmark-lock2-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Lynis</div>
+              <div class="tool-desc">Security auditing tool cho Unix/Linux — system hardening check, compliance scoring (CIS Benchmark, PCI-DSS). Chạy sau provisioning và định kỳ trên production server.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-pencil-square"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Nuclei</div>
+              <div class="tool-desc">Fast vulnerability scanner với YAML-based template — community template library, custom template cho internal apps, CI integration để scan trước release.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Penetration Testing & Security Research ══════════ -->
+        <div id="pentest">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-bug-fill"></i></div>
+            <h2>Penetration Testing &amp; Security Research</h2>
+            <span class="tool-count">22 tools</span>
+          </div>
+          <div class="tools-grid">
+
+            <!-- Pentesting Distributions -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-terminal-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Kali Linux</div>
+              <div class="tool-desc">Debian-based Linux distribution được thiết kế riêng cho penetration testing và digital forensics. Đi kèm 600+ pre-installed security tools. Tiêu chuẩn de-facto của industry cho pentesting.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-archive-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">BackTrack</div>
+              <div class="tool-desc">Linux distro pentesting tiền thân của Kali Linux — hợp nhất từ WHAX và Auditor Security Collection. Ngừng phát triển 2013, nhưng là nền tảng lịch sử quan trọng của offensive security tooling.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Historical</div>
+            </div>
+
+            <!-- Exploitation Frameworks -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-bug"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Metasploit</div>
+              <div class="tool-desc">Framework khai thác lỗ hổng bảo mật phổ biến nhất. Cung cấp exploit modules, payloads, auxiliary scanners và post-exploitation tools. Dùng trong authorized pentesting và red team exercises.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <!-- Network Analysis & Scanning -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-wifi"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Wireshark</div>
+              <div class="tool-desc">Network protocol analyzer — capture và inspect packet-level traffic. Dùng trong security research để phân tích cleartext protocols, TLS handshake, và phát hiện bất thường trong traffic.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-search"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Nmap</div>
+              <div class="tool-desc">Network discovery, port scanning và service fingerprinting. NSE scripting engine cho vulnerability scanning. Nền tảng của mọi cuộc pentesting — recon và asset discovery phase.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-plugin"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Netcat (nc)</div>
+              <div class="tool-desc">"Swiss army knife" của networking — đọc/ghi data qua TCP/UDP. Dùng để tạo reverse shell, port forwarding, file transfer, và banner grabbing trong penetration testing.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 8+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-layers-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">hping3</div>
+              <div class="tool-desc">Packet crafting và network testing — tạo custom TCP/UDP/ICMP/RAW-IP packets. Dùng cho firewall testing, OS fingerprinting, traceroute nâng cao, và DoS stress testing trong lab environment.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-ethernet"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">OpenSSH</div>
+              <div class="tool-desc">Implementation chuẩn của SSH protocol — remote access, tunneling, SCP/SFTP file transfer. Trong security context: port forwarding, dynamic SOCKS proxy, jump host configuration và hardening.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 12+ years</div>
+            </div>
+
+            <!-- Web Application Testing -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-globe2"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Burp Suite Community</div>
+              <div class="tool-desc">Intercepting proxy cho web application security testing. Inspect/modify HTTP/S requests, spider, scanner (Pro), Intruder cho brute force, Repeater cho manual testing. Tiêu chuẩn web pentesting.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-globe"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Nikto</div>
+              <div class="tool-desc">Web server vulnerability scanner — kiểm tra 6700+ potentially dangerous files, outdated server versions, và misconfigurations. Nhanh, open-source, tốt cho initial web server recon trong pentest.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-database-fill-exclamation"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">sqlmap</div>
+              <div class="tool-desc">Automated SQL injection detection và exploitation — fingerprint database, extract data, read/write files, và execute OS commands. Hỗ trợ MySQL, PostgreSQL, MSSQL, Oracle. Chỉ dùng với authorization.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <!-- Password Security -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-key-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Hashcat</div>
+              <div class="tool-desc">GPU-accelerated password recovery — crack MD5, SHA, bcrypt, WPA handshake với dictionary, brute-force, rule-based attacks. Dùng để test password policy strength và audit leaked credential databases.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-person-lock"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">John the Ripper</div>
+              <div class="tool-desc">Password cracking đa nền tảng — auto-detect hash type, hỗ trợ Unix shadow, Windows NTLM, ZIP, PDF passwords. Jumbo edition mở rộng thêm 100+ hash types. Dùng để audit password security.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-shield-x"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Hydra</div>
+              <div class="tool-desc">Login brute-forcer hỗ trợ 50+ protocols — SSH, FTP, HTTP, SMB, RDP, Telnet, LDAP. Dùng trong authorized pentesting để test authentication strength và account lockout policies.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <!-- Wireless Security -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-broadcast"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Aircrack-ng</div>
+              <div class="tool-desc">Wi-Fi security auditing suite — capture WPA/WPA2 handshake (airodump-ng), deauth attack (aireplay-ng), crack PSK (aircrack-ng). Dùng để audit wireless network security trong authorized assessments.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <!-- Network IDS/IPS -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-radar"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Snort</div>
+              <div class="tool-desc">Network intrusion detection/prevention system tiên phong — rule-based packet inspection, real-time traffic analysis. Snort 3 cải thiện performance đáng kể. Basis của nhiều commercial NGFW signature engines.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-shield-fill-exclamation"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Suricata</div>
+              <div class="tool-desc">Network threat detection engine thế hệ mới — IDS/IPS/NSM với multi-threading, protocol parsing sâu, EVE JSON output. Tích hợp với ELK/Wazuh và hỗ trợ Lua scripting cho custom detection.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <!-- Reverse Engineering & Malware Analysis -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-code-slash"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Ghidra</div>
+              <div class="tool-desc">Software reverse engineering suite phát triển bởi NSA, open-source 2019. Disassembler, decompiler, scripting API (Java/Python), collaborative analysis. Alternative miễn phí cho IDA Pro trong malware research.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-cpu-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Radare2</div>
+              <div class="tool-desc">Reverse engineering framework CLI-based — disassembly, debugging, binary patching, scripting via r2pipe (Python/JS). Học curve dốc nhưng cực kỳ powerful cho binary analysis và CTF challenges.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-memory"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Volatility</div>
+              <div class="tool-desc">Memory forensics framework cho incident response — extract processes, network connections, registry, malware artifacts từ RAM dump. Hỗ trợ Windows/Linux/macOS memory images. Essential cho DFIR.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-virus"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">YARA</div>
+              <div class="tool-desc">Pattern matching tool để identify và classify malware — viết rules dạng text mô tả file signatures. Tích hợp với antivirus engines, SIEM, và sandbox. Ngôn ngữ de-facto của threat hunting community.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <!-- Historical/Educational -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-lightning-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">High Orbit Ion Cannon</div>
+              <div class="tool-desc">DoS/DDoS stress testing tool (educational/historical) — GUI-based HTTP flood với threading. Quan trọng trong lịch sử hacktivism (Anonymous). Nghiên cứu để hiểu DDoS mechanics và xây dựng defense strategies.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Historical / Study</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ══ Encryption & Cryptography ═══════════════════════ -->
+        <div id="encryption">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-lock-fill"></i></div>
+            <h2>Encryption &amp; Cryptography</h2>
+            <span class="tool-count">12 tools</span>
+          </div>
+          <div class="tools-grid">
+
+            <!-- TLS / Protocol Libraries -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-shield-lock-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">OpenSSL</div>
+              <div class="tool-desc">Thư viện TLS/SSL và cryptography phổ biến nhất — tạo certificate, ký CSR, test TLS handshake, và inspect cipher suites. Nền tảng của phần lớn HTTPS stack trên internet.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-shield-check"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">GnuTLS</div>
+              <div class="tool-desc">Thư viện TLS/SSL open-source alternative cho OpenSSL — hỗ trợ TLS 1.3, DTLS, PKCS#11, và OpenPGP. Được dùng rộng rãi trong các dự án GNOME và nhiều Linux distribution.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-link-45deg"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">stunnel</div>
+              <div class="tool-desc">SSL/TLS tunneling proxy — wrap non-TLS protocols (POP3, IMAP, LDAP, custom TCP) trong SSL layer mà không cần sửa ứng dụng gốc. Hữu ích để retrofit encryption cho legacy services.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <!-- PGP / GPG Ecosystem -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-key-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">GnuPG (GPG)</div>
+              <div class="tool-desc">GNU Privacy Guard — mã hóa và ký số file/email theo chuẩn OpenPGP. Dùng để ký commit, verify package integrity, mã hóa secrets trong pipeline và trao đổi thông tin an toàn.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-person-badge"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">KGPG</div>
+              <div class="tool-desc">KDE GUI frontend cho GnuPG — quản lý keyring, mã hóa/giải mã file, tích hợp với KDE Plasma. Thay thế đồ họa đơn giản cho GPG command line, phù hợp người dùng desktop Linux.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-safe2"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Seahorse</div>
+              <div class="tool-desc">GNOME keyring manager và GPG frontend — quản lý PGP keys, SSH keys, passwords qua GUI. Tích hợp sâu với GNOME keyring daemon, hỗ trợ import/export và key signing.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <!-- Crypto Libraries -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-braces-asterisk"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Bouncy Castle</div>
+              <div class="tool-desc">Cryptography library cho Java và C# — hỗ trợ RSA, EC, AES, PGP, CMS, TSP, TLS. Chuẩn mực cho Java crypto ngoài JCE, đặc biệt khi cần thuật toán nâng cao hoặc FIPS compliance.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-boxes"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">NaCl / libsodium</div>
+              <div class="tool-desc">High-level cryptography library — API đơn giản, chọn sẵn thuật toán tốt nhất (Curve25519, XSalsa20, Poly1305). libsodium là port đa nền tảng của NaCl với binding cho Python, Node, Go, Ruby.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-cpu"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">wolfCrypt</div>
+              <div class="tool-desc">Embedded cryptography engine — thành phần core của wolfSSL, tối ưu cho IoT/embedded systems với footprint nhỏ. Hỗ trợ FIPS 140-2, AES, RSA, ECC, SHA. Dùng trong automotive và industrial IoT.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Study</div>
+            </div>
+
+            <!-- Encrypted Messaging -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-chat-dots-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Signal</div>
+              <div class="tool-desc">End-to-end encrypted messaging app với Signal Protocol — double ratchet algorithm, forward secrecy, sealed sender. Chuẩn vàng về privacy-preserving communication, open-source toàn bộ stack.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-chat-square-lock-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">TextSecure</div>
+              <div class="tool-desc">Tiền thân của Signal — ứng dụng SMS/MMS mã hóa đầu tiên áp dụng Signal Protocol (lúc đó gọi là Axolotl). Hợp nhất với RedPhone thành Signal năm 2015. Quan trọng về lịch sử E2E messaging.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Historical</div>
+            </div>
+
+            <!-- File Encryption -->
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-file-zip-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">7-Zip</div>
+              <div class="tool-desc">File archiver mã nguồn mở với mã hóa AES-256 — nén 7z, ZIP, TAR, GZ, XZ với tỷ lệ nén cao. Dùng để tạo encrypted archive cho backup, secure file transfer, và bảo vệ sensitive data at rest.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 10+ years</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ══ API & Load Testing ══════════════════════════════ -->
+        <div id="apitesting">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-send-fill"></i></div>
+            <h2>API &amp; Load Testing</h2>
+            <span class="tool-count">7 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-collection-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Postman</div>
+              <div class="tool-desc">API testing và documentation. Collection, environment variables, pre/post script, Newman CLI runner cho CI. Dùng để doc API contract và share với dev team.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-send-check"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Bruno</div>
+              <div class="tool-desc">Open-source Postman alternative — collection lưu dưới dạng file text (Git-friendly), không cần sync cloud. Đơn giản, nhanh, hoạt động hoàn toàn offline.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 1+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-bar-chart-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">k6</div>
+              <div class="tool-desc">Load testing viết bằng JavaScript — scripted scenario, thresholds, real-time metrics. k6 Cloud và k6 OSS với Prometheus exporter cho Grafana dashboard.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-people-fill"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Locust</div>
+              <div class="tool-desc">Python-based load testing — định nghĩa user behavior bằng code, distributed load generation, real-time web UI. Linh hoạt hơn JMeter cho custom scenario.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-hdd-rack"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Apache JMeter</div>
+              <div class="tool-desc">Mature load testing tool với GUI — HTTP, gRPC, JDBC, FTP test plan. Distributed testing với remote agents, JTL report, và tích hợp với Jenkins CI.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-file-code"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Swagger / OpenAPI</div>
+              <div class="tool-desc">API documentation và contract. OpenAPI 3.x spec để generate client SDK, mock server, và validate request/response. SwaggerUI cho interactive doc portal.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-proxy"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">wrk / hey / bombardier</div>
+              <div class="tool-desc">Simple HTTP benchmarking CLI tools — wrk với Lua script, hey cho quick benchmark, bombardier cho concurrent request. Nhanh để spot-check API performance.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Documentation & Diagramming ════════════════════ -->
+        <div id="docs">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-journals"></i></div>
+            <h2>Docs, Wiki &amp; Knowledge Base</h2>
+            <span class="tool-count">10 tools</span>
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-diagram-2-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">draw.io / diagrams.net</div>
+              <div class="tool-desc">Architecture diagramming tool — cloud icons (AWS, GCP, K8s), network topology, sequence diagram. File lưu dạng XML, commit vào Git cùng code. Offline-first.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-pencil-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Excalidraw</div>
+              <div class="tool-desc">Whiteboard-style sketching tool — hand-drawn look cho brainstorming, system design interview, và informal architecture discussion. Real-time collaboration.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-book-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">MkDocs Material</div>
+              <div class="tool-desc">Documentation site generator từ Markdown — đẹp out-of-the-box, search, admonitions, mermaid diagram, code highlight. Docs as code, deploy lên GitHub Pages.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 4+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-journals"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Confluence</div>
+              <div class="tool-desc">Team wiki và knowledge base — runbook, post-mortem, RFC, onboarding guide. Tích hợp với Jira cho project tracking. Vẫn là standard cho enterprise documentation.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-bezier2"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Mermaid</div>
+              <div class="tool-desc">Diagrams trong Markdown code block — sequence, flowchart, ER diagram, GitGraph. Render trong GitHub, GitLab, Notion, Confluence. Diagram as code, version controllable.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-kanban"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Jira</div>
+              <div class="tool-desc">Project và issue tracking — Sprint, Epic, Story, Bug. Dùng cho team DevOps roadmap, incident tracking, và change management. Tích hợp với GitLab/GitHub và Confluence.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 6+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-chat-dots-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Slack</div>
+              <div class="tool-desc">Team communication — alert notification từ Prometheus/PagerDuty, bot integration cho deploy status, incident channel, và ChatOps workflow. Webhooks và slash commands.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 5+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-grid-3x2-gap"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">Notion</div>
+              <div class="tool-desc">Personal knowledge management và note-taking — draft runbook, learning notes, architecture exploration. Database, board view, và AI writing assistant built-in.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 3+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-file-earmark-text-fill"></i></div>
+                <span class="proficiency p-expert">In Use</span>
+              </div>
+              <div class="tool-name">Outline</div>
+              <div class="tool-desc">Open-source team wiki — giao diện đẹp, real-time collaboration, nested docs, full-text search. Self-hosted với S3 storage backend. Alternative cho Confluence với UX tốt hơn nhiều.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-book-half"></i></div>
+                <span class="proficiency p-advanced">Hands-on</span>
+              </div>
+              <div class="tool-name">BookStack</div>
+              <div class="tool-desc">Open-source documentation platform với cấu trúc Books → Chapters → Pages — rõ ràng, dễ navigate. Self-hosted, LDAP/SSO integration, Markdown + WYSIWYG editor.</div>
+              <div class="tool-meta"><i class="bi bi-clock"></i> 2+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ On My Radar ════════════════════════════════════ -->
+        <div id="radar">
+          <div class="section-heading">
+            <div class="section-heading-icon"><i class="bi bi-binoculars-fill"></i></div>
+            <h2>On My Radar</h2>
+            <span class="tool-count">14 tools — đang khám phá</span>
+          </div>
+
+          <div class="info-box">
+            <i class="bi bi-lightbulb me-2"></i>
+            Những công nghệ tôi <strong>chưa dùng thực tế</strong> nhưng đang theo dõi và nghiên cứu —
+            vì thấy hướng đi thú vị, giải quyết bài toán mới, hoặc đơn giản là tò mò muốn hiểu rõ hơn.
+          </div>
+
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-grid-1x2"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Cilium</div>
+              <div class="tool-desc">CNI plugin dựa trên eBPF — network policy và observability ở kernel level, thay thế kube-proxy, Hubble cho network flow visibility. Hiệu năng vượt trội IPtables.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon iac"><i class="bi bi-braces-asterisk"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Pulumi</div>
+              <div class="tool-desc">IaC dùng ngôn ngữ lập trình thực (Python, Go, TypeScript) thay vì DSL. Muốn so sánh với Terraform — lợi thế khi cần logic phức tạp và unit testing.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang đọc</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-graph-up-arrow"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">VictoriaMetrics</div>
+              <div class="tool-desc">Time-series DB tương thích Prometheus — hiệu năng cao hơn, ít RAM hơn đáng kể. Single-node có thể xử lý workload mà Prometheus cluster mới đáp ứng được.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Lab testing</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cicd"><i class="bi bi-boxes"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Dagger</div>
+              <div class="tool-desc">CI/CD engine — pipeline chạy trong container, portable sang bất kỳ CI system nào. Viết pipeline bằng code (Python, Go, TypeScript) thay vì YAML.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang đọc</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-diagram-2-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Temporal</div>
+              <div class="tool-desc">Workflow orchestration engine — long-running, fault-tolerant workflow với replay và history. Thú vị cho saga pattern, distributed transaction, và complex business process.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang tìm hiểu</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon container"><i class="bi bi-cpu"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Dapr</div>
+              <div class="tool-desc">Distributed Application Runtime — sidecar cung cấp state management, pub/sub, service invocation, secret store. Giúp app code không phụ thuộc infrastructure cụ thể.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang đọc</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon security"><i class="bi bi-eye-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Tetragon (eBPF Security)</div>
+              <div class="tool-desc">Runtime security observability từ Cilium — trace syscall, network, file activity ở kernel level với zero overhead. Kết hợp detection và enforcement trong một tool.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang đọc</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-hexagon"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">WebAssembly (WASM)</div>
+              <div class="tool-desc">Portable binary format chạy gần native speed — Proxy-WASM cho Envoy filter, WASI cho edge computing, và Spin/Fermyon cho serverless workload.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang theo dõi</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cloud"><i class="bi bi-hdd-fill"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Talos Linux</div>
+              <div class="tool-desc">Immutable, minimal OS được thiết kế riêng cho Kubernetes — không có shell, không có SSH, toàn bộ config qua API. Attack surface giảm đáng kể so với general-purpose OS.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang đọc</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon network"><i class="bi bi-wifi"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Tailscale / WireGuard</div>
+              <div class="tool-desc">Modern VPN mesh dựa trên WireGuard — zero-config, peer-to-peer, không cần VPN gateway. Đơn giản hơn OpenVPN/IPSec rất nhiều cho remote access và inter-DC connectivity.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang thử</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon database"><i class="bi bi-table"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">DuckDB</div>
+              <div class="tool-desc">In-process OLAP engine — query Parquet, CSV, JSON trực tiếp không cần setup server. Thú vị cho analytics adhoc, data pipeline nhỏ, và thay thế pandas cho heavy aggregation.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang thử</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon lang"><i class="bi bi-robot"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Ollama / Local LLM</div>
+              <div class="tool-desc">Chạy LLM locally (Llama, Mistral, Gemma) — tích hợp AI vào DevOps workflow: phân tích log, triage alert, draft runbook tự động. Privacy-first, không cần gửi data ra ngoài.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang thử</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon observ"><i class="bi bi-tsunami"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Apache Flink</div>
+              <div class="tool-desc">Stateful stream processing — CEP (Complex Event Processing), windowed aggregation, và exactly-once semantics. Thú vị cho real-time fraud detection và analytics pipeline.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang đọc</div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-top">
+                <div class="tool-icon cloud"><i class="bi bi-cloud-lightning-rain"></i></div>
+                <span class="proficiency p-proficient">Exploring</span>
+              </div>
+              <div class="tool-name">Cloudflare Workers</div>
+              <div class="tool-desc">Edge computing platform — serverless functions chạy ở 300+ PoP, R2 storage, D1 database, và AI Gateway. Đang xem xét cho edge caching và bot protection.</div>
+              <div class="tool-meta"><i class="bi bi-book"></i> Đang theo dõi</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Back link -->
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top: 1px solid #e8f0f8;">
+          <a href="index.html" style="color: var(--primary); font-size: 13px; font-weight: 600; text-decoration: none;">
+            <i class="bi bi-arrow-left me-1"></i> Back to Portfolio
+          </a>
+          <a href="docs/index.html" style="color: var(--primary); font-size: 13px; font-weight: 600; text-decoration: none;">
+            Engineering Docs <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+
+      </div><!-- /content-wrap -->
+    </div><!-- /col-lg-9 -->
+  </div><!-- /row -->
+</div><!-- /container -->
+
+<!-- Sidebar active highlight on scroll -->
+<script>
+  (() => {
+    // Dark mode
+    const btn  = document.getElementById('theme-toggle');
+    const icon = document.getElementById('theme-icon');
+    function applyTheme(dark) {
+      document.body.classList.toggle('dark-mode', dark);
+      icon.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+      btn.style.background = dark
+        ? 'linear-gradient(135deg, #1e293b, #334155)'
+        : 'linear-gradient(135deg, #149ddd, #0d7ab5)';
+    }
+    applyTheme(localStorage.getItem('theme') === 'dark');
+    btn.addEventListener('click', () => {
+      const isDark = document.body.classList.contains('dark-mode');
+      applyTheme(!isDark);
+      localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+    });
+
+    // Sidebar active link on scroll
+    const sections = document.querySelectorAll('[id]');
+    const navLinks  = document.querySelectorAll('.sidebar .nav-link');
+    const observer  = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          const target = document.querySelector(`.sidebar .nav-link[href="#${e.target.id}"]`);
+          if (target) target.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    sections.forEach(s => observer.observe(s));
+  })();
+</script>
+
+</body>
+</html>
