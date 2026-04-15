@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ thống trí nhớ 3 tầng của OpenClaw | Field Notes</title>
+  <meta name="description" content="Giải thích chi tiết hệ thống trí nhớ 3 tầng của OpenClaw — MEMORY.md, Daily Notes, và Semantic Search — cách giúp agent nhớ liên tục giữa các phiên làm việc.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary:    #149ddd;
+      --secondary:  #173b6c;
+      --text:       #272829;
+      --bg-light:   #f5f8fd;
+      --sidebar-bg: #0d1b2a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+
+    /* ── Post header ── */
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); display: inline-block; margin-bottom: 16px; }
+    .post-series-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); display: inline-block; margin-bottom: 16px; margin-left: 6px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    /* ── TOC ── */
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Post body ── */
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.4rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+
+    /* ── Tier cards ── */
+    .tier-card { border-radius: 14px; margin: 2rem 0; overflow: hidden; border: 1px solid rgba(20,157,221,0.15); }
+    .tier-header { padding: 16px 22px; display: flex; align-items: center; gap: 14px; }
+    .tier-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Raleway', sans-serif; font-size: 16px; font-weight: 900; color: #fff; flex-shrink: 0; }
+    .tier-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; display: block; }
+    .tier-title { font-family: 'Raleway', sans-serif; font-size: 1rem; font-weight: 800; margin: 0; }
+    .tier-subtitle { font-size: 12px; margin-left: auto; opacity: 0.7; white-space: nowrap; }
+
+    .tier-1 .tier-header { background: linear-gradient(135deg, #1e3a5f, #0d4f7a); color: #fff; }
+    .tier-1 .tier-num { background: var(--primary); }
+    .tier-1 { border-color: rgba(20,157,221,0.25); }
+
+    .tier-2 .tier-header { background: linear-gradient(135deg, #1e3d1e, #2d5a2d); color: #fff; }
+    .tier-2 .tier-num { background: #22c55e; }
+    .tier-2 { border-color: rgba(34,197,94,0.25); }
+
+    .tier-3 .tier-header { background: linear-gradient(135deg, #3d1e3d, #5a2d5a); color: #fff; }
+    .tier-3 .tier-num { background: #8b5cf6; }
+    .tier-3 { border-color: rgba(139,92,246,0.25); }
+
+    .tier-body { padding: 1.6rem 1.8rem; }
+
+    /* ── File tree ── */
+    .file-tree { background: #0d1b2a; border-radius: 10px; padding: 1.4rem 1.6rem; font-family: 'Courier New', monospace; font-size: 13px; color: #7dd3fc; line-height: 1.9; margin: 1.4rem 0; overflow-x: auto; }
+    .ft-dir { color: #5bc8f5; font-weight: 700; }
+    .ft-key { color: #86efac; font-weight: 700; }
+    .ft-desc { color: #4a6480; font-style: italic; }
+    .ft-badge { font-size: 10px; background: rgba(20,157,221,0.25); color: #7dd3fc; padding: 1px 7px; border-radius: 10px; font-style: normal; }
+
+    /* ── Flow ── */
+    .flow-steps { margin: 1.4rem 0; }
+    .flow-step { display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start; }
+    .flow-step-num { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background: #8b5cf6; color: #fff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 3px; }
+    .flow-step-body { font-size: 14px; color: #3a4555; }
+    .flow-step-body strong { color: var(--secondary); }
+
+    /* ── Provider grid ── */
+    .provider-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin: 1.2rem 0; }
+    .provider-card { border: 1px solid #e4eef8; border-radius: 10px; padding: 12px 14px; background: #fff; }
+    .provider-name { font-size: 13px; font-weight: 700; color: var(--secondary); margin-bottom: 3px; }
+    .provider-model { font-size: 11.5px; color: #8a9bb0; font-family: 'Courier New', monospace; }
+    .provider-badge { font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 20px; display: inline-block; margin-top: 6px; }
+    .pb-openai   { background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); }
+    .pb-google   { background: rgba(239,68,68,0.1);  color: #dc2626; border: 1px solid rgba(239,68,68,0.25); }
+    .pb-voyage   { background: rgba(139,92,246,0.1); color: #6d28d9; border: 1px solid rgba(139,92,246,0.25); }
+    .pb-mistral  { background: rgba(245,158,11,0.1); color: #d97706; border: 1px solid rgba(245,158,11,0.25); }
+
+    /* ── Check list ── */
+    .check-list { list-style: none; padding: 0; margin: 0 0 1.2rem; }
+    .check-list li { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid #f0f5fb; font-size: 14px; color: #3a4555; }
+    .check-list li:last-child { border-bottom: none; }
+    .check-list li i { font-size: 14px; margin-top: 3px; flex-shrink: 0; }
+    .check-list .ci-ok   { color: #22c55e; }
+    .check-list .ci-warn { color: #f59e0b; }
+    .check-list .ci-fail { color: #ef4444; }
+
+    /* ── Callouts ── */
+    .callout { border-radius: 10px; padding: 1rem 1.4rem; margin: 1.4rem 0; font-size: 13.5px; line-height: 1.7; display: flex; gap: 12px; align-items: flex-start; }
+    .callout i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .callout-tip  { background: rgba(34,197,94,0.08);  border-left: 4px solid #22c55e; color: #166534; }
+    .callout-tip i { color: #22c55e; }
+    .callout-warn { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout-warn i { color: #f59e0b; }
+    .callout-info { background: rgba(20,157,221,0.08); border-left: 4px solid var(--primary); color: #1e40af; }
+    .callout-info i { color: var(--primary); }
+    .callout-purple { background: rgba(139,92,246,0.08); border-left: 4px solid #8b5cf6; color: #4c1d95; }
+    .callout-purple i { color: #8b5cf6; }
+
+    /* ── Debug box ── */
+    .debug-box { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.2rem 1.6rem; margin: 1.4rem 0; }
+    .debug-box-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .debug-item { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13.5px; }
+    .debug-q { font-family: 'Courier New', monospace; background: #fff; border: 1px solid #dce8f5; padding: 4px 10px; border-radius: 6px; color: #3a4555; font-size: 12.5px; flex: 1; }
+    .debug-arrow { color: var(--primary); flex-shrink: 0; margin-top: 6px; }
+    .debug-a { font-size: 12px; color: #6c7a8d; flex: 1; align-self: center; }
+
+    /* ── Series nav ── */
+    .series-nav { background: rgba(20,157,221,0.05); border: 1px solid rgba(20,157,221,0.15); border-radius: 12px; padding: 1.2rem 1.6rem; margin-top: 2.4rem; }
+    .series-nav-title { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .series-nav-list { list-style: none; padding: 0; margin: 0; }
+    .series-nav-list li { padding: 5px 0; font-size: 13px; color: #6c7a8d; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(20,157,221,0.08); }
+    .series-nav-list li:last-child { border-bottom: none; }
+    .series-nav-list li.current { color: var(--secondary); font-weight: 700; }
+    .series-nav-list li.current::before { content: '→'; color: var(--primary); font-weight: 900; }
+    .series-nav-list li.upcoming::before { content: '○'; color: #ccc; }
+    .series-nav-list li.done::before { content: '✓'; color: #22c55e; }
+    .series-nav-list a { color: var(--primary); text-decoration: none; }
+    .series-nav-list a:hover { text-decoration: underline; }
+
+    /* ── Post footer ── */
+    .post-footer-nav { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 1.8rem; margin-top: 2rem; border-top: 2px solid var(--bg-light); }
+    .post-footer-nav a { font-size: 13px; font-weight: 600; color: #8a9bb0; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .post-footer-nav a:hover { color: var(--primary); }
+    .post-footer-nav .prev-post, .post-footer-nav .next-post { max-width: 260px; }
+    .post-footer-nav .next-post { text-align: right; }
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #b0c4d8; display: block; margin-bottom: 3px; }
+    .nav-title { color: var(--secondary); font-size: 13.5px; }
+
+    /* ── Theme ── */
+    #theme-toggle { position: fixed; top: 72px; right: 16px; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; z-index: 9999; background: linear-gradient(135deg, #149ddd, #0d7ab5); color: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20,157,221,0.4); transition: all 0.25s ease; }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* ── Dark mode ── */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; }
+    body.dark-mode .navbar-brand { color: var(--primary); }
+    body.dark-mode .nav-pills-custom a { background: #1e293b; color: #94a3b8; border-color: #1e3a52; }
+    body.dark-mode .nav-pills-custom a:hover, body.dark-mode .nav-pills-custom a.active { background: var(--primary); color: #fff; }
+    body.dark-mode .post-wrap   { background: #1e293b; }
+    body.dark-mode .post-header { border-color: #1e3a52; }
+    body.dark-mode .post-title  { color: #e2e8f0; }
+    body.dark-mode .post-body   { color: #94a3b8; }
+    body.dark-mode .post-body h2 { color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .post-body h3 { color: #e2e8f0; }
+    body.dark-mode .post-body strong { color: #e2e8f0; }
+    body.dark-mode .post-body code  { background: #0f172a; border-color: #1e3a52; color: #f472b6; }
+    body.dark-mode .post-body a { color: #38bdf8; }
+    body.dark-mode .toc { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .toc-title { color: #4a6480; }
+    body.dark-mode .post-tag { background: #0f172a; color: #64748b; border-color: #1e3a52; }
+    body.dark-mode .tier-body { color: #94a3b8; }
+    body.dark-mode .flow-step-body { color: #94a3b8; }
+    body.dark-mode .flow-step-body strong { color: #e2e8f0; }
+    body.dark-mode .provider-card { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .provider-name { color: #e2e8f0; }
+    body.dark-mode .check-list li { color: #94a3b8; border-color: #1a2a3a; }
+    body.dark-mode .callout-tip    { background: rgba(34,197,94,0.07);   color: #4ade80; }
+    body.dark-mode .callout-warn   { background: rgba(245,158,11,0.07);  color: #fbbf24; }
+    body.dark-mode .callout-info   { background: rgba(20,157,221,0.07);  color: #7dd3fc; }
+    body.dark-mode .callout-purple { background: rgba(139,92,246,0.07);  color: #c4b5fd; }
+    body.dark-mode .debug-box  { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .debug-q    { background: #0f172a; border-color: #1e3a52; color: #94a3b8; }
+    body.dark-mode .debug-a    { color: #4a6480; }
+    body.dark-mode .series-nav { background: rgba(20,157,221,0.04); border-color: rgba(20,157,221,0.12); }
+    body.dark-mode .series-nav-list li { color: #4a6480; border-color: rgba(20,157,221,0.07); }
+    body.dark-mode .series-nav-list li.current { color: #e2e8f0; }
+    body.dark-mode .post-footer-nav { border-color: #1e3a52; }
+    body.dark-mode .nav-title { color: #e2e8f0; }
+    body.dark-mode .breadcrumb a { color: var(--primary); }
+    body.dark-mode .breadcrumb-item.active { color: #64748b; }
+
+    @media (max-width: 768px) {
+      .post-wrap { padding: 1.8rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+      .provider-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4" style="max-width: 900px;">
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">OpenClaw Memory System</li>
+    </ol>
+  </nav>
+
+  <a href="../blog.html" class="back-to-blog">
+    <i class="bi bi-arrow-left"></i> Về Field Notes
+  </a>
+
+  <div class="post-wrap">
+
+    <!-- ── Post header ── -->
+    <div class="post-header">
+      <span class="post-category-badge">Tooling & Tips</span>
+      <span class="post-series-badge"><i class="bi bi-collection me-1"></i>Series: OpenClaw</span>
+      <h1 class="post-title">Hệ thống trí nhớ 3 tầng của OpenClaw:<br>Giúp agent nhớ mọi thứ</h1>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-person-fill"></i> Lê Bình Phương</span>
+        <span><i class="bi bi-calendar3"></i> April 2026</span>
+        <span><i class="bi bi-clock"></i> 10 phút đọc</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">OpenClaw</span>
+        <span class="post-tag">AI Agent</span>
+        <span class="post-tag">Memory</span>
+        <span class="post-tag">RAG</span>
+      </div>
+    </div>
+
+    <!-- ── TOC ── -->
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#problem">Vấn đề cốt lõi: agent quên sạch sau mỗi phiên</a></li>
+        <li><a href="#tier1">Tầng 1: MEMORY.md — Trí nhớ dài hạn</a></li>
+        <li><a href="#tier2">Tầng 2: Daily Notes — Ngữ cảnh gần đây</a></li>
+        <li><a href="#tier3">Tầng 3: Semantic Search — Kho kiến thức sâu</a></li>
+        <li><a href="#advanced">Tổ chức thư mục memory nâng cao</a></li>
+        <li><a href="#providers">Embedding Provider — Điều kiện để tầng 3 hoạt động</a></li>
+        <li><a href="#best-practices">Mẹo tối ưu hệ thống trí nhớ</a></li>
+        <li><a href="#debug">Kiểm tra và debug memory</a></li>
+      </ol>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="post-body">
+
+      <!-- Problem -->
+      <h2 id="problem"><i class="bi bi-exclamation-triangle"></i> Vấn đề cốt lõi: agent quên sạch sau mỗi phiên</h2>
+
+      <p>
+        Bạn dành 30 phút đầu phiên giải thích cho agent về dự án: naming convention, quyết định kiến trúc, những thứ đã thử và thất bại.
+        Agent hiểu, làm tốt suốt buổi. Sáng hôm sau mở lại? <strong>Quên sạch.</strong> Phải bắt đầu lại từ đầu.
+      </p>
+
+      <p>
+        Đây là giới hạn cơ bản của LLM — mỗi phiên chat là một cuộc hội thoại mới, hoàn toàn biệt lập. Context window của model
+        chỉ tồn tại trong phiên đó; khi phiên kết thúc, mọi thứ biến mất.
+      </p>
+
+      <p>
+        OpenClaw giải quyết vấn đề này bằng <strong>hệ thống trí nhớ 3 tầng</strong>, mô phỏng cách bộ não con người hoạt động:
+        có thứ <em>luôn sẵn trong đầu</em>, có thứ <em>nhớ từ hôm qua</em>, và có thứ phải <em>"lục lại" mới ra</em>.
+      </p>
+
+      <!-- Tier 1 -->
+      <h2 id="tier1"><i class="bi bi-layers-fill"></i> Ba tầng trí nhớ</h2>
+
+      <div class="tier-card tier-1">
+        <div class="tier-header">
+          <div class="tier-num">1</div>
+          <div>
+            <span class="tier-label">Tầng 1</span>
+            <div class="tier-title">MEMORY.md — Trí nhớ dài hạn</div>
+          </div>
+          <span class="tier-subtitle">Load tự động mỗi phiên</span>
+        </div>
+        <div class="tier-body">
+          <p>
+            <code>MEMORY.md</code> là file được đọc vào context <em>mỗi lần</em> agent khởi động một phiên riêng tư.
+            Bất cứ thứ gì nằm trong file này, agent sẽ "nhớ" ngay khi bắt đầu chat — không cần nhắc lại.
+          </p>
+          <p>Nên đưa vào MEMORY.md những gì <strong>quan trọng, dùng thường xuyên, và ít thay đổi</strong>:</p>
+
+          <div class="pre-header">
+            <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+            <span>MEMORY.md</span>
+          </div>
+          <pre><code><span class="code-key"># Memory</span>
+
+<span class="code-key">## Quyết định kiến trúc</span>
+- 2026-03-15: Chuyển từ REST sang GraphQL cho internal API
+- 2026-04-01: Dùng Resend thay SendGrid (giá tốt hơn, DX sạch hơn)
+- 2026-04-10: Chọn VietinBank qua SePay cho payment gateway
+
+<span class="code-key">## Convention đã thống nhất</span>
+- Commit message: conventional commits (feat:, fix:, docs:)
+- Branch naming: feature/TASK-xxx-mo-ta-ngan
+- API response: <span class="code-str">{ success: true, data: {} }</span>
+
+<span class="code-key">## Bài học rút ra</span>
+- Không mock database trong integration test → đã gây lỗi production
+- Luôn test email template trước khi deploy
+- VPS provisioning cần timeout <span class="code-num">120</span>s, không phải <span class="code-num">30</span>s mặc định</code></pre>
+
+          <div class="callout callout-tip">
+            <i class="bi bi-lightbulb-fill"></i>
+            <div>
+              <strong>Quy tắc vàng: giữ MEMORY.md dưới 100 dòng.</strong> File này được load mỗi phiên — mỗi dòng thừa
+              đều tiêu tốn token. Chỉ giữ những gì thực sự cần thiết. Thông tin ít dùng hơn để ở tầng 2 hoặc tầng 3.
+            </div>
+          </div>
+
+          <div class="callout callout-info">
+            <i class="bi bi-shield-check"></i>
+            <div>
+              <strong>Bảo mật:</strong> MEMORY.md chỉ được load trong phiên riêng tư (chat trực tiếp với bạn).
+              Nó không bao giờ xuất hiện trong group chat hay phiên chia sẻ — bảo vệ thông tin nhạy cảm của bạn tự động.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tier 2 -->
+      <div class="tier-card tier-2">
+        <div class="tier-header">
+          <div class="tier-num">2</div>
+          <div>
+            <span class="tier-label">Tầng 2</span>
+            <div class="tier-title">Daily Notes — Ngữ cảnh gần đây</div>
+          </div>
+          <span class="tier-subtitle">Load tự động hôm nay + hôm qua</span>
+        </div>
+        <div class="tier-body">
+          <p>
+            Tầng 2 là các file ghi chú theo ngày trong thư mục <code>memory/</code>, format <code>YYYY-MM-DD.md</code>.
+            OpenClaw tự động load <strong>file hôm nay và hôm qua</strong> vào context — không cần cấu hình gì thêm.
+          </p>
+
+          <div class="file-tree">
+            memory/<br>
+            ├── 2026-04-10.md<br>
+            ├── <span class="ft-key">2026-04-11.md</span>  <span class="ft-badge">auto-load: hôm qua</span><br>
+            └── <span class="ft-key">2026-04-12.md</span>  <span class="ft-badge">auto-load: hôm nay</span>
+          </div>
+
+          <p>
+            Khi bạn nói <em>"nhớ cái này nhé"</em>, agent sẽ ghi vào file daily note của ngày hôm nay.
+            Đây là cuốn sổ tay công việc tự động — agent ghi lại những quyết định, bug đã fix, và ngữ cảnh quan trọng theo thời gian thực.
+          </p>
+
+          <div class="pre-header">
+            <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+            <span>memory/2026-04-12.md</span>
+          </div>
+          <pre><code><span class="code-key"># 2026-04-12</span>
+
+<span class="code-key">## Buổi sáng</span>
+- Deploy thành công v2.3.1 lên production (10:15)
+- Phát hiện bug pagination ở /admin/users — chưa fix, ưu tiên thấp
+- Khách hàng @minh_dev hỏi về API rate limit → đã giải thích qua Telegram
+
+<span class="code-key">## Buổi chiều</span>
+- Fix bug pagination: nguyên nhân offset = page * limit thay vì (page-1) * limit
+- Commit: <span class="code-str">fix: correct pagination offset for admin user list</span>
+- Team lead: tuần sau làm tính năng auto-deploy theo branch</code></pre>
+
+          <div class="callout callout-info">
+            <i class="bi bi-info-circle-fill"></i>
+            <div>
+              <strong>Tại sao chỉ load 2 ngày?</strong> Context window có giới hạn. Load nhiều hơn sẽ tốn token và làm chậm phản hồi.
+              Hai ngày gần nhất thường đủ cho phần lớn ngữ cảnh cần thiết. Thông tin cũ hơn sẽ được tìm khi cần — đó là việc của tầng 3.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tier 3 -->
+      <div class="tier-card tier-3">
+        <div class="tier-header">
+          <div class="tier-num">3</div>
+          <div>
+            <span class="tier-label">Tầng 3</span>
+            <div class="tier-title">Semantic Search — Kho kiến thức sâu</div>
+          </div>
+          <span class="tier-subtitle">Tìm khi cần, không giới hạn thời gian</span>
+        </div>
+        <div class="tier-body">
+          <p>
+            Đây là tầng mạnh nhất và khác biệt nhất. Khi agent cần thông tin không có trong MEMORY.md hay daily notes gần đây,
+            nó tự động tìm kiếm trong <strong>toàn bộ thư mục <code>memory/</code></strong> bằng semantic search —
+            không cần bạn chỉ đường.
+          </p>
+
+          <h3>Cách hoạt động bên dưới</h3>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-step-num">1</div>
+              <div class="flow-step-body">Tất cả file markdown trong workspace được chia thành các đoạn nhỏ (~400 token mỗi đoạn)</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">2</div>
+              <div class="flow-step-body">Mỗi đoạn được chuyển thành <strong>vector embedding</strong> bởi embedding provider</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">3</div>
+              <div class="flow-step-body">Vector được lưu vào <strong>SQLite cục bộ</strong> — không có server bên ngoài, không tốn thêm phí</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">4</div>
+              <div class="flow-step-body">Khi cần tìm: câu hỏi → vector → so sánh cosine similarity → trả về đoạn liên quan nhất</div>
+            </div>
+          </div>
+
+          <div class="callout callout-purple">
+            <i class="bi bi-magic"></i>
+            <div>
+              <strong>Ví dụ thực tế:</strong> Bạn hỏi <em>"lần trước fix lỗi SSL certificate thế nào?"</em> — agent tìm
+              trong tất cả daily notes và trả về đúng đoạn ghi chú từ 3 tuần trước, dù file đó hoàn toàn không có trong
+              context hiện tại.
+            </div>
+          </div>
+
+          <h3>Cấu hình semantic search</h3>
+          <div class="pre-header">
+            <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+            <span>openclaw.json</span>
+          </div>
+          <pre><code>{
+  <span class="code-key">"agents"</span>: {
+    <span class="code-key">"defaults"</span>: {
+      <span class="code-key">"memorySearch"</span>: {
+        <span class="code-key">"backend"</span>:    <span class="code-str">"qmd"</span>,
+        <span class="code-key">"maxResults"</span>: <span class="code-num">6</span>,
+        <span class="code-key">"paths"</span>: [
+          <span class="code-str">"memory/"</span>,
+          <span class="code-str">"MEMORY.md"</span>,
+          <span class="code-str">"AGENTS.md"</span>
+        ]
+      }
+    }
+  }
+}</code></pre>
+
+          <div class="callout callout-info">
+            <i class="bi bi-intersect"></i>
+            <div>
+              <strong>Hybrid search:</strong> OpenClaw dùng kết hợp vector search (70%) + keyword search (30%).
+              Nghĩa là nó vừa hiểu ngữ nghĩa — <em>"lỗi chứng chỉ bảo mật"</em> khớp với <em>"SSL certificate error"</em> —
+              vừa tìm chính xác từ khoá, rất hữu ích cho tên biến, ID, mã lỗi cụ thể.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced structure -->
+      <h2 id="advanced"><i class="bi bi-folder2-open"></i> Tổ chức thư mục memory nâng cao</h2>
+
+      <p>
+        Ngoài daily notes, bạn có thể tổ chức memory theo chủ đề. Semantic search tìm trong <em>tất cả</em> file —
+        không phân biệt cấu trúc thư mục.
+      </p>
+
+      <div class="file-tree">
+        <span class="ft-dir">memory/</span><br>
+        ├── <span class="ft-dir">people/</span><br>
+        │&nbsp;&nbsp; ├── <span class="ft-key">khach-hang-a.md</span>     <span class="ft-desc"># Lịch sử và yêu cầu</span><br>
+        │&nbsp;&nbsp; └── <span class="ft-key">doi-tac-b.md</span>        <span class="ft-desc"># Ghi chú hợp tác</span><br>
+        ├── <span class="ft-dir">projects/</span><br>
+        │&nbsp;&nbsp; ├── <span class="ft-key">onmay.md</span>            <span class="ft-desc"># Ngữ cảnh dự án chính</span><br>
+        │&nbsp;&nbsp; └── <span class="ft-key">side-project.md</span>     <span class="ft-desc"># Dự án phụ</span><br>
+        ├── <span class="ft-dir">decisions/</span><br>
+        │&nbsp;&nbsp; └── <span class="ft-key">payment-gateway.md</span>  <span class="ft-desc"># Tại sao chọn SePay thay Stripe</span><br>
+        ├── <span class="ft-dir">topics/</span><br>
+        │&nbsp;&nbsp; ├── <span class="ft-key">devops-notes.md</span><br>
+        │&nbsp;&nbsp; └── <span class="ft-key">nextjs-tips.md</span><br>
+        ├── 2026-04-11.md<br>
+        └── 2026-04-12.md
+      </div>
+
+      <p>
+        Khi bạn hỏi <em>"khách hàng A muốn gì?"</em>, agent tìm đúng <code>people/khach-hang-a.md</code> mà không cần
+        bạn nhắc tới đường dẫn. Khi hỏi <em>"tại sao không dùng Stripe?"</em>, nó tìm ra <code>decisions/payment-gateway.md</code>.
+      </p>
+
+      <!-- Providers -->
+      <h2 id="providers"><i class="bi bi-cpu-fill"></i> Embedding Provider</h2>
+
+      <p>
+        Semantic search cần embedding provider để chuyển text thành vector.
+        OpenClaw tự động phát hiện provider từ API key bạn đã cấu hình — không cần khai báo thêm.
+      </p>
+
+      <div class="provider-grid">
+        <div class="provider-card">
+          <div class="provider-name">OpenAI</div>
+          <div class="provider-model">text-embedding-3-small</div>
+          <span class="provider-badge pb-openai">Khuyến nghị</span>
+        </div>
+        <div class="provider-card">
+          <div class="provider-name">Google Gemini</div>
+          <div class="provider-model">embedding model</div>
+          <span class="provider-badge pb-google">Hỗ trợ</span>
+        </div>
+        <div class="provider-card">
+          <div class="provider-name">Voyage AI</div>
+          <div class="provider-model">voyage-3</div>
+          <span class="provider-badge pb-voyage">Hỗ trợ</span>
+        </div>
+        <div class="provider-card">
+          <div class="provider-name">Mistral</div>
+          <div class="provider-model">mistral-embed</div>
+          <span class="provider-badge pb-mistral">Hỗ trợ</span>
+        </div>
+      </div>
+
+      <p>
+        Nếu bạn đã có API key của bất kỳ provider nào ở trên, semantic search tự bật — không cần cấu hình thêm.
+        Trên VPS OnMay, chỉ cần thêm API key vào <code>.env</code> và memory search sẵn sàng hoạt động.
+      </p>
+
+      <!-- Best practices -->
+      <h2 id="best-practices"><i class="bi bi-bookmark-star-fill"></i> Mẹo tối ưu hệ thống trí nhớ</h2>
+
+      <h3>Viết ghi chú có cấu trúc, ngữ cảnh đủ trong một chunk</h3>
+      <p>
+        Semantic search chia text theo chunk ~400 token. Nếu một đoạn ghi chú thiếu ngữ cảnh, agent tìm thấy
+        nhưng không hiểu. Dùng heading rõ ràng và viết mỗi đoạn như một unit độc lập:
+      </p>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>memory/2026-04-12.md — Ví dụ ghi chú tốt</span>
+      </div>
+      <pre><code><span class="code-key">## Bug fix: Pagination offset sai ở admin users</span>
+- Ngày: 2026-04-12
+- File: app/admin/users/page.tsx
+- Nguyên nhân: offset = page * limit → phải là (page - 1) * limit
+- Fix: commit <span class="code-num">abc123</span>
+- Đã test với page 1, 5, 10, 100 — pass hết</code></pre>
+
+      <p>
+        Đoạn trên có đủ ngữ cảnh trong một chunk: vấn đề là gì, ở đâu, nguyên nhân, và cách fix.
+        Agent tìm thấy sẽ hiểu ngay — không cần đọc thêm file khác.
+      </p>
+
+      <h3>Cross-reference khi một concept liên quan nhiều nơi</h3>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>memory/decisions/payment-gateway.md</span>
+      </div>
+      <pre><code><span class="code-key">## Quyết định dùng SePay (2026-04-10)</span>
+Xem chi tiết tại: decisions/payment-gateway.md
+Liên quan: yêu cầu bank transfer từ khách hàng (people/khach-hang-a.md)</code></pre>
+
+      <h3>Dọn dẹp memory định kỳ</h3>
+      <ul class="check-list">
+        <li>
+          <i class="bi bi-check-circle-fill ci-ok"></i>
+          <span>Mỗi tháng: chuyển thông tin quan trọng từ daily notes vào MEMORY.md hoặc file chuyên đề</span>
+        </li>
+        <li>
+          <i class="bi bi-check-circle-fill ci-ok"></i>
+          <span>Xóa daily notes cũ hơn 30 ngày (đã được index, xóa file không mất vector đã build)</span>
+        </li>
+        <li>
+          <i class="bi bi-check-circle-fill ci-ok"></i>
+          <span>Review MEMORY.md — loại bỏ những gì không còn đúng, thêm bài học mới</span>
+        </li>
+        <li>
+          <i class="bi bi-exclamation-circle-fill ci-warn"></i>
+          <span>Không nhồi nhét MEMORY.md — 100 dòng curated tốt hơn 500 dòng lộn xộn</span>
+        </li>
+      </ul>
+
+      <!-- Debug -->
+      <h2 id="debug"><i class="bi bi-bug-fill"></i> Kiểm tra và debug memory</h2>
+
+      <p>Muốn biết agent đang "nhớ" đúng không? Thử ba câu hỏi kiểm tra:</p>
+
+      <div class="debug-box">
+        <div class="debug-box-title"><i class="bi bi-terminal"></i> Câu hỏi kiểm tra từng tầng</div>
+        <div class="debug-item">
+          <div class="debug-q">"Bạn nhớ gì về dự án hiện tại?"</div>
+          <div class="debug-arrow"><i class="bi bi-arrow-right"></i></div>
+          <div class="debug-a">→ Test Tầng 1: MEMORY.md</div>
+        </div>
+        <div class="debug-item">
+          <div class="debug-q">"Hôm qua mình làm gì?"</div>
+          <div class="debug-arrow"><i class="bi bi-arrow-right"></i></div>
+          <div class="debug-a">→ Test Tầng 2: Daily Notes</div>
+        </div>
+        <div class="debug-item">
+          <div class="debug-q">"Lần trước fix bug X như thế nào?"</div>
+          <div class="debug-arrow"><i class="bi bi-arrow-right"></i></div>
+          <div class="debug-a">→ Test Tầng 3: Semantic Search</div>
+        </div>
+      </div>
+
+      <p>Nếu agent không nhớ thứ bạn mong đợi, kiểm tra theo thứ tự:</p>
+      <ul class="check-list">
+        <li>
+          <i class="bi bi-check-circle-fill ci-ok"></i>
+          <span>Thông tin đã được ghi vào file markdown chưa? (Agent chỉ nhớ những gì đã được ghi ra file)</span>
+        </li>
+        <li>
+          <i class="bi bi-check-circle-fill ci-ok"></i>
+          <span>File có nằm trong path được cấu hình cho <code>memorySearch.paths</code> không?</span>
+        </li>
+        <li>
+          <i class="bi bi-exclamation-circle-fill ci-warn"></i>
+          <span>Embedding provider đã được thiết lập chưa? Kiểm tra API key trong <code>.env</code></span>
+        </li>
+      </ul>
+
+      <!-- Series nav -->
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection-fill"></i> Series: Làm chủ OpenClaw</div>
+        <ul class="series-nav-list">
+          <li class="done"><a href="openclaw-install.html">Bài 1: Cài đặt và khởi động nhanh</a></li>
+          <li class="done"><a href="openclaw-workspace.html">Bài 2: Cấu hình Workspace từ A-Z</a></li>
+          <li class="current">Bài 3: Hệ thống trí nhớ 3 tầng (bài này)</li>
+          <li class="upcoming">Bài 4: HEARTBEAT.md — tác vụ tự động và cron agent</li>
+          <li class="upcoming">Bài 5: Multi-agent setup và phân vai</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ── Post footer ── -->
+    <div class="post-footer-nav">
+      <div class="prev-post">
+        <span class="nav-label">Bài trước</span>
+        <a href="openclaw-workspace.html" class="nav-title"><i class="bi bi-arrow-left"></i> Cấu hình Workspace OpenClaw từ A-Z</a>
+      </div>
+      <div class="next-post">
+        <span class="nav-label">Bài tiếp theo</span>
+        <a href="openclaw-heartbeat.html" class="nav-title">HEARTBEAT.md — tự động hóa 24/7 <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const icon   = document.getElementById('theme-icon');
+  const body   = document.body;
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark-mode');
+    icon.className = 'bi bi-sun-fill';
+  }
+  toggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>

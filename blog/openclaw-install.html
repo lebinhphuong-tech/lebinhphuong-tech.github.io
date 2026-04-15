@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cài đặt và khởi động OpenClaw | Field Notes</title>
+  <meta name="description" content="Hướng dẫn cài đặt OpenClaw từ đầu: yêu cầu hệ thống, Docker Compose setup, cấu hình API key, khởi động Web UI và tạo agent đầu tiên trong 15 phút.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary:    #149ddd;
+      --secondary:  #173b6c;
+      --text:       #272829;
+      --bg-light:   #f5f8fd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+
+    /* ── Header ── */
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); display: inline-block; margin-bottom: 16px; }
+    .post-series-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); display: inline-block; margin-bottom: 16px; margin-left: 6px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    /* ── TOC ── */
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Body ── */
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.4rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-section { color: #5bc8f5; font-weight: 700; }
+
+    /* ── Requirements grid ── */
+    .req-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 1.4rem 0; }
+    .req-card { border-radius: 12px; padding: 16px; border: 1px solid #e4eef8; background: #fff; text-align: center; }
+    .req-card-icon { font-size: 1.6rem; margin-bottom: 8px; display: block; }
+    .req-card-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #8a9bb0; margin-bottom: 4px; }
+    .req-card-val { font-family: 'Raleway', sans-serif; font-size: 1rem; font-weight: 800; color: var(--secondary); }
+    .req-card-note { font-size: 11px; color: #8a9bb0; margin-top: 3px; }
+    .rc-min  { border-color: rgba(245,158,11,0.3);  background: rgba(245,158,11,0.04); }
+    .rc-rec  { border-color: rgba(34,197,94,0.3);   background: rgba(34,197,94,0.04);  }
+
+    /* ── Install steps ── */
+    .install-steps { display: flex; flex-direction: column; gap: 0; margin: 1.6rem 0; position: relative; }
+    .install-steps::before { content: ''; position: absolute; left: 17px; top: 28px; bottom: 28px; width: 2px; background: linear-gradient(to bottom, var(--primary), #22c55e); opacity: 0.2; }
+    .install-step { display: flex; gap: 16px; align-items: flex-start; padding: 10px 0; }
+    .is-num { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; background: var(--primary); color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; z-index: 1; }
+    .is-body { padding-top: 6px; font-size: 14px; color: #3a4555; flex: 1; }
+    .is-body strong { color: var(--secondary); display: block; font-size: 14.5px; margin-bottom: 4px; }
+    .is-body span { color: #6c7a8d; font-size: 13px; }
+
+    /* ── Provider cards ── */
+    .provider-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 1.2rem 0; }
+    .provider-card { border-radius: 12px; padding: 16px; border: 1px solid; }
+    .provider-logo { font-size: 1.4rem; margin-bottom: 8px; }
+    .provider-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .provider-key  { font-family: 'Courier New', monospace; font-size: 11.5px; color: #c0392b; background: var(--bg-light); border: 1px solid #e4eef8; border-radius: 6px; padding: 3px 8px; display: inline-block; margin-bottom: 6px; }
+    .provider-note { font-size: 11.5px; color: #8a9bb0; }
+    .pc-anthropic { background: rgba(255,107,53,0.06); border-color: rgba(255,107,53,0.25); }
+    .pc-openai    { background: rgba(16,163,127,0.06); border-color: rgba(16,163,127,0.25); }
+    .pc-google    { background: rgba(66,133,244,0.06); border-color: rgba(66,133,244,0.25); }
+    .pc-anthropic .provider-name { color: #c2410c; }
+    .pc-openai    .provider-name { color: #0d7a5f; }
+    .pc-google    .provider-name { color: #1a56cc; }
+
+    /* ── Verify checklist ── */
+    .verify-list { list-style: none; padding: 0; margin: 0 0 1.2rem; }
+    .verify-list li { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid #f0f5fb; font-size: 14px; color: #3a4555; }
+    .verify-list li:last-child { border-bottom: none; }
+    .vl-check { width: 22px; height: 22px; border-radius: 50%; background: rgba(34,197,94,0.12); color: #059669; border: 1px solid rgba(34,197,94,0.3); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+
+    /* ── Callouts ── */
+    .callout { border-radius: 10px; padding: 1rem 1.4rem; margin: 1.4rem 0; font-size: 13.5px; line-height: 1.7; display: flex; gap: 12px; align-items: flex-start; }
+    .callout i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .callout-tip    { background: rgba(34,197,94,0.08);  border-left: 4px solid #22c55e; color: #166534; }
+    .callout-tip i  { color: #22c55e; }
+    .callout-warn   { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout-warn i { color: #f59e0b; }
+    .callout-info   { background: rgba(20,157,221,0.08); border-left: 4px solid var(--primary); color: #1e40af; }
+    .callout-info i { color: var(--primary); }
+    .callout-dark   { background: rgba(15,23,42,0.06);   border-left: 4px solid #334155; color: #1e293b; }
+    .callout-dark i { color: #475569; }
+
+    /* ── Series nav ── */
+    .series-nav { background: rgba(20,157,221,0.05); border: 1px solid rgba(20,157,221,0.15); border-radius: 12px; padding: 1.2rem 1.6rem; margin-top: 2.4rem; }
+    .series-nav-title { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .series-nav-list { list-style: none; padding: 0; margin: 0; }
+    .series-nav-list li { padding: 5px 0; font-size: 13px; color: #6c7a8d; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(20,157,221,0.08); }
+    .series-nav-list li:last-child { border-bottom: none; }
+    .series-nav-list li.current { color: var(--secondary); font-weight: 700; }
+    .series-nav-list li.current::before { content: '→'; color: var(--primary); font-weight: 900; }
+    .series-nav-list li.upcoming::before { content: '○'; color: #ccc; }
+    .series-nav-list li.done::before { content: '✓'; color: #22c55e; }
+    .series-nav-list a { color: var(--primary); text-decoration: none; }
+    .series-nav-list a:hover { text-decoration: underline; }
+
+    /* ── Post footer ── */
+    .post-footer-nav { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 1.8rem; margin-top: 2rem; border-top: 2px solid var(--bg-light); }
+    .post-footer-nav a { font-size: 13px; font-weight: 600; color: #8a9bb0; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .post-footer-nav a:hover { color: var(--primary); }
+    .post-footer-nav .prev-post, .post-footer-nav .next-post { max-width: 280px; }
+    .post-footer-nav .next-post { text-align: right; }
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #b0c4d8; display: block; margin-bottom: 3px; }
+    .nav-title { color: var(--secondary); font-size: 13.5px; }
+
+    /* ── Theme ── */
+    #theme-toggle { position: fixed; top: 72px; right: 16px; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; z-index: 9999; background: linear-gradient(135deg, #149ddd, #0d7ab5); color: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20,157,221,0.4); transition: all 0.25s ease; }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* ── Dark mode ── */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; }
+    body.dark-mode .navbar-brand { color: var(--primary); }
+    body.dark-mode .nav-pills-custom a { background: #1e293b; color: #94a3b8; border-color: #1e3a52; }
+    body.dark-mode .nav-pills-custom a:hover, body.dark-mode .nav-pills-custom a.active { background: var(--primary); color: #fff; }
+    body.dark-mode .post-wrap    { background: #1e293b; }
+    body.dark-mode .post-header  { border-color: #1e3a52; }
+    body.dark-mode .post-title   { color: #e2e8f0; }
+    body.dark-mode .post-body    { color: #94a3b8; }
+    body.dark-mode .post-body h2 { color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .post-body h3 { color: #e2e8f0; }
+    body.dark-mode .post-body strong { color: #e2e8f0; }
+    body.dark-mode .post-body code  { background: #0f172a; border-color: #1e3a52; color: #f472b6; }
+    body.dark-mode .post-body a { color: #38bdf8; }
+    body.dark-mode .toc { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .toc-title { color: #4a6480; }
+    body.dark-mode .post-tag { background: #0f172a; color: #64748b; border-color: #1e3a52; }
+    body.dark-mode .req-card { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .req-card-val { color: #e2e8f0; }
+    body.dark-mode .rc-min { background: rgba(245,158,11,0.04); border-color: rgba(245,158,11,0.2); }
+    body.dark-mode .rc-rec { background: rgba(34,197,94,0.04);  border-color: rgba(34,197,94,0.2); }
+    body.dark-mode .is-body { color: #94a3b8; }
+    body.dark-mode .is-body strong { color: #e2e8f0; }
+    body.dark-mode .provider-card { opacity: 0.9; }
+    body.dark-mode .provider-key  { background: #0f172a; border-color: #1e3a52; }
+    body.dark-mode .verify-list li { border-color: #1a2a3a; color: #94a3b8; }
+    body.dark-mode .callout-tip    { background: rgba(34,197,94,0.07);  color: #4ade80; }
+    body.dark-mode .callout-warn   { background: rgba(245,158,11,0.07); color: #fbbf24; }
+    body.dark-mode .callout-info   { background: rgba(20,157,221,0.07); color: #7dd3fc; }
+    body.dark-mode .callout-dark   { background: rgba(15,23,42,0.4);    border-color: #475569; color: #94a3b8; }
+    body.dark-mode .series-nav { background: rgba(20,157,221,0.04); border-color: rgba(20,157,221,0.12); }
+    body.dark-mode .series-nav-list li { color: #4a6480; border-color: rgba(20,157,221,0.07); }
+    body.dark-mode .series-nav-list li.current { color: #e2e8f0; }
+    body.dark-mode .post-footer-nav { border-color: #1e3a52; }
+    body.dark-mode .nav-title { color: #e2e8f0; }
+    body.dark-mode .breadcrumb a { color: var(--primary); }
+    body.dark-mode .breadcrumb-item.active { color: #64748b; }
+
+    @media (max-width: 768px) {
+      .post-wrap { padding: 1.8rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+      .req-grid { grid-template-columns: repeat(3, 1fr); }
+      .provider-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4" style="max-width: 900px;">
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">OpenClaw — Cài đặt & Khởi động</li>
+    </ol>
+  </nav>
+
+  <a href="../blog.html" class="back-to-blog">
+    <i class="bi bi-arrow-left"></i> Về Field Notes
+  </a>
+
+  <div class="post-wrap">
+
+    <!-- ── Header ── -->
+    <div class="post-header">
+      <span class="post-category-badge">Tooling & Tips</span>
+      <span class="post-series-badge"><i class="bi bi-collection me-1"></i>Series: OpenClaw</span>
+      <h1 class="post-title">Cài đặt và khởi động OpenClaw:<br>Từ zero đến agent đầu tiên trong 15 phút</h1>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-person-fill"></i> Lê Bình Phương</span>
+        <span><i class="bi bi-calendar3"></i> April 2026</span>
+        <span><i class="bi bi-clock"></i> 10 phút đọc</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">OpenClaw</span>
+        <span class="post-tag">Docker</span>
+        <span class="post-tag">Self-hosted</span>
+        <span class="post-tag">Quickstart</span>
+      </div>
+    </div>
+
+    <!-- ── TOC ── -->
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#what-is-openclaw">OpenClaw là gì?</a></li>
+        <li><a href="#requirements">Yêu cầu hệ thống</a></li>
+        <li><a href="#install">Cài đặt với Docker Compose</a></li>
+        <li><a href="#api-keys">Cấu hình API Keys</a></li>
+        <li><a href="#first-launch">Khởi động lần đầu</a></li>
+        <li><a href="#first-agent">Tạo agent đầu tiên</a></li>
+        <li><a href="#verify">Kiểm tra hoạt động</a></li>
+        <li><a href="#next">Bước tiếp theo</a></li>
+      </ol>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="post-body">
+
+      <!-- 1. What is OpenClaw -->
+      <h2 id="what-is-openclaw"><i class="bi bi-stars"></i> OpenClaw là gì?</h2>
+
+      <p>
+        <strong>OpenClaw</strong> là nền tảng AI agent self-hosted — bạn tự chạy trên server, toàn quyền kiểm soát
+        dữ liệu, không phụ thuộc cloud vendor. Giao tiếp qua Web UI hoặc API, hỗ trợ multi-provider
+        (Anthropic, OpenAI, Google Gemini), và có hệ sinh thái mở rộng qua Skills, MCP Servers và Plugins.
+      </p>
+
+      <p>
+        Điểm khác biệt so với dùng Claude.ai hay ChatGPT trực tiếp: OpenClaw cho phép bạn <strong>định nghĩa
+        hành vi agent</strong> qua file cấu hình (AGENTS.md, SOUL.md, IDENTITY.md...), xây dựng
+        <strong>bộ nhớ dài hạn</strong> (Persistent Memory), và chạy <strong>autonomous task</strong> định kỳ
+        mà không cần can thiệp thủ công.
+      </p>
+
+      <div class="callout callout-info">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>
+          Series này tập trung vào cách dùng OpenClaw trong thực tế — cấu hình workspace, quản lý memory,
+          tự động hóa với HEARTBEAT.md, mở rộng với MCP và tối ưu chi phí token. Bài này là điểm khởi đầu:
+          <strong>cài đặt xong, agent chạy được, rồi mới đi sâu</strong>.
+        </div>
+      </div>
+
+      <!-- 2. Requirements -->
+      <h2 id="requirements"><i class="bi bi-hdd-stack-fill"></i> Yêu cầu hệ thống</h2>
+
+      <p>OpenClaw chạy tốt trên VPS phổ thông. Dưới đây là cấu hình tối thiểu và khuyến nghị:</p>
+
+      <div class="req-grid">
+        <div class="req-card rc-min">
+          <span class="req-card-icon">🖥️</span>
+          <div class="req-card-label">CPU</div>
+          <div class="req-card-val">1 vCPU</div>
+          <div class="req-card-note">tối thiểu</div>
+        </div>
+        <div class="req-card rc-rec">
+          <span class="req-card-icon">🖥️</span>
+          <div class="req-card-label">CPU</div>
+          <div class="req-card-val">2 vCPU</div>
+          <div class="req-card-note">khuyến nghị</div>
+        </div>
+        <div class="req-card rc-min">
+          <span class="req-card-icon">💾</span>
+          <div class="req-card-label">RAM</div>
+          <div class="req-card-val">1 GB</div>
+          <div class="req-card-note">tối thiểu</div>
+        </div>
+        <div class="req-card rc-rec">
+          <span class="req-card-icon">💾</span>
+          <div class="req-card-label">RAM</div>
+          <div class="req-card-val">2 GB</div>
+          <div class="req-card-note">khuyến nghị</div>
+        </div>
+        <div class="req-card rc-rec">
+          <span class="req-card-icon">💿</span>
+          <div class="req-card-label">Disk</div>
+          <div class="req-card-val">10 GB</div>
+          <div class="req-card-note">SSD, cho data & image</div>
+        </div>
+        <div class="req-card rc-rec">
+          <span class="req-card-icon">🐳</span>
+          <div class="req-card-label">Docker</div>
+          <div class="req-card-val">v24+</div>
+          <div class="req-card-note">+ Compose v2</div>
+        </div>
+      </div>
+
+      <p>
+        Hệ điều hành: <strong>Ubuntu 22.04 / 24.04</strong> hoặc Debian 12. Cổng cần mở: <code>3000</code>
+        (Web UI) và <code>11434</code> nếu dùng Ollama local model.
+      </p>
+
+      <!-- 3. Install -->
+      <h2 id="install"><i class="bi bi-download"></i> Cài đặt với Docker Compose</h2>
+
+      <div class="install-steps">
+        <div class="install-step">
+          <div class="is-num">1</div>
+          <div class="is-body">
+            <strong>Clone repo và tạo thư mục data</strong>
+            <span>Tạo workspace cho OpenClaw, tất cả data sẽ được mount vào đây.</span>
+          </div>
+        </div>
+        <div class="install-step">
+          <div class="is-num">2</div>
+          <div class="is-body">
+            <strong>Tạo file <code>docker-compose.yml</code></strong>
+            <span>Khai báo service chính và volume mount.</span>
+          </div>
+        </div>
+        <div class="install-step">
+          <div class="is-num">3</div>
+          <div class="is-body">
+            <strong>Tạo file <code>.env</code> với API keys</strong>
+            <span>Điền key của provider bạn dùng — Anthropic, OpenAI, hoặc Google.</span>
+          </div>
+        </div>
+        <div class="install-step">
+          <div class="is-num">4</div>
+          <div class="is-body">
+            <strong>Chạy <code>docker compose up -d</code></strong>
+            <span>Pull image, khởi động container, truy cập Web UI qua port 3000.</span>
+          </div>
+        </div>
+      </div>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>docker-compose.yml</span></div><code><span class="code-section">services:</span>
+  <span class="code-key">openclaw</span><span class="code-str">:</span>
+    <span class="code-key">image</span><span class="code-str">:</span> ghcr.io/openclaw-ai/openclaw<span class="code-str">:latest</span>
+    <span class="code-key">container_name</span><span class="code-str">:</span> openclaw
+    <span class="code-key">restart</span><span class="code-str">:</span> unless-stopped
+    <span class="code-key">ports</span><span class="code-str">:</span>
+      - <span class="code-str">"3000:8080"</span>
+    <span class="code-key">env_file</span><span class="code-str">:</span>
+      - .env
+    <span class="code-key">volumes</span><span class="code-str">:</span>
+      - openclaw-data<span class="code-str">:/app/backend/data</span>
+    <span class="code-key">healthcheck</span><span class="code-str">:</span>
+      <span class="code-key">test</span><span class="code-str">:</span> [<span class="code-str">"CMD"</span>, <span class="code-str">"curl"</span>, <span class="code-str">"-f"</span>, <span class="code-str">"http://localhost:8080/health"</span>]
+      <span class="code-key">interval</span><span class="code-str">:</span> 30s
+      <span class="code-key">retries</span><span class="code-str">:</span> <span class="code-num">3</span>
+
+<span class="code-section">volumes:</span>
+  <span class="code-key">openclaw-data</span><span class="code-str">:</span></code></pre>
+
+      <!-- 4. API Keys -->
+      <h2 id="api-keys"><i class="bi bi-key-fill"></i> Cấu hình API Keys</h2>
+
+      <p>
+        Tạo file <code>.env</code> cùng thư mục với <code>docker-compose.yml</code>. Chỉ cần điền key của
+        provider bạn thực sự dùng — không nhất thiết phải có cả ba.
+      </p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>.env</span></div><code><span class="code-comment"># ── Anthropic ──────────────────────────────────</span>
+<span class="code-key">ANTHROPIC_API_KEY</span>=sk-ant-api03-<span class="code-str">xxxxxxxxxxxx</span>
+
+<span class="code-comment"># ── OpenAI ─────────────────────────────────────</span>
+<span class="code-key">OPENAI_API_KEY</span>=sk-proj-<span class="code-str">xxxxxxxxxxxx</span>
+
+<span class="code-comment"># ── Google Gemini ──────────────────────────────</span>
+<span class="code-key">GOOGLE_API_KEY</span>=<span class="code-str">AIzaSy-xxxxxxxxxxxx</span>
+
+<span class="code-comment"># ── App secret (đổi thành chuỗi ngẫu nhiên) ───</span>
+<span class="code-key">WEBUI_SECRET_KEY</span>=<span class="code-str">change-me-to-random-string</span>
+
+<span class="code-comment"># ── Tên hiển thị trên Web UI ───────────────────</span>
+<span class="code-key">WEBUI_NAME</span>=<span class="code-str">OpenClaw</span></code></pre>
+
+      <div class="provider-grid">
+        <div class="provider-card pc-anthropic">
+          <div class="provider-logo">🟠</div>
+          <div class="provider-name">Anthropic</div>
+          <div class="provider-key">ANTHROPIC_API_KEY</div>
+          <div class="provider-note">Claude Haiku / Sonnet / Opus. Khuyến nghị cho hầu hết workflow.</div>
+        </div>
+        <div class="provider-card pc-openai">
+          <div class="provider-logo">🟢</div>
+          <div class="provider-name">OpenAI</div>
+          <div class="provider-key">OPENAI_API_KEY</div>
+          <div class="provider-note">GPT-4o mini / GPT-4o / o1. Tùy chọn thay thế hoặc kết hợp.</div>
+        </div>
+        <div class="provider-card pc-google">
+          <div class="provider-logo">🔵</div>
+          <div class="provider-name">Google</div>
+          <div class="provider-key">GOOGLE_API_KEY</div>
+          <div class="provider-note">Gemini Flash / Pro. Context window lớn, phù hợp tài liệu dài.</div>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div><strong>Bảo mật file .env:</strong> Không commit file <code>.env</code> lên git. Thêm <code>.env</code>
+        vào <code>.gitignore</code> ngay từ đầu. API key bị lộ = tài khoản bị lợi dụng, chi phí không kiểm soát.</div>
+      </div>
+
+      <!-- 5. First launch -->
+      <h2 id="first-launch"><i class="bi bi-rocket-takeoff-fill"></i> Khởi động lần đầu</h2>
+
+      <p>Chạy lệnh sau để khởi động:</p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>terminal</span></div><code><span class="code-comment"># Khởi động (lần đầu sẽ pull image ~500MB)</span>
+docker compose up -d
+
+<span class="code-comment"># Kiểm tra log</span>
+docker compose logs -f openclaw
+
+<span class="code-comment"># Xem status</span>
+docker compose ps</code></pre>
+
+      <p>
+        Sau khoảng 30–60 giây, truy cập <code>http://&lt;server-ip&gt;:3000</code> trên trình duyệt.
+        Lần đầu tiên sẽ được yêu cầu tạo tài khoản admin — điền email và mật khẩu, tài khoản này được
+        lưu local trên server của bạn.
+      </p>
+
+      <div class="callout callout-tip">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div>
+          <strong>Gắn domain riêng:</strong> Nếu có domain, dùng Nginx reverse proxy để truy cập qua
+          HTTPS thay vì IP:port. Cấu hình Nginx cơ bản: proxy_pass tới <code>localhost:3000</code> với
+          certbot SSL.
+        </div>
+      </div>
+
+      <!-- 6. First agent -->
+      <h2 id="first-agent"><i class="bi bi-robot"></i> Tạo agent đầu tiên</h2>
+
+      <p>
+        Vào <strong>Workspace → Agents</strong> trên Web UI, chọn <strong>+ New Agent</strong>. Điền các
+        trường cơ bản:
+      </p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>agent config (ví dụ)</span></div><code><span class="code-key">Name</span>       : <span class="code-str">General Assistant</span>
+<span class="code-key">Model</span>      : <span class="code-str">claude-haiku-4-5</span>          <span class="code-comment"># bắt đầu với model nhỏ</span>
+<span class="code-key">System</span>     : <span class="code-str">Trợ lý thông minh, trả lời súc tích bằng tiếng Việt.</span>
+<span class="code-key">Temperature</span>: <span class="code-num">0.7</span>
+<span class="code-key">Memory</span>     : <span class="code-str">enabled</span>                   <span class="code-comment"># bật persistent memory</span>
+<span class="code-key">Tools</span>      : <span class="code-str">web_search, code_exec</span>    <span class="code-comment"># chỉ gắn tool cần dùng</span></code></pre>
+
+      <p>
+        Save và bắt đầu chat. Agent đầu tiên không cần phức tạp — mục tiêu bài này là
+        <strong>xác nhận hệ thống hoạt động</strong>. Chỉnh sửa và mở rộng agent ở các bài tiếp theo
+        trong series.
+      </p>
+
+      <!-- 7. Verify -->
+      <h2 id="verify"><i class="bi bi-patch-check-fill"></i> Kiểm tra hoạt động</h2>
+
+      <p>Sau khi setup xong, kiểm tra những điểm sau trước khi đi tiếp:</p>
+
+      <ul class="verify-list">
+        <li>
+          <div class="vl-check"><i class="bi bi-check-lg"></i></div>
+          <span>Web UI load được tại <code>http://&lt;server-ip&gt;:3000</code> — không có lỗi 502/504</span>
+        </li>
+        <li>
+          <div class="vl-check"><i class="bi bi-check-lg"></i></div>
+          <span>Đăng nhập thành công bằng tài khoản admin đã tạo</span>
+        </li>
+        <li>
+          <div class="vl-check"><i class="bi bi-check-lg"></i></div>
+          <span>Tạo agent và gửi tin nhắn thử — nhận được phản hồi từ model</span>
+        </li>
+        <li>
+          <div class="vl-check"><i class="bi bi-check-lg"></i></div>
+          <span>Model đúng provider hiện trong header chat (biểu tượng provider)</span>
+        </li>
+        <li>
+          <div class="vl-check"><i class="bi bi-check-lg"></i></div>
+          <span>Container đang chạy ổn định: <code>docker compose ps</code> → status <code>Up</code></span>
+        </li>
+        <li>
+          <div class="vl-check"><i class="bi bi-check-lg"></i></div>
+          <span>File <code>.env</code> không có trong git: <code>git status</code> không liệt kê .env</span>
+        </li>
+      </ul>
+
+      <!-- 8. Next steps -->
+      <h2 id="next"><i class="bi bi-arrow-right-circle-fill"></i> Bước tiếp theo</h2>
+
+      <p>
+        Setup xong là nền tảng — nhưng chạy được không có nghĩa là dùng hiệu quả. Những bài tiếp theo
+        trong series sẽ đi sâu vào từng phần giúp bạn khai thác OpenClaw đúng cách:
+      </p>
+
+      <ul>
+        <li><strong>Bài 2</strong> — Cấu hình Workspace: AGENTS.md, SOUL.md, IDENTITY.md và các file định nghĩa hành vi agent</li>
+        <li><strong>Bài 3</strong> — Hệ thống trí nhớ 3 tầng: MEMORY.md, Daily Notes và Semantic Search</li>
+        <li><strong>Bài 4</strong> — HEARTBEAT.md: tự động hóa tác vụ định kỳ không cần can thiệp</li>
+        <li><strong>Bài 5</strong> — Skills, MCP Servers & Plugins: mở rộng khả năng agent</li>
+        <li><strong>Bài 6</strong> — Tối ưu token: giảm chi phí mà agent vẫn hoạt động thông minh</li>
+      </ul>
+
+      <div class="callout callout-dark">
+        <i class="bi bi-quote"></i>
+        <div>
+          Một agent chạy được trong 15 phút — đó là điểm khởi đầu, không phải đích đến.
+          Giá trị thực của OpenClaw nằm ở những lớp cấu hình phía sau. Đọc tiếp bài 2.
+        </div>
+      </div>
+
+      <!-- Series nav -->
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection-fill"></i> Series: Làm chủ OpenClaw</div>
+        <ul class="series-nav-list">
+          <li class="current">Bài 1: Cài đặt và khởi động nhanh (bài này)</li>
+          <li class="upcoming"><a href="openclaw-workspace.html">Bài 2: Cấu hình Workspace từ A-Z</a></li>
+          <li class="upcoming"><a href="openclaw-memory.html">Bài 3: Hệ thống trí nhớ 3 tầng</a></li>
+          <li class="upcoming"><a href="openclaw-heartbeat.html">Bài 4: HEARTBEAT.md — tự động hóa 24/7</a></li>
+          <li class="upcoming"><a href="openclaw-skills-mcp.html">Bài 5: Skills, MCP Servers & Plugins</a></li>
+          <li class="upcoming"><a href="openclaw-token-tips.html">Bài 6: Dùng OpenClaw hiệu quả — Giảm token</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ── Footer nav ── -->
+    <div class="post-footer-nav">
+      <div class="prev-post">
+        <span class="nav-label">Trở về</span>
+        <a href="../blog.html" class="nav-title"><i class="bi bi-grid-fill"></i> Field Notes</a>
+      </div>
+      <div class="next-post">
+        <span class="nav-label">Bài tiếp theo</span>
+        <a href="openclaw-workspace.html" class="nav-title">Cấu hình Workspace từ A-Z <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const icon   = document.getElementById('theme-icon');
+  const saved  = localStorage.getItem('theme');
+  if (saved === 'dark') { document.body.classList.add('dark-mode'); icon.className = 'bi bi-sun-fill'; }
+  toggle.addEventListener('click', () => {
+    const dark = document.body.classList.toggle('dark-mode');
+    icon.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>

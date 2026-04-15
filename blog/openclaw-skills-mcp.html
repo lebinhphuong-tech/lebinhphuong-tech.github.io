@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skills, MCP Servers & Plugins: Mở rộng sức mạnh OpenClaw | Field Notes</title>
+  <meta name="description" content="Hướng dẫn đầy đủ Skills, MCP Servers, Plugins và Hooks trong OpenClaw — cách trang bị công cụ cho agent để hành động thật sự thay vì chỉ trả lời.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary: #149ddd; --secondary: #173b6c; --text: #272829; --bg-light: #f5f8fd; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+
+    /* ── Header ── */
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); display: inline-block; margin-bottom: 16px; }
+    .post-series-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); display: inline-block; margin-bottom: 16px; margin-left: 6px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    /* ── TOC ── */
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Body ── */
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.4rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key  { color: #f472b6; }
+    .code-str  { color: #86efac; }
+    .code-num  { color: #fb923c; }
+    .code-cmd  { color: #fde68a; }
+
+    /* ── Layer comparison ── */
+    .layer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 1.6rem 0; }
+    .layer-card { border-radius: 12px; padding: 16px 14px; border: 1px solid; text-align: center; }
+    .layer-icon { font-size: 1.6rem; display: block; margin-bottom: 8px; }
+    .layer-name { font-family: 'Raleway', sans-serif; font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+    .layer-desc { font-size: 11.5px; line-height: 1.5; color: #6c7a8d; }
+    .lc-skill   { background: rgba(139,92,246,0.07); border-color: rgba(139,92,246,0.25); }
+    .lc-skill .layer-name { color: #6d28d9; }
+    .lc-mcp     { background: rgba(20,157,221,0.07); border-color: rgba(20,157,221,0.25); }
+    .lc-mcp .layer-name { color: #0369a1; }
+    .lc-plugin  { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.25); }
+    .lc-plugin .layer-name { color: #d97706; }
+    .lc-hook    { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.25); }
+    .lc-hook .layer-name { color: #dc2626; }
+
+    /* ── File tree ── */
+    .file-tree { background: #0d1b2a; border-radius: 10px; padding: 1.4rem 1.6rem; font-family: 'Courier New', monospace; font-size: 13px; color: #7dd3fc; line-height: 1.9; margin: 1.4rem 0; overflow-x: auto; }
+    .ft-dir  { color: #5bc8f5; font-weight: 700; }
+    .ft-key  { color: #86efac; font-weight: 700; }
+    .ft-desc { color: #4a6480; font-style: italic; }
+
+    /* ── Skill steps ── */
+    .skill-steps { counter-reset: skill-step; margin: 1.4rem 0; }
+    .skill-step { display: flex; gap: 14px; margin-bottom: 16px; align-items: flex-start; }
+    .skill-step-num { counter-increment: skill-step; width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3); color: #6d28d9; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+    .skill-step-body { font-size: 14px; color: #3a4555; flex: 1; }
+    .skill-step-body strong { color: var(--secondary); display: block; margin-bottom: 4px; }
+
+    /* ── MCP category groups ── */
+    .mcp-category { margin-bottom: 1.6rem; }
+    .mcp-cat-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .mcp-cat-label::after { content: ''; flex: 1; height: 1px; background: #e4eef8; }
+    .mcp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+    .mcp-card { border: 1px solid #e4eef8; border-radius: 10px; padding: 12px 14px; background: #fff; transition: all 0.2s; }
+    .mcp-card:hover { border-color: rgba(20,157,221,0.3); box-shadow: 0 2px 12px rgba(20,157,221,0.08); }
+    .mcp-package { font-family: 'Courier New', monospace; font-size: 11.5px; color: #0369a1; font-weight: 700; margin-bottom: 4px; word-break: break-all; }
+    .mcp-desc { font-size: 12px; color: #6c7a8d; line-height: 1.5; }
+    .mcp-badge { font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 20px; display: inline-block; margin-top: 6px; }
+    .mb-official { background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); }
+    .mb-community{ background: rgba(139,92,246,0.1); color: #6d28d9; border: 1px solid rgba(139,92,246,0.25); }
+
+    /* ── Hook events ── */
+    .hook-events { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 1.2rem 0; }
+    .hook-event-group { border-radius: 10px; border: 1px solid; padding: 12px 14px; }
+    .heg-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+    .heg-items { list-style: none; padding: 0; margin: 0; }
+    .heg-items li { font-family: 'Courier New', monospace; font-size: 11.5px; padding: 3px 0; border-bottom: 1px solid; display: flex; align-items: center; gap: 5px; }
+    .heg-items li:last-child { border-bottom: none; }
+    .heg-items li::before { content: '▸'; font-size: 8px; flex-shrink: 0; }
+    .heg-command { background: rgba(139,92,246,0.07); border-color: rgba(139,92,246,0.2); }
+    .heg-command .heg-label { color: #6d28d9; }
+    .heg-command .heg-items li { color: #6d28d9; border-color: rgba(139,92,246,0.1); }
+    .heg-command .heg-items li::before { color: #6d28d9; }
+    .heg-agent { background: rgba(20,157,221,0.07); border-color: rgba(20,157,221,0.2); }
+    .heg-agent .heg-label { color: #0369a1; }
+    .heg-agent .heg-items li { color: #0369a1; border-color: rgba(20,157,221,0.1); }
+    .heg-agent .heg-items li::before { color: #0369a1; }
+    .heg-gateway { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.2); }
+    .heg-gateway .heg-label { color: #059669; }
+    .heg-gateway .heg-items li { color: #059669; border-color: rgba(16,185,129,0.1); }
+    .heg-gateway .heg-items li::before { color: #059669; }
+
+    /* ── Full workflow ── */
+    .workflow-box { background: #0d1b2a; border-radius: 12px; padding: 1.8rem 2rem; margin: 1.6rem 0; }
+    .workflow-trigger { color: #fde68a; font-size: 13px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .workflow-trigger i { font-size: 14px; }
+    .workflow-steps { list-style: none; padding: 0; margin: 0; }
+    .workflow-steps li { display: flex; gap: 12px; margin-bottom: 10px; font-size: 13px; color: #94a3b8; align-items: flex-start; }
+    .workflow-steps li:last-child { margin-bottom: 0; }
+    .ws-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(20,157,221,0.2); color: #7dd3fc; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .ws-tool { color: #86efac; font-weight: 700; font-family: 'Courier New', monospace; font-size: 12px; }
+    .workflow-result { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.07); font-size: 12px; color: #4a6480; }
+    .workflow-result span { color: #22c55e; font-weight: 700; }
+
+    /* ── Security principles ── */
+    .sec-principles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 1.2rem 0; }
+    .sec-principle { border-radius: 10px; padding: 14px 16px; border: 1px solid; }
+    .sp-icon { font-size: 1.2rem; margin-bottom: 8px; display: block; }
+    .sp-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .sp-desc { font-size: 12px; color: #6c7a8d; line-height: 1.5; }
+    .spc-1 { background: rgba(20,157,221,0.06); border-color: rgba(20,157,221,0.2); }
+    .spc-1 .sp-title { color: #0369a1; }
+    .spc-2 { background: rgba(139,92,246,0.06); border-color: rgba(139,92,246,0.2); }
+    .spc-2 .sp-title { color: #6d28d9; }
+    .spc-3 { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.2); }
+    .spc-3 .sp-title { color: #d97706; }
+    .spc-4 { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2); }
+    .spc-4 .sp-title { color: #dc2626; }
+
+    /* ── Callouts ── */
+    .callout { border-radius: 10px; padding: 1rem 1.4rem; margin: 1.4rem 0; font-size: 13.5px; line-height: 1.7; display: flex; gap: 12px; align-items: flex-start; }
+    .callout i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .callout-tip    { background: rgba(34,197,94,0.08);  border-left: 4px solid #22c55e; color: #166534; }
+    .callout-tip i  { color: #22c55e; }
+    .callout-warn   { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout-warn i { color: #f59e0b; }
+    .callout-info   { background: rgba(20,157,221,0.08); border-left: 4px solid var(--primary); color: #1e40af; }
+    .callout-info i { color: var(--primary); }
+
+    /* ── Series nav ── */
+    .series-nav { background: rgba(20,157,221,0.05); border: 1px solid rgba(20,157,221,0.15); border-radius: 12px; padding: 1.2rem 1.6rem; margin-top: 2.4rem; }
+    .series-nav-title { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .series-nav-list { list-style: none; padding: 0; margin: 0; }
+    .series-nav-list li { padding: 5px 0; font-size: 13px; color: #6c7a8d; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(20,157,221,0.08); }
+    .series-nav-list li:last-child { border-bottom: none; }
+    .series-nav-list li.current { color: var(--secondary); font-weight: 700; }
+    .series-nav-list li.current::before { content: '→'; color: var(--primary); font-weight: 900; }
+    .series-nav-list li.upcoming::before { content: '○'; color: #ccc; }
+    .series-nav-list li.done::before { content: '✓'; color: #22c55e; }
+    .series-nav-list a { color: var(--primary); text-decoration: none; }
+    .series-nav-list a:hover { text-decoration: underline; }
+
+    /* ── Post footer ── */
+    .post-footer-nav { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 1.8rem; margin-top: 2rem; border-top: 2px solid var(--bg-light); }
+    .post-footer-nav a { font-size: 13px; font-weight: 600; color: #8a9bb0; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .post-footer-nav a:hover { color: var(--primary); }
+    .post-footer-nav .prev-post, .post-footer-nav .next-post { max-width: 280px; }
+    .post-footer-nav .next-post { text-align: right; }
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #b0c4d8; display: block; margin-bottom: 3px; }
+    .nav-title { color: var(--secondary); font-size: 13.5px; }
+
+    /* ── Theme ── */
+    #theme-toggle { position: fixed; top: 72px; right: 16px; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; z-index: 9999; background: linear-gradient(135deg, #149ddd, #0d7ab5); color: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20,157,221,0.4); transition: all 0.25s ease; }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* ── Dark mode ── */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; }
+    body.dark-mode .navbar-brand { color: var(--primary); }
+    body.dark-mode .nav-pills-custom a { background: #1e293b; color: #94a3b8; border-color: #1e3a52; }
+    body.dark-mode .nav-pills-custom a:hover, body.dark-mode .nav-pills-custom a.active { background: var(--primary); color: #fff; }
+    body.dark-mode .post-wrap    { background: #1e293b; }
+    body.dark-mode .post-header  { border-color: #1e3a52; }
+    body.dark-mode .post-title   { color: #e2e8f0; }
+    body.dark-mode .post-body    { color: #94a3b8; }
+    body.dark-mode .post-body h2 { color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .post-body h3 { color: #e2e8f0; }
+    body.dark-mode .post-body strong { color: #e2e8f0; }
+    body.dark-mode .post-body code  { background: #0f172a; border-color: #1e3a52; color: #f472b6; }
+    body.dark-mode .post-body a { color: #38bdf8; }
+    body.dark-mode .toc { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .toc-title { color: #4a6480; }
+    body.dark-mode .post-tag { background: #0f172a; color: #64748b; border-color: #1e3a52; }
+    body.dark-mode .layer-card { opacity: 0.9; }
+    body.dark-mode .layer-desc { color: #4a6480; }
+    body.dark-mode .mcp-card { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .mcp-desc { color: #4a6480; }
+    body.dark-mode .mcp-cat-label::after { background: #1e3a52; }
+    body.dark-mode .skill-step-body { color: #94a3b8; }
+    body.dark-mode .skill-step-body strong { color: #e2e8f0; }
+    body.dark-mode .skill-step-num { background: rgba(139,92,246,0.15); }
+    body.dark-mode .hook-event-group { opacity: 0.9; }
+    body.dark-mode .sec-principle { opacity: 0.9; }
+    body.dark-mode .sp-desc { color: #4a6480; }
+    body.dark-mode .sp-title { opacity: 0.9; }
+    body.dark-mode .callout-tip  { background: rgba(34,197,94,0.07);  color: #4ade80; }
+    body.dark-mode .callout-warn { background: rgba(245,158,11,0.07); color: #fbbf24; }
+    body.dark-mode .callout-info { background: rgba(20,157,221,0.07); color: #7dd3fc; }
+    body.dark-mode .series-nav { background: rgba(20,157,221,0.04); border-color: rgba(20,157,221,0.12); }
+    body.dark-mode .series-nav-list li { color: #4a6480; border-color: rgba(20,157,221,0.07); }
+    body.dark-mode .series-nav-list li.current { color: #e2e8f0; }
+    body.dark-mode .post-footer-nav { border-color: #1e3a52; }
+    body.dark-mode .nav-title { color: #e2e8f0; }
+    body.dark-mode .breadcrumb a { color: var(--primary); }
+    body.dark-mode .breadcrumb-item.active { color: #64748b; }
+
+    @media (max-width: 768px) {
+      .post-wrap { padding: 1.8rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+      .layer-grid { grid-template-columns: repeat(2, 1fr); }
+      .hook-events { grid-template-columns: 1fr; }
+      .sec-principles { grid-template-columns: 1fr; }
+      .mcp-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4" style="max-width: 900px;">
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">Skills, MCP & Plugins</li>
+    </ol>
+  </nav>
+
+  <a href="../blog.html" class="back-to-blog">
+    <i class="bi bi-arrow-left"></i> Về Field Notes
+  </a>
+
+  <div class="post-wrap">
+
+    <!-- ── Header ── -->
+    <div class="post-header">
+      <span class="post-category-badge">Tooling & Tips</span>
+      <span class="post-series-badge"><i class="bi bi-collection me-1"></i>Series: OpenClaw</span>
+      <h1 class="post-title">Skills, MCP Servers &amp; Plugins:<br>Mở rộng sức mạnh OpenClaw không giới hạn</h1>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-person-fill"></i> Lê Bình Phương</span>
+        <span><i class="bi bi-calendar3"></i> April 2026</span>
+        <span><i class="bi bi-clock"></i> 12 phút đọc</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">OpenClaw</span>
+        <span class="post-tag">MCP</span>
+        <span class="post-tag">Skills</span>
+        <span class="post-tag">Plugins</span>
+        <span class="post-tag">Hooks</span>
+      </div>
+    </div>
+
+    <!-- ── TOC ── -->
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#overview">Bốn lớp mở rộng: Skills, MCP, Plugins, Hooks</a></li>
+        <li><a href="#skills">Skills — Bộ kỹ năng chuyên biệt</a></li>
+        <li><a href="#mcp">MCP Servers — Cổng kết nối vạn năng</a></li>
+        <li><a href="#plugins">Plugins — Gói mở rộng trọn bộ</a></li>
+        <li><a href="#hooks">Hooks — Tự động phản ứng với sự kiện</a></li>
+        <li><a href="#full-example">Kết hợp tất cả: ví dụ thực tế end-to-end</a></li>
+        <li><a href="#security">Bảo mật khi mở rộng tools</a></li>
+      </ol>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="post-body">
+
+      <!-- 1. Overview -->
+      <h2 id="overview"><i class="bi bi-layers"></i> Bốn lớp mở rộng: Skills, MCP, Plugins, Hooks</h2>
+
+      <p>
+        Agent chỉ biết trả lời câu hỏi thì không khác gì chatbot. Agent <strong>thực sự mạnh</strong> khi nó có thể
+        hành động: đọc file, gọi API, kiểm tra server, tạo ticket, gửi Telegram. OpenClaw cung cấp bốn cơ chế để trang
+        bị khả năng hành động cho agent — mỗi cơ chế có vai trò riêng biệt:
+      </p>
+
+      <div class="layer-grid">
+        <div class="layer-card lc-skill">
+          <span class="layer-icon">🧩</span>
+          <div class="layer-name">Skills</div>
+          <div class="layer-desc">Bộ hướng dẫn chuyên biệt — dạy agent <em>cách làm</em> một nhóm tác vụ</div>
+        </div>
+        <div class="layer-card lc-mcp">
+          <span class="layer-icon">🔌</span>
+          <div class="layer-name">MCP Servers</div>
+          <div class="layer-desc">Công cụ kết nối — cấp cho agent <em>quyền hành động</em> với hệ thống bên ngoài</div>
+        </div>
+        <div class="layer-card lc-plugin">
+          <span class="layer-icon">📦</span>
+          <div class="layer-name">Plugins</div>
+          <div class="layer-desc">Gói trọn bộ — kết hợp skills + MCP + hooks thành <em>một trải nghiệm</em> liền mạch</div>
+        </div>
+        <div class="layer-card lc-hook">
+          <span class="layer-icon">⚡</span>
+          <div class="layer-name">Hooks</div>
+          <div class="layer-desc">Tự động hóa sự kiện — chạy code <em>khi có trigger</em>, không cần agent chủ động</div>
+        </div>
+      </div>
+
+      <!-- 2. Skills -->
+      <h2 id="skills"><i class="bi bi-puzzle-fill"></i> Skills — Bộ kỹ năng chuyên biệt</h2>
+
+      <p>
+        Skills là "bộ hướng dẫn nghiệp vụ" được đóng gói sẵn. Mỗi skill bao gồm prompt (hướng dẫn cho agent),
+        custom tools (Python/JS), và hooks tùy chọn. Khi agent nhận yêu cầu phù hợp, nó tự nhận ra skill nào cần
+        áp dụng — không cần bạn chỉ định tường minh.
+      </p>
+
+      <h3>Quản lý skills</h3>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>bash</span>
+      </div>
+      <pre><code><span class="code-comment"># Xem skills đang có</span>
+<span class="code-cmd">openclaw skills list</span>
+
+<span class="code-comment"># Cài từ ClawHub (kho skill cộng đồng)</span>
+<span class="code-cmd">openclaw skills install memory-manager</span>
+<span class="code-cmd">openclaw skills install code-reviewer</span>
+<span class="code-cmd">openclaw skills install web-scraper</span></code></pre>
+
+      <h3>Cấu trúc một skill</h3>
+
+      <div class="file-tree">
+        skills/<br>
+        └── <span class="ft-dir">my-custom-skill/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="ft-key">SKILL.md</span>          <span class="ft-desc"># Hướng dẫn cho agent khi dùng skill</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="ft-dir">tools/</span>             <span class="ft-desc"># Custom tools (Python/JS)</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── analyze.py<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└── <span class="ft-dir">hooks/</span>             <span class="ft-desc"># Tự động trigger theo sự kiện</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── on-message.js
+      </div>
+
+      <h3>Tạo skill đầu tiên: VPS Health Check</h3>
+      <p>Ví dụ thực tế: skill kiểm tra sức khỏe server khi bạn hỏi.</p>
+
+      <div class="skill-steps">
+        <div class="skill-step">
+          <div class="skill-step-num">1</div>
+          <div class="skill-step-body">
+            <strong>Tạo thư mục skill</strong>
+            <div class="pre-header" style="margin-top:8px;">
+              <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <span>bash</span>
+            </div>
+            <pre style="margin-top:0;border-radius:0 0 10px 10px;"><code>mkdir -p ~/.openclaw/workspace/skills/vps-health</code></pre>
+          </div>
+        </div>
+        <div class="skill-step">
+          <div class="skill-step-num">2</div>
+          <div class="skill-step-body">
+            <strong>Viết SKILL.md — hướng dẫn cho agent</strong>
+            <div class="pre-header" style="margin-top:8px;">
+              <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+              <span>skills/vps-health/SKILL.md</span>
+            </div>
+            <pre style="margin-top:0;border-radius:0 0 10px 10px;"><code><span class="code-key"># VPS Health Check</span>
+
+<span class="code-key">## Khi nào dùng</span>
+Khi user hỏi về tình trạng server, VPS, hoặc muốn
+kiểm tra health/status của hệ thống.
+
+<span class="code-key">## Cách thực hiện</span>
+1. SSH vào server theo thông tin trong TOOLS.md
+2. Chạy: df -h, free -m, uptime, docker ps,
+   systemctl status nginx
+3. Tóm tắt ngắn gọn — cảnh báo nếu disk > 80%,
+   RAM > 90%, hoặc có service down
+
+<span class="code-key">## Format trả lời</span>
+- Server: [IP] | Uptime: [thời gian]
+- CPU: [%] | RAM: [used/total] | Disk: [used/total]
+- Services: [status]
+- ⚠ Cảnh báo: [nếu có]</code></pre>
+          </div>
+        </div>
+        <div class="skill-step">
+          <div class="skill-step-num">3</div>
+          <div class="skill-step-body">
+            <strong>Dùng ngay</strong> — Hỏi agent <em>"server ổn không?"</em>, nó tự nhận ra cần skill <code>vps-health</code> và làm theo hướng dẫn.
+          </div>
+        </div>
+      </div>
+
+      <h3>Giới hạn skill bằng allowList</h3>
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>openclaw.json</span>
+      </div>
+      <pre><code>{
+  <span class="code-key">"skills"</span>: {
+    <span class="code-key">"allowList"</span>: [<span class="code-str">"vps-health"</span>, <span class="code-str">"code-reviewer"</span>, <span class="code-str">"memory-manager"</span>],
+    <span class="code-key">"locations"</span>: [
+      <span class="code-str">"~/.openclaw/workspace/skills"</span>,
+      <span class="code-str">"/shared/team-skills"</span>   <span class="code-comment">// skill dùng chung cả team</span>
+    ]
+  }
+}</code></pre>
+
+      <div class="callout callout-tip">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div>
+          <strong>SKILL.md đơn giản là đủ.</strong> Bạn không cần viết code để tạo skill cơ bản — chỉ cần mô tả
+          rõ ràng trong SKILL.md. Agent đủ thông minh để làm theo hướng dẫn văn bản nếu hướng dẫn đó rõ ràng và có cấu trúc.
+        </div>
+      </div>
+
+      <!-- 3. MCP -->
+      <h2 id="mcp"><i class="bi bi-plug-fill"></i> MCP Servers — Cổng kết nối vạn năng</h2>
+
+      <p>
+        MCP (Model Context Protocol) là giao thức chuẩn mở cho phép AI agent kết nối với bất kỳ dịch vụ bên ngoài nào
+        theo một cách thống nhất. Thay vì viết code tích hợp riêng cho GitHub, database, Slack — bạn chỉ cần
+        cắm MCP server tương ứng, agent tự biết có tool mới để dùng.
+      </p>
+
+      <div class="callout callout-info">
+        <i class="bi bi-usb-plug-fill"></i>
+        <div>
+          <strong>Hình dung đơn giản:</strong> MCP giống như cổng USB cho AI agent. Cắm MCP server vào là agent
+          có thêm khả năng mới — không cần restart, không cần cấu hình phức tạp.
+        </div>
+      </div>
+
+      <h3>Cài đặt MCP Server</h3>
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>bash — Ví dụ các loại kết nối</span>
+      </div>
+      <pre><code><span class="code-comment"># Kết nối GitHub</span>
+openclaw mcp set github \
+  --command <span class="code-str">"npx"</span> \
+  --args <span class="code-str">"-y @modelcontextprotocol/server-github"</span> \
+  --env <span class="code-str">"GITHUB_TOKEN=ghp_your_token"</span>
+
+<span class="code-comment"># Kết nối PostgreSQL</span>
+openclaw mcp set postgres \
+  --command <span class="code-str">"npx"</span> \
+  --args <span class="code-str">"-y @modelcontextprotocol/server-postgres"</span> \
+  --env <span class="code-str">"DATABASE_URL=postgresql://user:pass@localhost/mydb"</span>
+
+<span class="code-comment"># MCP server qua HTTP remote</span>
+openclaw mcp set my-api \
+  --url <span class="code-str">"https://my-mcp-server.example.com/mcp"</span> \
+  --transport <span class="code-str">"streamable-http"</span> \
+  --headers <span class="code-str">'{"Authorization": "Bearer token"}'</span>
+
+<span class="code-comment"># Quản lý</span>
+openclaw mcp list           <span class="code-comment"># xem tất cả</span>
+openclaw mcp show github    <span class="code-comment"># xem chi tiết</span>
+openclaw mcp remove github  <span class="code-comment"># xoá</span></code></pre>
+
+      <h3>MCP Servers phổ biến cho developer</h3>
+
+      <div class="mcp-category">
+        <div class="mcp-cat-label"><i class="bi bi-code-square"></i> Quản lý code</div>
+        <div class="mcp-grid">
+          <div class="mcp-card">
+            <div class="mcp-package">server-github</div>
+            <div class="mcp-desc">Tạo issue, PR, review code, quản lý branch — trực tiếp từ chat</div>
+            <span class="mcp-badge mb-official">Official</span>
+          </div>
+          <div class="mcp-card">
+            <div class="mcp-package">server-gitlab</div>
+            <div class="mcp-desc">Tương tự cho GitLab — MR, pipeline, issue management</div>
+            <span class="mcp-badge mb-official">Official</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcp-category">
+        <div class="mcp-cat-label"><i class="bi bi-database-fill"></i> Database</div>
+        <div class="mcp-grid">
+          <div class="mcp-card">
+            <div class="mcp-package">server-postgres</div>
+            <div class="mcp-desc">Query PostgreSQL trực tiếp — schema inspection, data analysis</div>
+            <span class="mcp-badge mb-official">Official</span>
+          </div>
+          <div class="mcp-card">
+            <div class="mcp-package">server-sqlite</div>
+            <div class="mcp-desc">SQLite local — tốt cho prototyping và project nhỏ</div>
+            <span class="mcp-badge mb-official">Official</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcp-category">
+        <div class="mcp-cat-label"><i class="bi bi-chat-dots-fill"></i> Giao tiếp & Thông báo</div>
+        <div class="mcp-grid">
+          <div class="mcp-card">
+            <div class="mcp-package">server-slack</div>
+            <div class="mcp-desc">Gửi/đọc tin nhắn Slack, tạo channel, upload file</div>
+            <span class="mcp-badge mb-official">Official</span>
+          </div>
+          <div class="mcp-card">
+            <div class="mcp-package">mcp-telegram-bot</div>
+            <div class="mcp-desc">Gửi thông báo qua Telegram bot — phổ biến với developer VN</div>
+            <span class="mcp-badge mb-community">Community</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcp-category">
+        <div class="mcp-cat-label"><i class="bi bi-gear-fill"></i> DevOps & Infrastructure</div>
+        <div class="mcp-grid">
+          <div class="mcp-card">
+            <div class="mcp-package">server-docker</div>
+            <div class="mcp-desc">Quản lý containers, images, volumes, networks</div>
+            <span class="mcp-badge mb-official">Official</span>
+          </div>
+          <div class="mcp-card">
+            <div class="mcp-package">server-filesystem</div>
+            <div class="mcp-desc">Đọc/ghi file hệ thống trong phạm vi được cấp quyền</div>
+            <span class="mcp-badge mb-official">Official</span>
+          </div>
+          <div class="mcp-card">
+            <div class="mcp-package">mcp-proxmox</div>
+            <div class="mcp-desc">Quản lý VPS Proxmox — VM lifecycle, snapshot, resource</div>
+            <span class="mcp-badge mb-community">Community</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <i class="bi bi-tag-fill"></i>
+        <div>
+          <strong>Tool naming convention:</strong> Khi cài MCP server tên <code>github</code> có tool <code>create_issue</code>,
+          OpenClaw đăng ký tool đó thành <code>github__create_issue</code>. Bạn không cần nhớ tên — agent tự chọn
+          tool phù hợp dựa trên mô tả và ngữ cảnh yêu cầu.
+        </div>
+      </div>
+
+      <!-- 4. Plugins -->
+      <h2 id="plugins"><i class="bi bi-box-seam-fill"></i> Plugins — Gói mở rộng trọn bộ</h2>
+
+      <p>
+        Plugins là cấp cao nhất của hệ sinh thái mở rộng — kết hợp skills + MCP tools + hooks thành một gói hoàn chỉnh,
+        cài một lần là dùng được ngay. Có hai loại:
+      </p>
+
+      <ul>
+        <li><strong>Native plugins:</strong> Chạy trong process OpenClaw, có toàn quyền truy cập. Cần xác minh nguồn gốc tin cậy trước khi cài.</li>
+        <li><strong>Bundle plugins:</strong> Gói content từ hệ sinh thái khác (Claude, Cursor), được map vào tính năng native của OpenClaw với boundary bảo mật chặt hơn.</li>
+      </ul>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>bash — Quản lý plugins</span>
+      </div>
+      <pre><code><span class="code-comment"># Tìm plugin trên ClawHub</span>
+openclaw plugins search <span class="code-str">"monitoring"</span>
+
+<span class="code-comment"># Cài, bật, tắt</span>
+openclaw plugins install monitoring-suite
+openclaw plugins enable  monitoring-suite
+openclaw plugins disable monitoring-suite
+openclaw plugins list</code></pre>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>openclaw.json — Plugin config</span>
+      </div>
+      <pre><code>{
+  <span class="code-key">"plugins"</span>: {
+    <span class="code-key">"entries"</span>: {
+      <span class="code-key">"active-memory"</span>: {
+        <span class="code-key">"enabled"</span>:        <span class="code-num">true</span>,
+        <span class="code-key">"updateInterval"</span>: <span class="code-str">"5m"</span>
+      },
+      <span class="code-key">"monitoring-suite"</span>: {
+        <span class="code-key">"enabled"</span>:         <span class="code-num">true</span>,
+        <span class="code-key">"alertThreshold"</span>: <span class="code-str">"warning"</span>
+      }
+    }
+  }
+}</code></pre>
+
+      <!-- 5. Hooks -->
+      <h2 id="hooks"><i class="bi bi-lightning-charge-fill"></i> Hooks — Tự động phản ứng với sự kiện</h2>
+
+      <p>
+        Hooks cho phép chạy code tự động khi có sự kiện nhất định xảy ra trong OpenClaw —
+        không cần agent chủ động, không cần bạn nhắc. Có ba nhóm hook events:
+      </p>
+
+      <div class="hook-events">
+        <div class="hook-event-group heg-command">
+          <div class="heg-label">Command Events</div>
+          <ul class="heg-items">
+            <li>before_tool_call</li>
+            <li>after_tool_call</li>
+            <li>on_tool_error</li>
+          </ul>
+        </div>
+        <div class="hook-event-group heg-agent">
+          <div class="heg-label">Agent Events</div>
+          <ul class="heg-items">
+            <li>on_session_start</li>
+            <li>on_session_end</li>
+            <li>on_agent_response</li>
+          </ul>
+        </div>
+        <div class="hook-event-group heg-gateway">
+          <div class="heg-label">Gateway Events</div>
+          <ul class="heg-items">
+            <li>on_message_received</li>
+            <li>on_heartbeat_tick</li>
+            <li>on_heartbeat_alert</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Hook: log mỗi lần agent gọi tool</h3>
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>hooks/log-tool-calls.js</span>
+      </div>
+      <pre><code>export default {
+  <span class="code-key">event</span>: <span class="code-str">"after_tool_call"</span>,
+  <span class="code-key">handler</span>: async (context) => {
+    const { toolName, result, duration } = context;
+    console.log(<span class="code-str">`[TOOL] ${toolName} — ${duration}ms`</span>);
+    <span class="code-comment">// Ghi vào daily note nếu cần</span>
+  }
+};</code></pre>
+
+      <h3>Hook: chặn và xác nhận trước tool nguy hiểm</h3>
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>hooks/safety-check.js</span>
+      </div>
+      <pre><code>export default {
+  <span class="code-key">event</span>: <span class="code-str">"before_tool_call"</span>,
+  <span class="code-key">handler</span>: async (context) => {
+    const dangerous = [<span class="code-str">"bash_execute"</span>, <span class="code-str">"file_delete"</span>, <span class="code-str">"db_write"</span>];
+    if (dangerous.includes(context.toolName)) {
+      return { requireConfirmation: <span class="code-num">true</span> };
+      <span class="code-comment">// Agent sẽ hỏi bạn xác nhận trước khi chạy</span>
+    }
+  }
+};</code></pre>
+
+      <!-- 6. Full example -->
+      <h2 id="full-example"><i class="bi bi-diagram-3-fill"></i> Kết hợp tất cả: end-to-end example</h2>
+
+      <p>
+        Dưới đây là setup hoàn chỉnh cho developer chạy OpenClaw trên VPS, và luồng xử lý khi bạn nhắn
+        một câu đơn giản:
+      </p>
+
+      <p><strong>Setup đã cài đặt:</strong></p>
+      <ul>
+        <li><strong>Skills:</strong> <code>vps-health</code>, <code>code-reviewer</code>, <code>deploy-assistant</code></li>
+        <li><strong>MCP Servers:</strong> <code>github</code>, <code>postgres</code>, <code>telegram-bot</code></li>
+        <li><strong>Hooks:</strong> <code>log-tool-calls</code>, <code>safety-check</code>, <code>auto-commit-log</code></li>
+      </ul>
+
+      <div class="workflow-box">
+        <div class="workflow-trigger">
+          <i class="bi bi-chat-quote-fill"></i>
+          Bạn nhắn: <em style="color:#fde68a;">"deploy version mới lên production"</em>
+        </div>
+        <ul class="workflow-steps">
+          <li>
+            <div class="ws-num">1</div>
+            <span>Skill <span class="ws-tool">deploy-assistant</span> được kích hoạt — agent biết quy trình deploy của bạn</span>
+          </li>
+          <li>
+            <div class="ws-num">2</div>
+            <span>MCP <span class="ws-tool">github__create_release</span> — tạo release tag tự động từ latest commit</span>
+          </li>
+          <li>
+            <div class="ws-num">3</div>
+            <span>Hook <span class="ws-tool">safety-check</span> chặn — yêu cầu xác nhận trước khi chạy deploy script trên production</span>
+          </li>
+          <li>
+            <div class="ws-num">4</div>
+            <span>Bạn xác nhận → <span class="ws-tool">bash_execute</span> chạy deploy script</span>
+          </li>
+          <li>
+            <div class="ws-num">5</div>
+            <span>MCP <span class="ws-tool">postgres__query</span> — kiểm tra migration có chạy thành công không</span>
+          </li>
+          <li>
+            <div class="ws-num">6</div>
+            <span>MCP <span class="ws-tool">telegram-bot__send_message</span> — báo kết quả cho team channel</span>
+          </li>
+          <li>
+            <div class="ws-num">7</div>
+            <span>Hook <span class="ws-tool">log-tool-calls</span> ghi toàn bộ audit trail vào daily note</span>
+          </li>
+        </ul>
+        <div class="workflow-result">
+          <span>✓ Done</span> — Tất cả từ một câu nhắn 5 từ. Không cần SSH thủ công, không cần copy lệnh, không cần nhớ quy trình.
+        </div>
+      </div>
+
+      <!-- 7. Security -->
+      <h2 id="security"><i class="bi bi-shield-fill-check"></i> Bảo mật khi mở rộng tools</h2>
+
+      <p>
+        Mỗi tool bạn thêm là một attack surface mới. Bốn nguyên tắc cần giữ nhất quán:
+      </p>
+
+      <div class="sec-principles">
+        <div class="sec-principle spc-1">
+          <span class="sp-icon">🔒</span>
+          <div class="sp-title">Least Privilege</div>
+          <div class="sp-desc">Chỉ cấp quyền tối thiểu cần thiết. GitHub token chỉ cần <code>repo</code> scope, không cần <code>admin</code>. Database user chỉ cần <code>SELECT</code> nếu agent không cần ghi.</div>
+        </div>
+        <div class="sec-principle spc-2">
+          <span class="sp-icon">🔍</span>
+          <div class="sp-title">Review trước khi cài</div>
+          <div class="sp-desc">Đọc source code của native plugin trước khi cài. Ưu tiên plugin từ nguồn tin cậy hoặc được verified trên ClawHub. Bundle plugins an toàn hơn native plugins.</div>
+        </div>
+        <div class="sec-principle spc-3">
+          <span class="sp-icon">📋</span>
+          <div class="sp-title">Dùng allowList</div>
+          <div class="sp-desc">Cấu hình <code>skills.allowList</code> để giới hạn skill agent được phép dùng — ngay cả khi bạn cài nhiều skill, chỉ những skill trong list mới được kích hoạt.</div>
+        </div>
+        <div class="sec-principle spc-4">
+          <span class="sp-icon">⚡</span>
+          <div class="sp-title">Hook safety-check</div>
+          <div class="sp-desc">Luôn có hook kiểm tra trước các tool nguy hiểm: xóa file, chạy bash, gửi data ra ngoài, ghi vào database. Một confirm prompt nhỏ có thể ngăn được sự cố lớn.</div>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+          <strong>Native plugins có full access:</strong> Không giống bundle plugins, native plugins chạy trong cùng process với OpenClaw và có thể đọc mọi thứ trong workspace — bao gồm MEMORY.md, API keys, và file logs. Chỉ cài native plugin từ tác giả bạn tin tưởng tuyệt đối.
+        </div>
+      </div>
+
+      <!-- Series nav -->
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection-fill"></i> Series: Làm chủ OpenClaw</div>
+        <ul class="series-nav-list">
+          <li class="done"><a href="openclaw-install.html">Bài 1: Cài đặt và khởi động nhanh</a></li>
+          <li class="done"><a href="openclaw-workspace.html">Bài 2: Cấu hình Workspace từ A-Z</a></li>
+          <li class="done"><a href="openclaw-memory.html">Bài 3: Hệ thống trí nhớ 3 tầng</a></li>
+          <li class="done"><a href="openclaw-heartbeat.html">Bài 4: HEARTBEAT.md — tự động hóa 24/7</a></li>
+          <li class="current">Bài 5: Skills, MCP Servers &amp; Plugins (bài này)</li>
+          <li class="upcoming"><a href="openclaw-token-tips.html">Bài 6: Dùng OpenClaw hiệu quả — Giảm token</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ── Footer ── -->
+    <div class="post-footer-nav">
+      <div class="prev-post">
+        <span class="nav-label">Bài trước</span>
+        <a href="openclaw-heartbeat.html" class="nav-title"><i class="bi bi-arrow-left"></i> HEARTBEAT.md — tự động hóa 24/7</a>
+      </div>
+      <div class="next-post">
+        <span class="nav-label">Bài tiếp theo</span>
+        <a href="openclaw-token-tips.html" class="nav-title">Dùng OpenClaw hiệu quả: Giảm token <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const icon   = document.getElementById('theme-icon');
+  const body   = document.body;
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark-mode');
+    icon.className = 'bi bi-sun-fill';
+  }
+  toggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>

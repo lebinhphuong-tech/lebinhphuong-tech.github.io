@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cấu hình Workspace OpenClaw từ A-Z | Field Notes</title>
+  <meta name="description" content="Hướng dẫn đầy đủ cách cấu hình workspace OpenClaw — từ AGENTS.md, SOUL.md đến các file thành phần, kèm mẹo thực tế từ kinh nghiệm sử dụng.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary:    #149ddd;
+      --secondary:  #173b6c;
+      --text:       #272829;
+      --bg-light:   #f5f8fd;
+      --sidebar-bg: #0d1b2a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text); line-height: 1.75;
+    }
+
+    /* ── Navbar ────────────────────────────────────────────────── */
+    .navbar {
+      background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09);
+      padding: 0.85rem 0;
+    }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a {
+      font-size: 12.5px; font-weight: 600; padding: 5px 14px;
+      border-radius: 20px; color: #555; text-decoration: none;
+      border: 1px solid #e0e8f0; transition: all 0.2s;
+    }
+    .nav-pills-custom a:hover,
+    .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* ── Breadcrumb ────────────────────────────────────────────── */
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    /* ── Layout ────────────────────────────────────────────────── */
+    .post-wrap {
+      background: #fff; border-radius: 14px; padding: 2.8rem 3rem;
+      box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem;
+    }
+    .back-to-blog {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 700; color: var(--primary);
+      text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s;
+    }
+    .back-to-blog:hover { gap: 12px; }
+
+    /* ── Post header ───────────────────────────────────────────── */
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge {
+      font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px;
+      background: rgba(16,185,129,0.1); color: #059669;
+      border: 1px solid rgba(16,185,129,0.25);
+      display: inline-block; margin-bottom: 16px;
+    }
+    .post-series-badge {
+      font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px;
+      background: rgba(20,157,221,0.1); color: #0369a1;
+      border: 1px solid rgba(20,157,221,0.25);
+      display: inline-block; margin-bottom: 16px; margin-left: 6px;
+    }
+    .post-title {
+      font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800;
+      color: var(--secondary); line-height: 1.3; margin-bottom: 16px;
+    }
+    .post-meta-bar {
+      display: flex; flex-wrap: wrap; gap: 16px;
+      font-size: 12px; color: #8a9bb0;
+    }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag {
+      font-size: 10.5px; font-weight: 600; padding: 2px 10px;
+      border-radius: 20px; background: var(--bg-light);
+      color: #6c7a8d; border: 1px solid #e4eef8;
+    }
+
+    /* ── TOC ───────────────────────────────────────────────────── */
+    .toc {
+      background: var(--bg-light); border-radius: 10px;
+      border: 1px solid #e4eef8; padding: 1.4rem 1.6rem;
+      margin-bottom: 2.2rem;
+    }
+    .toc-title {
+      font-size: 11px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+    .toc .toc-sub { margin-top: 5px; margin-left: 1.2rem; }
+    .toc .toc-sub li { font-size: 12px; font-weight: 400; }
+
+    /* ── Post body ─────────────────────────────────────────────── */
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 {
+      font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800;
+      color: var(--secondary); margin: 2.4rem 0 1rem;
+      padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .post-body h2 i {
+      font-size: 1rem; color: var(--primary);
+      background: rgba(20,157,221,0.1); padding: 6px;
+      border-radius: 8px; flex-shrink: 0;
+    }
+    .post-body h3 {
+      font-size: 1rem; font-weight: 700; color: var(--secondary);
+      margin: 1.8rem 0 0.8rem;
+    }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.4rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code {
+      font-family: 'Courier New', monospace; font-size: 13px;
+      background: var(--bg-light); color: #c0392b;
+      padding: 2px 7px; border-radius: 5px;
+      border: 1px solid #e4eef8;
+    }
+    .post-body pre {
+      background: #0d1b2a; border-radius: 10px;
+      margin: 1.4rem 0; overflow-x: auto; position: relative;
+    }
+    .pre-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px 0; font-size: 11px; font-weight: 700;
+      color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px;
+    }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; }
+    .pre-dots .d2 { background: #febc2e; }
+    .pre-dots .d3 { background: #28c840; }
+    .post-body pre code {
+      display: block; background: transparent; border: none;
+      color: #7dd3fc; font-size: 13px; padding: 14px 16px;
+      line-height: 1.7;
+    }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key     { color: #f472b6; }
+    .code-str     { color: #86efac; }
+    .code-num     { color: #fb923c; }
+
+    /* ── File tree ─────────────────────────────────────────────── */
+    .file-tree {
+      background: #0d1b2a; border-radius: 10px; padding: 1.4rem 1.6rem;
+      font-family: 'Courier New', monospace; font-size: 13px;
+      color: #7dd3fc; line-height: 1.8; margin: 1.4rem 0;
+      overflow-x: auto;
+    }
+    .ft-dir  { color: #5bc8f5; font-weight: 700; }
+    .ft-key  { color: #86efac; font-weight: 700; }
+    .ft-desc { color: #4a6480; font-style: italic; }
+
+    /* ── File sections ─────────────────────────────────────────── */
+    .file-section {
+      border: 1px solid rgba(20,157,221,0.15);
+      border-radius: 12px; margin: 2rem 0; overflow: hidden;
+    }
+    .file-section-header {
+      background: rgba(20,157,221,0.07);
+      padding: 12px 20px; border-bottom: 1px solid rgba(20,157,221,0.12);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .file-section-header .filename {
+      font-family: 'Courier New', monospace; font-size: 14px;
+      font-weight: 700; color: var(--primary);
+    }
+    .file-section-header .file-role {
+      font-size: 12px; color: #8a9bb0; margin-left: auto;
+    }
+    .file-icon {
+      width: 30px; height: 30px; border-radius: 7px;
+      background: rgba(20,157,221,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--primary); flex-shrink: 0;
+    }
+    .file-section-body { padding: 1.4rem 1.6rem; }
+
+    /* ── Flow steps ────────────────────────────────────────────── */
+    .flow-steps { margin: 1.4rem 0; }
+    .flow-step {
+      display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start;
+    }
+    .flow-step-num {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      background: var(--primary); color: #fff;
+      font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 3px;
+    }
+    .flow-step-body { font-size: 14px; color: #3a4555; }
+    .flow-step-body strong { color: var(--secondary); }
+    .flow-step-body em { color: #8a9bb0; font-size: 12.5px; font-style: normal; }
+
+    /* ── Callouts ──────────────────────────────────────────────── */
+    .callout {
+      border-radius: 10px; padding: 1rem 1.4rem;
+      margin: 1.4rem 0; font-size: 13.5px; line-height: 1.7;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .callout i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .callout-tip     { background: rgba(34,197,94,0.08);  border-left: 4px solid #22c55e; color: #166534; }
+    .callout-tip i   { color: #22c55e; }
+    .callout-warn    { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout-warn i  { color: #f59e0b; }
+    .callout-info    { background: rgba(20,157,221,0.08); border-left: 4px solid var(--primary); color: #1e40af; }
+    .callout-info i  { color: var(--primary); }
+    .callout-danger  { background: rgba(239,68,68,0.08);  border-left: 4px solid #ef4444; color: #991b1b; }
+    .callout-danger i{ color: #ef4444; }
+
+    /* ── Table ─────────────────────────────────────────────────── */
+    .post-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13.5px; margin: 1.4rem 0;
+    }
+    .post-table th {
+      background: var(--bg-light); padding: 10px 14px;
+      text-align: left; font-weight: 700; color: var(--secondary);
+      border-bottom: 2px solid #e4eef8; font-size: 12px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .post-table td {
+      padding: 10px 14px; border-bottom: 1px solid #f0f5fb;
+      vertical-align: top;
+    }
+    .post-table tr:last-child td { border-bottom: none; }
+    .post-table tr:hover td { background: #f9fbff; }
+    .post-table code { font-size: 12px; }
+    .badge-critical {
+      font-size: 9px; font-weight: 800; padding: 2px 7px;
+      border-radius: 20px; text-transform: uppercase;
+      background: rgba(239,68,68,0.1); color: #dc2626;
+      border: 1px solid rgba(239,68,68,0.25); white-space: nowrap;
+    }
+    .badge-important {
+      font-size: 9px; font-weight: 800; padding: 2px 7px;
+      border-radius: 20px; text-transform: uppercase;
+      background: rgba(20,157,221,0.1); color: #0369a1;
+      border: 1px solid rgba(20,157,221,0.25); white-space: nowrap;
+    }
+    .badge-optional {
+      font-size: 9px; font-weight: 800; padding: 2px 7px;
+      border-radius: 20px; text-transform: uppercase;
+      background: rgba(16,185,129,0.1); color: #059669;
+      border: 1px solid rgba(16,185,129,0.25); white-space: nowrap;
+    }
+
+    /* ── Series nav ────────────────────────────────────────────── */
+    .series-nav {
+      background: rgba(20,157,221,0.05); border: 1px solid rgba(20,157,221,0.15);
+      border-radius: 12px; padding: 1.2rem 1.6rem; margin-top: 2.4rem;
+    }
+    .series-nav-title {
+      font-size: 10.5px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--primary); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .series-nav-list { list-style: none; padding: 0; margin: 0; }
+    .series-nav-list li {
+      padding: 5px 0; font-size: 13px; color: #6c7a8d;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid rgba(20,157,221,0.08);
+    }
+    .series-nav-list li:last-child { border-bottom: none; }
+    .series-nav-list li.current { color: var(--secondary); font-weight: 700; }
+    .series-nav-list li.current::before { content: '→'; color: var(--primary); font-weight: 900; }
+    .series-nav-list li.upcoming::before { content: '○'; color: #ccc; }
+    .series-nav-list li.done::before { content: '✓'; color: #22c55e; }
+    .series-nav-list a { color: var(--primary); text-decoration: none; }
+    .series-nav-list a:hover { text-decoration: underline; }
+
+    /* ── Post footer ───────────────────────────────────────────── */
+    .post-footer-nav {
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+      padding-top: 1.8rem; margin-top: 2rem; border-top: 2px solid var(--bg-light);
+    }
+    .post-footer-nav a {
+      font-size: 13px; font-weight: 600; color: #8a9bb0;
+      text-decoration: none; display: flex; align-items: center; gap: 6px;
+      transition: color 0.2s;
+    }
+    .post-footer-nav a:hover { color: var(--primary); }
+    .post-footer-nav .next-post {
+      text-align: right; max-width: 260px;
+    }
+    .post-footer-nav .next-label {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px;
+      color: #b0c4d8; display: block; margin-bottom: 3px;
+    }
+    .post-footer-nav .next-title { color: var(--secondary); font-size: 13.5px; }
+
+    /* ── Theme toggle ──────────────────────────────────────────── */
+    #theme-toggle {
+      position: fixed; top: 72px; right: 16px;
+      width: 40px; height: 40px; border-radius: 50%;
+      border: none; cursor: pointer; z-index: 9999;
+      background: linear-gradient(135deg, #149ddd, #0d7ab5);
+      color: #fff; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(20,157,221,0.4); transition: all 0.25s ease;
+    }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* ── Dark mode ─────────────────────────────────────────────── */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; }
+    body.dark-mode .navbar-brand { color: var(--primary); }
+    body.dark-mode .nav-pills-custom a { background: #1e293b; color: #94a3b8; border-color: #1e3a52; }
+    body.dark-mode .nav-pills-custom a:hover,
+    body.dark-mode .nav-pills-custom a.active { background: var(--primary); color: #fff; }
+    body.dark-mode .post-wrap     { background: #1e293b; }
+    body.dark-mode .post-header   { border-color: #1e3a52; }
+    body.dark-mode .post-title    { color: #e2e8f0; }
+    body.dark-mode .post-body     { color: #94a3b8; }
+    body.dark-mode .post-body h2  { color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .post-body h3  { color: #e2e8f0; }
+    body.dark-mode .post-body strong { color: #e2e8f0; }
+    body.dark-mode .post-body code { background: #0f172a; border-color: #1e3a52; color: #f472b6; }
+    body.dark-mode .post-body a   { color: #38bdf8; }
+    body.dark-mode .toc           { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .toc-title     { color: #4a6480; }
+    body.dark-mode .file-section  { border-color: rgba(20,157,221,0.18); }
+    body.dark-mode .file-section-header { background: rgba(20,157,221,0.06); border-color: rgba(20,157,221,0.12); }
+    body.dark-mode .file-section-body   { color: #94a3b8; }
+    body.dark-mode .flow-step-body { color: #94a3b8; }
+    body.dark-mode .flow-step-body strong { color: #e2e8f0; }
+    body.dark-mode .callout-tip   { background: rgba(34,197,94,0.07); color: #4ade80; }
+    body.dark-mode .callout-warn  { background: rgba(245,158,11,0.07); color: #fbbf24; }
+    body.dark-mode .callout-info  { background: rgba(20,157,221,0.07); color: #7dd3fc; }
+    body.dark-mode .callout-danger{ background: rgba(239,68,68,0.07);  color: #fca5a5; }
+    body.dark-mode .post-table th { background: #162032; color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .post-table td { border-color: #1a2a3a; }
+    body.dark-mode .post-table tr:hover td { background: #162032; }
+    body.dark-mode .series-nav    { background: rgba(20,157,221,0.04); border-color: rgba(20,157,221,0.12); }
+    body.dark-mode .series-nav-list li { color: #4a6480; border-color: rgba(20,157,221,0.07); }
+    body.dark-mode .series-nav-list li.current { color: #e2e8f0; }
+    body.dark-mode .post-footer-nav { border-color: #1e3a52; }
+    body.dark-mode .post-footer-nav .next-title { color: #e2e8f0; }
+    body.dark-mode .breadcrumb a  { color: var(--primary); }
+    body.dark-mode .breadcrumb-item.active { color: #64748b; }
+    body.dark-mode .post-tag      { background: #0f172a; color: #64748b; border-color: #1e3a52; }
+
+    @media (max-width: 768px) {
+      .post-wrap  { padding: 1.8rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html">
+      <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+    </a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4" style="max-width: 900px;">
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">OpenClaw Workspace</li>
+    </ol>
+  </nav>
+
+  <a href="../blog.html" class="back-to-blog">
+    <i class="bi bi-arrow-left"></i> Về Field Notes
+  </a>
+
+  <div class="post-wrap">
+
+    <!-- ── Post header ─────────────────────────────────────────── -->
+    <div class="post-header">
+      <span class="post-category-badge">Tooling & Tips</span>
+      <span class="post-series-badge"><i class="bi bi-collection me-1"></i>Series: OpenClaw</span>
+      <h1 class="post-title">Cấu hình Workspace OpenClaw từ A-Z:<br>AGENTS.md, SOUL.md và hơn thế</h1>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-person-fill"></i> Lê Bình Phương</span>
+        <span><i class="bi bi-calendar3"></i> April 2026</span>
+        <span><i class="bi bi-clock"></i> 8 phút đọc</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">OpenClaw</span>
+        <span class="post-tag">AI Agent</span>
+        <span class="post-tag">Configuration</span>
+        <span class="post-tag">DevOps</span>
+      </div>
+    </div>
+
+    <!-- ── TOC ─────────────────────────────────────────────────── -->
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#what-is-workspace">Workspace là gì và tại sao nó quan trọng?</a></li>
+        <li><a href="#structure">Cấu trúc workspace mặc định</a></li>
+        <li>
+          <a href="#file-breakdown">Giải mã từng file</a>
+          <ol class="toc-sub">
+            <li><a href="#agents-md">AGENTS.md — Bản hướng dẫn vận hành</a></li>
+            <li><a href="#soul-md">SOUL.md — Tính cách của agent</a></li>
+            <li><a href="#identity-md">IDENTITY.md — Agent này là ai?</a></li>
+            <li><a href="#user-md">USER.md — Ngữ cảnh về chủ sở hữu</a></li>
+            <li><a href="#tools-md">TOOLS.md — Ghi chú về môi trường</a></li>
+          </ol>
+        </li>
+        <li><a href="#how-it-works">Cách các file phối hợp với nhau</a></li>
+        <li><a href="#best-practices">Mẹo thực tế</a></li>
+        <li><a href="#vps-setup">Chạy trên VPS OnMay</a></li>
+      </ol>
+    </div>
+
+    <!-- ── Post body ───────────────────────────────────────────── -->
+    <div class="post-body">
+
+      <!-- 1. Workspace là gì -->
+      <h2 id="what-is-workspace"><i class="bi bi-folder2-open"></i> Workspace là gì và tại sao nó quan trọng?</h2>
+
+      <p>
+        Khi bạn chạy OpenClaw lần đầu, nó tạo ra một thư mục <code>~/.openclaw/workspace/</code> với vài file markdown bên trong.
+        Nhìn bề ngoài rất đơn giản — nhưng đây chính là <strong>"bộ não khởi động" của agent</strong>: nơi quyết định agent biết gì,
+        là ai, và hành xử như thế nào từ khoảnh khắc nó được khởi chạy.
+      </p>
+
+      <p>
+        Triết lý thiết kế của OpenClaw rất rõ ràng: <strong>files are the source of truth</strong>.
+        Không có dashboard ẩn, không có cơ sở dữ liệu nội bộ. Mọi thứ agent cần biết đều nằm trong các file markdown
+        mà bạn có thể đọc và chỉnh sửa bằng bất kỳ text editor nào.
+      </p>
+
+      <p>Điều này mang lại hai lợi ích cốt lõi:</p>
+      <ul>
+        <li><strong>Transparency:</strong> bạn luôn kiểm soát được agent đang biết gì và đang làm gì.</li>
+        <li><strong>Portability:</strong> toàn bộ cấu hình có thể version control bằng Git — rollback bất cứ lúc nào.</li>
+      </ul>
+
+      <!-- 2. Cấu trúc -->
+      <h2 id="structure"><i class="bi bi-diagram-2"></i> Cấu trúc workspace mặc định</h2>
+
+      <p>Sau khi cài đặt, workspace trông như sau:</p>
+
+      <div class="file-tree">
+        <span class="ft-dir">~/.openclaw/workspace/</span><br>
+        ├── <span class="ft-key">AGENTS.md</span>       <span class="ft-desc"># Hướng dẫn vận hành — được load mỗi phiên</span><br>
+        ├── <span class="ft-key">SOUL.md</span>         <span class="ft-desc"># Tính cách và phong cách giao tiếp</span><br>
+        ├── <span class="ft-key">IDENTITY.md</span>     <span class="ft-desc"># Tên, ID, vai trò của agent</span><br>
+        ├── <span class="ft-key">USER.md</span>         <span class="ft-desc"># Ngữ cảnh về chủ sở hữu</span><br>
+        ├── <span class="ft-key">TOOLS.md</span>        <span class="ft-desc"># Ghi chú về môi trường và công cụ</span><br>
+        ├── HEARTBEAT.md    <span class="ft-desc"># Tác vụ định kỳ tự động</span><br>
+        ├── MEMORY.md       <span class="ft-desc"># Index trí nhớ dài hạn</span><br>
+        └── <span class="ft-dir">memory/</span>         <span class="ft-desc"># Thư mục ghi chú theo ngày</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└── 2026-04-12.md
+      </div>
+
+      <p>Tóm tắt nhanh mức độ ưu tiên của từng file:</p>
+
+      <table class="post-table">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Vai trò</th>
+            <th>Mức độ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>AGENTS.md</code></td>
+            <td>Quy tắc hành xử, nhiệm vụ chính — load mỗi phiên</td>
+            <td><span class="badge-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td><code>SOUL.md</code></td>
+            <td>Tính cách, giọng điệu, phong cách giao tiếp</td>
+            <td><span class="badge-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td><code>USER.md</code></td>
+            <td>Ngữ cảnh về người dùng — giúp agent cá nhân hóa phản hồi</td>
+            <td><span class="badge-important">Important</span></td>
+          </tr>
+          <tr>
+            <td><code>TOOLS.md</code></td>
+            <td>Thông tin môi trường: server, API, thiết bị</td>
+            <td><span class="badge-important">Important</span></td>
+          </tr>
+          <tr>
+            <td><code>IDENTITY.md</code></td>
+            <td>Định danh agent — cần thiết khi chạy multi-agent</td>
+            <td><span class="badge-optional">Optional</span></td>
+          </tr>
+          <tr>
+            <td><code>HEARTBEAT.md</code></td>
+            <td>Tác vụ tự động chạy định kỳ</td>
+            <td><span class="badge-optional">Optional</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 3. File breakdown -->
+      <h2 id="file-breakdown"><i class="bi bi-files"></i> Giải mã từng file</h2>
+
+      <!-- AGENTS.md -->
+      <div class="file-section" id="agents-md">
+        <div class="file-section-header">
+          <div class="file-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
+          <span class="filename">AGENTS.md</span>
+          <span class="file-role">Load mỗi phiên · Ảnh hưởng trực tiếp đến hành vi</span>
+        </div>
+        <div class="file-section-body">
+          <p>
+            Đây là file quan trọng nhất trong workspace. <code>AGENTS.md</code> được nạp vào context
+            <em>mỗi lần</em> agent khởi động — tương tự như bạn đưa cho nhân viên mới một tờ
+            "Quy tắc làm việc" vào ngày đầu tiên, trước khi họ làm bất cứ điều gì.
+          </p>
+
+          <p>Một <code>AGENTS.md</code> hoàn chỉnh nên có các mục sau:</p>
+
+          <div class="pre-header">
+            <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+            <span>AGENTS.md</span>
+          </div>
+          <pre><code><span class="code-key"># Hướng dẫn vận hành</span>
+
+<span class="code-key">## Vai trò</span>
+Bạn là trợ lý AI cá nhân của [Tên]. Nhiệm vụ chính:
+- Quản lý lịch trình và nhắc việc
+- Hỗ trợ viết code và debug
+- Nghiên cứu và tóm tắt thông tin
+
+<span class="code-key">## Quy tắc giao tiếp</span>
+- Trả lời bằng tiếng Việt trừ khi được yêu cầu khác
+- Ngắn gọn, đi thẳng vào vấn đề
+- Nếu không chắc → hỏi lại thay vì đoán
+
+<span class="code-key">## Quy tắc an toàn</span>
+- Không chạy lệnh xóa dữ liệu mà không xác nhận trước
+- Không chia sẻ thông tin cá nhân ra ngoài
+- Log lại mọi thao tác quan trọng
+
+<span class="code-key">## Bài học từ thực tế</span>
+<span class="code-comment"># Cập nhật khi agent mắc lỗi — để không lặp lại</span>
+- 2026-04-10: Không dùng rm -rf mà không kiểm tra path trước</code></pre>
+
+          <div class="callout callout-tip">
+            <i class="bi bi-lightbulb-fill"></i>
+            <div>
+              <strong>Giữ AGENTS.md dưới 100 dòng.</strong> File này được load vào context mỗi phiên.
+              Mỗi dòng thừa đều tiêu tốn token. Viết súc tích, dùng bullet points, loại bỏ thông tin trùng lặp.
+              Thêm mục <em>"Bài học từ thực tế"</em> — tích lũy theo thời gian sẽ cực kỳ có giá trị.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOUL.md -->
+      <div class="file-section" id="soul-md">
+        <div class="file-section-header">
+          <div class="file-icon"><i class="bi bi-person-heart"></i></div>
+          <span class="filename">SOUL.md</span>
+          <span class="file-role">Tính cách · Giọng điệu · Phong cách</span>
+        </div>
+        <div class="file-section-body">
+          <p>
+            Nếu <code>AGENTS.md</code> là "bản mô tả công việc", thì <code>SOUL.md</code> là "tính cách con người".
+            File này định nghĩa <em>cách</em> agent giao tiếp — không phải <em>làm gì</em>, mà là
+            <em>nói như thế nào</em>.
+          </p>
+
+          <div class="pre-header">
+            <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+            <span>SOUL.md</span>
+          </div>
+          <pre><code><span class="code-key"># Soul</span>
+
+<span class="code-key">## Tính cách</span>
+Thân thiện nhưng chuyên nghiệp. Nói chuyện tự nhiên
+như đồng nghiệp — không quá trang trọng, không suồng sã.
+
+<span class="code-key">## Giọng điệu</span>
+- Dùng "mình" và "bạn" thay vì "tôi" và "quý khách"
+- Có thể pha chút hài hước khi ngữ cảnh phù hợp
+- Giải thích kỹ thuật bằng ví dụ đời thường
+
+<span class="code-key">## Nguyên tắc phản hồi</span>
+- Không dùng emoji quá nhiều
+- Không trả lời dài dòng khi câu hỏi đơn giản
+- Thừa nhận khi không chắc — đừng tỏ ra biết tuốt
+- Kết thúc bằng câu hỏi ngược nếu cần làm rõ yêu cầu</code></pre>
+
+          <div class="callout callout-info">
+            <i class="bi bi-stars"></i>
+            <div>
+              <strong>SOUL.md có thể thay đổi theo use case.</strong> Muốn agent nghiêm túc hơn cho môi trường công việc?
+              Muốn vui vẻ hơn cho chat cá nhân? Chỉ cần sửa file này — không cần cài đặt lại bất cứ thứ gì.
+              Đây chính là lợi thế lớn nhất của file-based config.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IDENTITY.md -->
+      <div class="file-section" id="identity-md">
+        <div class="file-section-header">
+          <div class="file-icon"><i class="bi bi-fingerprint"></i></div>
+          <span class="filename">IDENTITY.md</span>
+          <span class="file-role">Định danh · Định tuyến trong multi-agent setup</span>
+        </div>
+        <div class="file-section-body">
+          <p>
+            File ngắn nhất nhưng không thể thiếu khi bạn chạy nhiều agent trên cùng một máy.
+            OpenClaw dùng thông tin này để định tuyến tin nhắn đúng agent.
+          </p>
+
+          <div class="pre-header">
+            <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+            <span>IDENTITY.md</span>
+          </div>
+          <pre><code><span class="code-key">name:</span>  <span class="code-str">Minh</span>
+<span class="code-key">role:</span>  <span class="code-str">Personal Assistant</span>
+<span class="code-key">id:</span>    <span class="code-str">main-agent</span></code></pre>
+
+          <p style="margin-top: 12px; margin-bottom: 0;">
+            Nếu chỉ dùng một agent đơn, file này không cần phức tạp hơn ba dòng trên.
+          </p>
+        </div>
+      </div>
+
+      <!-- USER.md -->
+      <div class="file-section" id="user-md">
+        <div class="file-section-header">
+          <div class="file-icon"><i class="bi bi-person-fill"></i></div>
+          <span class="filename">USER.md</span>
+          <span class="file-role">Ngữ cảnh về người dùng · Cá nhân hóa phản hồi</span>
+        </div>
+        <div class="file-section-body">
+          <p>
+            Đây là nơi bạn cho agent hiểu về bản thân bạn. Nguyên tắc đơn giản:
+            <strong>càng nhiều ngữ cảnh, câu trả lời càng chính xác</strong>.
+            Agent biết bạn là developer sẽ giải thích khác với một người không biết code.
+          </p>
+
+          <div class="pre-header">
+            <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+            <span>USER.md</span>
+          </div>
+          <pre><code><span class="code-key"># User</span>
+
+<span class="code-key">## Thông tin cơ bản</span>
+- Tên: Hùng
+- Nghề: Full-stack developer
+- Ngôn ngữ: Tiếng Việt (chính), English (đọc tốt)
+- Múi giờ: UTC+7 (Việt Nam)
+
+<span class="code-key">## Dự án hiện tại</span>
+- Đang phát triển OnMay — nền tảng VPS hosting
+- Stack: Next.js, TypeScript, PostgreSQL
+- Ưu tiên: hoàn thiện tính năng payment
+
+<span class="code-key">## Phong cách làm việc</span>
+- Code nhiều nhất vào buổi tối (20h–1h)
+- Thích giải thích ngắn gọn, kèm ví dụ cụ thể
+- Không thích câu trả lời chung chung kiểu "tuỳ trường hợp"</code></pre>
+
+          <div class="callout callout-warn">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <div>
+              <strong>Lưu ý bảo mật:</strong> Không đưa mật khẩu, API key, hay thông tin tài chính vào
+              <code>USER.md</code>. File này được đọc bởi model AI. Chỉ đưa thông tin mà bạn thoải mái
+              chia sẻ với một đồng nghiệp tin cậy.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOOLS.md -->
+      <div class="file-section" id="tools-md">
+        <div class="file-section-header">
+          <div class="file-icon"><i class="bi bi-tools"></i></div>
+          <span class="filename">TOOLS.md</span>
+          <span class="file-role">Môi trường · Server · Thiết bị · Endpoint</span>
+        </div>
+        <div class="file-section-body">
+          <p>
+            <code>TOOLS.md</code> không phải nơi cấu hình tool (việc đó thuộc về <code>openclaw.json</code>).
+            Đây là nơi ghi <strong>thông tin thực tế về môi trường</strong> mà agent cần biết để hành động đúng.
+          </p>
+
+          <div class="pre-header">
+            <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+            <span>TOOLS.md</span>
+          </div>
+          <pre><code><span class="code-key"># Tools Notes</span>
+
+<span class="code-key">## SSH Servers</span>
+- Production: ssh deploy@<span class="code-num">10.10.10.2</span> (key: ~/.ssh/onmay_deploy)
+- Staging:    ssh dev@<span class="code-num">10.10.10.3</span>
+
+<span class="code-key">## Camera nhà</span>
+- Phòng khách: rtsp://<span class="code-num">192.168.1.100</span>/stream
+- Model: Hikvision DS-2CD2143G2
+
+<span class="code-key">## API Keys location</span>
+- Anthropic: lưu trong .env.local
+- OpenAI:    lưu trong 1Password vault "Dev Keys"
+<span class="code-comment"># Không lưu key trực tiếp trong file này</span></code></pre>
+        </div>
+      </div>
+
+      <!-- 4. How it works -->
+      <h2 id="how-it-works"><i class="bi bi-cpu-fill"></i> Cách các file phối hợp với nhau</h2>
+
+      <p>
+        Sức mạnh thực sự của workspace không nằm ở từng file riêng lẻ, mà ở <strong>cách chúng phối hợp</strong>.
+        Một ví dụ thực tế: bạn nhắn cho agent <em>"Kiểm tra server production có ổn không?"</em>
+      </p>
+
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">1</div>
+          <div class="flow-step-body">
+            <strong>Đọc AGENTS.md</strong> — biết mình là trợ lý kỹ thuật, phải cẩn thận với thao tác trên server production.
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">2</div>
+          <div class="flow-step-body">
+            <strong>Đọc USER.md</strong> — biết bạn là developer, không cần giải thích SSH là gì hay CPU là gì.
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">3</div>
+          <div class="flow-step-body">
+            <strong>Đọc TOOLS.md</strong> — tra cứu IP server production: <code>10.10.10.2</code>, key: <code>onmay_deploy</code>.
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">4</div>
+          <div class="flow-step-body">
+            <strong>Đọc SOUL.md</strong> — biết cần trả lời ngắn gọn, đi thẳng vào kết quả, không giải thích dài dòng.
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">5</div>
+          <div class="flow-step-body">
+            <strong>Đọc MEMORY.md</strong> — nhớ lần trước server bị lỗi do disk full → chủ động kiểm tra disk trước.
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Kết quả: agent SSH vào server, kiểm tra CPU / RAM / disk, và báo lại — tất cả từ một câu hỏi bốn từ.
+        Không có workspace đúng cách, agent sẽ phải hỏi lại IP, hỏi lại key path, rồi trả lời theo template chung.
+      </p>
+
+      <!-- 5. Best practices -->
+      <h2 id="best-practices"><i class="bi bi-bookmark-star-fill"></i> Mẹo thực tế</h2>
+
+      <h3>Bắt đầu tối giản, mở rộng dần</h3>
+      <p>
+        Đừng cố viết workspace hoàn hảo ngay từ đầu. Bắt đầu với <code>AGENTS.md</code> và <code>SOUL.md</code> cơ bản
+        — 20–30 dòng mỗi file là đủ. Bổ sung khi bạn nhận ra agent thiếu ngữ cảnh nào đó trong quá trình sử dụng.
+        Workspace tốt nhất là workspace được cải thiện liên tục qua thực tế, không phải qua lý thuyết.
+      </p>
+
+      <h3>Version control với Git</h3>
+      <p>
+        Đặt toàn bộ thư mục workspace vào một Git repo riêng. Mỗi lần tinh chỉnh — sửa tính cách, thêm quy tắc mới,
+        cập nhật thông tin môi trường — đều nên có một commit. Nếu agent bắt đầu hành xử lạ sau một lần chỉnh sửa,
+        <code>git diff</code> sẽ cho bạn biết ngay nguyên nhân.
+      </p>
+
+      <h3>Đổi workspace path khi cần</h3>
+      <p>
+        Bạn không bị gắn chặt vào <code>~/.openclaw/workspace/</code>. Nếu muốn workspace nằm trong project repo
+        để share với team, cấu hình trong <code>openclaw.json</code>:
+      </p>
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>openclaw.json</span>
+      </div>
+      <pre><code>{
+  <span class="code-key">"agents"</span>: {
+    <span class="code-key">"defaults"</span>: {
+      <span class="code-key">"workspace"</span>: <span class="code-str">"~/projects/my-agent-workspace"</span>
+    }
+  }
+}</code></pre>
+
+      <h3>Review workspace định kỳ</h3>
+      <p>
+        Mỗi tuần dành 5 phút đọc lại <code>AGENTS.md</code>. Xóa những quy tắc không còn phù hợp, thêm bài học mới.
+        Workspace càng gọn → agent càng ít tốn token → phản hồi càng nhanh và rẻ hơn.
+        Đây là loại "technical debt" mà nhiều người bỏ qua nhưng tích lũy theo thời gian rất nhanh.
+      </p>
+
+      <div class="callout callout-tip">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div>
+          Thêm mục <strong>"Bài học từ thực tế"</strong> vào cuối <code>AGENTS.md</code> và cập nhật mỗi khi agent mắc lỗi.
+          Sau vài tháng, phần này sẽ trở thành runbook mini cực kỳ có giá trị — đặc biệt khi bạn cần onboard agent mới
+          hoặc reset workspace.
+        </div>
+      </div>
+
+      <!-- 6. VPS OnMay -->
+      <h2 id="vps-setup"><i class="bi bi-server"></i> Chạy trên VPS OnMay</h2>
+
+      <p>
+        Trên VPS OnMay, OpenClaw được cài sẵn cùng workspace mặc định. Bạn chỉ cần SSH vào và bắt đầu tùy chỉnh.
+        Điểm khác biệt so với chạy local: agent chạy <strong>24/7</strong>, mọi thay đổi workspace có hiệu lực
+        ngay từ phiên chat tiếp theo mà không cần restart.
+      </p>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>bash</span>
+      </div>
+      <pre><code><span class="code-comment"># SSH vào VPS OnMay</span>
+ssh root@your-vps-ip -p <span class="code-num">10122</span>
+
+<span class="code-comment"># Xem workspace hiện tại</span>
+ls -la ~/.openclaw/workspace/
+
+<span class="code-comment"># Chỉnh sửa trực tiếp trên server</span>
+nano ~/.openclaw/workspace/AGENTS.md
+
+<span class="code-comment"># Hoặc clone workspace từ Git repo của bạn</span>
+cd ~/.openclaw
+rm -rf workspace
+git clone https://github.com/yourname/my-agent-config workspace</code></pre>
+
+      <div class="callout callout-info">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>
+          Nên dùng Git workflow thay vì sửa trực tiếp trên server. Điều này cho phép bạn test thay đổi ở local trước,
+          review diff trên GitHub, và deploy bằng một lệnh <code>git pull</code> — thay vì phải SSH và nano mỗi lần.
+        </div>
+      </div>
+
+      <!-- Series nav -->
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection-fill"></i> Series: Làm chủ OpenClaw</div>
+        <ul class="series-nav-list">
+          <li class="done"><a href="openclaw-install.html">Bài 1: Cài đặt và khởi động nhanh</a></li>
+          <li class="current">Bài 2: Cấu hình Workspace từ A-Z (bài này)</li>
+          <li class="upcoming">Bài 3: Hệ thống trí nhớ 3 tầng — nhớ nhiều, tốn ít token</li>
+          <li class="upcoming">Bài 4: HEARTBEAT.md — tác vụ tự động và cron agent</li>
+          <li class="upcoming">Bài 5: Multi-agent setup và phân vai</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ── Post footer ──────────────────────────────────────────── -->
+    <div class="post-footer-nav">
+      <a href="../blog.html"><i class="bi bi-arrow-left"></i> Về Field Notes</a>
+      <div class="next-post">
+        <span class="next-label">Bài tiếp theo</span>
+        <a href="openclaw-memory.html" class="next-title">Hệ thống trí nhớ 3 tầng của OpenClaw <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const icon   = document.getElementById('theme-icon');
+  const body   = document.body;
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark-mode');
+    icon.className = 'bi bi-sun-fill';
+  }
+  toggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>

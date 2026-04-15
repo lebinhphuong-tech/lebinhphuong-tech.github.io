@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tự động hóa với HEARTBEAT.md | Field Notes</title>
+  <meta name="description" content="Hướng dẫn cấu hình HEARTBEAT.md trong OpenClaw — biến agent từ chatbot thụ động thành trợ lý tự động chạy 24/7: monitoring, alerting, sub-agents và multi-agent setup.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary:    #149ddd;
+      --secondary:  #173b6c;
+      --text:       #272829;
+      --bg-light:   #f5f8fd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+
+    /* ── Header ── */
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); display: inline-block; margin-bottom: 16px; }
+    .post-series-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); display: inline-block; margin-bottom: 16px; margin-left: 6px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    /* ── TOC ── */
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Body ── */
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.4rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-check { color: #86efac; }
+    .code-section { color: #5bc8f5; font-weight: 700; }
+
+    /* ── How it works steps ── */
+    .how-steps { display: flex; flex-direction: column; gap: 0; margin: 1.6rem 0; position: relative; }
+    .how-steps::before { content: ''; position: absolute; left: 17px; top: 28px; bottom: 28px; width: 2px; background: linear-gradient(to bottom, var(--primary), #8b5cf6); opacity: 0.25; }
+    .how-step { display: flex; gap: 16px; align-items: flex-start; padding: 10px 0; }
+    .how-step-icon { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; background: var(--bg-light); border: 2px solid var(--primary); color: var(--primary); font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; z-index: 1; }
+    .how-step-body { padding-top: 6px; font-size: 14px; color: #3a4555; flex: 1; }
+    .how-step-body strong { color: var(--secondary); }
+    .how-step-body em { color: #8a9bb0; font-style: normal; font-size: 12.5px; display: block; margin-top: 2px; }
+
+    /* ── Interval badges ── */
+    .interval-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 1.2rem 0; }
+    .interval-card { border-radius: 10px; padding: 12px 14px; text-align: center; border: 1px solid; }
+    .interval-card .interval-val { font-family: 'Raleway', sans-serif; font-size: 1.2rem; font-weight: 800; display: block; }
+    .interval-card .interval-label { font-size: 11px; font-weight: 600; opacity: 0.8; margin-top: 2px; }
+    .ic-15  { background: rgba(20,157,221,0.08); border-color: rgba(20,157,221,0.25); color: #0369a1; }
+    .ic-30  { background: rgba(34,197,94,0.08);  border-color: rgba(34,197,94,0.25);  color: #166534; }
+    .ic-60  { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); color: #92400e; }
+    .ic-6h  { background: rgba(139,92,246,0.08); border-color: rgba(139,92,246,0.25); color: #4c1d95; }
+    .ic-day { background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.25);  color: #991b1b; }
+
+    /* ── Cost table ── */
+    .cost-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; }
+    .cost-table th { background: var(--bg-light); padding: 10px 14px; text-align: left; font-weight: 700; color: var(--secondary); border-bottom: 2px solid #e4eef8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .cost-table td { padding: 10px 14px; border-bottom: 1px solid #f0f5fb; vertical-align: top; }
+    .cost-table tr:last-child td { border-bottom: none; }
+    .cost-table tr:hover td { background: #f9fbff; }
+    .cost-table .cost-good { color: #059669; font-weight: 700; }
+    .cost-table .cost-ok   { color: #d97706; font-weight: 700; }
+    .cost-rec { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 20px; background: rgba(34,197,94,0.1); color: #059669; border: 1px solid rgba(34,197,94,0.25); }
+
+    /* ── Agent role cards ── */
+    .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 1.2rem 0; }
+    .agent-card { border-radius: 12px; padding: 16px; border: 1px solid; }
+    .agent-card-id { font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+    .agent-card-role { font-size: 13px; font-weight: 700; color: var(--secondary); margin-bottom: 6px; }
+    .agent-card-tasks { font-size: 12px; color: #6c7a8d; line-height: 1.6; }
+    .ac-dev  { background: rgba(20,157,221,0.06); border-color: rgba(20,157,221,0.2); }
+    .ac-ops  { background: rgba(239,68,68,0.06);  border-color: rgba(239,68,68,0.2); }
+    .ac-sup  { background: rgba(34,197,94,0.06);  border-color: rgba(34,197,94,0.2); }
+    .ac-dev .agent-card-id  { color: #0369a1; }
+    .ac-ops .agent-card-id  { color: #dc2626; }
+    .ac-sup .agent-card-id  { color: #059669; }
+
+    /* ── Security checklist ── */
+    .sec-list { list-style: none; padding: 0; margin: 0 0 1.2rem; }
+    .sec-list li { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f5fb; font-size: 14px; }
+    .sec-list li:last-child { border-bottom: none; }
+    .sec-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+    .si-shield { background: rgba(20,157,221,0.1); color: var(--primary); }
+    .si-log    { background: rgba(139,92,246,0.1); color: #7c3aed; }
+    .si-bell   { background: rgba(245,158,11,0.1); color: #d97706; }
+    .si-test   { background: rgba(16,185,129,0.1); color: #059669; }
+    .sec-body strong { color: var(--secondary); display: block; margin-bottom: 2px; }
+    .sec-body span   { color: #6c7a8d; font-size: 13px; }
+
+    /* ── Callouts ── */
+    .callout { border-radius: 10px; padding: 1rem 1.4rem; margin: 1.4rem 0; font-size: 13.5px; line-height: 1.7; display: flex; gap: 12px; align-items: flex-start; }
+    .callout i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .callout-tip    { background: rgba(34,197,94,0.08);  border-left: 4px solid #22c55e; color: #166534; }
+    .callout-tip i  { color: #22c55e; }
+    .callout-warn   { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout-warn i { color: #f59e0b; }
+    .callout-info   { background: rgba(20,157,221,0.08); border-left: 4px solid var(--primary); color: #1e40af; }
+    .callout-info i { color: var(--primary); }
+    .callout-dark   { background: rgba(15,23,42,0.06);   border-left: 4px solid #334155; color: #1e293b; }
+    .callout-dark i { color: #475569; }
+
+    /* ── Series nav ── */
+    .series-nav { background: rgba(20,157,221,0.05); border: 1px solid rgba(20,157,221,0.15); border-radius: 12px; padding: 1.2rem 1.6rem; margin-top: 2.4rem; }
+    .series-nav-title { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .series-nav-list { list-style: none; padding: 0; margin: 0; }
+    .series-nav-list li { padding: 5px 0; font-size: 13px; color: #6c7a8d; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(20,157,221,0.08); }
+    .series-nav-list li:last-child { border-bottom: none; }
+    .series-nav-list li.current { color: var(--secondary); font-weight: 700; }
+    .series-nav-list li.current::before { content: '→'; color: var(--primary); font-weight: 900; }
+    .series-nav-list li.upcoming::before { content: '○'; color: #ccc; }
+    .series-nav-list li.done::before { content: '✓'; color: #22c55e; }
+    .series-nav-list a { color: var(--primary); text-decoration: none; }
+    .series-nav-list a:hover { text-decoration: underline; }
+
+    /* ── Post footer ── */
+    .post-footer-nav { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 1.8rem; margin-top: 2rem; border-top: 2px solid var(--bg-light); }
+    .post-footer-nav a { font-size: 13px; font-weight: 600; color: #8a9bb0; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .post-footer-nav a:hover { color: var(--primary); }
+    .post-footer-nav .prev-post, .post-footer-nav .next-post { max-width: 280px; }
+    .post-footer-nav .next-post { text-align: right; }
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #b0c4d8; display: block; margin-bottom: 3px; }
+    .nav-title { color: var(--secondary); font-size: 13.5px; }
+
+    /* ── Theme ── */
+    #theme-toggle { position: fixed; top: 72px; right: 16px; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; z-index: 9999; background: linear-gradient(135deg, #149ddd, #0d7ab5); color: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20,157,221,0.4); transition: all 0.25s ease; }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* ── Dark mode ── */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; }
+    body.dark-mode .navbar-brand { color: var(--primary); }
+    body.dark-mode .nav-pills-custom a { background: #1e293b; color: #94a3b8; border-color: #1e3a52; }
+    body.dark-mode .nav-pills-custom a:hover, body.dark-mode .nav-pills-custom a.active { background: var(--primary); color: #fff; }
+    body.dark-mode .post-wrap    { background: #1e293b; }
+    body.dark-mode .post-header  { border-color: #1e3a52; }
+    body.dark-mode .post-title   { color: #e2e8f0; }
+    body.dark-mode .post-body    { color: #94a3b8; }
+    body.dark-mode .post-body h2 { color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .post-body h3 { color: #e2e8f0; }
+    body.dark-mode .post-body strong { color: #e2e8f0; }
+    body.dark-mode .post-body code  { background: #0f172a; border-color: #1e3a52; color: #f472b6; }
+    body.dark-mode .post-body a { color: #38bdf8; }
+    body.dark-mode .toc { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .toc-title { color: #4a6480; }
+    body.dark-mode .post-tag { background: #0f172a; color: #64748b; border-color: #1e3a52; }
+    body.dark-mode .how-step-body { color: #94a3b8; }
+    body.dark-mode .how-step-body strong { color: #e2e8f0; }
+    body.dark-mode .how-step-icon { background: #162032; }
+    body.dark-mode .interval-card { opacity: 0.9; }
+    body.dark-mode .cost-table th { background: #162032; color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .cost-table td { border-color: #1a2a3a; }
+    body.dark-mode .cost-table tr:hover td { background: #162032; }
+    body.dark-mode .agent-card { opacity: 0.9; }
+    body.dark-mode .agent-card-role { color: #e2e8f0; }
+    body.dark-mode .agent-card-tasks { color: #4a6480; }
+    body.dark-mode .sec-list li { border-color: #1a2a3a; color: #94a3b8; }
+    body.dark-mode .sec-body strong { color: #e2e8f0; }
+    body.dark-mode .sec-body span   { color: #4a6480; }
+    body.dark-mode .callout-tip    { background: rgba(34,197,94,0.07);  color: #4ade80; }
+    body.dark-mode .callout-warn   { background: rgba(245,158,11,0.07); color: #fbbf24; }
+    body.dark-mode .callout-info   { background: rgba(20,157,221,0.07); color: #7dd3fc; }
+    body.dark-mode .callout-dark   { background: rgba(15,23,42,0.4);    border-color: #475569; color: #94a3b8; }
+    body.dark-mode .series-nav { background: rgba(20,157,221,0.04); border-color: rgba(20,157,221,0.12); }
+    body.dark-mode .series-nav-list li { color: #4a6480; border-color: rgba(20,157,221,0.07); }
+    body.dark-mode .series-nav-list li.current { color: #e2e8f0; }
+    body.dark-mode .post-footer-nav { border-color: #1e3a52; }
+    body.dark-mode .nav-title { color: #e2e8f0; }
+    body.dark-mode .breadcrumb a { color: var(--primary); }
+    body.dark-mode .breadcrumb-item.active { color: #64748b; }
+
+    @media (max-width: 768px) {
+      .post-wrap { padding: 1.8rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+      .interval-grid { grid-template-columns: repeat(3, 1fr); }
+      .agent-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4" style="max-width: 900px;">
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">OpenClaw HEARTBEAT.md</li>
+    </ol>
+  </nav>
+
+  <a href="../blog.html" class="back-to-blog">
+    <i class="bi bi-arrow-left"></i> Về Field Notes
+  </a>
+
+  <div class="post-wrap">
+
+    <!-- ── Header ── -->
+    <div class="post-header">
+      <span class="post-category-badge">Tooling & Tips</span>
+      <span class="post-series-badge"><i class="bi bi-collection me-1"></i>Series: OpenClaw</span>
+      <h1 class="post-title">Tự động hóa với HEARTBEAT.md:<br>Để OpenClaw làm việc khi bạn ngủ</h1>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-person-fill"></i> Lê Bình Phương</span>
+        <span><i class="bi bi-calendar3"></i> April 2026</span>
+        <span><i class="bi bi-clock"></i> 12 phút đọc</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">OpenClaw</span>
+        <span class="post-tag">Automation</span>
+        <span class="post-tag">Monitoring</span>
+        <span class="post-tag">Multi-Agent</span>
+      </div>
+    </div>
+
+    <!-- ── TOC ── -->
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#reactive-vs-proactive">Từ "hỏi rồi trả lời" sang "tự biết mà làm"</a></li>
+        <li><a href="#how-heartbeat-works">HEARTBEAT.md hoạt động thế nào?</a></li>
+        <li><a href="#first-heartbeat">Viết HEARTBEAT.md đầu tiên</a></li>
+        <li><a href="#interval-config">Cấu hình tần suất heartbeat</a></li>
+        <li><a href="#subagents">Sub-Agents: chia nhỏ công việc phức tạp</a></li>
+        <li><a href="#vps-example">Ví dụ thực tế: setup cho VPS OnMay</a></li>
+        <li><a href="#memory-integration">Kết hợp Heartbeat với Memory</a></li>
+        <li><a href="#multi-agent">Multi-Agent: mỗi agent một vai trò</a></li>
+        <li><a href="#security">Bảo mật cho autonomous workflows</a></li>
+        <li><a href="#cost">Chi phí thực tế</a></li>
+      </ol>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="post-body">
+
+      <!-- 1. Reactive vs proactive -->
+      <h2 id="reactive-vs-proactive"><i class="bi bi-arrow-left-right"></i> Từ "hỏi rồi trả lời" sang "tự biết mà làm"</h2>
+
+      <p>
+        Phần lớn AI agent hoạt động theo kiểu <strong>reactive</strong>: bạn hỏi, nó trả lời. Bạn không hỏi, nó im.
+        Mô hình này ổn cho nhiều tác vụ — nhưng có một lớp công việc quan trọng mà không nên phụ thuộc vào việc
+        bạn nhớ hỏi: server có đang chạy không, SSL certificate sắp hết hạn chưa, backup đêm qua thành công chưa?
+      </p>
+
+      <p>
+        OpenClaw giải quyết bằng <strong>HEARTBEAT.md</strong> — một file checklist mà agent tự chạy qua định kỳ,
+        giống nhịp tim đập đều. Không cần bạn nhắc, không cần bạn online.
+        Agent chỉ "quấy rầy" bạn khi <em>thực sự có vấn đề</em>.
+      </p>
+
+      <!-- 2. How it works -->
+      <h2 id="how-heartbeat-works"><i class="bi bi-heart-pulse-fill"></i> HEARTBEAT.md hoạt động thế nào?</h2>
+
+      <p>
+        OpenClaw Gateway chạy như daemon ở background. Mặc định <strong>mỗi 30 phút</strong>, agent thực hiện một
+        vòng heartbeat theo trình tự sau:
+      </p>
+
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-step-icon">1</div>
+          <div class="how-step-body">
+            <strong>Đọc HEARTBEAT.md</strong> trong workspace
+            <em>Load toàn bộ checklist vào context</em>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-icon">2</div>
+          <div class="how-step-body">
+            <strong>Duyệt từng mục</strong>, đánh giá tần suất và điều kiện
+            <em>Bỏ qua mục "mỗi giờ" nếu chưa đủ 1 giờ từ lần kiểm tra trước</em>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-icon">3</div>
+          <div class="how-step-body">
+            <strong>Thực hiện hành động</strong> cho các mục đủ điều kiện
+            <em>SSH, curl, kiểm tra log, chạy script...</em>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-icon">4</div>
+          <div class="how-step-body">
+            <strong>Nhắn alert</strong> nếu có vấn đề cần chú ý
+            <em>Nếu mọi thứ ổn → im lặng, trả về <code>HEARTBEAT_OK</code></em>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div>
+          <strong>Nguyên tắc "không spam":</strong> Agent chỉ liên lạc khi có vấn đề thực sự. Không có báo cáo định kỳ
+          vô nghĩa, không có "heartbeat completed" mỗi 30 phút. Silence = everything is OK.
+        </div>
+      </div>
+
+      <!-- 3. First heartbeat -->
+      <h2 id="first-heartbeat"><i class="bi bi-file-earmark-plus"></i> Viết HEARTBEAT.md đầu tiên</h2>
+
+      <p>Bắt đầu đơn giản. Đây là ví dụ cho developer chạy một VPS:</p>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>HEARTBEAT.md — Ví dụ cơ bản</span>
+      </div>
+      <pre><code><span class="code-section"># Heartbeat Checklist</span>
+
+<span class="code-key">## Mỗi 30 phút</span>
+<span class="code-check">- [ ]</span> Kiểm tra server production (<span class="code-num">10.10.10.2</span>) có respond không
+  - Ping hoặc curl health endpoint /api/v1/health
+  - Nếu không respond sau 3 lần thử: gửi alert Telegram
+
+<span class="code-key">## Mỗi giờ</span>
+<span class="code-check">- [ ]</span> Kiểm tra disk usage trên VPS
+  - Nếu > 85%: cảnh báo thường
+  - Nếu > 95%: cảnh báo khẩn + tự dọn Docker images cũ
+
+<span class="code-key">## Mỗi 6 giờ</span>
+<span class="code-check">- [ ]</span> Kiểm tra SSL certificate
+  - Còn &lt; 7 ngày: nhắc renew thủ công
+  - Còn &lt; 1 ngày: chạy <span class="code-str">certbot renew</span> tự động
+
+<span class="code-key">## Mỗi ngày (8h sáng)</span>
+<span class="code-check">- [ ]</span> Tóm tắt hoạt động hôm qua
+  - Commits, deployments, incidents
+  - Gửi bản tóm tắt compact qua Telegram
+
+<span class="code-key">## Mỗi tuần (thứ Hai)</span>
+<span class="code-check">- [ ]</span> Kiểm tra backup database
+  - File backup mới nhất phải &lt; 24h
+  - Kích thước backup phải hợp lý (so với lần trước)
+  - Báo cáo nếu thiếu hoặc bất thường</code></pre>
+
+      <div class="callout callout-info">
+        <i class="bi bi-clock-history"></i>
+        <div>
+          <strong>Không cần cấu hình cron.</strong> Agent tự phân biệt tần suất từ mô tả: <em>"mỗi giờ"</em>,
+          <em>"mỗi 6 giờ"</em>, <em>"mỗi ngày lúc 8h"</em>. Nó theo dõi thời điểm kiểm tra trước và chỉ thực hiện
+          lại khi đủ điều kiện.
+        </div>
+      </div>
+
+      <!-- 4. Interval config -->
+      <h2 id="interval-config"><i class="bi bi-sliders"></i> Cấu hình tần suất heartbeat</h2>
+
+      <p>
+        Heartbeat interval là tần suất agent <em>kiểm tra</em> checklist — không phải tần suất thực hiện từng mục.
+        Agent kiểm tra mỗi 30 phút, nhưng mục "mỗi ngày" chỉ chạy một lần mỗi ngày.
+      </p>
+
+      <div class="interval-grid">
+        <div class="interval-card ic-15"><span class="interval-val">15m</span><span class="interval-label">Production-critical</span></div>
+        <div class="interval-card ic-30"><span class="interval-val">30m</span><span class="interval-label">Mặc định (khuyến nghị)</span></div>
+        <div class="interval-card ic-60"><span class="interval-val">60m</span><span class="interval-label">Oauth mode / tiết kiệm</span></div>
+        <div class="interval-card ic-6h"><span class="interval-val">6h</span><span class="interval-label">Dev environment</span></div>
+        <div class="interval-card ic-day"><span class="interval-val">24h</span><span class="interval-label">Tối thiểu / test</span></div>
+      </div>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>openclaw.json</span>
+      </div>
+      <pre><code>{
+  <span class="code-key">"gateway"</span>: {
+    <span class="code-key">"heartbeat"</span>: {
+      <span class="code-key">"interval"</span>: <span class="code-str">"15m"</span>,    <span class="code-comment">// 15m | 30m | 1h | 6h | 24h</span>
+      <span class="code-key">"enabled"</span>:  <span class="code-num">true</span>
+    }
+  }
+}</code></pre>
+
+      <div class="callout callout-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+          <strong>Không đặt interval dưới 10 phút.</strong> Mỗi heartbeat là một phiên agent đầy đủ — tốn token và
+          tài nguyên. Với interval = 5m, bạn chạy 288 phiên mỗi ngày. <strong>15–30 phút là điểm cân bằng tốt</strong>
+          giữa phản ứng nhanh và chi phí.
+        </div>
+      </div>
+
+      <!-- 5. Sub-agents -->
+      <h2 id="subagents"><i class="bi bi-diagram-2-fill"></i> Sub-Agents: chia nhỏ công việc phức tạp</h2>
+
+      <p>
+        Khi một tác vụ heartbeat quá phức tạp cho một agent xử lý đơn lẻ, OpenClaw hỗ trợ
+        <strong>sub-agents</strong> — agent con được sinh ra để xử lý một phần công việc cụ thể.
+        Agent chính tổng hợp kết quả, giống bạn giao việc cho team rồi review output.
+      </p>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>HEARTBEAT.md — Ví dụ dùng sub-agents</span>
+      </div>
+      <pre><code><span class="code-key">## Báo cáo tuần (thứ Hai 9h)</span>
+<span class="code-check">- [ ]</span> Spawn sub-agent <span class="code-str">"report-builder"</span>
+  → Thu thập commits, PR, deployment từ GitHub
+<span class="code-check">- [ ]</span> Spawn sub-agent <span class="code-str">"metrics-analyzer"</span>
+  → Phân tích traffic, latency, error rate từ Grafana
+<span class="code-check">- [ ]</span> Tổng hợp kết quả từ cả hai sub-agent
+<span class="code-check">- [ ]</span> Format thành báo cáo compact → gửi Telegram</code></pre>
+
+      <p>Quản lý sub-agents từ CLI:</p>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>bash</span>
+      </div>
+      <pre><code><span class="code-comment"># Xem sub-agents đang chạy</span>
+openclaw agents list
+
+<span class="code-comment"># Dừng một sub-agent cụ thể</span>
+openclaw agents kill report-builder
+
+<span class="code-comment"># Dừng tất cả sub-agents</span>
+openclaw agents kill --all</code></pre>
+
+      <!-- 6. VPS example -->
+      <h2 id="vps-example"><i class="bi bi-server"></i> Ví dụ thực tế: setup cho VPS OnMay</h2>
+
+      <p>
+        Đây là <code>HEARTBEAT.md</code> hoàn chỉnh cho VPS chạy AI agent 24/7 — đã được tinh chỉnh qua thực tế
+        để tránh false positive và alert fatigue:
+      </p>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>HEARTBEAT.md — Production VPS</span>
+      </div>
+      <pre><code><span class="code-section"># OnMay VPS Heartbeat</span>
+
+<span class="code-key">## Monitoring (mỗi 15 phút)</span>
+<span class="code-check">- [ ]</span> Health check: curl http://localhost:3000/api/v1/health
+  - Nếu fail: restart Docker container "openclaw-gateway"
+  - Nếu fail sau restart: alert Telegram + ghi log incident
+
+<span class="code-key">## Tài nguyên (mỗi giờ)</span>
+<span class="code-check">- [ ]</span> RAM usage
+  - &gt; 85%: <span class="code-str">docker system prune -f</span>
+  - &gt; 95% sau prune: alert khẩn cấp
+<span class="code-check">- [ ]</span> Disk usage
+  - &gt; 80%: xoá Docker images không dùng
+  - Log rotation cho files &gt; 100MB
+
+<span class="code-key">## OpenClaw health (mỗi 6 giờ)</span>
+<span class="code-check">- [ ]</span> Ping agent, kiểm tra responsive
+  - Nếu không response: restart gateway
+<span class="code-check">- [ ]</span> Memory index freshness
+  - Nếu index &gt; 24h chưa rebuild: trigger reindex
+
+<span class="code-key">## Bảo mật (mỗi ngày)</span>
+<span class="code-check">- [ ]</span> Auth log — brute force detection
+  - &gt; 50 failed login từ cùng IP: block bằng iptables
+<span class="code-check">- [ ]</span> Docker image vulnerability scan
+  - Alert nếu CVE severity HIGH+
+
+<span class="code-key">## Báo cáo ngày (7h sáng)</span>
+<span class="code-check">- [ ]</span> Tóm tắt compact: uptime, request count,
+  top 5 errors, CPU/RAM/disk trung bình
+  → Gửi Telegram</code></pre>
+
+      <!-- 7. Memory integration -->
+      <h2 id="memory-integration"><i class="bi bi-link-45deg"></i> Kết hợp Heartbeat với Memory</h2>
+
+      <p>
+        Một pattern hiệu quả: để heartbeat <strong>tự ghi kết quả vào daily notes</strong>. Khi bạn hỏi
+        <em>"server hôm nay thế nào?"</em>, agent đọc notes thay vì phải chạy lại kiểm tra — nhanh hơn và không
+        tốn thêm tài nguyên.
+      </p>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>HEARTBEAT.md — Thêm vào cuối file</span>
+      </div>
+      <pre><code><span class="code-key">## Logging (mỗi heartbeat)</span>
+<span class="code-check">- [ ]</span> Ghi kết quả vào memory/YYYY-MM-DD.md
+  - Format: <span class="code-str">## Heartbeat [HH:MM] — [OK/WARN/ERROR]</span>
+  - Chỉ ghi chi tiết khi có cảnh báo hoặc lỗi
+  - Mục OK chỉ ghi một dòng tóm tắt</code></pre>
+
+      <p>
+        Kết quả trong daily note sẽ trông như thế này:
+      </p>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>memory/2026-04-12.md — Heartbeat logs</span>
+      </div>
+      <pre><code><span class="code-key">## Heartbeat 07:00 — OK</span> (uptime 99.9%, disk 42%, RAM 61%)
+
+<span class="code-key">## Heartbeat 09:00 — WARN</span>
+- Disk tăng lên 83% — đã chạy docker system prune
+- Disk sau prune: 71% — ổn
+
+<span class="code-key">## Heartbeat 15:30 — OK</span> (routine check)</code></pre>
+
+      <!-- 8. Multi-agent -->
+      <h2 id="multi-agent"><i class="bi bi-people-fill"></i> Multi-Agent: mỗi agent một vai trò</h2>
+
+      <p>
+        OpenClaw hỗ trợ chạy nhiều agent song song trên cùng Gateway, mỗi agent có workspace riêng,
+        HEARTBEAT.md riêng, và kênh giao tiếp riêng. Tin nhắn đến được Gateway route đến đúng agent
+        dựa trên channel và nội dung.
+      </p>
+
+      <div class="agent-grid">
+        <div class="agent-card ac-dev">
+          <div class="agent-card-id">dev-assistant</div>
+          <div class="agent-card-role">Developer Assistant</div>
+          <div class="agent-card-tasks">Heartbeat: CI/CD status, code quality, PR reviews chưa merge</div>
+        </div>
+        <div class="agent-card ac-ops">
+          <div class="agent-card-id">ops-monitor</div>
+          <div class="agent-card-role">Ops & Monitoring</div>
+          <div class="agent-card-tasks">Heartbeat: server health, security scan, backup verification</div>
+        </div>
+        <div class="agent-card ac-sup">
+          <div class="agent-card-id">customer-support</div>
+          <div class="agent-card-role">Customer Support</div>
+          <div class="agent-card-tasks">Heartbeat: ticket chưa trả lời, SLA nearing breach, escalation</div>
+        </div>
+      </div>
+
+      <div class="pre-header">
+        <div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <span>openclaw.json — Multi-agent config</span>
+      </div>
+      <pre><code>{
+  <span class="code-key">"agents"</span>: {
+    <span class="code-key">"list"</span>: [
+      {
+        <span class="code-key">"id"</span>:        <span class="code-str">"dev-assistant"</span>,
+        <span class="code-key">"workspace"</span>: <span class="code-str">"~/.openclaw/workspaces/dev"</span>,
+        <span class="code-key">"channels"</span>:  [<span class="code-str">"telegram-personal"</span>]
+      },
+      {
+        <span class="code-key">"id"</span>:        <span class="code-str">"ops-monitor"</span>,
+        <span class="code-key">"workspace"</span>: <span class="code-str">"~/.openclaw/workspaces/ops"</span>,
+        <span class="code-key">"channels"</span>:  [<span class="code-str">"telegram-alerts"</span>]
+      },
+      {
+        <span class="code-key">"id"</span>:        <span class="code-str">"customer-support"</span>,
+        <span class="code-key">"workspace"</span>: <span class="code-str">"~/.openclaw/workspaces/support"</span>,
+        <span class="code-key">"channels"</span>:  [<span class="code-str">"website-chat"</span>]
+      }
+    ]
+  }
+}</code></pre>
+
+      <!-- 9. Security -->
+      <h2 id="security"><i class="bi bi-shield-fill-lock"></i> Bảo mật cho autonomous workflows</h2>
+
+      <p>
+        Agent chạy tự động 24/7 có attack surface lớn hơn agent chỉ chạy khi bạn chat.
+        Cần thiết lập kiểm soát chặt hơn ngay từ đầu.
+      </p>
+
+      <ul class="sec-list">
+        <li>
+          <div class="sec-icon si-shield"><i class="bi bi-lock-fill"></i></div>
+          <div class="sec-body">
+            <strong>Giới hạn quyền theo nguyên tắc least privilege</strong>
+            <span>Chỉ liệt kê trong HEARTBEAT.md những tác vụ bạn tin tưởng agent tự làm. Hành động nguy hiểm
+            (xóa dữ liệu, deploy production) nên yêu cầu xác nhận trước — thêm "hỏi trước khi thực hiện"
+            vào mô tả mục đó.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sec-icon si-log"><i class="bi bi-journal-code"></i></div>
+          <div class="sec-body">
+            <strong>Audit log đầy đủ</strong>
+            <span>Bật hook <code>log-tool-calls</code> để ghi lại mọi hành động agent thực hiện trong heartbeat.
+            Khi có vấn đề bạn sẽ có trail đầy đủ để điều tra — không bao giờ debug blind.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sec-icon si-bell"><i class="bi bi-bell-slash-fill"></i></div>
+          <div class="sec-body">
+            <strong>Chống alert fatigue</strong>
+            <span>Đừng để agent gửi quá nhiều alert — bạn sẽ bắt đầu ignore chúng. Đặt ngưỡng hợp lý, gom
+            nhiều cảnh báo nhỏ thành một tóm tắt, và chỉ gửi kênh riêng (không chung với chat thông thường).</span>
+          </div>
+        </li>
+        <li>
+          <div class="sec-icon si-test"><i class="bi bi-play-circle-fill"></i></div>
+          <div class="sec-body">
+            <strong>Test bằng dry-run trước khi bật auto-fix</strong>
+            <span>Chạy heartbeat vài ngày ở chế độ "chỉ log, không hành động" trước khi bật auto-fix.
+            Đảm bảo agent phán đoán đúng và không trigger false positive trước khi cho nó quyền hành động thật.</span>
+          </div>
+        </li>
+      </ul>
+
+      <!-- 10. Cost -->
+      <h2 id="cost"><i class="bi bi-currency-dollar"></i> Chi phí thực tế</h2>
+
+      <p>
+        Mỗi heartbeat tick là một phiên agent nhỏ, tiêu tốn khoảng <strong>1.000–5.000 token</strong> tùy độ phức tạp
+        của checklist. Dưới đây là ước tính thực tế với interval 30 phút (48 ticks/ngày):
+      </p>
+
+      <table class="cost-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Giá (input)</th>
+            <th>~Token/ngày</th>
+            <th>Chi phí/ngày</th>
+            <th>Chi phí/tháng</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Claude Haiku</strong></td>
+            <td>$0.25 / 1M</td>
+            <td>~144K</td>
+            <td class="cost-good">~$0.04</td>
+            <td class="cost-good">~$1.2</td>
+            <td><span class="cost-rec">Khuyến nghị cho heartbeat</span></td>
+          </tr>
+          <tr>
+            <td><strong>GPT-4o mini</strong></td>
+            <td>$0.15 / 1M</td>
+            <td>~144K</td>
+            <td class="cost-good">~$0.02</td>
+            <td class="cost-good">~$0.7</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><strong>Claude Sonnet</strong></td>
+            <td>$3 / 1M</td>
+            <td>~144K</td>
+            <td class="cost-ok">~$0.43</td>
+            <td class="cost-ok">~$13</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip">
+        <i class="bi bi-piggy-bank-fill"></i>
+        <div>
+          <strong>Mẹo tiết kiệm:</strong> Dùng model nhỏ (<strong>Haiku, GPT-4o mini</strong>) cho heartbeat.
+          Phần lớn tác vụ monitoring — kiểm tra ping, đọc disk usage, so sánh số — không cần model mạnh.
+          Chỉ dùng Sonnet/Opus khi cần phân tích phức tạp hoặc viết báo cáo.
+        </div>
+      </div>
+
+      <div class="callout callout-dark">
+        <i class="bi bi-quote"></i>
+        <div>
+          Bắt đầu với 2–3 mục heartbeat đơn giản (health check, disk monitor, daily summary).
+          Thêm dần khi bạn tin tưởng agent hơn. <strong>Agent chạy tự động chỉ tốt khi bạn thiết lập
+          đúng giới hạn cho nó.</strong>
+        </div>
+      </div>
+
+      <!-- Series nav -->
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection-fill"></i> Series: Làm chủ OpenClaw</div>
+        <ul class="series-nav-list">
+          <li class="done"><a href="openclaw-install.html">Bài 1: Cài đặt và khởi động nhanh</a></li>
+          <li class="done"><a href="openclaw-workspace.html">Bài 2: Cấu hình Workspace từ A-Z</a></li>
+          <li class="done"><a href="openclaw-memory.html">Bài 3: Hệ thống trí nhớ 3 tầng</a></li>
+          <li class="current">Bài 4: HEARTBEAT.md — tự động hóa 24/7 (bài này)</li>
+          <li class="upcoming"><a href="openclaw-skills-mcp.html">Bài 5: Skills, MCP Servers & Plugins</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ── Footer ── -->
+    <div class="post-footer-nav">
+      <div class="prev-post">
+        <span class="nav-label">Bài trước</span>
+        <a href="openclaw-memory.html" class="nav-title"><i class="bi bi-arrow-left"></i> Hệ thống trí nhớ 3 tầng</a>
+      </div>
+      <div class="next-post">
+        <span class="nav-label">Bài tiếp theo</span>
+        <a href="openclaw-skills-mcp.html" class="nav-title">Skills, MCP Servers & Plugins <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const icon   = document.getElementById('theme-icon');
+  const body   = document.body;
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark-mode');
+    icon.className = 'bi bi-sun-fill';
+  }
+  toggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>

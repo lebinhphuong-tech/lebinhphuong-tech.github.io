@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dùng OpenClaw hiệu quả: Giảm token, giữ trí nhớ | Field Notes</title>
+  <meta name="description" content="Hướng dẫn tối ưu token consumption cho OpenClaw agent: chọn đúng model, rút gọn system prompt, dùng Persistent Memory, quản lý context window và theo dõi chi phí.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary:    #149ddd;
+      --secondary:  #173b6c;
+      --text:       #272829;
+      --bg-light:   #f5f8fd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+
+    /* ── Header ── */
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); display: inline-block; margin-bottom: 16px; }
+    .post-series-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); display: inline-block; margin-bottom: 16px; margin-left: 6px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    /* ── TOC ── */
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Body ── */
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.4rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-del { color: #f87171; }
+    .code-add { color: #86efac; }
+
+    /* ── Model comparison table ── */
+    .model-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; border-radius: 10px; overflow: hidden; }
+    .model-table th { padding: 11px 16px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .model-table td { padding: 11px 16px; vertical-align: top; }
+    .model-table tr.tier-cheap th,
+    .model-table tr.tier-cheap { background: rgba(34,197,94,0.06); }
+    .model-table tr.tier-mid   { background: rgba(245,158,11,0.06); }
+    .model-table tr.tier-heavy { background: rgba(239,68,68,0.06); }
+    .model-table thead tr { background: var(--bg-light); }
+    .model-table thead th { color: var(--secondary); border-bottom: 2px solid #e4eef8; }
+    .model-table tbody tr { border-bottom: 1px solid #f0f5fb; }
+    .model-table tbody tr:last-child { border-bottom: none; }
+    .tier-badge { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px; display: inline-block; }
+    .tb-cheap { background: rgba(34,197,94,0.12); color: #059669; border: 1px solid rgba(34,197,94,0.3); }
+    .tb-mid   { background: rgba(245,158,11,0.12); color: #92400e; border: 1px solid rgba(245,158,11,0.3); }
+    .tb-heavy { background: rgba(239,68,68,0.12); color: #991b1b; border: 1px solid rgba(239,68,68,0.3); }
+    .model-names { font-family: 'Courier New', monospace; font-size: 12px; color: var(--primary); }
+
+    /* ── Before/after prompt compare ── */
+    .prompt-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 1.4rem 0; }
+    .prompt-box { border-radius: 10px; overflow: hidden; }
+    .prompt-box-label { padding: 8px 14px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px; }
+    .pb-before .prompt-box-label { background: rgba(239,68,68,0.1); color: #dc2626; border-bottom: 1px solid rgba(239,68,68,0.15); }
+    .pb-after  .prompt-box-label { background: rgba(34,197,94,0.1); color: #059669; border-bottom: 1px solid rgba(34,197,94,0.15); }
+    .pb-before { border: 1px solid rgba(239,68,68,0.2); }
+    .pb-after  { border: 1px solid rgba(34,197,94,0.2); }
+    .prompt-box-body { font-family: 'Courier New', monospace; font-size: 12.5px; line-height: 1.65; padding: 14px; color: #3a4555; background: #fff; white-space: pre-wrap; }
+    .pb-before .prompt-box-body { background: rgba(239,68,68,0.03); }
+    .pb-after  .prompt-box-body { background: rgba(34,197,94,0.03); }
+    .prompt-saving { text-align: center; font-size: 12px; color: #8a9bb0; margin-top: 6px; }
+    .saving-badge { display: inline-block; font-size: 11px; font-weight: 800; padding: 3px 12px; border-radius: 20px; background: rgba(34,197,94,0.1); color: #059669; border: 1px solid rgba(34,197,94,0.25); }
+
+    /* ── Memory tier compact ── */
+    .mem-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 1.2rem 0; }
+    .mem-card { border-radius: 12px; padding: 14px 16px; border: 1px solid; }
+    .mem-card-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .mem-card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .mem-card-desc { font-size: 12px; line-height: 1.55; opacity: 0.8; }
+    .mc-always  { background: rgba(20,157,221,0.07); border-color: rgba(20,157,221,0.25); color: #1e40af; }
+    .mc-daily   { background: rgba(34,197,94,0.07);  border-color: rgba(34,197,94,0.25);  color: #166534; }
+    .mc-search  { background: rgba(139,92,246,0.07); border-color: rgba(139,92,246,0.25); color: #4c1d95; }
+
+    /* ── Optimization checklist table ── */
+    .opt-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; }
+    .opt-table th { background: var(--secondary); color: #fff; padding: 11px 16px; text-align: left; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .opt-table td { padding: 11px 16px; border-bottom: 1px solid #f0f5fb; vertical-align: middle; }
+    .opt-table tr:last-child td { border-bottom: none; }
+    .opt-table tr:hover td { background: #f9fbff; }
+    .opt-num { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 800; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; }
+    .saving-cell { font-weight: 700; color: #059669; }
+
+    /* ── Tips list ── */
+    .tip-list { list-style: none; padding: 0; margin: 0 0 1.2rem; }
+    .tip-list li { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f5fb; font-size: 14px; }
+    .tip-list li:last-child { border-bottom: none; }
+    .tip-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .ti-green  { background: rgba(34,197,94,0.1);  color: #059669; }
+    .ti-blue   { background: rgba(20,157,221,0.1); color: var(--primary); }
+    .ti-purple { background: rgba(139,92,246,0.1); color: #7c3aed; }
+    .ti-orange { background: rgba(245,158,11,0.1); color: #d97706; }
+    .tip-body strong { color: var(--secondary); display: block; margin-bottom: 2px; }
+    .tip-body span   { color: #6c7a8d; font-size: 13px; }
+
+    /* ── Callouts ── */
+    .callout { border-radius: 10px; padding: 1rem 1.4rem; margin: 1.4rem 0; font-size: 13.5px; line-height: 1.7; display: flex; gap: 12px; align-items: flex-start; }
+    .callout i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .callout-tip    { background: rgba(34,197,94,0.08);  border-left: 4px solid #22c55e; color: #166534; }
+    .callout-tip i  { color: #22c55e; }
+    .callout-warn   { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout-warn i { color: #f59e0b; }
+    .callout-info   { background: rgba(20,157,221,0.08); border-left: 4px solid var(--primary); color: #1e40af; }
+    .callout-info i { color: var(--primary); }
+    .callout-dark   { background: rgba(15,23,42,0.06);   border-left: 4px solid #334155; color: #1e293b; }
+    .callout-dark i { color: #475569; }
+
+    /* ── Series nav ── */
+    .series-nav { background: rgba(20,157,221,0.05); border: 1px solid rgba(20,157,221,0.15); border-radius: 12px; padding: 1.2rem 1.6rem; margin-top: 2.4rem; }
+    .series-nav-title { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .series-nav-list { list-style: none; padding: 0; margin: 0; }
+    .series-nav-list li { padding: 5px 0; font-size: 13px; color: #6c7a8d; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(20,157,221,0.08); }
+    .series-nav-list li:last-child { border-bottom: none; }
+    .series-nav-list li.current { color: var(--secondary); font-weight: 700; }
+    .series-nav-list li.current::before { content: '→'; color: var(--primary); font-weight: 900; }
+    .series-nav-list li.upcoming::before { content: '○'; color: #ccc; }
+    .series-nav-list li.done::before { content: '✓'; color: #22c55e; }
+    .series-nav-list a { color: var(--primary); text-decoration: none; }
+    .series-nav-list a:hover { text-decoration: underline; }
+
+    /* ── Post footer ── */
+    .post-footer-nav { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 1.8rem; margin-top: 2rem; border-top: 2px solid var(--bg-light); }
+    .post-footer-nav a { font-size: 13px; font-weight: 600; color: #8a9bb0; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .post-footer-nav a:hover { color: var(--primary); }
+    .post-footer-nav .prev-post, .post-footer-nav .next-post { max-width: 280px; }
+    .post-footer-nav .next-post { text-align: right; }
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #b0c4d8; display: block; margin-bottom: 3px; }
+    .nav-title { color: var(--secondary); font-size: 13.5px; }
+
+    /* ── Theme ── */
+    #theme-toggle { position: fixed; top: 72px; right: 16px; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; z-index: 9999; background: linear-gradient(135deg, #149ddd, #0d7ab5); color: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20,157,221,0.4); transition: all 0.25s ease; }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* ── Dark mode ── */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; }
+    body.dark-mode .navbar-brand { color: var(--primary); }
+    body.dark-mode .nav-pills-custom a { background: #1e293b; color: #94a3b8; border-color: #1e3a52; }
+    body.dark-mode .nav-pills-custom a:hover, body.dark-mode .nav-pills-custom a.active { background: var(--primary); color: #fff; }
+    body.dark-mode .post-wrap    { background: #1e293b; }
+    body.dark-mode .post-header  { border-color: #1e3a52; }
+    body.dark-mode .post-title   { color: #e2e8f0; }
+    body.dark-mode .post-body    { color: #94a3b8; }
+    body.dark-mode .post-body h2 { color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .post-body h3 { color: #e2e8f0; }
+    body.dark-mode .post-body strong { color: #e2e8f0; }
+    body.dark-mode .post-body code  { background: #0f172a; border-color: #1e3a52; color: #f472b6; }
+    body.dark-mode .post-body a { color: #38bdf8; }
+    body.dark-mode .toc { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .toc-title { color: #4a6480; }
+    body.dark-mode .post-tag { background: #0f172a; color: #64748b; border-color: #1e3a52; }
+    body.dark-mode .model-table thead tr { background: #162032; }
+    body.dark-mode .model-table thead th { color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .model-table tbody tr { border-color: #1a2a3a; }
+    body.dark-mode .model-table tr.tier-cheap { background: rgba(34,197,94,0.04); }
+    body.dark-mode .model-table tr.tier-mid   { background: rgba(245,158,11,0.04); }
+    body.dark-mode .model-table tr.tier-heavy { background: rgba(239,68,68,0.04); }
+    body.dark-mode .prompt-box-body { background: #162032; color: #94a3b8; }
+    body.dark-mode .pb-before { border-color: rgba(239,68,68,0.2); }
+    body.dark-mode .pb-after  { border-color: rgba(34,197,94,0.2); }
+    body.dark-mode .pb-before .prompt-box-body { background: rgba(239,68,68,0.04); }
+    body.dark-mode .pb-after  .prompt-box-body { background: rgba(34,197,94,0.04); }
+    body.dark-mode .mem-card { opacity: 0.9; }
+    body.dark-mode .mem-card-title { color: inherit; }
+    body.dark-mode .opt-table th { background: #0d1b2a; }
+    body.dark-mode .opt-table td { border-color: #1a2a3a; }
+    body.dark-mode .opt-table tr:hover td { background: #162032; }
+    body.dark-mode .tip-list li { border-color: #1a2a3a; color: #94a3b8; }
+    body.dark-mode .tip-body strong { color: #e2e8f0; }
+    body.dark-mode .tip-body span   { color: #4a6480; }
+    body.dark-mode .callout-tip    { background: rgba(34,197,94,0.07);  color: #4ade80; }
+    body.dark-mode .callout-warn   { background: rgba(245,158,11,0.07); color: #fbbf24; }
+    body.dark-mode .callout-info   { background: rgba(20,157,221,0.07); color: #7dd3fc; }
+    body.dark-mode .callout-dark   { background: rgba(15,23,42,0.4);    border-color: #475569; color: #94a3b8; }
+    body.dark-mode .series-nav { background: rgba(20,157,221,0.04); border-color: rgba(20,157,221,0.12); }
+    body.dark-mode .series-nav-list li { color: #4a6480; border-color: rgba(20,157,221,0.07); }
+    body.dark-mode .series-nav-list li.current { color: #e2e8f0; }
+    body.dark-mode .post-footer-nav { border-color: #1e3a52; }
+    body.dark-mode .nav-title { color: #e2e8f0; }
+    body.dark-mode .breadcrumb a { color: var(--primary); }
+    body.dark-mode .breadcrumb-item.active { color: #64748b; }
+
+    @media (max-width: 768px) {
+      .post-wrap { padding: 1.8rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+      .prompt-compare { grid-template-columns: 1fr; }
+      .mem-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4" style="max-width: 900px;">
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">OpenClaw — Tối ưu Token</li>
+    </ol>
+  </nav>
+
+  <a href="../blog.html" class="back-to-blog">
+    <i class="bi bi-arrow-left"></i> Về Field Notes
+  </a>
+
+  <div class="post-wrap">
+
+    <!-- ── Header ── -->
+    <div class="post-header">
+      <span class="post-category-badge">Tooling & Tips</span>
+      <span class="post-series-badge"><i class="bi bi-collection me-1"></i>Series: OpenClaw</span>
+      <h1 class="post-title">Dùng OpenClaw hiệu quả:<br>Giảm token, giữ trí nhớ</h1>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-person-fill"></i> Lê Bình Phương</span>
+        <span><i class="bi bi-calendar3"></i> April 2026</span>
+        <span><i class="bi bi-clock"></i> 11 phút đọc</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">OpenClaw</span>
+        <span class="post-tag">Token Optimization</span>
+        <span class="post-tag">Cost</span>
+        <span class="post-tag">Memory</span>
+      </div>
+    </div>
+
+    <!-- ── TOC ── -->
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#token-waste">Vấn đề: token bị đốt vô ích</a></li>
+        <li><a href="#right-model">Chọn đúng model cho đúng việc</a></li>
+        <li><a href="#system-prompt">Viết system prompt ngắn gọn</a></li>
+        <li><a href="#persistent-memory">Tận dụng Persistent Memory</a></li>
+        <li><a href="#context-window">Quản lý Context Window thông minh</a></li>
+        <li><a href="#tools">Dùng Tool đúng cách</a></li>
+        <li><a href="#monitoring">Theo dõi và đo lường</a></li>
+        <li><a href="#checklist">Checklist tối ưu token</a></li>
+      </ol>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="post-body">
+
+      <!-- 1. Problem -->
+      <h2 id="token-waste"><i class="bi bi-fire"></i> Vấn đề: token bị đốt vô ích</h2>
+
+      <p>
+        Chạy AI agent 24/7 nghe hấp dẫn — cho đến khi bạn nhận hoá đơn API cuối tháng.
+      </p>
+
+      <p>
+        Phần lớn chi phí chạy AI agent <strong>không đến từ những tác vụ phức tạp</strong>. Nó đến từ token bị lãng phí:
+        hội thoại cũ gửi lại mỗi lần, system prompt dài dòng, model đắt tiền được dùng cho việc đơn giản.
+        OpenClaw có đầy đủ công cụ để giải quyết những vấn đề này — nhưng nhiều người chưa tận dụng hết.
+      </p>
+
+      <p>
+        Bài viết này hướng dẫn bạn cách <strong>giảm đáng kể token tiêu thụ</strong> mà agent vẫn hoạt động
+        thông minh, vẫn nhớ mọi thứ cần nhớ.
+      </p>
+
+      <!-- 2. Right model -->
+      <h2 id="right-model"><i class="bi bi-cpu"></i> Chọn đúng model cho đúng việc</h2>
+
+      <p>
+        Sai lầm phổ biến nhất: dùng model mạnh nhất (GPT-4o, Claude Opus) cho mọi tác vụ.
+      </p>
+
+      <p>
+        Thực tế, phần lớn công việc của agent không cần model đắt tiền. Phân loại tin nhắn, trích xuất
+        thông tin đơn giản, format dữ liệu — những việc này model nhỏ làm tốt ngang model lớn, mà
+        <strong>rẻ hơn 10–20 lần</strong>.
+      </p>
+
+      <table class="model-table">
+        <thead>
+          <tr>
+            <th>Tác vụ</th>
+            <th>Model phù hợp</th>
+            <th>Ví dụ</th>
+            <th>Chi phí tương đối</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="tier-cheap">
+            <td>Phân loại, trích xuất đơn giản</td>
+            <td class="model-names">Haiku · GPT-4o mini</td>
+            <td>"Tin nhắn này là hỏi giá hay hỏi kỹ thuật?"</td>
+            <td><span class="tier-badge tb-cheap">Rẻ nhất</span></td>
+          </tr>
+          <tr class="tier-mid">
+            <td>Chat thông thường, tóm tắt</td>
+            <td class="model-names">Sonnet · GPT-4o</td>
+            <td>Trả lời khách hàng, viết email</td>
+            <td><span class="tier-badge tb-mid">Trung bình</span></td>
+          </tr>
+          <tr class="tier-heavy">
+            <td>Phân tích phức tạp, viết code</td>
+            <td class="model-names">Opus · o1</td>
+            <td>Debug code, lập kế hoạch dự án</td>
+            <td><span class="tier-badge tb-heavy">Cao nhất</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        OpenClaw hỗ trợ <strong>multi-provider</strong> — bạn có thể cấu hình nhiều API key (Anthropic, OpenAI, Google)
+        và chọn model phù hợp cho từng agent hoặc từng workflow. Không cần dùng một model cho tất cả.
+      </p>
+
+      <div class="callout callout-tip">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div><strong>Mẹo thực hành:</strong> Bắt đầu với model nhỏ nhất. Chỉ upgrade lên model lớn hơn khi kết quả
+        không đạt yêu cầu. Hầu hết routing logic và tóm tắt đơn giản chạy tốt trên Haiku / GPT-4o mini.</div>
+      </div>
+
+      <!-- 3. System prompt -->
+      <h2 id="system-prompt"><i class="bi bi-textarea-t"></i> Viết system prompt ngắn gọn</h2>
+
+      <p>
+        System prompt được gửi đi <strong>mỗi lần agent nhận request</strong>. Một system prompt 2.000 token ×
+        100 request/ngày = <strong>200.000 token/ngày</strong> chỉ cho phần hướng dẫn.
+      </p>
+
+      <p>
+        System prompt dài không có nghĩa là tốt hơn. Model hiện đại hiểu hướng dẫn ngắn gọn tốt hơn
+        hướng dẫn dài dòng lặp đi lặp lại.
+      </p>
+
+      <div class="prompt-compare">
+        <div class="prompt-box pb-before">
+          <div class="prompt-box-label"><i class="bi bi-x-circle-fill"></i> Trước — Dài, lặp (≈ 80 token)</div>
+          <div class="prompt-box-body">Bạn là trợ lý hỗ trợ khách hàng của
+công ty ABC. Bạn phải luôn luôn trả lời
+bằng tiếng Việt. Nhớ rằng bạn là trợ lý
+hỗ trợ, không được trả lời câu hỏi ngoài
+phạm vi hỗ trợ. Luôn giữ giọng điệu thân
+thiện và chuyên nghiệp. Không được đưa ra
+thông tin sai. Nếu không biết câu trả lời,
+hãy nói rằng bạn sẽ chuyển cho nhân viên
+hỗ trợ...</div>
+        </div>
+        <div class="prompt-box pb-after">
+          <div class="prompt-box-label"><i class="bi bi-check-circle-fill"></i> Sau — Ngắn, rõ (≈ 24 token)</div>
+          <div class="prompt-box-body">Trợ lý hỗ trợ khách hàng công ty ABC.
+Trả lời bằng tiếng Việt, thân thiện.
+Chỉ trả lời trong phạm vi hỗ trợ sản phẩm.
+Không chắc → chuyển nhân viên.</div>
+        </div>
+      </div>
+      <p class="prompt-saving">Cùng ý nghĩa — tiết kiệm <span class="saving-badge">~70% token system prompt</span></p>
+
+      <p>
+        Nhân với hàng trăm request mỗi ngày, bạn tiết kiệm được rất nhiều mà agent vẫn hoạt động
+        đúng như thiết kế.
+      </p>
+
+      <!-- 4. Persistent memory -->
+      <h2 id="persistent-memory"><i class="bi bi-database-fill-check"></i> Tận dụng Persistent Memory</h2>
+
+      <p>
+        Đây là tính năng quan trọng nhất mà nhiều người bỏ qua.
+      </p>
+
+      <p>
+        Mặc định, mỗi cuộc hội thoại mới, agent phải được "nhắc lại" mọi thứ — tên khách hàng,
+        lịch sử mua hàng, preference. Mỗi lần nhắc lại là token bị đốt.
+      </p>
+
+      <p>
+        OpenClaw có hệ thống <strong>Persistent Memory 3 tầng</strong> — agent ghi nhớ thông tin quan trọng
+        giữa các phiên, tự động truy xuất khi cần. Thay vì gửi toàn bộ lịch sử mỗi lần, agent chỉ
+        tải đúng phần memory liên quan.
+      </p>
+
+      <div class="mem-grid">
+        <div class="mem-card mc-always">
+          <div class="mem-card-icon">📌</div>
+          <div class="mem-card-title">MEMORY.md</div>
+          <div class="mem-card-desc">Luôn được tải — chứa những gì agent cần biết ở mọi phiên. Giữ ngắn gọn, cập nhật thường xuyên.</div>
+        </div>
+        <div class="mem-card mc-daily">
+          <div class="mem-card-icon">📅</div>
+          <div class="mem-card-title">Daily Notes</div>
+          <div class="mem-card-desc">Tự động tải hôm nay + hôm qua — ngữ cảnh công việc gần nhất, không cần nhắc lại.</div>
+        </div>
+        <div class="mem-card mc-search">
+          <div class="mem-card-icon">🔍</div>
+          <div class="mem-card-title">Semantic Search</div>
+          <div class="mem-card-desc">SQLite vector store — chỉ truy xuất đoạn liên quan khi query. Tiết kiệm hàng nghìn token/request.</div>
+        </div>
+      </div>
+
+      <ul class="tip-list">
+        <li>
+          <div class="tip-icon ti-blue"><i class="bi bi-bookmark-fill"></i></div>
+          <div class="tip-body">
+            <strong>Bật memory cho agent</strong>
+            <span>Cho phép agent tự lưu thông tin quan trọng (tên, preference, context dự án) vào bộ nhớ dài hạn. Phiên sau không cần giải thích lại.</span>
+          </div>
+        </li>
+        <li>
+          <div class="tip-icon ti-purple"><i class="bi bi-search"></i></div>
+          <div class="tip-body">
+            <strong>Dùng RAG cho tài liệu lớn</strong>
+            <span>Thay vì nhét toàn bộ tài liệu vào prompt, kết nối vector database. Agent chỉ truy xuất đoạn liên quan — tiết kiệm hàng nghìn token mỗi request.</span>
+          </div>
+        </li>
+        <li>
+          <div class="tip-icon ti-green"><i class="bi bi-chat-square-text-fill"></i></div>
+          <div class="tip-body">
+            <strong>Không gửi toàn bộ history thủ công</strong>
+            <span>OpenClaw tự quản lý conversation history. Bạn không cần gửi lại mọi tin nhắn cũ — chỉ context gần nhất + memory là đủ.</span>
+          </div>
+        </li>
+      </ul>
+
+      <!-- 5. Context window -->
+      <h2 id="context-window"><i class="bi bi-layout-text-window-reverse"></i> Quản lý Context Window thông minh</h2>
+
+      <p>
+        Mỗi model có giới hạn context window (số token tối đa trong một lần gọi). Khi hội thoại dài
+        vượt giới hạn, có hai cách xử lý:
+      </p>
+
+      <ul>
+        <li><strong>Cắt bỏ:</strong> Mất thông tin cũ, agent "quên" nội dung đầu cuộc hội thoại</li>
+        <li><strong>Tóm tắt:</strong> Nén nội dung cũ thành bản tóm tắt ngắn gọn, giữ lại ý chính</li>
+      </ul>
+
+      <p>
+        OpenClaw hỗ trợ <strong>tự động tóm tắt context</strong> khi vượt ngưỡng. Thay vì gửi 50.000 token
+        lịch sử hội thoại, hệ thống nén lại còn 2.000–3.000 token mà vẫn giữ được bối cảnh quan trọng.
+      </p>
+
+      <div class="callout callout-info">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>
+          <strong>Thiết lập hợp lý:</strong>
+          <ul style="margin: 6px 0 0 1.2rem;">
+            <li>Đặt ngưỡng tóm tắt ở khoảng <strong>70–80% context window</strong> — đừng để đầy mới xử lý</li>
+            <li>Cho phép agent đánh dấu thông tin "quan trọng" để không bị tóm tắt mất</li>
+            <li>Với hội thoại dài (debug session, phân tích dữ liệu), cân nhắc tạo conversation mới khi chuyển sang chủ đề khác</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 6. Tools -->
+      <h2 id="tools"><i class="bi bi-tools"></i> Dùng Tool đúng cách</h2>
+
+      <p>
+        OpenClaw hỗ trợ Tool Use (function calling) và MCP. Mỗi tool definition tốn token vì nó được
+        <strong>gửi kèm mỗi request</strong>.
+      </p>
+
+      <ul class="tip-list">
+        <li>
+          <div class="tip-icon ti-orange"><i class="bi bi-funnel-fill"></i></div>
+          <div class="tip-body">
+            <strong>Chỉ gắn tool agent thực sự cần</strong>
+            <span>Agent hỗ trợ khách hàng không cần tool đọc file hệ thống. Mỗi tool thừa = token lãng phí mỗi request.</span>
+          </div>
+        </li>
+        <li>
+          <div class="tip-icon ti-blue"><i class="bi bi-pencil-square"></i></div>
+          <div class="tip-body">
+            <strong>Viết description tool ngắn gọn</strong>
+            <span>Tương tự system prompt — description dài không có nghĩa model hiểu tốt hơn. Một câu rõ ràng thường đủ.</span>
+          </div>
+        </li>
+        <li>
+          <div class="tip-icon ti-purple"><i class="bi bi-plug-fill"></i></div>
+          <div class="tip-body">
+            <strong>Chọn lọc MCP server</strong>
+            <span>Mỗi MCP server kết nối thêm tool definitions vào context. Chỉ kết nối những server bạn thực sự dùng trong workflow đó.</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="callout callout-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div><strong>Quy tắc đơn giản:</strong> Ít tool hơn = ít token hơn = phản hồi nhanh hơn. Đừng gắn tool "phòng khi cần" — gắn khi thực sự cần.</div>
+      </div>
+
+      <!-- 7. Monitoring -->
+      <h2 id="monitoring"><i class="bi bi-bar-chart-fill"></i> Theo dõi và đo lường</h2>
+
+      <p>
+        Không đo được thì không tối ưu được. OpenClaw Web UI cho phép theo dõi:
+      </p>
+
+      <div class="callout callout-info">
+        <i class="bi bi-display"></i>
+        <div>
+          <ul style="margin: 0 0 0 1.2rem;">
+            <li><strong>Token usage per conversation</strong> — xem cuộc hội thoại nào tốn nhiều token nhất</li>
+            <li><strong>Model usage breakdown</strong> — biết bao nhiêu token đi vào model nào</li>
+            <li><strong>Conversation length</strong> — nhận diện những cuộc hội thoại dài bất thường</li>
+          </ul>
+        </div>
+      </div>
+
+      <p>
+        Kết hợp với monitoring VPS (CPU, RAM, disk qua Telegram alert), bạn có cái nhìn toàn diện về
+        chi phí vận hành agent — và biết chính xác nên tối ưu chỗ nào trước.
+      </p>
+
+      <!-- 8. Checklist -->
+      <h2 id="checklist"><i class="bi bi-check2-all"></i> Checklist tối ưu token</h2>
+
+      <table class="opt-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Hành động</th>
+            <th>Tiết kiệm ước tính</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="opt-num">1</span></td>
+            <td><strong>Dùng model nhỏ cho tác vụ đơn giản</strong><br><span style="font-size:12px;color:#8a9bb0;">Routing, phân loại, format dữ liệu → Haiku / GPT-4o mini</span></td>
+            <td class="saving-cell">10–20× chi phí / request</td>
+          </tr>
+          <tr>
+            <td><span class="opt-num">2</span></td>
+            <td><strong>Rút gọn system prompt</strong><br><span style="font-size:12px;color:#8a9bb0;">Bỏ lặp, giữ ý chính, không quá 100 token</span></td>
+            <td class="saving-cell">50–70% token system prompt</td>
+          </tr>
+          <tr>
+            <td><span class="opt-num">3</span></td>
+            <td><strong>Bật Persistent Memory</strong><br><span style="font-size:12px;color:#8a9bb0;">Không nhắc lại context mỗi phiên — để agent tự nhớ</span></td>
+            <td class="saving-cell">Giảm token context lặp lại</td>
+          </tr>
+          <tr>
+            <td><span class="opt-num">4</span></td>
+            <td><strong>Cấu hình auto-summarize context</strong><br><span style="font-size:12px;color:#8a9bb0;">Tóm tắt tự động khi vượt 70–80% context window</span></td>
+            <td class="saving-cell">Giảm 80–90% token history</td>
+          </tr>
+          <tr>
+            <td><span class="opt-num">5</span></td>
+            <td><strong>Bỏ tool không dùng</strong><br><span style="font-size:12px;color:#8a9bb0;">Chỉ giữ tool agent thực sự cần trong từng workflow</span></td>
+            <td class="saving-cell">100–500 token / request</td>
+          </tr>
+          <tr>
+            <td><span class="opt-num">6</span></td>
+            <td><strong>Theo dõi usage hàng tuần</strong><br><span style="font-size:12px;color:#8a9bb0;">Phát hiện conversation bất thường, tối ưu sớm</span></td>
+            <td class="saving-cell">Phát hiện lãng phí sớm</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-dark">
+        <i class="bi bi-quote"></i>
+        <div>
+          Không cần làm tất cả cùng lúc. Bắt đầu từ <strong>chọn đúng model</strong> (tiết kiệm nhiều nhất),
+          rồi tối ưu dần các phần còn lại. Một tuần một bước — sau một tháng hóa đơn API sẽ khác hẳn.
+        </div>
+      </div>
+
+      <!-- Series nav -->
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection-fill"></i> Series: Làm chủ OpenClaw</div>
+        <ul class="series-nav-list">
+          <li class="done"><a href="openclaw-install.html">Bài 1: Cài đặt và khởi động nhanh</a></li>
+          <li class="done"><a href="openclaw-workspace.html">Bài 2: Cấu hình Workspace từ A-Z</a></li>
+          <li class="done"><a href="openclaw-memory.html">Bài 3: Hệ thống trí nhớ 3 tầng</a></li>
+          <li class="done"><a href="openclaw-heartbeat.html">Bài 4: HEARTBEAT.md — tự động hóa 24/7</a></li>
+          <li class="done"><a href="openclaw-skills-mcp.html">Bài 5: Skills, MCP Servers & Plugins</a></li>
+          <li class="current">Bài 6: Dùng OpenClaw hiệu quả — Giảm token (bài này)</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ── Footer nav ── -->
+    <div class="post-footer-nav">
+      <div class="prev-post">
+        <span class="nav-label">Bài trước</span>
+        <a href="openclaw-skills-mcp.html" class="nav-title"><i class="bi bi-arrow-left"></i> Skills, MCP Servers & Plugins</a>
+      </div>
+      <div class="next-post">
+        <span class="nav-label">Trở về</span>
+        <a href="../blog.html" class="nav-title">Field Notes <i class="bi bi-grid-fill"></i></a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const icon   = document.getElementById('theme-icon');
+  const saved  = localStorage.getItem('theme');
+  if (saved === 'dark') { document.body.classList.add('dark-mode'); icon.className = 'bi bi-sun-fill'; }
+  toggle.addEventListener('click', () => {
+    const dark = document.body.classList.toggle('dark-mode');
+    icon.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>
