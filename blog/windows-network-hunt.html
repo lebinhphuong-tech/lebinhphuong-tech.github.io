@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Process nào đang gọi API lạ trên Windows? | Field Notes</title>
+  <meta name="description" content="Máy Windows liên tục gọi về một domain lạ nhưng không biết từ ứng dụng nào? Hướng dẫn điều tra network connection ẩn với 4 phương pháp: netstat, TCPView, Process Monitor và PowerShell.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary:    #149ddd;
+      --secondary:  #173b6c;
+      --text:       #272829;
+      --bg-light:   #f5f8fd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+
+    /* ── Header ── */
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(239,68,68,0.1); color: #dc2626; border: 1px solid rgba(239,68,68,0.25); display: inline-block; margin-bottom: 16px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    /* ── TOC ── */
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Body ── */
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.4rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-cmd { color: #fde68a; }
+    .code-out { color: #94a3b8; }
+
+    /* ── Tool cards ── */
+    .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 12px; margin: 1.4rem 0; }
+    .tool-card { border-radius: 12px; padding: 16px; border: 1px solid; }
+    .tool-card-num  { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 8px; opacity: 0.7; }
+    .tool-card-name { font-family: 'Raleway', sans-serif; font-size: 1rem; font-weight: 800; margin-bottom: 6px; }
+    .tool-card-desc { font-size: 12px; line-height: 1.55; opacity: 0.8; }
+    .tool-card-meta { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+    .tool-pill { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; border: 1px solid; }
+    .tc-1 { background: rgba(20,157,221,0.07); border-color: rgba(20,157,221,0.25); color: #0369a1; }
+    .tc-1 .tool-pill { background: rgba(20,157,221,0.12); border-color: rgba(20,157,221,0.3); color: #0369a1; }
+    .tc-2 { background: rgba(34,197,94,0.07);  border-color: rgba(34,197,94,0.25);  color: #166534; }
+    .tc-2 .tool-pill { background: rgba(34,197,94,0.12);  border-color: rgba(34,197,94,0.3);  color: #166534; }
+    .tc-3 { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.25); color: #92400e; }
+    .tc-3 .tool-pill { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.3); color: #92400e; }
+    .tc-4 { background: rgba(139,92,246,0.07); border-color: rgba(139,92,246,0.25); color: #4c1d95; }
+    .tc-4 .tool-pill { background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.3); color: #4c1d95; }
+
+    /* ── Method header ── */
+    .method-header { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; margin: 2rem 0 1rem; border: 1px solid; }
+    .method-num { width: 38px; height: 38px; border-radius: 50%; font-family: 'Raleway', sans-serif; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; }
+    .method-info { flex: 1; }
+    .method-name { font-weight: 700; font-size: 15px; }
+    .method-sub  { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+    .method-tags { display: flex; gap: 6px; flex-shrink: 0; }
+    .method-tag  { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; border: 1px solid; }
+
+    .mh-1 { background: rgba(20,157,221,0.07); border-color: rgba(20,157,221,0.25); color: #1e40af; }
+    .mh-1 .method-num { background: var(--primary); }
+    .mh-1 .method-tag { background: rgba(20,157,221,0.12); border-color: rgba(20,157,221,0.3); color: #0369a1; }
+    .mh-2 { background: rgba(34,197,94,0.07); border-color: rgba(34,197,94,0.25); color: #166534; }
+    .mh-2 .method-num { background: #16a34a; }
+    .mh-2 .method-tag { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.3); color: #166534; }
+    .mh-3 { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.25); color: #92400e; }
+    .mh-3 .method-num { background: #d97706; }
+    .mh-3 .method-tag { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.3); color: #92400e; }
+    .mh-4 { background: rgba(139,92,246,0.07); border-color: rgba(139,92,246,0.25); color: #4c1d95; }
+    .mh-4 .method-num { background: #7c3aed; }
+    .mh-4 .method-tag { background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.3); color: #4c1d95; }
+
+    /* ── Decision table ── */
+    .decision-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; }
+    .decision-table th { background: var(--secondary); color: #fff; padding: 11px 16px; text-align: left; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .decision-table td { padding: 10px 16px; border-bottom: 1px solid #f0f5fb; vertical-align: middle; font-size: 13.5px; }
+    .decision-table tr:last-child td { border-bottom: none; }
+    .decision-table tr:hover td { background: #f9fbff; }
+    .dt-tool { font-weight: 700; color: var(--secondary); font-family: 'Courier New', monospace; font-size: 12.5px; }
+    .rec-badge { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px; }
+    .rb-fast   { background: rgba(20,157,221,0.1); color: #0369a1;   border: 1px solid rgba(20,157,221,0.25); }
+    .rb-visual { background: rgba(34,197,94,0.1);  color: #059669;   border: 1px solid rgba(34,197,94,0.25); }
+    .rb-deep   { background: rgba(245,158,11,0.1); color: #92400e;   border: 1px solid rgba(245,158,11,0.25); }
+    .rb-auto   { background: rgba(139,92,246,0.1); color: #6d28d9;   border: 1px solid rgba(139,92,246,0.25); }
+
+    /* ── Case study ── */
+    .case-study-banner { background: linear-gradient(135deg, rgba(15,23,42,0.04), rgba(20,157,221,0.04)); border: 1px solid rgba(20,157,221,0.2); border-left: 4px solid var(--primary); border-radius: 10px; padding: 14px 18px; margin: 2rem 0 0.5rem; display: flex; align-items: center; gap: 12px; }
+    .csb-icon { width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; flex-shrink: 0; }
+    .csb-body { flex: 1; }
+    .csb-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 2px; }
+    .csb-title { font-weight: 700; color: var(--secondary); font-size: 14px; }
+
+    .inv-steps { display: flex; flex-direction: column; gap: 0; margin: 1.4rem 0; position: relative; }
+    .inv-steps::before { content: ''; position: absolute; left: 17px; top: 28px; bottom: 28px; width: 2px; background: linear-gradient(to bottom, var(--primary), #ef4444); opacity: 0.2; }
+    .inv-step { display: flex; gap: 16px; align-items: flex-start; padding: 10px 0; }
+    .inv-num { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; background: var(--secondary); color: #fff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; z-index: 1; }
+    .inv-body { padding-top: 6px; font-size: 14px; color: #3a4555; flex: 1; }
+    .inv-body strong { color: var(--secondary); display: block; font-size: 14.5px; margin-bottom: 4px; }
+    .inv-body span { color: #6c7a8d; font-size: 13px; }
+
+    /* ── File tree / dir listing ── */
+    .dir-box { background: #0d1b2a; border-radius: 10px; overflow: hidden; margin: 1.4rem 0; }
+    .dir-header { padding: 10px 16px; background: #0a1420; display: flex; align-items: center; gap: 8px; }
+    .dir-dots { display: flex; gap: 5px; }
+    .dir-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .dir-path { font-family: 'Courier New', monospace; font-size: 11px; color: #4a6480; margin-left: 4px; }
+    .dir-body { padding: 14px 16px; font-family: 'Courier New', monospace; font-size: 12.5px; line-height: 1.75; color: #7dd3fc; overflow-x: auto; }
+    .dir-folder { color: #86efac; font-weight: 700; }
+    .dir-exe    { color: #f472b6; }
+    .dir-js     { color: #fde68a; }
+    .dir-zip    { color: #fb923c; }
+    .dir-node   { color: #94a3b8; }
+    .dir-dll    { color: #c084fc; }
+    .dir-date   { color: #4a6480; }
+    .dir-flag   { color: #f87171; font-weight: 700; }
+
+    /* ── Red flag list ── */
+    .red-flags { list-style: none; padding: 0; margin: 1rem 0 1.4rem; }
+    .red-flags li { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f0f5fb; font-size: 13.5px; }
+    .red-flags li:last-child { border-bottom: none; }
+    .rf-icon { width: 22px; height: 22px; border-radius: 6px; background: rgba(239,68,68,0.1); color: #dc2626; border: 1px solid rgba(239,68,68,0.25); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; margin-top: 2px; }
+    .rf-ok { background: rgba(34,197,94,0.1); color: #059669; border-color: rgba(34,197,94,0.3); }
+
+    /* ── Timestamp analysis ── */
+    .ts-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 1.2rem 0; }
+    .ts-table th { background: var(--bg-light); padding: 9px 14px; text-align: left; font-weight: 700; color: var(--secondary); border-bottom: 2px solid #e4eef8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .ts-table td { padding: 9px 14px; border-bottom: 1px solid #f0f5fb; vertical-align: middle; font-family: 'Courier New', monospace; font-size: 12.5px; }
+    .ts-table tr:last-child td { border-bottom: none; }
+    .ts-file  { color: #c0392b; }
+    .ts-date  { color: #3a4555; }
+    .ts-match { color: #059669; font-weight: 700; }
+    .ts-badge { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px; }
+    .tsb-install { background: rgba(139,92,246,0.1); color: #6d28d9; border: 1px solid rgba(139,92,246,0.25); }
+    .tsb-update  { background: rgba(245,158,11,0.1);  color: #92400e; border: 1px solid rgba(245,158,11,0.25); }
+    .tsb-runtime { background: rgba(20,157,221,0.1);  color: #0369a1; border: 1px solid rgba(20,157,221,0.25); }
+
+    /* ── Verdict box ── */
+    .verdict-box { border-radius: 12px; overflow: hidden; margin: 2rem 0 1.4rem; border: 1px solid rgba(34,197,94,0.3); }
+    .verdict-header { background: rgba(34,197,94,0.1); padding: 12px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(34,197,94,0.2); }
+    .verdict-icon { font-size: 1.2rem; color: #059669; }
+    .verdict-title { font-weight: 800; color: #166534; font-size: 14px; font-family: 'Raleway', sans-serif; }
+    .verdict-body { padding: 16px 18px; background: rgba(34,197,94,0.03); font-size: 13.5px; color: #3a4555; line-height: 1.75; }
+    .verdict-body strong { color: var(--secondary); }
+
+    /* Callouts ── */
+    .callout { border-radius: 10px; padding: 1rem 1.4rem; margin: 1.4rem 0; font-size: 13.5px; line-height: 1.7; display: flex; gap: 12px; align-items: flex-start; }
+    .callout i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .callout-tip    { background: rgba(34,197,94,0.08);  border-left: 4px solid #22c55e; color: #166534; }
+    .callout-tip i  { color: #22c55e; }
+    .callout-warn   { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout-warn i { color: #f59e0b; }
+    .callout-info   { background: rgba(20,157,221,0.08); border-left: 4px solid var(--primary); color: #1e40af; }
+    .callout-info i { color: var(--primary); }
+    .callout-danger { background: rgba(239,68,68,0.08);  border-left: 4px solid #ef4444; color: #991b1b; }
+    .callout-danger i { color: #ef4444; }
+    .callout-dark   { background: rgba(15,23,42,0.06);   border-left: 4px solid #334155; color: #1e293b; }
+    .callout-dark i { color: #475569; }
+
+    /* ── Post footer ── */
+    .post-footer-nav { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 1.8rem; margin-top: 2rem; border-top: 2px solid var(--bg-light); }
+    .post-footer-nav a { font-size: 13px; font-weight: 600; color: #8a9bb0; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .post-footer-nav a:hover { color: var(--primary); }
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #b0c4d8; display: block; margin-bottom: 3px; }
+    .nav-title { color: var(--secondary); font-size: 13.5px; }
+
+    /* ── Theme ── */
+    #theme-toggle { position: fixed; top: 72px; right: 16px; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; z-index: 9999; background: linear-gradient(135deg, #149ddd, #0d7ab5); color: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20,157,221,0.4); transition: all 0.25s ease; }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* ── Dark mode ── */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; }
+    body.dark-mode .navbar-brand { color: var(--primary); }
+    body.dark-mode .nav-pills-custom a { background: #1e293b; color: #94a3b8; border-color: #1e3a52; }
+    body.dark-mode .nav-pills-custom a:hover, body.dark-mode .nav-pills-custom a.active { background: var(--primary); color: #fff; }
+    body.dark-mode .post-wrap    { background: #1e293b; }
+    body.dark-mode .post-header  { border-color: #1e3a52; }
+    body.dark-mode .post-title   { color: #e2e8f0; }
+    body.dark-mode .post-body    { color: #94a3b8; }
+    body.dark-mode .post-body h2 { color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .post-body h3 { color: #e2e8f0; }
+    body.dark-mode .post-body strong { color: #e2e8f0; }
+    body.dark-mode .post-body code  { background: #0f172a; border-color: #1e3a52; color: #f472b6; }
+    body.dark-mode .post-body a { color: #38bdf8; }
+    body.dark-mode .toc { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .toc-title { color: #4a6480; }
+    body.dark-mode .post-tag { background: #0f172a; color: #64748b; border-color: #1e3a52; }
+    body.dark-mode .tool-card { opacity: 0.9; }
+    body.dark-mode .method-header { opacity: 0.92; }
+    body.dark-mode .case-study-banner { background: rgba(20,157,221,0.04); border-color: rgba(20,157,221,0.15); }
+    body.dark-mode .csb-title { color: #e2e8f0; }
+    body.dark-mode .inv-body { color: #94a3b8; }
+    body.dark-mode .inv-body strong { color: #e2e8f0; }
+    body.dark-mode .red-flags li { border-color: #1a2a3a; color: #94a3b8; }
+    body.dark-mode .ts-table th { background: #162032; color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .ts-table td { border-color: #1a2a3a; }
+    body.dark-mode .ts-date  { color: #94a3b8; }
+    body.dark-mode .verdict-box { border-color: rgba(34,197,94,0.2); }
+    body.dark-mode .verdict-header { background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.15); }
+    body.dark-mode .verdict-title { color: #4ade80; }
+    body.dark-mode .verdict-body { background: rgba(34,197,94,0.02); color: #94a3b8; }
+    body.dark-mode .verdict-body strong { color: #e2e8f0; }
+    body.dark-mode .decision-table th { background: #0d1b2a; }
+    body.dark-mode .decision-table td { border-color: #1a2a3a; }
+    body.dark-mode .decision-table tr:hover td { background: #162032; }
+    body.dark-mode .dt-tool { color: #e2e8f0; }
+    body.dark-mode .callout-tip    { background: rgba(34,197,94,0.07);  color: #4ade80; }
+    body.dark-mode .callout-warn   { background: rgba(245,158,11,0.07); color: #fbbf24; }
+    body.dark-mode .callout-info   { background: rgba(20,157,221,0.07); color: #7dd3fc; }
+    body.dark-mode .callout-danger { background: rgba(239,68,68,0.07);  color: #fca5a5; }
+    body.dark-mode .callout-dark   { background: rgba(15,23,42,0.4);    border-color: #475569; color: #94a3b8; }
+    body.dark-mode .post-footer-nav { border-color: #1e3a52; }
+    body.dark-mode .nav-title { color: #e2e8f0; }
+    body.dark-mode .breadcrumb a { color: var(--primary); }
+    body.dark-mode .breadcrumb-item.active { color: #64748b; }
+
+    @media (max-width: 768px) {
+      .post-wrap { padding: 1.8rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+      .tool-grid { grid-template-columns: 1fr 1fr; }
+      .method-tags { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4" style="max-width: 900px;">
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">Điều tra network connection ẩn trên Windows</li>
+    </ol>
+  </nav>
+
+  <a href="../blog.html" class="back-to-blog">
+    <i class="bi bi-arrow-left"></i> Về Field Notes
+  </a>
+
+  <div class="post-wrap">
+
+    <!-- ── Header ── -->
+    <div class="post-header">
+      <span class="post-category-badge"><i class="bi bi-shield-exclamation me-1"></i>Security</span>
+      <h1 class="post-title">Process nào đang gọi API lạ trên Windows?<br>4 cách điều tra network connection ẩn</h1>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-person-fill"></i> Lê Bình Phương</span>
+        <span><i class="bi bi-calendar3"></i> April 2026</span>
+        <span><i class="bi bi-clock"></i> 8 phút đọc</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">Windows</span>
+        <span class="post-tag">Network</span>
+        <span class="post-tag">Security</span>
+        <span class="post-tag">Sysinternals</span>
+        <span class="post-tag">PowerShell</span>
+      </div>
+    </div>
+
+    <!-- ── TOC ── -->
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#problem">Bối cảnh: máy gọi đi đâu không biết?</a></li>
+        <li><a href="#overview">4 công cụ, 4 cách tiếp cận</a></li>
+        <li><a href="#method1">Cách 1 — netstat + tasklist (không cài thêm gì)</a></li>
+        <li><a href="#method2">Cách 2 — TCPView: GUI real-time nhanh nhất</a></li>
+        <li><a href="#method3">Cách 3 — Process Monitor: audit theo filter</a></li>
+        <li><a href="#method4">Cách 4 — PowerShell: scriptable, tự động hoá được</a></li>
+        <li><a href="#decision">Chọn công cụ nào?</a></li>
+        <li><a href="#next-steps">Tìm ra rồi, làm gì tiếp?</a></li>
+        <li><a href="#case-study">Case study: node.exe giả Edge task</a></li>
+        <li><a href="#spawn-loop">Bắt process tự spawn lại bằng PowerShell loop</a></li>
+        <li><a href="#dir-analysis">Phân tích thư mục nghi vấn</a></li>
+        <li><a href="#timestamp-trace">Truy vết nguồn gốc qua ngày tháng file</a></li>
+        <li><a href="#verdict">Kết luận: BlueStacks</a></li>
+      </ol>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="post-body">
+
+      <!-- 1. Problem -->
+      <h2 id="problem"><i class="bi bi-question-circle"></i> Bối cảnh: máy gọi đi đâu không biết?</h2>
+
+      <p>
+        Một tình huống quen thuộc: firewall log hoặc monitoring báo máy Windows đang gọi liên tục về một
+        domain lạ — <code>api.something.com</code> — nhưng bạn không biết đó là ứng dụng nào. Không phải
+        malware, có thể chỉ là một app nào đó tự update hoặc telemetry. Nhưng không xác định được thì
+        không thể kết luận.
+      </p>
+
+      <p>
+        Windows không có giao diện đơn giản để xem "process X đang kết nối tới domain Y". Phải biết đúng
+        công cụ mới điều tra được nhanh.
+      </p>
+
+      <div class="callout callout-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+          <strong>Chạy với quyền Administrator.</strong> Tất cả phương pháp bên dưới đều cần quyền admin
+          mới thấy đầy đủ process — kể cả những process chạy dưới system account.
+        </div>
+      </div>
+
+      <!-- 2. Overview -->
+      <h2 id="overview"><i class="bi bi-grid-1x2-fill"></i> 4 công cụ, 4 cách tiếp cận</h2>
+
+      <div class="tool-grid">
+        <div class="tool-card tc-1">
+          <div class="tool-card-num">Cách 1</div>
+          <div class="tool-card-name">netstat + tasklist</div>
+          <div class="tool-card-desc">Built-in, không cài thêm gì. Nhanh nhưng output thô, phải tự ghép PID.</div>
+          <div class="tool-card-meta">
+            <span class="tool-pill">CLI</span>
+            <span class="tool-pill">Built-in</span>
+          </div>
+        </div>
+        <div class="tool-card tc-2">
+          <div class="tool-card-num">Cách 2</div>
+          <div class="tool-card-name">TCPView</div>
+          <div class="tool-card-desc">GUI Sysinternals. Real-time, thấy ngay process nào kết nối đi đâu.</div>
+          <div class="tool-card-meta">
+            <span class="tool-pill">GUI</span>
+            <span class="tool-pill">Real-time</span>
+          </div>
+        </div>
+        <div class="tool-card tc-3">
+          <div class="tool-card-num">Cách 3</div>
+          <div class="tool-card-name">Process Monitor</div>
+          <div class="tool-card-desc">Sysinternals nâng cao. Filter theo domain, ghi log, audit toàn bộ network event.</div>
+          <div class="tool-card-meta">
+            <span class="tool-pill">GUI</span>
+            <span class="tool-pill">Deep audit</span>
+          </div>
+        </div>
+        <div class="tool-card tc-4">
+          <div class="tool-card-num">Cách 4</div>
+          <div class="tool-card-name">PowerShell</div>
+          <div class="tool-card-desc">Scriptable, output có thể export CSV. Phù hợp khi cần tự động hoá hoặc chạy remote.</div>
+          <div class="tool-card-meta">
+            <span class="tool-pill">CLI</span>
+            <span class="tool-pill">Scriptable</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Method 1 -->
+      <div class="method-header mh-1" id="method1">
+        <div class="method-num">1</div>
+        <div class="method-info">
+          <div class="method-name">netstat + tasklist</div>
+          <div class="method-sub">Command Prompt · Built-in · Không cần cài thêm</div>
+        </div>
+        <div class="method-tags">
+          <span class="method-tag">Nhanh</span>
+        </div>
+      </div>
+
+      <p>
+        Cách cổ điển nhất. <code>netstat</code> liệt kê connection kèm PID, <code>tasklist</code> ghép PID
+        ra tên process. Dùng được ngay trên mọi máy Windows.
+      </p>
+
+      <p><strong>Bước 1:</strong> Tìm IP của domain cần điều tra:</p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>cmd (Administrator)</span></div><code><span class="code-cmd">nslookup api.freshstartwalk.org</span>
+<span class="code-out">
+Server:  UnKnown
+Address: 192.168.1.1
+
+Non-authoritative answer:
+Name:    api.freshstartwalk.org
+Address: 104.21.45.67</span></code></pre>
+
+      <p><strong>Bước 2:</strong> Tìm kết nối đang active đến IP đó:</p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>cmd (Administrator)</span></div><code><span class="code-comment">Xem tất cả connection đang ESTABLISHED, kèm PID</span>
+<span class="code-cmd">netstat -ano | findstr "ESTABLISHED"</span>
+
+<span class="code-comment">Hoặc filter thẳng theo IP của domain:</span>
+<span class="code-cmd">netstat -ano | findstr "104.21.45.67"</span>
+<span class="code-out">
+  TCP    192.168.1.10:52341     104.21.45.67:443    ESTABLISHED    4872</span></code></pre>
+
+      <p><strong>Bước 3:</strong> Tra PID ra tên process:</p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>cmd (Administrator)</span></div><code><span class="code-cmd">tasklist /fi "PID eq 4872"</span>
+<span class="code-out">
+Image Name       PID   Session Name    Mem Usage
+============   =====   ============   ==========
+chrome.exe      4872   Console         185,420 K</span></code></pre>
+
+      <div class="callout callout-tip">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div>
+          Nếu domain dùng CDN (Cloudflare, AWS CloudFront...) thì IP có thể thay đổi mỗi lần resolve.
+          Trong trường hợp đó, <code>netstat</code> một mình không đủ — cần TCPView hoặc ProcMon để
+          bắt được event đúng lúc kết nối xảy ra.
+        </div>
+      </div>
+
+      <!-- Method 2 -->
+      <div class="method-header mh-2" id="method2">
+        <div class="method-num">2</div>
+        <div class="method-info">
+          <div class="method-name">TCPView — Sysinternals</div>
+          <div class="method-sub">GUI real-time · Download từ Microsoft · Cách nhanh nhất về mặt trực quan</div>
+        </div>
+        <div class="method-tags">
+          <span class="method-tag">Khuyến nghị</span>
+        </div>
+      </div>
+
+      <p>
+        TCPView là công cụ GUI của Sysinternals (Microsoft) hiển thị <strong>real-time</strong> toàn bộ
+        TCP/UDP connection trên máy — process nào, kết nối tới IP/port nào, trạng thái gì.
+        Không cần ghép PID thủ công, không cần gõ lệnh.
+      </p>
+
+      <p>
+        Download tại: <strong>Microsoft Sysinternals → TCPView</strong> (tìm "TCPView site:microsoft.com").
+        Giải nén, chạy <code>Tcpview.exe</code> với quyền Administrator.
+      </p>
+
+      <p>Sau khi mở:</p>
+
+      <ol>
+        <li>Nhìn vào cột <strong>Remote Address</strong> — tìm domain hoặc IP cần điều tra</li>
+        <li>Cột <strong>Process</strong> bên trái cho thấy ngay ứng dụng nào đang kết nối</li>
+        <li>Dùng <strong>View → Filter</strong> để lọc theo domain/IP nếu danh sách dài</li>
+        <li>Connection mới xuất hiện sẽ <span style="color:#16a34a;font-weight:700;">highlight xanh</span>, connection đóng sẽ <span style="color:#dc2626;font-weight:700;">highlight đỏ</span></li>
+      </ol>
+
+      <div class="callout callout-info">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>
+          TCPView hiển thị tên domain thay vì IP nếu resolve được — giúp nhận diện nhanh hơn nhiều so với
+          netstat. Với domain dùng CDN, đây là cách đáng tin nhất vì bắt được event ngay tại thời điểm
+          connection mở.
+        </div>
+      </div>
+
+      <!-- Method 3 -->
+      <div class="method-header mh-3" id="method3">
+        <div class="method-num">3</div>
+        <div class="method-info">
+          <div class="method-name">Process Monitor — Sysinternals</div>
+          <div class="method-sub">GUI nâng cao · Filter theo domain · Ghi log đầy đủ</div>
+        </div>
+        <div class="method-tags">
+          <span class="method-tag">Deep audit</span>
+        </div>
+      </div>
+
+      <p>
+        Process Monitor (ProcMon) là công cụ mạnh nhất trong bộ Sysinternals — ghi lại <em>mọi</em> event
+        của mọi process: file, registry, network, process. Dùng khi cần audit sâu hơn hoặc bắt event
+        ngắt quãng (không phải connection thường xuyên).
+      </p>
+
+      <p>Cách setup filter để theo dõi domain cụ thể:</p>
+
+      <ol>
+        <li>Mở <strong>Process Monitor</strong> với quyền Administrator</li>
+        <li>Vào <strong>Filter → Filter...</strong> (Ctrl+L)</li>
+        <li>Thêm filter: <code>Operation</code> <strong>is</strong> <code>TCP Connect</code> → <strong>Include</strong></li>
+        <li>Thêm filter thứ hai: <code>Path</code> <strong>contains</strong> <code>freshstartwalk</code> → <strong>Include</strong></li>
+        <li>Apply và chờ — mỗi lần máy gọi domain đó, event sẽ xuất hiện kèm tên process và full path</li>
+      </ol>
+
+      <div class="callout callout-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+          ProcMon ghi <em>rất nhiều</em> event — tắt filter sẽ làm đầy màn hình trong vài giây. Luôn
+          setup filter trước khi bật capture, đặc biệt trên máy có nhiều process chạy nền.
+        </div>
+      </div>
+
+      <!-- Method 4 -->
+      <div class="method-header mh-4" id="method4">
+        <div class="method-num">4</div>
+        <div class="method-info">
+          <div class="method-name">PowerShell</div>
+          <div class="method-sub">Scriptable · Export CSV · Chạy được remote qua WinRM</div>
+        </div>
+        <div class="method-tags">
+          <span class="method-tag">Tự động hoá</span>
+        </div>
+      </div>
+
+      <p>
+        Khi cần kết quả có thể export, tích hợp vào script, hoặc chạy trên nhiều máy từ xa — PowerShell
+        là lựa chọn duy nhất. Script dưới đây liệt kê tất cả connection đang active kèm tên process và
+        đường dẫn file thực thi:
+      </p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>PowerShell (Administrator)</span></div><code><span class="code-key">Get-NetTCPConnection</span> | <span class="code-key">Where-Object</span> {$_.State <span class="code-key">-eq</span> <span class="code-str">"Established"</span>} |
+  <span class="code-key">ForEach-Object</span> {
+    <span class="code-key">$proc</span> = <span class="code-key">Get-Process</span> -Id $_.OwningProcess <span class="code-key">-ErrorAction</span> SilentlyContinue
+    [PSCustomObject]@{
+      <span class="code-key">LocalPort</span>  = $_.LocalPort
+      <span class="code-key">RemoteAddr</span> = $_.RemoteAddress
+      <span class="code-key">RemotePort</span> = $_.RemotePort
+      <span class="code-key">PID</span>        = $_.OwningProcess
+      <span class="code-key">Process</span>    = $proc.Name
+      <span class="code-key">Path</span>       = $proc.Path
+    }
+  } | <span class="code-key">Format-Table</span> -AutoSize</code></pre>
+
+      <p>Export ra CSV để phân tích hoặc gửi cho người khác:</p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>PowerShell — export CSV</span></div><code><span class="code-comment"># Thêm | Export-Csv vào cuối pipeline</span>
+<span class="code-key">Get-NetTCPConnection</span> | <span class="code-key">Where-Object</span> {$_.State <span class="code-key">-eq</span> <span class="code-str">"Established"</span>} |
+  <span class="code-key">ForEach-Object</span> {
+    <span class="code-key">$proc</span> = <span class="code-key">Get-Process</span> -Id $_.OwningProcess <span class="code-key">-ErrorAction</span> SilentlyContinue
+    [PSCustomObject]@{
+      <span class="code-key">RemoteAddr</span> = $_.RemoteAddress
+      <span class="code-key">RemotePort</span> = $_.RemotePort
+      <span class="code-key">Process</span>    = $proc.Name
+      <span class="code-key">Path</span>       = $proc.Path
+    }
+  } | <span class="code-key">Export-Csv</span> -Path <span class="code-str">"C:\connections.csv"</span> -NoTypeInformation</code></pre>
+
+      <!-- Decision table -->
+      <h2 id="decision"><i class="bi bi-signpost-split-fill"></i> Chọn công cụ nào?</h2>
+
+      <table class="decision-table">
+        <thead>
+          <tr>
+            <th>Tình huống</th>
+            <th>Công cụ phù hợp</th>
+            <th>Lý do</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cần xác định ngay, không muốn cài thêm gì</td>
+            <td><span class="dt-tool">netstat + tasklist</span></td>
+            <td><span class="rec-badge rb-fast">Nhanh nhất</span> built-in, không phụ thuộc</td>
+          </tr>
+          <tr>
+            <td>Muốn nhìn real-time, thấy ngay, ít thao tác</td>
+            <td><span class="dt-tool">TCPView</span></td>
+            <td><span class="rec-badge rb-visual">Trực quan</span> GUI rõ ràng, highlight đổi màu</td>
+          </tr>
+          <tr>
+            <td>Connection không liên tục, cần bắt đúng lúc xảy ra</td>
+            <td><span class="dt-tool">Process Monitor</span></td>
+            <td><span class="rec-badge rb-deep">Deep audit</span> ghi log event, không bỏ sót</td>
+          </tr>
+          <tr>
+            <td>Cần export, chạy trên nhiều máy, hoặc tích hợp script</td>
+            <td><span class="dt-tool">PowerShell</span></td>
+            <td><span class="rec-badge rb-auto">Tự động hoá</span> pipeline, CSV, remote WinRM</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Quy trình thực tế thường đi theo thứ tự: thử <strong>netstat</strong> trước (30 giây),
+        nếu không bắt được thì mở <strong>TCPView</strong> (2 phút), nếu vẫn không thấy
+        thì mới dùng <strong>ProcMon</strong> với filter để chờ event.
+      </p>
+
+      <!-- Next steps -->
+      <h2 id="next-steps"><i class="bi bi-arrow-right-circle-fill"></i> Tìm ra rồi, làm gì tiếp?</h2>
+
+      <p>
+        Sau khi xác định được process, bước tiếp theo tuỳ thuộc vào kết quả:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Là ứng dụng hợp lệ (browser, updater, telemetry):</strong> Xem cài đặt privacy của app đó.
+          Nhiều ứng dụng cho phép tắt telemetry hoặc block cụ thể connection trong Windows Firewall.
+        </li>
+        <li>
+          <strong>Là process không rõ nguồn gốc:</strong> Tra hash file thực thi trên VirusTotal
+          (<code>Get-FileHash "path\to\process.exe"</code> trong PowerShell để lấy SHA256).
+        </li>
+        <li>
+          <strong>Muốn chặn hoàn toàn:</strong> Tạo Outbound rule trong Windows Defender Firewall —
+          block theo tên process hoặc theo IP/domain cụ thể.
+        </li>
+      </ul>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>PowerShell — lấy hash để kiểm tra VirusTotal</span></div><code><span class="code-comment"># Thay đường dẫn bằng Path lấy được từ bước điều tra</span>
+<span class="code-key">Get-FileHash</span> <span class="code-str">"C:\Program Files\SomeApp\app.exe"</span> -Algorithm SHA256
+
+<span class="code-out">Algorithm  Hash                                                              Path
+---------  ----                                                              ----
+SHA256     3A7B2C...F9E1D4                                                   C:\Program Files\...</span>
+
+<span class="code-comment"># Copy hash, paste vào virustotal.com để kiểm tra</span></code></pre>
+
+      <div class="callout callout-danger">
+        <i class="bi bi-shield-exclamation"></i>
+        <div>
+          Nếu process không có chữ ký số (Properties → Digital Signatures tab trống), đường dẫn nằm trong
+          <code>%AppData%</code> hoặc <code>%Temp%</code>, hoặc VirusTotal cho kết quả dương tính —
+          đó là dấu hiệu nghiêm trọng. Cô lập máy khỏi mạng và tiến hành phân tích sâu hơn.
+        </div>
+      </div>
+
+      <!-- ── Case study ── -->
+      <h2 id="case-study"><i class="bi bi-journal-text"></i> Case study: node.exe giả Edge task</h2>
+
+      <div class="case-study-banner">
+        <div class="csb-icon"><i class="bi bi-bug-fill"></i></div>
+        <div class="csb-body">
+          <div class="csb-label">Câu chuyện thực tế · April 2026</div>
+          <div class="csb-title">Máy liên tục gọi <code style="font-size:12px;">api.freshstartwalk.org</code> — truy ra <code style="font-size:12px;">node.exe</code> núp trong folder giả danh Edge task</div>
+        </div>
+      </div>
+
+      <p>
+        Sau khi phát hiện traffic đến <code>api.freshstartwalk.org</code>, áp dụng các phương pháp trên
+        cho kết quả: process thủ phạm là <code>node.exe</code> — nhưng không phải Node.js cài chính thống.
+        Đường dẫn đầy đủ: <code>C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe</code>.
+      </p>
+
+      <p>
+        Tên thư mục <strong>EdgeVersionHealthCheckerV2Task-fzf8</strong> được thiết kế để trông như
+        một scheduled task của Microsoft Edge. Nhưng khi chạy
+        <code>schtasks /query /fo LIST /v | findstr /i EdgeVersion</code> — không có kết quả nào trả về.
+        Nghĩa là: không có task nào với tên đó tồn tại trong hệ thống. Thư mục chỉ mượn tên để ngụy trang.
+      </p>
+
+      <!-- Spawn loop -->
+      <h2 id="spawn-loop"><i class="bi bi-arrow-repeat"></i> Bắt process tự spawn lại bằng PowerShell loop</h2>
+
+      <p>
+        Vấn đề: process <code>node.exe</code> liên tục bị tắt rồi spawn lại với PID mới — mỗi lần chỉ sống
+        vài chục giây. Netstat và TCPView snapshot không đủ nhanh để bắt kịp. Giải pháp: chạy vòng lặp
+        PowerShell polling liên tục để theo dõi.
+      </p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>PowerShell (Administrator) — polling loop</span></div><code><span class="code-key">while</span> ($true) {
+  <span class="code-key">Get-Process</span> node <span class="code-key">-ErrorAction</span> SilentlyContinue | <span class="code-key">Select</span> Id, Path, StartTime
+  <span class="code-key">Start-Sleep</span> -Milliseconds <span class="code-num">200</span>
+}</code></pre>
+
+      <p>Output sau vài giây chạy:</p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>output</span></div><code><span class="code-out">  Id  Path                                                                    StartTime
+  --  ----                                                                    ---------</span>
+<span class="code-num">5752</span>  <span class="code-str">C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe</span>  <span class="code-out">20/04/2026 11:08:01</span>
+<span class="code-num">5752</span>  <span class="code-str">C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe</span>  <span class="code-out">20/04/2026 11:08:01</span>
+<span class="code-out">...
+</span><span class="code-num">8972</span>  <span class="code-str">C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe</span>  <span class="code-out">20/04/2026 11:08:39</span>
+<span class="code-out">...</span></code></pre>
+
+      <p>
+        PID thay đổi (5752 → 8972 → ...) nhưng đường dẫn giống nhau — xác nhận đây là một process được
+        spawn định kỳ từ cùng một nơi. Interval khoảng <strong>30–40 giây</strong> một lần.
+      </p>
+
+      <div class="callout callout-tip">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div>
+          Kỹ thuật polling loop này rất hữu ích khi điều tra process ngắn hạn — malware, updater, cron task
+          trên Windows. Giảm interval xuống <code>-Milliseconds 50</code> nếu cần bắt process sống rất ngắn.
+        </div>
+      </div>
+
+      <!-- Dir analysis -->
+      <h2 id="dir-analysis"><i class="bi bi-folder2-open"></i> Phân tích thư mục nghi vấn</h2>
+
+      <p>
+        Bước tiếp theo: inspect nội dung thư mục chứa process. Chạy <code>dir</code> để xem toàn bộ file:
+      </p>
+
+      <div class="dir-box">
+        <div class="dir-header">
+          <div class="dir-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+          <span class="dir-path">dir "C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8"</span>
+        </div>
+        <div class="dir-body"><span class="dir-date">Mode        LastWriteTime      Length</span>  Name
+<span class="dir-date">----        -------------      ------</span>  ----
+<span class="dir-folder">d-----  20/04/2026  11:09              </span>  <span class="dir-folder">db</span>
+<span class="dir-node">-a----  24/02/2026  18:12      332256  </span>  0.5oe0t2qw4kv.node
+<span class="dir-node">-a----  24/02/2026  18:12      107984  </span>  0.6gn19lthqzo.node
+<span class="dir-node">-a----  24/02/2026  18:11      184832  </span>  0.8vu6h3l2cg.node
+<span class="dir-node">-a----  24/02/2026  18:12      837520  </span>  0.gr2z7mtphdc.node
+<span class="dir-node">-a----  24/02/2026  18:12       63440  </span>  0.jnl0emo8bq.node
+<span class="dir-node">-a----  24/02/2026  18:12      216640  </span>  0.nolvhrr6vxi.node
+<span class="dir-node">-a----  24/02/2026  18:12      126464  </span>  0.t525khuzc9.node
+<span class="dir-node">-a----  24/02/2026  18:12       77184  </span>  0.viwad3mg7fo.node
+<span class="dir-js">-a----  24/02/2026  18:12     4870832  </span>  <span class="dir-js">app.js</span>     <span class="dir-flag">← 4.8 MB minified</span>
+<span class="dir-zip">-a----  25/02/2026  04:07     7013312  </span>  <span class="dir-zip">build.zip</span>
+<span class="dir-exe">-a----  29/10/2025  14:56    89872896  </span>  <span class="dir-exe">node.exe</span>  <span class="dir-flag">← 89 MB runtime</span>
+<span class="dir-zip">-a----  21/11/2025  10:41    33562122  </span>  <span class="dir-zip">node.zip</span>
+<span class="dir-js">-a----  24/02/2026  18:12       12016  </span>  <span class="dir-js">preload.js</span>
+<span class="dir-exe">-a----  14/10/2025  23:09      318536  </span>  <span class="dir-exe">winpty-agent.exe</span>
+<span class="dir-dll">-a----  10/12/2025  16:25      258560  </span>  <span class="dir-dll">winpty.dll</span></div>
+      </div>
+
+      <p>Những điểm đáng ngờ khi nhìn vào directory listing:</p>
+
+      <ul class="red-flags">
+        <li>
+          <div class="rf-icon"><i class="bi bi-x-lg"></i></div>
+          <div><strong>Tên folder giả danh Edge task</strong> — nhưng <code>schtasks /query | findstr EdgeVersion</code> không trả về kết quả nào. Không có task Windows nào với tên đó.</div>
+        </li>
+        <li>
+          <div class="rf-icon"><i class="bi bi-x-lg"></i></div>
+          <div><strong>node.exe nặng 89 MB</strong> nằm trong <code>system32</code> — Node.js runtime đầy đủ được nhúng vào, không phải file hệ thống Windows.</div>
+        </li>
+        <li>
+          <div class="rf-icon"><i class="bi bi-x-lg"></i></div>
+          <div><strong>app.js nặng 4.8 MB</strong> — ứng dụng Node.js minified/bundled. Kèm <code>preload.js</code> — pattern quen thuộc của Electron app.</div>
+        </li>
+        <li>
+          <div class="rf-icon"><i class="bi bi-x-lg"></i></div>
+          <div><strong>Các file .node tên random hash</strong> — native addon (C++ module) được compile sẵn. Không có file nào tên thông thường hay chữ ký rõ ràng.</div>
+        </li>
+        <li>
+          <div class="rf-icon"><i class="bi bi-x-lg"></i></div>
+          <div><strong>winpty-agent.exe + winpty.dll</strong> — thư viện terminal emulation. Thường thấy trong Git for Windows, ConEmu — không liên quan gì đến Edge health check.</div>
+        </li>
+        <li>
+          <div class="rf-icon rf-ok"><i class="bi bi-check-lg"></i></div>
+          <div><strong>Không có chữ ký số của Microsoft</strong> — tất cả file đều có thể verify bằng <code>Get-AuthenticodeSignature</code>. File hợp lệ của Microsoft sẽ có chữ ký.</div>
+        </li>
+      </ul>
+
+      <!-- Timestamp trace -->
+      <h2 id="timestamp-trace"><i class="bi bi-calendar-event-fill"></i> Truy vết nguồn gốc qua ngày tháng file</h2>
+
+      <p>
+        Thay vì vội kết luận là malware, bước quan trọng là <strong>đối chiếu timestamp file với lịch sử
+        cài đặt phần mềm</strong>. Hai đợt file rõ ràng:
+      </p>
+
+      <table class="ts-table">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Ngày tháng</th>
+            <th>Nhận định</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ts-file">winpty-agent.exe</td>
+            <td class="ts-date">14/10/2025</td>
+            <td><span class="ts-badge tsb-install">Lần cài đầu</span></td>
+          </tr>
+          <tr>
+            <td class="ts-file">node.exe</td>
+            <td class="ts-date">29/10/2025</td>
+            <td><span class="ts-badge tsb-install">Lần cài đầu</span></td>
+          </tr>
+          <tr>
+            <td class="ts-file">node.zip</td>
+            <td class="ts-date">21/11/2025</td>
+            <td><span class="ts-badge tsb-runtime">Bundle gốc</span></td>
+          </tr>
+          <tr>
+            <td class="ts-file">winpty.dll</td>
+            <td class="ts-date">10/12/2025</td>
+            <td><span class="ts-badge tsb-install">Lần cài đầu</span></td>
+          </tr>
+          <tr>
+            <td class="ts-file">app.js, preload.js, *.node</td>
+            <td class="ts-date">24/02/2026</td>
+            <td><span class="ts-badge tsb-update">Lần update</span></td>
+          </tr>
+          <tr>
+            <td class="ts-file">build.zip</td>
+            <td class="ts-date">25/02/2026</td>
+            <td><span class="ts-badge tsb-update">Lần update</span></td>
+          </tr>
+          <tr>
+            <td class="ts-file">db/ (folder)</td>
+            <td class="ts-date">20/04/2026</td>
+            <td><span class="ts-badge tsb-runtime">Runtime data</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Kiểm tra lịch sử cài đặt qua <strong>Programs and Features</strong> (Control Panel) hoặc PowerShell:
+      </p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>PowerShell — xem lịch sử cài đặt</span></div><code><span class="code-comment"># Xem tất cả phần mềm đã cài, sort theo ngày</span>
+<span class="code-key">Get-ItemProperty</span> <span class="code-str">"HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"</span> |
+  <span class="code-key">Select</span> DisplayName, InstallDate, DisplayVersion |
+  <span class="code-key">Where-Object</span> { $_.InstallDate } |
+  <span class="code-key">Sort-Object</span> InstallDate -Descending |
+  <span class="code-key">Format-Table</span> -AutoSize
+
+<span class="code-comment"># Lọc cụ thể theo tên nghi vấn</span>
+<span class="code-key">Get-ItemProperty</span> <span class="code-str">"HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"</span> |
+  <span class="code-key">Where-Object</span> { $_.DisplayName <span class="code-key">-like</span> <span class="code-str">"*BlueStacks*"</span> } |
+  <span class="code-key">Select</span> DisplayName, InstallDate, DisplayVersion</code></pre>
+
+      <p>
+        Kết quả cho thấy BlueStacks được cài vào <strong>tháng 10/2025</strong> — khớp với timestamp
+        của <code>node.exe</code> và <code>winpty-agent.exe</code>. Đợt update tháng 2/2026 khớp với
+        lần BlueStacks tự update <code>app.js</code> và các module.
+      </p>
+
+      <!-- Verdict -->
+      <h2 id="verdict"><i class="bi bi-patch-check-fill"></i> Kết luận: BlueStacks</h2>
+
+      <div class="verdict-box">
+        <div class="verdict-header">
+          <div class="verdict-icon"><i class="bi bi-check-circle-fill"></i></div>
+          <div class="verdict-title">Thủ phạm đã xác định: BlueStacks Android Emulator</div>
+        </div>
+        <div class="verdict-body">
+          <p>
+            <code>api.freshstartwalk.org</code> là endpoint telemetry/update của <strong>BlueStacks</strong> —
+            phần mềm giả lập Android trên Windows. BlueStacks cài một background service viết bằng Node.js,
+            ẩn trong <code>system32</code> với tên thư mục giả danh Edge task để tránh bị chú ý.
+          </p>
+          <p style="margin-top:10px;">
+            Về bản chất đây không phải malware — nhưng hành vi <strong>ngụy trang dưới tên Microsoft</strong>,
+            <strong>spawn process định kỳ không có UI</strong>, và <strong>gọi API nền mà không thông báo</strong>
+            là những pattern đáng lo ngại từ góc độ bảo mật doanh nghiệp.
+          </p>
+        </div>
+      </div>
+
+      <p>Tuỳ mục đích sử dụng, có thể xử lý theo một trong ba cách:</p>
+
+      <ul>
+        <li>
+          <strong>Gỡ cài BlueStacks hoàn toàn:</strong> Control Panel → Uninstall. Folder
+          <code>EdgeVersionHealthCheckerV2Task-fzf8</code> sẽ được dọn sạch theo.
+        </li>
+        <li>
+          <strong>Vẫn muốn dùng BlueStacks, nhưng chặn telemetry:</strong> Tạo Outbound rule trong
+          Windows Defender Firewall — block <code>node.exe</code> theo đường dẫn cụ thể hoặc block
+          domain <code>*.freshstartwalk.org</code> ở DNS/firewall layer.
+        </li>
+        <li>
+          <strong>Tắt service BlueStacks nền:</strong> Vào <code>services.msc</code>, tìm các service
+          BlueStacks (thường có tên <code>BstHdLogRotatorSvc</code>, <code>BlueStacksAgent</code>...)
+          và set Startup Type → Manual hoặc Disabled.
+        </li>
+      </ul>
+
+      <div class="callout callout-info">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>
+          <strong>Bài học từ case này:</strong> Tên folder nghe có vẻ hợp lệ không có nghĩa là hợp lệ.
+          Bước kiểm tra <code>schtasks /query | findstr &lt;tên&gt;</code> rất hữu ích — nếu task không
+          tồn tại mà folder đã mượn tên, đó là dấu hiệu đáng điều tra thêm.
+        </div>
+      </div>
+
+      <div class="callout callout-dark">
+        <i class="bi bi-quote"></i>
+        <div>
+          Traffic không rõ nguồn gốc không nhất thiết là malware — nhưng không điều tra thì không thể
+          kết luận. Mười lần thì chín là ứng dụng nào đó gọi telemetry — nhưng lần thứ mười mới quan trọng.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Footer nav ── -->
+    <div class="post-footer-nav">
+      <div class="prev-post">
+        <span class="nav-label">Trở về</span>
+        <a href="../blog.html" class="nav-title"><i class="bi bi-grid-fill"></i> Field Notes</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const icon   = document.getElementById('theme-icon');
+  const saved  = localStorage.getItem('theme');
+  if (saved === 'dark') { document.body.classList.add('dark-mode'); icon.className = 'bi bi-sun-fill'; }
+  toggle.addEventListener('click', () => {
+    const dark = document.body.classList.toggle('dark-mode');
+    icon.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>

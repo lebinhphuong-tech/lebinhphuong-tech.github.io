@@ -1,0 +1,61 @@
+PS C:\Users\timpo> while ($true) {
+>>   Get-Process node -ErrorAction SilentlyContinue | Select Id,Path,StartTime
+>>   Start-Sleep -Milliseconds 200
+>> }
+
+  Id Path                                                             StartTime
+  -- ----                                                             ---------
+5752 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:01
+5752 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:01
+5752 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:01
+5752 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:01
+5752 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:01
+5752 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:01
+5752 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:01
+5752 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:01
+5752 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:01
+8972 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:39
+8972 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:39
+8972 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:39
+8972 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:39
+8972 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:39
+8972 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:39
+8972 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:39
+8972 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:39
+8972 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:08:39
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+...4 C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8\node.exe 20/04/2026 11:09:16
+PS C:\Users\timpo> schtasks /query /fo LIST /v | findstr /i EdgeVersion
+PS C:\Users\timpo> dir "C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8"
+
+
+    Directory: C:\WINDOWS\system32\EdgeVersionHealthCheckerV2Task-fzf8
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        20/04/2026     11:09                db
+-a----        24/02/2026     18:12         332256 0.5oe0t2qw4kv.node
+-a----        24/02/2026     18:12         107984 0.6gn19lthqzo.node
+-a----        24/02/2026     18:11         184832 0.8vu6h3l2cg.node
+-a----        24/02/2026     18:12         837520 0.gr2z7mtphdc.node
+-a----        24/02/2026     18:12          63440 0.jnl0emo8bq.node
+-a----        24/02/2026     18:12         216640 0.nolvhrr6vxi.node
+-a----        24/02/2026     18:12         126464 0.t525khuzc9.node
+-a----        24/02/2026     18:12          77184 0.viwad3mg7fo.node
+-a----        24/02/2026     18:12        4870832 app.js
+-a----        25/02/2026     04:07        7013312 build.zip
+-a----        29/10/2025     14:56       89872896 node.exe
+-a----        21/11/2025     10:41       33562122 node.zip
+-a----        24/02/2026     18:12          12016 preload.js
+-a----        14/10/2025     23:09         318536 winpty-agent.exe
+-a----        10/12/2025     16:25         258560 winpty.dll

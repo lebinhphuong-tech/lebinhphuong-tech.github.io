@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kết hợp n8n và Puppeteer: Tự động hoá web động không cần code | Field Notes</title>
+  <meta name="description" content="Hướng dẫn kết hợp n8n workflow automation với Puppeteer để xử lý Single Page Applications, bypass anti-bot, tự động điền form, chụp ảnh và thu thập dữ liệu từ các trang web phức tạp.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary:    #149ddd;
+      --secondary:  #173b6c;
+      --text:       #272829;
+      --bg-light:   #f5f8fd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+
+    /* ── Header ── */
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); display: inline-block; margin-bottom: 16px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    /* ── TOC ── */
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Body ── */
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.4rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-cmd { color: #fde68a; }
+
+    /* ── Tool intro cards ── */
+    .tool-intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 1.4rem 0; }
+    .tool-intro-card { border-radius: 12px; padding: 18px 20px; border: 1px solid; }
+    .tic-logo { font-size: 2rem; margin-bottom: 10px; }
+    .tic-name { font-family: 'Raleway', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 6px; }
+    .tic-desc { font-size: 13px; line-height: 1.6; opacity: 0.85; }
+    .tic-n8n { background: rgba(234,88,12,0.07); border-color: rgba(234,88,12,0.25); color: #9a3412; }
+    .tic-n8n .tic-name { color: #c2410c; }
+    .tic-pup { background: rgba(34,197,94,0.07); border-color: rgba(34,197,94,0.25); color: #166534; }
+    .tic-pup .tic-name { color: #15803d; }
+
+    /* ── Comparison table ── */
+    .cmp-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; border-radius: 10px; overflow: hidden; }
+    .cmp-table th { padding: 11px 16px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; background: var(--secondary); color: #fff; }
+    .cmp-table td { padding: 10px 16px; border-bottom: 1px solid #f0f5fb; vertical-align: top; }
+    .cmp-table tr:last-child td { border-bottom: none; }
+    .cmp-table tr:hover td { background: #f9fbff; }
+    .cmp-use   { color: #059669; font-weight: 700; }
+    .cmp-skip  { color: #dc2626; font-weight: 700; }
+    .cmp-badge { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px; }
+    .cb-http { background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); }
+    .cb-pup  { background: rgba(34,197,94,0.1);  color: #059669; border: 1px solid rgba(34,197,94,0.25); }
+
+    /* ── Workflow steps ── */
+    .workflow-steps { display: flex; flex-direction: column; gap: 0; margin: 1.4rem 0; position: relative; }
+    .workflow-steps::before { content: ''; position: absolute; left: 17px; top: 28px; bottom: 28px; width: 2px; background: linear-gradient(to bottom, #ea580c, #16a34a); opacity: 0.25; }
+    .wf-step { display: flex; gap: 16px; align-items: flex-start; padding: 10px 0; }
+    .wf-num { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, #ea580c, #c2410c); color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; z-index: 1; }
+    .wf-body { padding-top: 6px; font-size: 14px; color: #3a4555; flex: 1; }
+    .wf-body strong { color: var(--secondary); display: block; font-size: 14.5px; margin-bottom: 4px; }
+    .wf-body span { color: #6c7a8d; font-size: 13px; }
+    .wf-config { background: var(--bg-light); border: 1px solid #e4eef8; border-radius: 8px; padding: 10px 14px; margin-top: 8px; font-size: 12.5px; font-family: 'Courier New', monospace; }
+    .wf-config .cfg-key { color: #6c7a8d; }
+    .wf-config .cfg-val { color: var(--secondary); font-weight: 700; }
+
+    /* ── Error/solution box ── */
+    .error-solution { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 1.4rem 0; }
+    .err-box { border-radius: 10px; overflow: hidden; }
+    .err-box-label { padding: 8px 14px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px; }
+    .eb-err .err-box-label { background: rgba(239,68,68,0.1); color: #dc2626; border-bottom: 1px solid rgba(239,68,68,0.15); }
+    .eb-fix .err-box-label { background: rgba(34,197,94,0.1); color: #059669; border-bottom: 1px solid rgba(34,197,94,0.15); }
+    .eb-err { border: 1px solid rgba(239,68,68,0.2); }
+    .eb-fix { border: 1px solid rgba(34,197,94,0.2); }
+    .err-box-body { font-size: 13px; line-height: 1.65; padding: 12px 14px; }
+    .eb-err .err-box-body { background: rgba(239,68,68,0.02); color: #991b1b; }
+    .eb-fix .err-box-body { background: rgba(34,197,94,0.02); color: #166534; }
+
+    /* ── Use case grid ── */
+    .usecase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 1.2rem 0; }
+    .usecase-card { border-radius: 12px; padding: 16px; border: 1px solid #e4eef8; background: #fff; }
+    .uc-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .uc-title { font-size: 13px; font-weight: 700; color: var(--secondary); margin-bottom: 5px; }
+    .uc-desc  { font-size: 12px; color: #6c7a8d; line-height: 1.55; }
+    .uc-when { font-size: 10.5px; font-weight: 700; margin-top: 8px; }
+    .uc-use  .uc-when { color: #059669; }
+    .uc-skip .uc-when { color: #dc2626; }
+    .uc-use  { border-color: rgba(34,197,94,0.25); background: rgba(34,197,94,0.03); }
+    .uc-skip { border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.03); }
+
+    /* ── Callouts ── */
+    .callout { border-radius: 10px; padding: 1rem 1.4rem; margin: 1.4rem 0; font-size: 13.5px; line-height: 1.7; display: flex; gap: 12px; align-items: flex-start; }
+    .callout i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .callout-tip    { background: rgba(34,197,94,0.08);  border-left: 4px solid #22c55e; color: #166534; }
+    .callout-tip i  { color: #22c55e; }
+    .callout-warn   { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout-warn i { color: #f59e0b; }
+    .callout-info   { background: rgba(20,157,221,0.08); border-left: 4px solid var(--primary); color: #1e40af; }
+    .callout-info i { color: var(--primary); }
+    .callout-dark   { background: rgba(15,23,42,0.06);   border-left: 4px solid #334155; color: #1e293b; }
+    .callout-dark i { color: #475569; }
+
+    /* ── Post footer ── */
+    .post-footer-nav { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 1.8rem; margin-top: 2rem; border-top: 2px solid var(--bg-light); }
+    .post-footer-nav a { font-size: 13px; font-weight: 600; color: #8a9bb0; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .post-footer-nav a:hover { color: var(--primary); }
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #b0c4d8; display: block; margin-bottom: 3px; }
+    .nav-title { color: var(--secondary); font-size: 13.5px; }
+
+    /* ── Theme ── */
+    #theme-toggle { position: fixed; top: 72px; right: 16px; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; z-index: 9999; background: linear-gradient(135deg, #149ddd, #0d7ab5); color: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20,157,221,0.4); transition: all 0.25s ease; }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* ── Dark mode ── */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; }
+    body.dark-mode .navbar-brand { color: var(--primary); }
+    body.dark-mode .nav-pills-custom a { background: #1e293b; color: #94a3b8; border-color: #1e3a52; }
+    body.dark-mode .nav-pills-custom a:hover, body.dark-mode .nav-pills-custom a.active { background: var(--primary); color: #fff; }
+    body.dark-mode .post-wrap    { background: #1e293b; }
+    body.dark-mode .post-header  { border-color: #1e3a52; }
+    body.dark-mode .post-title   { color: #e2e8f0; }
+    body.dark-mode .post-body    { color: #94a3b8; }
+    body.dark-mode .post-body h2 { color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .post-body h3 { color: #e2e8f0; }
+    body.dark-mode .post-body strong { color: #e2e8f0; }
+    body.dark-mode .post-body code  { background: #0f172a; border-color: #1e3a52; color: #f472b6; }
+    body.dark-mode .post-body a { color: #38bdf8; }
+    body.dark-mode .toc { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .toc-title { color: #4a6480; }
+    body.dark-mode .post-tag { background: #0f172a; color: #64748b; border-color: #1e3a52; }
+    body.dark-mode .tool-intro-card { opacity: 0.9; }
+    body.dark-mode .cmp-table th { background: #0d1b2a; }
+    body.dark-mode .cmp-table td { border-color: #1a2a3a; }
+    body.dark-mode .cmp-table tr:hover td { background: #162032; }
+    body.dark-mode .wf-body { color: #94a3b8; }
+    body.dark-mode .wf-body strong { color: #e2e8f0; }
+    body.dark-mode .wf-config { background: #0f172a; border-color: #1e3a52; }
+    body.dark-mode .wf-config .cfg-val { color: #e2e8f0; }
+    body.dark-mode .err-box-body { opacity: 0.9; }
+    body.dark-mode .usecase-card { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .uc-use { border-color: rgba(34,197,94,0.2); background: rgba(34,197,94,0.04); }
+    body.dark-mode .uc-skip { border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.04); }
+    body.dark-mode .uc-title { color: #e2e8f0; }
+    body.dark-mode .callout-tip    { background: rgba(34,197,94,0.07);  color: #4ade80; }
+    body.dark-mode .callout-warn   { background: rgba(245,158,11,0.07); color: #fbbf24; }
+    body.dark-mode .callout-info   { background: rgba(20,157,221,0.07); color: #7dd3fc; }
+    body.dark-mode .callout-dark   { background: rgba(15,23,42,0.4);    border-color: #475569; color: #94a3b8; }
+    body.dark-mode .post-footer-nav { border-color: #1e3a52; }
+    body.dark-mode .nav-title { color: #e2e8f0; }
+    body.dark-mode .breadcrumb a { color: var(--primary); }
+    body.dark-mode .breadcrumb-item.active { color: #64748b; }
+
+    @media (max-width: 768px) {
+      .post-wrap { padding: 1.8rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+      .tool-intro-grid { grid-template-columns: 1fr; }
+      .error-solution { grid-template-columns: 1fr; }
+      .usecase-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4" style="max-width: 900px;">
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">n8n + Puppeteer</li>
+    </ol>
+  </nav>
+
+  <a href="../blog.html" class="back-to-blog">
+    <i class="bi bi-arrow-left"></i> Về Field Notes
+  </a>
+
+  <div class="post-wrap">
+
+    <!-- ── Header ── -->
+    <div class="post-header">
+      <span class="post-category-badge"><i class="bi bi-tools me-1"></i>Tooling & Tips</span>
+      <h1 class="post-title">Kết hợp n8n và Puppeteer:<br>Tự động hoá web động không cần code</h1>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-person-fill"></i> Lê Bình Phương</span>
+        <span><i class="bi bi-calendar3"></i> April 2026</span>
+        <span><i class="bi bi-clock"></i> 10 phút đọc</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">n8n</span>
+        <span class="post-tag">Puppeteer</span>
+        <span class="post-tag">Automation</span>
+        <span class="post-tag">Web Scraping</span>
+        <span class="post-tag">Docker</span>
+      </div>
+    </div>
+
+    <!-- ── TOC ── -->
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#intro">n8n và Puppeteer là gì?</a></li>
+        <li><a href="#why-combine">Tại sao cần kết hợp cả hai?</a></li>
+        <li><a href="#when-to-use">HTTP Request vs Puppeteer: chọn cái nào?</a></li>
+        <li><a href="#install">Cài đặt Community Node Puppeteer</a></li>
+        <li><a href="#first-workflow">Workflow đầu tiên: chụp ảnh trang web</a></li>
+        <li><a href="#docker-fix">Khắc phục lỗi trên Docker / Alpine Linux</a></li>
+        <li><a href="#advanced">Các tác vụ nâng cao</a></li>
+        <li><a href="#tips">Tips vận hành thực tế</a></li>
+      </ol>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="post-body">
+
+      <!-- 1. Intro -->
+      <h2 id="intro"><i class="bi bi-boxes"></i> n8n và Puppeteer là gì?</h2>
+
+      <div class="tool-intro-grid">
+        <div class="tool-intro-card tic-n8n">
+          <div class="tic-logo">🔀</div>
+          <div class="tic-name">n8n</div>
+          <div class="tic-desc">Nền tảng workflow automation self-hosted. Giao diện kéo thả kết nối 400+ service — không cần viết code cho các tác vụ tích hợp thông thường.</div>
+        </div>
+        <div class="tool-intro-card tic-pup">
+          <div class="tic-logo">🤖</div>
+          <div class="tic-name">Puppeteer</div>
+          <div class="tic-desc">Thư viện Node.js của Google, điều khiển Chrome/Chromium qua DevTools Protocol. Chạy headless — không cần màn hình, tự động mọi thao tác trình duyệt.</div>
+        </div>
+      </div>
+
+      <p>
+        Nếu n8n là "bộ não" điều phối luồng công việc, thì Puppeteer là "đôi tay" có thể thao tác
+        trực tiếp lên bất kỳ trang web nào — giống hệt người dùng thật ngồi trước màn hình.
+      </p>
+
+      <!-- 2. Why combine -->
+      <h2 id="why-combine"><i class="bi bi-diagram-3-fill"></i> Tại sao cần kết hợp cả hai?</h2>
+
+      <p>
+        Node <strong>HTTP Request</strong> mặc định của n8n gửi request thẳng đến server và nhận HTML về —
+        đủ dùng cho phần lớn API và trang web tĩnh. Nhưng web hiện đại không đơn giản như vậy.
+      </p>
+
+      <p>
+        <strong>Single Page Applications</strong> (React, Vue, Angular) render nội dung bằng JavaScript sau
+        khi tải trang. HTTP Request chỉ lấy được HTML khung rỗng — nội dung thực sự chưa được render.
+        Puppeteer mở trình duyệt thật, chờ JavaScript chạy xong, rồi mới đọc DOM.
+      </p>
+
+      <ul>
+        <li><strong>Vượt qua trang web động:</strong> SPA, lazy-load, infinite scroll, nội dung render bằng JS</li>
+        <li><strong>Tương tác phức tạp:</strong> Click, điền form, kéo thả, hover, đăng nhập multi-step</li>
+        <li><strong>Chụp ảnh &amp; PDF:</strong> Screenshot full-page hoặc element cụ thể, xuất PDF</li>
+        <li><strong>Bypass anti-bot cơ bản:</strong> Giả lập User-Agent, viewport, mouse movement</li>
+        <li><strong>Quản lý trực quan:</strong> Toàn bộ logic trong n8n workflow — không cần deploy script riêng</li>
+      </ul>
+
+      <!-- 3. When to use -->
+      <h2 id="when-to-use"><i class="bi bi-arrow-left-right"></i> HTTP Request vs Puppeteer: chọn cái nào?</h2>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Tình huống</th>
+            <th><span class="cmp-badge cb-http">HTTP Request</span></th>
+            <th><span class="cmp-badge cb-pup">Puppeteer</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Trang web tĩnh, HTML đầy đủ ngay khi tải</td>
+            <td class="cmp-use">✓ Dùng được</td>
+            <td>Overkill</td>
+          </tr>
+          <tr>
+            <td>REST API trả về JSON</td>
+            <td class="cmp-use">✓ Tốt nhất</td>
+            <td>Không cần</td>
+          </tr>
+          <tr>
+            <td>Single Page App (React, Vue, Angular)</td>
+            <td class="cmp-skip">✗ Không đủ</td>
+            <td class="cmp-use">✓ Cần dùng</td>
+          </tr>
+          <tr>
+            <td>Cần đăng nhập, điền form nhiều bước</td>
+            <td class="cmp-skip">✗ Phức tạp</td>
+            <td class="cmp-use">✓ Phù hợp</td>
+          </tr>
+          <tr>
+            <td>Infinite scroll, lazy-load content</td>
+            <td class="cmp-skip">✗ Không bắt được</td>
+            <td class="cmp-use">✓ Scroll được</td>
+          </tr>
+          <tr>
+            <td>Chụp ảnh màn hình, xuất PDF</td>
+            <td class="cmp-skip">✗ Không hỗ trợ</td>
+            <td class="cmp-use">✓ Built-in</td>
+          </tr>
+          <tr>
+            <td>Tốc độ thực thi, tài nguyên thấp</td>
+            <td class="cmp-use">✓ Nhanh, nhẹ</td>
+            <td>Nặng hơn ~200MB RAM/tab</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div>
+          <strong>Nguyên tắc thực hành:</strong> Luôn thử HTTP Request trước. Chỉ chuyển sang Puppeteer
+          khi HTTP Request không lấy được nội dung cần — Puppeteer tốn tài nguyên hơn đáng kể (mỗi
+          tab Chrome ~150–300 MB RAM).
+        </div>
+      </div>
+
+      <!-- 4. Install -->
+      <h2 id="install"><i class="bi bi-download"></i> Cài đặt Community Node Puppeteer</h2>
+
+      <p>
+        Puppeteer không có sẵn trong n8n mặc định — cần cài qua Community Nodes. Quy trình:
+      </p>
+
+      <ol>
+        <li>Vào <strong>Settings</strong> (góc trái dưới) → <strong>Community Nodes</strong></li>
+        <li>Click <strong>Install a community node</strong></li>
+        <li>Điền package name: <code>n8n-nodes-puppeteer</code></li>
+        <li>Tick xác nhận rủi ro → <strong>Install</strong></li>
+        <li>Chờ cài xong, node mới xuất hiện khi search "Puppeteer" trong workflow editor</li>
+      </ol>
+
+      <div class="callout callout-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+          Community Nodes yêu cầu biến môi trường <code>N8N_COMMUNITY_PACKAGES_ENABLED=true</code>
+          trong cấu hình n8n. Nếu không thấy menu Community Nodes, kiểm tra biến này trước.
+        </div>
+      </div>
+
+      <!-- 5. First workflow -->
+      <h2 id="first-workflow"><i class="bi bi-play-circle-fill"></i> Workflow đầu tiên: chụp ảnh trang web</h2>
+
+      <p>
+        Bắt đầu với ví dụ đơn giản nhất — chụp ảnh full-page một URL. Từ đây bạn hiểu được cấu trúc
+        node Puppeteer trước khi làm các tác vụ phức tạp hơn.
+      </p>
+
+      <div class="workflow-steps">
+        <div class="wf-step">
+          <div class="wf-num">1</div>
+          <div class="wf-body">
+            <strong>Tạo trigger Manual</strong>
+            <span>Kéo node "Manual Trigger" vào canvas — dùng để chạy thủ công khi test</span>
+          </div>
+        </div>
+        <div class="wf-step">
+          <div class="wf-num">2</div>
+          <div class="wf-body">
+            <strong>Thêm node Puppeteer</strong>
+            <span>Search "Puppeteer" trong node panel, kéo vào và nối với Manual Trigger</span>
+            <div class="wf-config">
+              <div><span class="cfg-key">Operation: </span><span class="cfg-val">Get Screenshot</span></div>
+              <div><span class="cfg-key">URL: </span><span class="cfg-val">https://www.google.com</span></div>
+              <div><span class="cfg-key">Type: </span><span class="cfg-val">PNG</span></div>
+              <div><span class="cfg-key">Full Page: </span><span class="cfg-val">true</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="wf-step">
+          <div class="wf-num">3</div>
+          <div class="wf-body">
+            <strong>Chạy và kiểm tra output</strong>
+            <span>Click "Execute workflow" → chọn node Puppeteer → tab <strong>Binary</strong> trong Output sẽ có ảnh PNG</span>
+          </div>
+        </div>
+        <div class="wf-step">
+          <div class="wf-num">4</div>
+          <div class="wf-body">
+            <strong>Lưu ảnh hoặc gửi đi</strong>
+            <span>Nối tiếp node Write Binary File (lưu vào disk), Send Email (đính kèm), hoặc HTTP Request (upload lên API)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Docker fix -->
+      <h2 id="docker-fix"><i class="bi bi-bug-fill"></i> Khắc phục lỗi trên Docker / Alpine Linux</h2>
+
+      <p>
+        Khi chạy n8n trong Docker (đặc biệt image dùng Alpine Linux), Puppeteer thường báo lỗi vì
+        Chrome không tìm thấy các thư viện hệ thống cần thiết.
+      </p>
+
+      <div class="error-solution">
+        <div class="err-box eb-err">
+          <div class="err-box-label"><i class="bi bi-x-circle-fill"></i> Lỗi thường gặp</div>
+          <div class="err-box-body">
+            <strong>Could not find Chrome</strong><br>
+            Puppeteer không tìm thấy binary Chrome.<br><br>
+            <strong>Missing libraries</strong><br>
+            libX11, libglib, nss, freetype... không tồn tại trong Alpine tối giản.<br><br>
+            <strong>Sandbox error</strong><br>
+            Running as root without <code>--no-sandbox</code> is not supported.
+          </div>
+        </div>
+        <div class="err-box eb-fix">
+          <div class="err-box-label"><i class="bi bi-check-circle-fill"></i> Giải pháp</div>
+          <div class="err-box-body">
+            <strong>Cài Chromium vào container:</strong><br>
+            Thực thi trong container đang chạy.<br><br>
+            <strong>Cấu hình đường dẫn &amp; flags:</strong><br>
+            Trỏ Puppeteer đến Chromium vừa cài, tắt sandbox.<br><br>
+            <strong>Hoặc: dùng biến môi trường</strong><br>
+            Khai báo trong docker-compose.yml để áp dụng vĩnh viễn.
+          </div>
+        </div>
+      </div>
+
+      <p><strong>Bước 1 — Cài Chromium vào container Alpine:</strong></p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>shell — trong container đang chạy</span></div><code><span class="code-comment"># Exec vào container với quyền root</span>
+<span class="code-cmd">docker exec -it -u root &lt;tên_container&gt; sh</span>
+
+<span class="code-comment"># Cài Chromium và các thư viện phụ thuộc</span>
+<span class="code-cmd">apk add --no-cache \
+  chromium \
+  nss \
+  freetype \
+  harfbuzz \
+  ca-certificates \
+  ttf-freefont</span></code></pre>
+
+      <p><strong>Bước 2 — Cấu hình node Puppeteer trong n8n:</strong></p>
+
+      <div class="wf-config" style="margin: 1rem 0; border-radius: 8px; padding: 14px 18px;">
+        <div><span class="cfg-key">Executable Path: </span><span class="cfg-val">/usr/bin/chromium-browser</span></div>
+        <div><span class="cfg-key">Launch Arguments: </span><span class="cfg-val">--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage</span></div>
+        <div><span class="cfg-key">Headless: </span><span class="cfg-val">true</span></div>
+      </div>
+
+      <p><strong>Bước 3 — Hoặc khai báo trong docker-compose.yml để tránh cấu hình lại mỗi lần:</strong></p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>docker-compose.yml</span></div><code><span class="code-key">services</span>:
+  <span class="code-key">n8n</span>:
+    <span class="code-key">image</span>: n8nio/n8n:latest
+    <span class="code-key">environment</span>:
+      <span class="code-comment"># Trỏ Puppeteer đến Chromium đã cài trong Alpine</span>
+      - <span class="code-str">PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser</span>
+      - <span class="code-str">PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true</span>
+      <span class="code-comment"># Bật Community Nodes</span>
+      - <span class="code-str">N8N_COMMUNITY_PACKAGES_ENABLED=true</span>
+    <span class="code-key">volumes</span>:
+      - n8n_data:/home/node/.n8n</code></pre>
+
+      <div class="callout callout-info">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>
+          <code>--disable-dev-shm-usage</code> quan trọng trong Docker vì <code>/dev/shm</code> mặc định
+          chỉ có 64 MB — Chrome sẽ crash khi render trang phức tạp. Flag này chuyển sang dùng <code>/tmp</code>
+          thay thế.
+        </div>
+      </div>
+
+      <!-- 7. Advanced -->
+      <h2 id="advanced"><i class="bi bi-lightning-charge-fill"></i> Các tác vụ nâng cao</h2>
+
+      <div class="usecase-grid">
+        <div class="usecase-card uc-use">
+          <div class="uc-icon">📝</div>
+          <div class="uc-title">Tự động điền form</div>
+          <div class="uc-desc">Dùng action Type + Click để điền và submit form — hữu ích cho upload dữ liệu vào hệ thống không có API.</div>
+          <div class="uc-when">✓ Dùng khi: form nhiều bước, captcha-free</div>
+        </div>
+        <div class="usecase-card uc-use">
+          <div class="uc-icon">📊</div>
+          <div class="uc-title">Thu thập dữ liệu SPA</div>
+          <div class="uc-desc">Chờ selector xuất hiện, đọc text/attribute — lấy dữ liệu từ React/Vue app mà HTTP Request không lấy được.</div>
+          <div class="uc-when">✓ Dùng khi: trang render bằng JS</div>
+        </div>
+        <div class="usecase-card uc-use">
+          <div class="uc-icon">📸</div>
+          <div class="uc-title">Screenshot & PDF báo cáo</div>
+          <div class="uc-desc">Chụp dashboard, chart, hoặc xuất invoice/báo cáo sang PDF tự động — gửi qua email định kỳ.</div>
+          <div class="uc-when">✓ Dùng khi: cần visual output</div>
+        </div>
+        <div class="usecase-card uc-use">
+          <div class="uc-icon">🔐</div>
+          <div class="uc-title">Đăng nhập &amp; session</div>
+          <div class="uc-desc">Login, lưu cookie session, thực hiện tác vụ sau đăng nhập — tự động hoá portal nội bộ không có API key.</div>
+          <div class="uc-when">✓ Dùng khi: cần authenticated scraping</div>
+        </div>
+        <div class="usecase-card uc-skip">
+          <div class="uc-icon">⚡</div>
+          <div class="uc-title">REST API công khai</div>
+          <div class="uc-desc">Trang có sẵn API endpoint trả JSON — dùng HTTP Request nhanh hơn, ít tài nguyên hơn nhiều.</div>
+          <div class="uc-when">✗ Không cần Puppeteer</div>
+        </div>
+        <div class="usecase-card uc-skip">
+          <div class="uc-icon">📄</div>
+          <div class="uc-title">Trang HTML tĩnh</div>
+          <div class="uc-desc">Nội dung đã có trong HTML response ban đầu, không cần JS render — HTTP Request + HTML Extract đủ dùng.</div>
+          <div class="uc-when">✗ Overkill khi dùng Puppeteer</div>
+        </div>
+      </div>
+
+      <h3>Trích xuất dữ liệu bằng CSS Selector</h3>
+      <p>
+        Trong node Puppeteer, operation <strong>Get Content</strong> cho phép lấy text từ element bất kỳ
+        — dùng CSS Selector giống DevTools:
+      </p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>Puppeteer — Get Content config</span></div><code><span class="code-key">Operation</span>   : Get Content
+<span class="code-key">URL</span>         : https://example.com/products
+<span class="code-key">Selector</span>    : .product-card .price        <span class="code-comment">← CSS selector từ DevTools</span>
+<span class="code-key">Wait For</span>    : networkidle0                <span class="code-comment">← chờ trang load xong hoàn toàn</span>
+<span class="code-key">Attribute</span>   : innerText                   <span class="code-comment">← hoặc innerHTML, href, src...</span></code></pre>
+
+      <!-- 8. Tips -->
+      <h2 id="tips"><i class="bi bi-stars"></i> Tips vận hành thực tế</h2>
+
+      <ul>
+        <li>
+          <strong>Dùng <code>waitForSelector</code> thay vì <code>networkidle</code>:</strong>
+          Chờ đúng element xuất hiện nhanh hơn chờ toàn bộ network idle — tránh timeout không cần thiết.
+        </li>
+        <li>
+          <strong>Giới hạn đồng thời:</strong> Mỗi tab Puppeteer tốn ~200 MB RAM. Nếu workflow chạy song song,
+          set concurrency tối đa trong n8n Settings → Executions để tránh OOM.
+        </li>
+        <li>
+          <strong>User-Agent thực tế:</strong> Một số site block request từ Headless Chrome. Set User-Agent
+          thành Chrome bình thường trong Launch Arguments:
+          <code>--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120..."</code>
+        </li>
+        <li>
+          <strong>Timeout hợp lý:</strong> Default timeout của Puppeteer là 30 giây. Với trang nặng,
+          set <strong>Page Timeout</strong> lên 60–90 giây trong node config.
+        </li>
+        <li>
+          <strong>Không dùng Puppeteer cho scraping quy mô lớn:</strong> Nếu cần crawl hàng nghìn URL,
+          dùng HTTP Request + queue. Puppeteer phù hợp cho tác vụ lẻ hoặc batch nhỏ có tương tác.
+        </li>
+      </ul>
+
+      <div class="callout callout-dark">
+        <i class="bi bi-quote"></i>
+        <div>
+          n8n + Puppeteer giải quyết được lớp bài toán mà trước đây cần cả một script Python và
+          cronjob riêng. Kéo thả, cấu hình, chạy — không cần deploy, không cần maintain server script
+          riêng biệt.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Footer nav ── -->
+    <div class="post-footer-nav">
+      <div class="prev-post">
+        <span class="nav-label">Trở về</span>
+        <a href="../blog.html" class="nav-title"><i class="bi bi-grid-fill"></i> Field Notes</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const icon   = document.getElementById('theme-icon');
+  const saved  = localStorage.getItem('theme');
+  if (saved === 'dark') { document.body.classList.add('dark-mode'); icon.className = 'bi bi-sun-fill'; }
+  toggle.addEventListener('click', () => {
+    const dark = document.body.classList.toggle('dark-mode');
+    icon.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>
