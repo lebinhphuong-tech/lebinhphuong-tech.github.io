@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenRouter: Một API key cho toàn bộ AI model | Field Notes</title>
+  <meta name="description" content="OpenRouter là AI gateway thống nhất — một API key truy cập 300+ model từ OpenAI, Anthropic, Google, Meta, Mistral... Không còn juggling SDK, không còn multiple billing, failover tự động, giá minh bạch.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary:    #149ddd;
+      --secondary:  #173b6c;
+      --text:       #272829;
+      --bg-light:   #f5f8fd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+
+    /* ── Header ── */
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); display: inline-block; margin-bottom: 16px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    /* ── TOC ── */
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Body ── */
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-highlight { color: #fde68a; font-weight: 700; }
+
+    /* ── Pain points (before) ── */
+    .pain-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; margin: 1.4rem 0; }
+    .pain-card { border-radius: 10px; padding: 14px; border: 1px solid rgba(239,68,68,0.2); background: rgba(239,68,68,0.04); text-align: center; }
+    .pain-icon { font-size: 1.4rem; margin-bottom: 6px; }
+    .pain-label { font-size: 12px; font-weight: 700; color: #dc2626; }
+    .pain-desc  { font-size: 11.5px; color: #8a9bb0; margin-top: 4px; line-height: 1.4; }
+
+    /* ── Provider logos ── */
+    .provider-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 1.2rem 0; }
+    .prov-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1px solid; }
+    .pb-openai    { background: rgba(16,163,127,0.08); border-color: rgba(16,163,127,0.3); color: #0d7a5f; }
+    .pb-anthropic { background: rgba(198,88,42,0.08);  border-color: rgba(198,88,42,0.3);  color: #9a3412; }
+    .pb-google    { background: rgba(66,133,244,0.08); border-color: rgba(66,133,244,0.3); color: #1a56cc; }
+    .pb-meta      { background: rgba(24,119,242,0.08); border-color: rgba(24,119,242,0.3); color: #1d4ed8; }
+    .pb-mistral   { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.3); color: #92400e; }
+    .pb-deepseek  { background: rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.3); color: #4338ca; }
+    .pb-grok      { background: rgba(15,23,42,0.08);   border-color: rgba(15,23,42,0.2);   color: #1e293b; }
+    .pb-more      { background: var(--bg-light); border-color: #e4eef8; color: #8a9bb0; }
+
+    /* ── Feature cards ── */
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin: 1.4rem 0; }
+    .feature-card { border-radius: 12px; padding: 18px; border: 1px solid #e4eef8; background: #fff; }
+    .fc-num   { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 8px; }
+    .fc-icon  { font-size: 1.5rem; margin-bottom: 8px; display: block; }
+    .fc-title { font-size: 13.5px; font-weight: 700; color: var(--secondary); margin-bottom: 5px; }
+    .fc-desc  { font-size: 12.5px; color: #6c7a8d; line-height: 1.55; }
+
+    /* ── Before/after comparison ── */
+    .ba-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 1.4rem 0; }
+    .ba-box { border-radius: 10px; overflow: hidden; }
+    .ba-label { padding: 9px 14px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px; }
+    .bb-before .ba-label { background: rgba(239,68,68,0.1); color: #dc2626; border-bottom: 1px solid rgba(239,68,68,0.15); }
+    .bb-after  .ba-label { background: rgba(34,197,94,0.1);  color: #059669; border-bottom: 1px solid rgba(34,197,94,0.15); }
+    .bb-before { border: 1px solid rgba(239,68,68,0.2); }
+    .bb-after  { border: 1px solid rgba(34,197,94,0.2); }
+    .ba-body { padding: 14px; font-size: 13px; line-height: 1.7; }
+    .bb-before .ba-body { background: rgba(239,68,68,0.02); color: #991b1b; }
+    .bb-after  .ba-body { background: rgba(34,197,94,0.02); color: #166534; }
+    .ba-body code { font-family: 'Courier New', monospace; font-size: 11.5px; display: block; margin: 3px 0; background: transparent; border: none; color: inherit; padding: 0; }
+
+    /* ── Who is it for ── */
+    .persona-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 1.2rem 0; }
+    .persona-card { border-radius: 12px; padding: 16px; border: 1px solid; }
+    .persona-icon  { font-size: 1.5rem; margin-bottom: 8px; }
+    .persona-title { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+    .persona-desc  { font-size: 12px; line-height: 1.5; opacity: 0.85; }
+    .p-dev     { background: rgba(20,157,221,0.07); border-color: rgba(20,157,221,0.25); color: #1e40af; }
+    .p-nocode  { background: rgba(139,92,246,0.07); border-color: rgba(139,92,246,0.25); color: #4c1d95; }
+    .p-research{ background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.25); color: #92400e; }
+    .p-indie   { background: rgba(34,197,94,0.07);  border-color: rgba(34,197,94,0.25);  color: #166534; }
+
+    /* ── Pros/cons ── */
+    .proscons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 1.4rem 0; }
+    .pc-box { border-radius: 10px; padding: 16px 18px; border: 1px solid; }
+    .pc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .pc-pros { background: rgba(34,197,94,0.05); border-color: rgba(34,197,94,0.25); }
+    .pc-pros .pc-title { color: #059669; }
+    .pc-cons { background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.25); }
+    .pc-cons .pc-title { color: #d97706; }
+    .pc-list { list-style: none; padding: 0; margin: 0; }
+    .pc-list li { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; font-size: 13px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .pc-list li:last-child { border-bottom: none; }
+    .pc-pros .pc-list li::before { content: '✓'; color: #059669; font-weight: 800; flex-shrink: 0; }
+    .pc-cons .pc-list li::before { content: '△'; color: #d97706; font-weight: 800; flex-shrink: 0; }
+
+    /* ── Callouts ── */
+    .callout { border-radius: 10px; padding: 1rem 1.4rem; margin: 1.4rem 0; font-size: 13.5px; line-height: 1.7; display: flex; gap: 12px; align-items: flex-start; }
+    .callout i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .callout-tip    { background: rgba(34,197,94,0.08);  border-left: 4px solid #22c55e; color: #166534; }
+    .callout-tip i  { color: #22c55e; }
+    .callout-warn   { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout-warn i { color: #f59e0b; }
+    .callout-info   { background: rgba(20,157,221,0.08); border-left: 4px solid var(--primary); color: #1e40af; }
+    .callout-info i { color: var(--primary); }
+    .callout-dark   { background: rgba(15,23,42,0.06);   border-left: 4px solid #334155; color: #1e293b; }
+    .callout-dark i { color: #475569; }
+
+    /* ── Post footer ── */
+    .post-footer-nav { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 1.8rem; margin-top: 2rem; border-top: 2px solid var(--bg-light); }
+    .post-footer-nav a { font-size: 13px; font-weight: 600; color: #8a9bb0; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .post-footer-nav a:hover { color: var(--primary); }
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #b0c4d8; display: block; margin-bottom: 3px; }
+    .nav-title { color: var(--secondary); font-size: 13.5px; }
+
+    /* ── Theme ── */
+    #theme-toggle { position: fixed; top: 72px; right: 16px; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; z-index: 9999; background: linear-gradient(135deg, #149ddd, #0d7ab5); color: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20,157,221,0.4); transition: all 0.25s ease; }
+    #theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+    /* ── Dark mode ── */
+    body.dark-mode { background: #0f172a; color: #cbd5e1; }
+    body.dark-mode .navbar { background: #0d1b2a !important; }
+    body.dark-mode .navbar-brand { color: var(--primary); }
+    body.dark-mode .nav-pills-custom a { background: #1e293b; color: #94a3b8; border-color: #1e3a52; }
+    body.dark-mode .nav-pills-custom a:hover, body.dark-mode .nav-pills-custom a.active { background: var(--primary); color: #fff; }
+    body.dark-mode .post-wrap    { background: #1e293b; }
+    body.dark-mode .post-header  { border-color: #1e3a52; }
+    body.dark-mode .post-title   { color: #e2e8f0; }
+    body.dark-mode .post-body    { color: #94a3b8; }
+    body.dark-mode .post-body h2 { color: #e2e8f0; border-color: #1e3a52; }
+    body.dark-mode .post-body h3 { color: #e2e8f0; }
+    body.dark-mode .post-body strong { color: #e2e8f0; }
+    body.dark-mode .post-body code  { background: #0f172a; border-color: #1e3a52; color: #f472b6; }
+    body.dark-mode .post-body a { color: #38bdf8; }
+    body.dark-mode .toc { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .toc-title { color: #4a6480; }
+    body.dark-mode .post-tag { background: #0f172a; color: #64748b; border-color: #1e3a52; }
+    body.dark-mode .pain-card { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2); }
+    body.dark-mode .prov-badge { opacity: 0.85; }
+    body.dark-mode .feature-card { background: #162032; border-color: #1e3a52; }
+    body.dark-mode .fc-title { color: #e2e8f0; }
+    body.dark-mode .fc-desc  { color: #4a6480; }
+    body.dark-mode .bb-before .ba-body { background: rgba(239,68,68,0.04); }
+    body.dark-mode .bb-after  .ba-body { background: rgba(34,197,94,0.04);  }
+    body.dark-mode .persona-card { opacity: 0.9; }
+    body.dark-mode .persona-title { color: inherit; }
+    body.dark-mode .pc-box { opacity: 0.9; }
+    body.dark-mode .pc-list li { border-color: rgba(255,255,255,0.05); color: #94a3b8; }
+    body.dark-mode .callout-tip    { background: rgba(34,197,94,0.07);  color: #4ade80; }
+    body.dark-mode .callout-warn   { background: rgba(245,158,11,0.07); color: #fbbf24; }
+    body.dark-mode .callout-info   { background: rgba(20,157,221,0.07); color: #7dd3fc; }
+    body.dark-mode .callout-dark   { background: rgba(15,23,42,0.4);    border-color: #475569; color: #94a3b8; }
+    body.dark-mode .post-footer-nav { border-color: #1e3a52; }
+    body.dark-mode .nav-title { color: #e2e8f0; }
+    body.dark-mode .breadcrumb a { color: var(--primary); }
+    body.dark-mode .breadcrumb-item.active { color: #64748b; }
+    body.dark-mode .pb-grok { border-color: #1e3a52; color: #94a3b8; background: #0f172a; }
+
+    @media (max-width: 768px) {
+      .post-wrap { padding: 1.8rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+      .ba-compare { grid-template-columns: 1fr; }
+      .proscons   { grid-template-columns: 1fr; }
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark / light mode" aria-label="Toggle theme">
+  <i class="bi bi-moon-fill" id="theme-icon"></i>
+</button>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4" style="max-width: 900px;">
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">OpenRouter AI Gateway</li>
+    </ol>
+  </nav>
+
+  <a href="../blog.html" class="back-to-blog">
+    <i class="bi bi-arrow-left"></i> Về Field Notes
+  </a>
+
+  <div class="post-wrap">
+
+    <!-- ── Header ── -->
+    <div class="post-header">
+      <span class="post-category-badge"><i class="bi bi-tools me-1"></i>Tooling & Tips</span>
+      <h1 class="post-title">OpenRouter:<br>Một API key cho toàn bộ AI model đỉnh nhất hiện nay</h1>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-person-fill"></i> Lê Bình Phương</span>
+        <span><i class="bi bi-calendar3"></i> April 2026</span>
+        <span><i class="bi bi-clock"></i> 9 phút đọc</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">OpenRouter</span>
+        <span class="post-tag">AI Gateway</span>
+        <span class="post-tag">LLM</span>
+        <span class="post-tag">API</span>
+        <span class="post-tag">Cost Optimization</span>
+      </div>
+    </div>
+
+    <!-- ── TOC ── -->
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#problem">Vấn đề: juggling SDK và billing từng provider</a></li>
+        <li><a href="#what-is">OpenRouter là gì?</a></li>
+        <li><a href="#features">7 tính năng cốt lõi</a></li>
+        <li><a href="#quickstart">Bắt đầu trong 5 phút</a></li>
+        <li><a href="#model-selection">Chọn model đúng cho đúng việc</a></li>
+        <li><a href="#who-for">Phù hợp với ai?</a></li>
+        <li><a href="#pros-cons">Ưu và nhược điểm</a></li>
+        <li><a href="#verdict">Nhận định</a></li>
+      </ol>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="post-body">
+
+      <!-- 1. Problem -->
+      <h2 id="problem"><i class="bi bi-exclamation-diamond-fill"></i> Vấn đề: juggling SDK và billing từng provider</h2>
+
+      <p>
+        Xây dựng bất kỳ thứ gì nghiêm túc với LLM đều đụng ngay vào một vấn đề thực tế: các provider
+        hoàn toàn rời rạc nhau. Mỗi bên một API key, một SDK riêng, một cách billing khác, và model
+        mới ra thì update liên tục — không theo dõi kịp là tụt hậu ngay.
+      </p>
+
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="pain-icon">🔑</div>
+          <div class="pain-label">N API keys</div>
+          <div class="pain-desc">OpenAI, Anthropic, Google, Mistral — mỗi ông một key, một account</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">💸</div>
+          <div class="pain-label">N billing</div>
+          <div class="pain-desc">Nhiều hoá đơn từ nhiều provider, khó tổng hợp chi phí</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">📦</div>
+          <div class="pain-label">SDK loạn</div>
+          <div class="pain-desc">Mỗi provider một SDK, interface khác nhau, update không đồng bộ</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">💀</div>
+          <div class="pain-label">Model down</div>
+          <div class="pain-desc">Một provider bị lỗi là cả app gãy, không có fallback tự động</div>
+        </div>
+      </div>
+
+      <p>
+        OpenRouter giải quyết toàn bộ lớp vấn đề này bằng một cách tiếp cận đơn giản: đứng ở giữa và
+        gom tất cả về một điểm duy nhất.
+      </p>
+
+      <!-- 2. What is -->
+      <h2 id="what-is"><i class="bi bi-diagram-2-fill"></i> OpenRouter là gì?</h2>
+
+      <p>
+        <strong>OpenRouter</strong> là AI gateway — lớp trung gian đứng giữa ứng dụng của bạn và toàn bộ
+        hệ sinh thái LLM. Thay vì kết nối trực tiếp đến từng provider, bạn chỉ cần kết nối đến
+        OpenRouter một lần. Từ đó muốn gọi model nào cũng được — đổi tên model trong một dòng code.
+      </p>
+
+      <p>Các provider hiện được hỗ trợ:</p>
+
+      <div class="provider-row">
+        <span class="prov-badge pb-openai">🟢 OpenAI</span>
+        <span class="prov-badge pb-anthropic">🟠 Anthropic</span>
+        <span class="prov-badge pb-google">🔵 Google</span>
+        <span class="prov-badge pb-meta">💙 Meta (Llama)</span>
+        <span class="prov-badge pb-mistral">🟡 Mistral</span>
+        <span class="prov-badge pb-deepseek">🟣 DeepSeek</span>
+        <span class="prov-badge pb-grok">⚫ xAI (Grok)</span>
+        <span class="prov-badge pb-more">+300 models...</span>
+      </div>
+
+      <!-- 3. Features -->
+      <h2 id="features"><i class="bi bi-stars"></i> 7 tính năng cốt lõi</h2>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="fc-icon">🔑</span>
+          <div class="fc-num">Feature 01</div>
+          <div class="fc-title">Một API key duy nhất</div>
+          <div class="fc-desc">Đăng ký một lần, lấy một key — truy cập 300+ model. Không cần quản lý key từng provider.</div>
+        </div>
+        <div class="feature-card">
+          <span class="fc-icon">🔄</span>
+          <div class="fc-num">Feature 02</div>
+          <div class="fc-title">Failover tự động</div>
+          <div class="fc-desc">Model A bị overload? OpenRouter tự route sang provider thứ hai. Uptime không bị gián đoạn.</div>
+        </div>
+        <div class="feature-card">
+          <span class="fc-icon">💰</span>
+          <div class="fc-num">Feature 03</div>
+          <div class="fc-title">Giá minh bạch, pay-as-you-go</div>
+          <div class="fc-desc">Giá từng model hiển thị rõ trên dashboard. Không markup ẩn, không phí tháng, xài bao nhiêu tính bấy nhiêu.</div>
+        </div>
+        <div class="feature-card">
+          <span class="fc-icon">🔌</span>
+          <div class="fc-num">Feature 04</div>
+          <div class="fc-title">OpenAI-compatible</div>
+          <div class="fc-desc">Đang dùng OpenAI SDK? Chỉ đổi <code>base_url</code> là xong. Hỗ trợ Python, TypeScript, cURL.</div>
+        </div>
+        <div class="feature-card">
+          <span class="fc-icon">📊</span>
+          <div class="fc-num">Feature 05</div>
+          <div class="fc-title">Analytics đầy đủ</div>
+          <div class="fc-desc">Số lượt gọi, latency, chi phí theo từng model. Log chi tiết từng request để debug và audit.</div>
+        </div>
+        <div class="feature-card">
+          <span class="fc-icon">🔀</span>
+          <div class="fc-num">Feature 06</div>
+          <div class="fc-title">Swap model tức thì</div>
+          <div class="fc-desc">300+ model — GPT-4o, Claude, Gemini, Llama 4, DeepSeek... Đổi trong một dòng code, không cần refactor.</div>
+        </div>
+        <div class="feature-card">
+          <span class="fc-icon">🧩</span>
+          <div class="fc-num">Feature 07</div>
+          <div class="fc-title">MCP & ecosystem</div>
+          <div class="fc-desc">Hỗ trợ Model Context Protocol, tích hợp với Claude Desktop, Obsidian và nhiều tool AI agent.</div>
+        </div>
+      </div>
+
+      <!-- 4. Quickstart -->
+      <h2 id="quickstart"><i class="bi bi-play-circle-fill"></i> Bắt đầu trong 5 phút</h2>
+
+      <p>
+        Nếu bạn đang dùng OpenAI SDK, migration sang OpenRouter gần như không tốn công. Chỉ cần thay
+        <code>base_url</code> và <code>api_key</code>:
+      </p>
+
+      <div class="ba-compare">
+        <div class="ba-box bb-before">
+          <div class="ba-label"><i class="bi bi-x-circle-fill"></i> Trước — Gọi thẳng OpenAI</div>
+          <div class="ba-body">
+            <code>from openai import OpenAI</code>
+            <code>&nbsp;</code>
+            <code>client = OpenAI(</code>
+            <code>&nbsp; api_key=OPENAI_KEY,</code>
+            <code>&nbsp; <strong># base_url mặc định OpenAI</strong></code>
+            <code>)</code>
+            <code>&nbsp;</code>
+            <code>model="gpt-4o"</code>
+            <code><em># Muốn dùng Claude? Viết lại toàn bộ...</em></code>
+          </div>
+        </div>
+        <div class="ba-box bb-after">
+          <div class="ba-label"><i class="bi bi-check-circle-fill"></i> Sau — Qua OpenRouter</div>
+          <div class="ba-body">
+            <code>from openai import OpenAI</code>
+            <code>&nbsp;</code>
+            <code>client = OpenAI(</code>
+            <code>&nbsp; api_key=OPENROUTER_KEY,</code>
+            <code>&nbsp; <strong>base_url="https://openrouter.ai/api/v1"</strong></code>
+            <code>)</code>
+            <code>&nbsp;</code>
+            <code>model="anthropic/claude-sonnet-4-5"</code>
+            <code><em># Đổi model = đổi 1 dòng, xong!</em></code>
+          </div>
+        </div>
+      </div>
+
+      <p>Ví dụ Python đầy đủ:</p>
+
+      <pre><div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>Python — OpenRouter quickstart</span></div><code><span class="code-key">import</span> os
+<span class="code-key">from</span> openai <span class="code-key">import</span> OpenAI
+
+client = OpenAI(
+    <span class="code-key">api_key</span>=os.environ[<span class="code-str">"OPENROUTER_API_KEY"</span>],
+    <span class="code-key">base_url</span>=<span class="code-str">"https://openrouter.ai/api/v1"</span>,
+)
+
+<span class="code-comment"># Gọi Llama 4 của Meta</span>
+completion = client.chat.completions.create(
+    <span class="code-key">model</span>=<span class="code-str">"meta-llama/llama-4-maverick"</span>,
+    <span class="code-key">messages</span>=[{<span class="code-str">"role"</span>: <span class="code-str">"user"</span>, <span class="code-str">"content"</span>: <span class="code-str">"Tóm tắt bài này giúp tôi."</span>}]
+)
+<span class="code-key">print</span>(completion.choices[<span class="code-num">0</span>].message.content)
+
+<span class="code-comment"># Đổi sang Claude — chỉ thay tên model, không thay gì khác</span>
+completion2 = client.chat.completions.create(
+    <span class="code-key">model</span>=<span class="code-str">"anthropic/claude-sonnet-4-5"</span>,
+    <span class="code-key">messages</span>=[{<span class="code-str">"role"</span>: <span class="code-str">"user"</span>, <span class="code-str">"content"</span>: <span class="code-str">"So sánh hai cách tiếp cận này."</span>}]
+)</code></pre>
+
+      <div class="callout callout-tip">
+        <i class="bi bi-lightbulb-fill"></i>
+        <div>
+          Tên model trên OpenRouter theo format <code>provider/model-name</code>. Ví dụ:
+          <code>openai/gpt-4o</code>, <code>anthropic/claude-opus-4</code>,
+          <code>google/gemini-2.5-pro</code>, <code>deepseek/deepseek-r2</code>.
+          Xem đầy đủ tại <strong>openrouter.ai/models</strong>.
+        </div>
+      </div>
+
+      <!-- 5. Model selection -->
+      <h2 id="model-selection"><i class="bi bi-sliders"></i> Chọn model đúng cho đúng việc</h2>
+
+      <p>
+        Một trong những giá trị lớn nhất của OpenRouter là <strong>thấy toàn bộ bảng giá và hiệu năng
+        của 300+ model trên cùng một trang</strong> — không cần mở 5 tab để so sánh.
+      </p>
+
+      <p>Gợi ý lựa chọn theo tác vụ:</p>
+
+      <ul>
+        <li>
+          <strong>Routing, phân loại, tóm tắt đơn giản:</strong> Llama 4 Scout, Gemini Flash, GPT-4o mini —
+          rẻ hơn 10–20× so với model flagship, tốc độ nhanh hơn.
+        </li>
+        <li>
+          <strong>Chat thông thường, viết nội dung, code cơ bản:</strong> Claude Sonnet, GPT-4o —
+          cân bằng tốt giữa chất lượng và chi phí.
+        </li>
+        <li>
+          <strong>Reasoning phức tạp, phân tích sâu, code nâng cao:</strong> Claude Opus, GPT o1/o3,
+          DeepSeek R2 — chỉ dùng khi thực sự cần.
+        </li>
+        <li>
+          <strong>Context window lớn, tài liệu dài:</strong> Gemini 2.5 Pro (1M token context) —
+          phù hợp khi cần nhét nhiều tài liệu vào một lần gọi.
+        </li>
+      </ul>
+
+      <div class="callout callout-info">
+        <i class="bi bi-bar-chart-fill"></i>
+        <div>
+          OpenRouter có trang <strong>model rankings</strong> hiển thị model nào đang được dùng nhiều nhất
+          theo từng category — hữu ích để theo dõi xu hướng và đánh giá model nào đang được cộng đồng
+          tin dùng thực tế.
+        </div>
+      </div>
+
+      <p>
+        Với tính năng <strong>cost estimation</strong> trước khi chạy, bạn có thể ước tính chi phí
+        cho một batch lớn trước khi thực sự gọi API — tránh bị sốc hoá đơn.
+      </p>
+
+      <!-- 6. Who for -->
+      <h2 id="who-for"><i class="bi bi-people-fill"></i> Phù hợp với ai?</h2>
+
+      <div class="persona-grid">
+        <div class="persona-card p-dev">
+          <div class="persona-icon">👨‍💻</div>
+          <div class="persona-title">Dev xây dựng AI app</div>
+          <div class="persona-desc">Cần swap model liên tục, tối ưu chi phí inference, hoặc build SaaS cần uptime cao. OpenRouter giảm đáng kể thời gian quản lý provider.</div>
+        </div>
+        <div class="persona-card p-nocode">
+          <div class="persona-icon">🎨</div>
+          <div class="persona-title">No-code / Low-code builder</div>
+          <div class="persona-desc">Muốn gắn AI vào app qua n8n, Make, hoặc các tool tương tự — không cần đi xin từng API key từng provider.</div>
+        </div>
+        <div class="persona-card p-research">
+          <div class="persona-icon">🔬</div>
+          <div class="persona-title">Researcher & team sản phẩm</div>
+          <div class="persona-desc">A/B test nhiều model song song, benchmark hiệu năng, so sánh output từng model với cùng prompt — tất cả trên một interface.</div>
+        </div>
+        <div class="persona-card p-indie">
+          <div class="persona-icon">🚀</div>
+          <div class="persona-title">Indie hacker & startup nhỏ</div>
+          <div class="persona-desc">Không muốn commit vào một provider. Pay-as-you-go, không phí tháng, linh hoạt chuyển model khi có model mới rẻ hơn ra mắt.</div>
+        </div>
+      </div>
+
+      <!-- 7. Pros/Cons -->
+      <h2 id="pros-cons"><i class="bi bi-balance-scale"></i> Ưu và nhược điểm</h2>
+
+      <div class="proscons">
+        <div class="pc-box pc-pros">
+          <div class="pc-title"><i class="bi bi-check-circle-fill"></i> Ưu điểm</div>
+          <ul class="pc-list">
+            <li>Một API key, một điểm tích hợp cho 300+ model</li>
+            <li>Failover tự động — không lo model down làm gãy app</li>
+            <li>OpenAI-compatible — migration gần như zero effort</li>
+            <li>Bảng giá minh bạch, so sánh được ngay trên dashboard</li>
+            <li>Không phí tháng, pay-as-you-go thực sự</li>
+            <li>Analytics chi tiết từng request, dễ debug và audit</li>
+            <li>Model ranking + community lớn, cập nhật model mới cực nhanh</li>
+            <li>Hỗ trợ MCP, tương thích nhiều AI agent framework</li>
+          </ul>
+        </div>
+        <div class="pc-box pc-cons">
+          <div class="pc-title"><i class="bi bi-exclamation-triangle-fill"></i> Nhược điểm cần biết</div>
+          <ul class="pc-list">
+            <li>Một số model premium chỉ BYOK (tự mang key riêng)</li>
+            <li>Giá token có thể biến động theo giờ cao điểm</li>
+            <li>Phụ thuộc vào OpenRouter làm trung gian — thêm một điểm có thể fail</li>
+            <li>Latency thêm một hop so với gọi thẳng provider</li>
+            <li>Một vài model mới nhất có thể chưa có ngay sau khi release</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+          <strong>Lưu ý khi chạy batch lớn:</strong> Giá token có thể thay đổi theo thời điểm.
+          Nên check bảng giá hiện tại trước khi kick off job lớn — đặc biệt với các model có pricing
+          theo tier giờ cao điểm.
+        </div>
+      </div>
+
+      <!-- 8. Verdict -->
+      <h2 id="verdict"><i class="bi bi-patch-check-fill"></i> Nhận định</h2>
+
+      <p>
+        OpenRouter không phải giải pháp cho mọi vấn đề AI — nhưng nó giải quyết tốt <strong>nỗi đau
+        lớn nhất</strong> của bất kỳ ai đang xây dựng nghiêm túc với LLM: sự phân mảnh của hệ sinh thái.
+      </p>
+
+      <p>
+        Với developer, lợi ích rõ nhất là <strong>giảm thời gian quản lý provider</strong> và tăng
+        khả năng thử nghiệm model mới. Với team sản phẩm, failover tự động và analytics tập trung
+        giúp vận hành ổn định hơn. Với indie hacker, pay-as-you-go và không bị lock-in vào một provider
+        là lợi thế thực sự.
+      </p>
+
+      <p>Bắt đầu bằng 3 bước:</p>
+
+      <ol>
+        <li>Đăng ký tài khoản free tại <strong>openrouter.ai</strong></li>
+        <li>Lấy API key, đọc docs (chuẩn OpenAI — không có gì lạ)</li>
+        <li>Đổi <code>base_url</code> trong project hiện tại, chạy thử — xong</li>
+      </ol>
+
+      <div class="callout callout-dark">
+        <i class="bi bi-quote"></i>
+        <div>
+          Xài OpenRouter rồi thì sẽ auto lười quay lại kiểu quản lý provider truyền thống. Không phải vì
+          nó hoàn hảo — mà vì nó giải quyết đúng vấn đề đúng lúc cần giải quyết.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Footer nav ── -->
+    <div class="post-footer-nav">
+      <div class="prev-post">
+        <span class="nav-label">Trở về</span>
+        <a href="../blog.html" class="nav-title"><i class="bi bi-grid-fill"></i> Field Notes</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const icon   = document.getElementById('theme-icon');
+  const saved  = localStorage.getItem('theme');
+  if (saved === 'dark') { document.body.classList.add('dark-mode'); icon.className = 'bi bi-sun-fill'; }
+  toggle.addEventListener('click', () => {
+    const dark = document.body.classList.toggle('dark-mode');
+    icon.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>
