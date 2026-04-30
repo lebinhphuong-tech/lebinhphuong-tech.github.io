@@ -387,23 +387,23 @@
 
         <div class="sidebar-section-label">— Danh mục</div>
         <nav class="nav flex-column">
-          <a class="nav-link active" href="blog.html">
+          <a class="nav-link active" href="#" data-cat="">
             <i class="bi bi-grid-fill"></i> Tất cả bài viết
             <span class="post-count-badge">11</span>
           </a>
-          <a class="nav-link" href="blog.html?cat=devops">
+          <a class="nav-link" href="#" data-cat="devops">
             <i class="bi bi-arrow-repeat"></i> DevOps & SRE
           </a>
-          <a class="nav-link" href="blog.html?cat=cloud">
+          <a class="nav-link" href="#" data-cat="cloud">
             <i class="bi bi-cloud-fill"></i> Cloud & Infrastructure
           </a>
-          <a class="nav-link" href="blog.html?cat=security">
+          <a class="nav-link" href="#" data-cat="security">
             <i class="bi bi-shield-fill-check"></i> Security
           </a>
-          <a class="nav-link" href="blog.html?cat=tooling">
+          <a class="nav-link" href="#" data-cat="tooling">
             <i class="bi bi-tools"></i> Tooling & Tips
           </a>
-          <a class="nav-link" href="blog.html?cat=notes">
+          <a class="nav-link" href="#" data-cat="notes">
             <i class="bi bi-journal-text"></i> Learning Notes
           </a>
         </nav>
@@ -461,12 +461,12 @@
         <!-- Filter bar -->
         <div class="filter-bar">
           <span>Lọc:</span>
-          <a href="blog.html" class="filter-btn active">Tất cả</a>
-          <a href="blog.html?cat=devops" class="filter-btn">DevOps & SRE</a>
-          <a href="blog.html?cat=cloud" class="filter-btn">Cloud</a>
-          <a href="blog.html?cat=security" class="filter-btn">Security</a>
-          <a href="blog.html?cat=tooling" class="filter-btn">Tooling</a>
-          <a href="blog.html?cat=notes" class="filter-btn">Notes</a>
+          <a href="#" class="filter-btn active" data-cat="">Tất cả</a>
+          <a href="#" class="filter-btn" data-cat="devops">DevOps & SRE</a>
+          <a href="#" class="filter-btn" data-cat="cloud">Cloud</a>
+          <a href="#" class="filter-btn" data-cat="security">Security</a>
+          <a href="#" class="filter-btn" data-cat="tooling">Tooling</a>
+          <a href="#" class="filter-btn" data-cat="notes">Notes</a>
         </div>
 
         <!-- Posts list -->
@@ -832,22 +832,39 @@
 
 <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>
-  /* ── Dark mode ────────────────────────────────────── */
-  const toggle = document.getElementById('theme-toggle');
-  const icon   = document.getElementById('theme-icon');
-  const body   = document.body;
+  /* ── Filter ───────────────────────────────────────── */
+  const allCards   = document.querySelectorAll('.post-card');
+  const countEl    = document.querySelector('.section-divider .post-count');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const sideNavs   = document.querySelectorAll('.sidebar .nav-link[data-cat]');
 
-  if (localStorage.getItem('theme') === 'dark') {
-    body.classList.add('dark-mode');
-    icon.className = 'bi bi-sun-fill';
+  function getCat(card) {
+    const badge = card.querySelector('.post-category');
+    if (!badge) return '';
+    const m = badge.className.match(/cat-(\w+)/);
+    return m ? m[1] : '';
   }
 
-  toggle.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-    const isDark = body.classList.contains('dark-mode');
-    icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  });
+  function applyFilter(cat) {
+    let visible = 0;
+    allCards.forEach(card => {
+      const show = !cat || getCat(card) === cat;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    if (countEl) countEl.textContent = visible + ' bài';
+
+    filterBtns.forEach(b => b.classList.toggle('active', (b.dataset.cat || '') === (cat || '')));
+    sideNavs.forEach(b => b.classList.toggle('active', (b.dataset.cat || '') === (cat || '')));
+  }
+
+  function onCatClick(e) {
+    e.preventDefault();
+    applyFilter(this.dataset.cat || '');
+  }
+
+  filterBtns.forEach(b => b.addEventListener('click', onCatClick));
+  sideNavs.forEach(b => b.addEventListener('click', onCatClick));
 </script>
 </body>
 </html>
