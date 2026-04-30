@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1.1.1.1 vs 1.1.1.2 vs 1.1.1.3: Ba DNS của Cloudflare khác nhau chỗ nào? | Field Notes</title>
+  <meta name="description" content="Cloudflare có ba DNS server: 1.1.1.1 (standard), 1.1.1.2 (chặn malware), 1.1.1.3 (chặn malware + nội dung người lớn). Cái nào phù hợp cho bạn? So sánh chi tiết kèm hướng dẫn cấu hình.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary:    #149ddd;
+      --secondary:  #173b6c;
+      --text:       #272829;
+      --bg-light:   #f5f8fd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+
+    /* ── Header ── */
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); display: inline-block; margin-bottom: 16px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    /* ── TOC ── */
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Body ── */
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-highlight { color: #fde68a; font-weight: 700; }
+
+    /* ── Callouts ── */
+    .callout { border-radius: 10px; padding: 1.1rem 1.4rem; margin: 1.4rem 0; border-left: 4px solid; font-size: 14px; }
+    .callout-title { font-weight: 700; margin-bottom: 5px; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+    .callout-tip  { background: rgba(16,185,129,0.06); border-color: #10b981; color: #065f46; }
+    .callout-tip .callout-title  { color: #059669; }
+    .callout-warn { background: rgba(245,158,11,0.07); border-color: #f59e0b; color: #78350f; }
+    .callout-warn .callout-title { color: #d97706; }
+    .callout-info { background: rgba(20,157,221,0.07); border-color: var(--primary); color: #1e3a5f; }
+    .callout-info .callout-title { color: var(--primary); }
+
+    /* ── DNS Trio cards ── */
+    .dns-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 1.6rem 0; }
+    .dns-card { border-radius: 14px; padding: 22px 18px; border: 2px solid; text-align: center; position: relative; overflow: hidden; }
+    .dns-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+    .dns-standard { border-color: rgba(20,157,221,0.3); background: rgba(20,157,221,0.04); }
+    .dns-standard::before { background: linear-gradient(90deg, #149ddd, #0ea5e9); }
+    .dns-malware  { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.04); }
+    .dns-malware::before  { background: linear-gradient(90deg, #f59e0b, #fb923c); }
+    .dns-family   { border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.04); }
+    .dns-family::before   { background: linear-gradient(90deg, #a855f7, #ec4899); }
+    .dns-ip { font-family: 'Courier New', monospace; font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+    .dns-standard .dns-ip { color: #0369a1; }
+    .dns-malware  .dns-ip { color: #b45309; }
+    .dns-family   .dns-ip { color: #7c3aed; }
+    .dns-secondary { font-family: 'Courier New', monospace; font-size: 12px; color: #8a9bb0; margin-bottom: 12px; }
+    .dns-name { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+    .dns-standard .dns-name { color: #0369a1; }
+    .dns-malware  .dns-name { color: #b45309; }
+    .dns-family   .dns-name { color: #7c3aed; }
+    .dns-filter { font-size: 12.5px; color: #6c7a8d; line-height: 1.5; }
+    .filter-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+    .filter-dot.on  { background: #22c55e; }
+    .filter-dot.off { background: #e2e8f0; }
+    .dns-label { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; padding: 2px 8px; border-radius: 10px; margin-bottom: 12px; }
+    .dns-standard .dns-label { background: rgba(20,157,221,0.12); color: #0369a1; }
+    .dns-malware  .dns-label { background: rgba(245,158,11,0.12); color: #b45309; }
+    .dns-family   .dns-label { background: rgba(168,85,247,0.12); color: #7c3aed; }
+
+    /* ── Filter level bar ── */
+    .filter-visual { margin: 1.8rem 0; }
+    .fv-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--bg-light); font-size: 13.5px; }
+    .fv-row:last-child { border-bottom: none; }
+    .fv-dns { font-family: 'Courier New', monospace; font-weight: 700; width: 80px; flex-shrink: 0; }
+    .fv-dns.c1 { color: #0369a1; }
+    .fv-dns.c2 { color: #b45309; }
+    .fv-dns.c3 { color: #7c3aed; }
+    .fv-bars { display: flex; gap: 5px; }
+    .fv-bar { height: 20px; border-radius: 4px; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; color: #fff; white-space: nowrap; padding: 0 8px; }
+    .fb-speed   { background: #149ddd; min-width: 90px; }
+    .fb-malware { background: #f59e0b; min-width: 90px; }
+    .fb-adult   { background: #a855f7; min-width: 90px; }
+    .fb-empty   { background: #e4eef8; color: #b0c0d0; min-width: 90px; }
+    .fv-note { font-size: 12px; color: #8a9bb0; margin-left: auto; }
+
+    /* ── Comparison table ── */
+    .cmp-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; }
+    .cmp-table th { background: var(--secondary); color: #fff; padding: 10px 14px; font-size: 12px; font-weight: 700; text-align: left; }
+    .cmp-table th:first-child { border-radius: 8px 0 0 0; }
+    .cmp-table th:last-child  { border-radius: 0 8px 0 0; }
+    .cmp-table td { padding: 10px 14px; border-bottom: 1px solid #edf2f8; }
+    .cmp-table tr:last-child td { border-bottom: none; }
+    .cmp-table tr:nth-child(even) td { background: var(--bg-light); }
+    .cmp-table .good  { color: #059669; font-weight: 700; }
+    .cmp-table .meh   { color: #d97706; font-weight: 700; }
+    .cmp-table .bad   { color: #dc2626; font-weight: 700; }
+    .cmp-table .dns-mono { font-family: 'Courier New', monospace; font-weight: 700; color: var(--secondary); }
+
+    /* ── Setup steps ── */
+    .setup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin: 1.4rem 0; }
+    .setup-card { border-radius: 12px; border: 1px solid #e4eef8; background: #fff; overflow: hidden; }
+    .setup-card-head { padding: 12px 16px; background: var(--bg-light); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #e4eef8; }
+    .setup-card-head i { font-size: 1.2rem; color: var(--primary); }
+    .setup-card-head span { font-weight: 700; font-size: 13.5px; color: var(--secondary); }
+    .setup-card-body { padding: 14px 16px; font-size: 13px; color: #4a5568; }
+    .setup-card-body ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .setup-card-body li { margin-bottom: 6px; }
+    .setup-card-body code { font-family: 'Courier New', monospace; font-size: 12px; background: #f0f6ff; color: #c0392b; padding: 1px 5px; border-radius: 4px; border: 1px solid #e4eef8; }
+
+    /* ── DoH / DoT info ── */
+    .protocol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 1.4rem 0; }
+    .protocol-card { border-radius: 12px; padding: 20px; border: 1px solid #e4eef8; }
+    .proto-badge { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; }
+    .pb-doh { background: rgba(20,157,221,0.1); color: #0369a1; }
+    .pb-dot { background: rgba(168,85,247,0.1); color: #7c3aed; }
+    .proto-title { font-size: 14px; font-weight: 700; color: var(--secondary); margin-bottom: 8px; }
+    .proto-desc  { font-size: 13px; color: #6c7a8d; line-height: 1.6; }
+    .proto-url { font-family: 'Courier New', monospace; font-size: 11.5px; background: var(--bg-light); padding: 6px 10px; border-radius: 6px; border: 1px solid #e4eef8; display: block; margin-top: 10px; color: #3a4555; word-break: break-all; }
+
+    /* ── Decision helper ── */
+    .decision-list { list-style: none; margin: 1.4rem 0; padding: 0; }
+    .decision-list li { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #e4eef8; background: #fff; }
+    .dec-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+    .dec-text strong { display: block; font-size: 13.5px; color: var(--secondary); margin-bottom: 3px; }
+    .dec-text span { font-size: 13px; color: #6c7a8d; }
+    .dec-dns { font-family: 'Courier New', monospace; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 6px; float: right; margin-top: 2px; }
+    .dec-dns.c1 { background: rgba(20,157,221,0.1); color: #0369a1; }
+    .dec-dns.c2 { background: rgba(245,158,11,0.1); color: #b45309; }
+    .dec-dns.c3 { background: rgba(168,85,247,0.1); color: #7c3aed; }
+
+    /* ── Footer nav ── */
+    .post-footer-nav { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 2px solid var(--bg-light); gap: 12px; flex-wrap: wrap; }
+    .pfn-link { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; padding: 10px 18px; border-radius: 10px; border: 1px solid #e4eef8; background: #fff; transition: all 0.2s; }
+    .pfn-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    @media (max-width: 768px) {
+      .post-wrap { padding: 1.6rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+      .dns-trio { grid-template-columns: 1fr; }
+      .protocol-grid { grid-template-columns: 1fr; }
+      .ba-compare { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html">
+      <i class="bi bi-house-door me-2"></i>Lê Bình Phương
+    </a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">Cloudflare DNS</li>
+    </ol>
+  </nav>
+
+  <div class="post-wrap">
+    <a href="../blog.html" class="back-to-blog">
+      <i class="bi bi-arrow-left"></i> Về trang blog
+    </a>
+
+    <!-- Post Header -->
+    <div class="post-header">
+      <div class="post-category-badge"><i class="bi bi-tools me-1"></i>Tooling & Tips</div>
+      <div class="post-title">1.1.1.1 vs 1.1.1.2 vs 1.1.1.3<br>Ba DNS của Cloudflare khác nhau chỗ nào?</div>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-calendar3"></i> April 2026</span>
+        <span><i class="bi bi-clock"></i> 6 phút đọc</span>
+        <span><i class="bi bi-person"></i> Lê Bình Phương</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">DNS</span>
+        <span class="post-tag">Cloudflare</span>
+        <span class="post-tag">Networking</span>
+        <span class="post-tag">Security</span>
+        <span class="post-tag">Privacy</span>
+      </div>
+    </div>
+
+    <!-- TOC -->
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#overview">Ba địa chỉ, ba cấp độ lọc</a></li>
+        <li><a href="#what-filters">Chúng lọc cái gì?</a></li>
+        <li><a href="#encrypted">DNS mã hóa: DoH và DoT</a></li>
+        <li><a href="#vs-others">So với Google 8.8.8.8 và Quad9 9.9.9.9</a></li>
+        <li><a href="#setup">Cấu hình trên từng thiết bị</a></li>
+        <li><a href="#decision">Dùng cái nào?</a></li>
+      </ol>
+    </div>
+
+    <!-- Post Body -->
+    <div class="post-body">
+
+      <p>
+        Cloudflare ra mắt <strong>1.1.1.1</strong> năm 2018 và nhanh chóng trở thành DNS resolver nhanh nhất thế giới.
+        Nhưng ít người biết họ có thêm hai biến thể: <strong>1.1.1.2</strong> và <strong>1.1.1.3</strong> — cùng tốc độ,
+        khác cấp độ lọc nội dung. Bài này giải thích sự khác nhau và giúp bạn chọn đúng cái cho từng nhu cầu.
+      </p>
+
+      <!-- SECTION 1 -->
+      <h2 id="overview"><i class="bi bi-diagram-3"></i> Ba địa chỉ, ba cấp độ lọc</h2>
+
+      <div class="dns-trio">
+        <div class="dns-card dns-standard">
+          <div class="dns-label">Standard</div>
+          <div class="dns-ip">1.1.1.1</div>
+          <div class="dns-secondary">Phụ: 1.0.0.1</div>
+          <div class="dns-name">Không lọc</div>
+          <div class="dns-filter">
+            <div><span class="filter-dot on"></span>Tốc độ tối đa</div>
+            <div><span class="filter-dot off"></span>Chặn malware</div>
+            <div><span class="filter-dot off"></span>Chặn nội dung 18+</div>
+          </div>
+        </div>
+        <div class="dns-card dns-malware">
+          <div class="dns-label">Malware Blocking</div>
+          <div class="dns-ip">1.1.1.2</div>
+          <div class="dns-secondary">Phụ: 1.0.0.2</div>
+          <div class="dns-name">Chặn Malware</div>
+          <div class="dns-filter">
+            <div><span class="filter-dot on"></span>Tốc độ cao</div>
+            <div><span class="filter-dot on"></span>Chặn malware</div>
+            <div><span class="filter-dot off"></span>Chặn nội dung 18+</div>
+          </div>
+        </div>
+        <div class="dns-card dns-family">
+          <div class="dns-label">Family</div>
+          <div class="dns-ip">1.1.1.3</div>
+          <div class="dns-secondary">Phụ: 1.0.0.3</div>
+          <div class="dns-name">Malware + Adult</div>
+          <div class="dns-filter">
+            <div><span class="filter-dot on"></span>Tốc độ cao</div>
+            <div><span class="filter-dot on"></span>Chặn malware</div>
+            <div><span class="filter-dot on"></span>Chặn nội dung 18+</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-title"><i class="bi bi-info-circle"></i> Ghi nhớ nhanh</div>
+        <strong>1 số</strong> = không lọc &nbsp;|&nbsp; <strong>2 số</strong> = chặn malware &nbsp;|&nbsp; <strong>3 số</strong> = chặn malware + adult content
+      </div>
+
+      <!-- SECTION 2 -->
+      <h2 id="what-filters"><i class="bi bi-shield-check"></i> Chúng lọc cái gì?</h2>
+
+      <p>
+        Cloudflare duy trì một danh sách domain độc hại được cập nhật liên tục. Khi bạn dùng 1.1.1.2 hoặc 1.1.1.3,
+        bất kỳ DNS query nào trỏ đến domain trong danh sách đen sẽ bị trả về <strong>NXDOMAIN</strong>
+        (domain không tồn tại) thay vì IP thật — trình duyệt sẽ hiện lỗi không thể kết nối.
+      </p>
+
+      <h3>1.1.1.2 — Malware blocking chặn gì?</h3>
+      <ul>
+        <li>Domain phát tán <strong>malware, ransomware, spyware</strong></li>
+        <li>Domain dùng trong <strong>phishing</strong> (giả mạo ngân hàng, email, login page)</li>
+        <li>Domain của <strong>botnet C2</strong> (command &amp; control servers)</li>
+        <li>Domain dùng để <strong>exfiltrate data</strong> ra ngoài</li>
+      </ul>
+
+      <h3>1.1.1.3 — Family chặn thêm gì?</h3>
+      <ul>
+        <li>Tất cả những gì 1.1.1.2 chặn</li>
+        <li>Toàn bộ <strong>nội dung người lớn</strong> (phân loại dựa trên category database của Cloudflare)</li>
+        <li>Một số nền tảng hẹn hò, gambling tùy region</li>
+      </ul>
+
+      <div class="callout callout-warn">
+        <div class="callout-title"><i class="bi bi-exclamation-triangle"></i> Giới hạn cần biết</div>
+        Lọc DNS chỉ chặn ở <strong>tầng domain</strong>. Nếu ai đó truy cập IP trực tiếp (không qua domain) hoặc dùng
+        VPN, filter sẽ bị bypass. Đây không phải giải pháp parental control toàn diện — chỉ là lớp bảo vệ đầu tiên.
+      </div>
+
+      <p>Trực quan hóa cấp độ lọc của từng server:</p>
+
+      <div class="filter-visual">
+        <div class="fv-row">
+          <div class="fv-dns c1">1.1.1.1</div>
+          <div class="fv-bars">
+            <div class="fv-bar fb-speed">Tốc độ tối đa</div>
+            <div class="fv-bar fb-empty">No filter</div>
+            <div class="fv-bar fb-empty">No filter</div>
+          </div>
+          <div class="fv-note">Dev / Pro user</div>
+        </div>
+        <div class="fv-row">
+          <div class="fv-dns c2">1.1.1.2</div>
+          <div class="fv-bars">
+            <div class="fv-bar fb-speed">Tốc độ cao</div>
+            <div class="fv-bar fb-malware">Malware ✓</div>
+            <div class="fv-bar fb-empty">No filter</div>
+          </div>
+          <div class="fv-note">Văn phòng / Gia đình</div>
+        </div>
+        <div class="fv-row">
+          <div class="fv-dns c3">1.1.1.3</div>
+          <div class="fv-bars">
+            <div class="fv-bar fb-speed">Tốc độ cao</div>
+            <div class="fv-bar fb-malware">Malware ✓</div>
+            <div class="fv-bar fb-adult">Adult ✓</div>
+          </div>
+          <div class="fv-note">Gia đình có trẻ em</div>
+        </div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <h2 id="encrypted"><i class="bi bi-lock"></i> DNS mã hóa: DoH và DoT</h2>
+
+      <p>
+        Cả ba DNS đều hỗ trợ hai giao thức mã hóa. DNS thông thường (UDP port 53) gửi query dưới dạng
+        plaintext — ISP có thể thấy bạn đang query domain nào. DoH và DoT giải quyết vấn đề này.
+      </p>
+
+      <div class="protocol-grid">
+        <div class="protocol-card">
+          <span class="proto-badge pb-doh">DNS over HTTPS · DoH</span>
+          <div class="proto-title">Chạy qua HTTPS (port 443)</div>
+          <div class="proto-desc">
+            Query DNS đi qua kết nối HTTPS giống như web traffic thông thường. ISP không phân biệt được DNS query với
+            các request HTTPS khác — tốt cho môi trường corporate firewall cần bypass.
+          </div>
+          <code class="proto-url">https://cloudflare-dns.com/dns-query</code>
+        </div>
+        <div class="protocol-card">
+          <span class="proto-badge pb-dot">DNS over TLS · DoT</span>
+          <div class="proto-title">Chạy qua TLS (port 853)</div>
+          <div class="proto-desc">
+            Query DNS được mã hóa bằng TLS riêng trên port 853. Dễ bị firewall chặn hơn DoH nhưng tách biệt
+            rõ ràng với HTTP — phù hợp cho router/resolver tự quản lý.
+          </div>
+          <code class="proto-url">tls://1dot1dot1dot1.cloudflare-dns.com</code>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-title"><i class="bi bi-lightbulb"></i> Tip</div>
+        Nếu bạn dùng <strong>Pi-hole</strong> hoặc <strong>AdGuard Home</strong> tự host, configure upstream resolver
+        là <code>1.1.1.2#853</code> (DoT) để có cả filter + mã hóa. Pi-hole hỗ trợ từ v5.x trở lên.
+      </div>
+
+      <!-- SECTION 4 -->
+      <h2 id="vs-others"><i class="bi bi-bar-chart"></i> So với Google 8.8.8.8 và Quad9 9.9.9.9</h2>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>DNS</th>
+            <th>Provider</th>
+            <th>Tốc độ</th>
+            <th>Malware filter</th>
+            <th>Privacy</th>
+            <th>Log policy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="dns-mono">1.1.1.1</td>
+            <td>Cloudflare</td>
+            <td class="good">Nhanh nhất</td>
+            <td class="bad">Không</td>
+            <td class="good">Rất tốt</td>
+            <td>Xóa sau 24h, không bán</td>
+          </tr>
+          <tr>
+            <td class="dns-mono">1.1.1.2</td>
+            <td>Cloudflare</td>
+            <td class="good">Rất nhanh</td>
+            <td class="good">Có</td>
+            <td class="good">Rất tốt</td>
+            <td>Xóa sau 24h, không bán</td>
+          </tr>
+          <tr>
+            <td class="dns-mono">1.1.1.3</td>
+            <td>Cloudflare</td>
+            <td class="good">Rất nhanh</td>
+            <td class="good">Có + Adult</td>
+            <td class="good">Rất tốt</td>
+            <td>Xóa sau 24h, không bán</td>
+          </tr>
+          <tr>
+            <td class="dns-mono">8.8.8.8</td>
+            <td>Google</td>
+            <td class="meh">Nhanh</td>
+            <td class="bad">Không</td>
+            <td class="meh">Trung bình</td>
+            <td>Lưu 24–48h, phân tích aggregate</td>
+          </tr>
+          <tr>
+            <td class="dns-mono">9.9.9.9</td>
+            <td>Quad9</td>
+            <td class="meh">Nhanh</td>
+            <td class="good">Có</td>
+            <td class="good">Tốt (nonprofit)</td>
+            <td>Không log IP</td>
+          </tr>
+          <tr>
+            <td class="dns-mono">208.67.222.222</td>
+            <td>OpenDNS</td>
+            <td class="meh">Nhanh</td>
+            <td class="good">Có (tùy plan)</td>
+            <td class="meh">Trung bình</td>
+            <td>Log query, Cisco sở hữu</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Cloudflare dẫn đầu về tốc độ (median 11ms theo DNSPerf) và privacy policy là minh bạch nhất trong nhóm.
+        Quad9 là lựa chọn thay thế tốt nếu bạn muốn malware blocking nhưng không muốn phụ thuộc vào Cloudflare.
+      </p>
+
+      <!-- SECTION 5 -->
+      <h2 id="setup"><i class="bi bi-gear"></i> Cấu hình trên từng thiết bị</h2>
+
+      <p>Thay DNS chỉ mất 2-3 bước. Chọn primary và secondary tương ứng với cấp độ bạn muốn:</p>
+
+      <div class="setup-grid">
+        <div class="setup-card">
+          <div class="setup-card-head">
+            <i class="bi bi-windows"></i>
+            <span>Windows 10 / 11</span>
+          </div>
+          <div class="setup-card-body">
+            <ol>
+              <li>Settings → Network &amp; Internet → Adapter options</li>
+              <li>Chuột phải vào adapter → Properties</li>
+              <li>Chọn <strong>Internet Protocol Version 4 (TCP/IPv4)</strong> → Properties</li>
+              <li>Nhập Preferred DNS: <code>1.1.1.2</code></li>
+              <li>Alternate DNS: <code>1.0.0.2</code></li>
+            </ol>
+          </div>
+        </div>
+        <div class="setup-card">
+          <div class="setup-card-head">
+            <i class="bi bi-apple"></i>
+            <span>macOS</span>
+          </div>
+          <div class="setup-card-body">
+            <ol>
+              <li>System Settings → Network → chọn adapter</li>
+              <li>Click <strong>Details</strong> → tab <strong>DNS</strong></li>
+              <li>Click <code>+</code> thêm <code>1.1.1.2</code></li>
+              <li>Thêm tiếp <code>1.0.0.2</code></li>
+              <li>Click OK → Apply</li>
+            </ol>
+          </div>
+        </div>
+        <div class="setup-card">
+          <div class="setup-card-head">
+            <i class="bi bi-phone"></i>
+            <span>Android (Private DNS)</span>
+          </div>
+          <div class="setup-card-body">
+            <ol>
+              <li>Settings → Network → Advanced → Private DNS</li>
+              <li>Chọn <strong>Private DNS provider hostname</strong></li>
+              <li>Nhập: <code>family.cloudflare-dns.com</code></li>
+              <li>Save — Android sẽ dùng DoT tự động</li>
+            </ol>
+          </div>
+        </div>
+        <div class="setup-card">
+          <div class="setup-card-head">
+            <i class="bi bi-phone-fill"></i>
+            <span>iOS / iPadOS</span>
+          </div>
+          <div class="setup-card-body">
+            <ol>
+              <li>Settings → Wi-Fi → chọn mạng → <i>i</i></li>
+              <li>Kéo xuống → Configure DNS → Manual</li>
+              <li>Xóa DNS cũ, thêm <code>1.1.1.2</code></li>
+              <li>Thêm <code>1.0.0.2</code> → Save</li>
+            </ol>
+          </div>
+        </div>
+        <div class="setup-card">
+          <div class="setup-card-head">
+            <i class="bi bi-router"></i>
+            <span>Router (khuyến nghị)</span>
+          </div>
+          <div class="setup-card-body">
+            <ol>
+              <li>Truy cập admin router (thường <code>192.168.1.1</code>)</li>
+              <li>Tìm mục DNS / DHCP settings</li>
+              <li>Primary DNS: <code>1.1.1.2</code></li>
+              <li>Secondary DNS: <code>1.0.0.2</code></li>
+              <li>Save &amp; reboot — áp dụng cho toàn bộ thiết bị</li>
+            </ol>
+          </div>
+        </div>
+        <div class="setup-card">
+          <div class="setup-card-head">
+            <i class="bi bi-terminal"></i>
+            <span>Linux (systemd-resolved)</span>
+          </div>
+          <div class="setup-card-body">
+            <ol>
+              <li>Mở <code>/etc/systemd/resolved.conf</code></li>
+              <li>Thêm: <code>DNS=1.1.1.2 1.0.0.2</code></li>
+              <li>Thêm: <code>FallbackDNS=1.1.1.1</code></li>
+              <li>Restart: <code>systemctl restart systemd-resolved</code></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-title"><i class="bi bi-lightbulb"></i> Hostname cho DoT (thân thiện hơn IP)</div>
+        Android Private DNS và các resolver hỗ trợ hostname:
+        <ul style="margin-top: 8px; margin-bottom: 0;">
+          <li><code>one.one.one.one</code> — 1.1.1.1 standard</li>
+          <li><code>security.cloudflare-dns.com</code> — 1.1.1.2 malware blocking</li>
+          <li><code>family.cloudflare-dns.com</code> — 1.1.1.3 family</li>
+        </ul>
+      </div>
+
+      <!-- SECTION 6 -->
+      <h2 id="decision"><i class="bi bi-signpost-split"></i> Dùng cái nào?</h2>
+
+      <ul class="decision-list">
+        <li>
+          <div class="dec-icon">🖥️</div>
+          <div class="dec-text">
+            <strong>Máy dev / server cá nhân</strong>
+            <span>Cần truy cập mọi domain không bị chặn, test security tools, không muốn false positive</span>
+          </div>
+          <span class="dec-dns c1">1.1.1.1</span>
+        </li>
+        <li>
+          <div class="dec-icon">🏢</div>
+          <div class="dec-text">
+            <strong>Router văn phòng / công ty</strong>
+            <span>Muốn lớp bảo vệ tự động không cần cài agent, giảm rủi ro malware từ click nhầm</span>
+          </div>
+          <span class="dec-dns c2">1.1.1.2</span>
+        </li>
+        <li>
+          <div class="dec-icon">🏠</div>
+          <div class="dec-text">
+            <strong>Router gia đình có trẻ em</strong>
+            <span>Chặn malware + nội dung người lớn cho toàn bộ thiết bị trong nhà không cần app</span>
+          </div>
+          <span class="dec-dns c3">1.1.1.3</span>
+        </li>
+        <li>
+          <div class="dec-icon">📱</div>
+          <div class="dec-text">
+            <strong>Điện thoại cá nhân đi ra ngoài</strong>
+            <span>Dùng Private DNS với <code>security.cloudflare-dns.com</code> — bảo vệ trên mọi mạng Wi-Fi công cộng</span>
+          </div>
+          <span class="dec-dns c2">1.1.1.2</span>
+        </li>
+        <li>
+          <div class="dec-icon">🔬</div>
+          <div class="dec-text">
+            <strong>Security research / Pentest lab</strong>
+            <span>Luôn dùng 1.1.1.1 — malware filter sẽ chặn domain C2 bạn đang phân tích</span>
+          </div>
+          <span class="dec-dns c1">1.1.1.1</span>
+        </li>
+      </ul>
+
+      <div class="callout callout-tip">
+        <div class="callout-title"><i class="bi bi-patch-check"></i> Kiểm tra DNS đang dùng</div>
+        Truy cập <strong>1.1.1.1/help</strong> — Cloudflare sẽ hiển thị bạn đang dùng DNS nào và có dùng DoH/DoT không.
+        Hoặc dùng terminal:<br><br>
+        <code>nslookup whoami.cloudflare-dns.com resolver1.cloudflare.com</code><br>
+        <code>dig @1.1.1.1 cloudflare.com +short</code>
+      </div>
+
+      <!-- Footer nav -->
+      <div class="post-footer-nav">
+        <a href="../blog.html" class="pfn-link">
+          <i class="bi bi-arrow-left"></i> Về trang blog
+        </a>
+        <a href="openrouter-gateway.html" class="pfn-link">
+          Bài tiếp theo: OpenRouter AI Gateway <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+    </div><!-- /post-body -->
+  </div><!-- /post-wrap -->
+
+</div><!-- /container -->
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
