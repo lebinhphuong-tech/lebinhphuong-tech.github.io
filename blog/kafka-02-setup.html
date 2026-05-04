@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cài đặt Kafka với Docker: Từ zero đến dashboard trong 15 phút | Field Notes</title>
+  <meta name="description" content="Setup Kafka KRaft mode + Kafka UI bằng Docker Compose. Tạo topic, gửi và nhận message đầu tiên với Python. Bài 2 series Kafka từ A-Z.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary: #149ddd; --secondary: #173b6c; --text: #272829; --bg-light: #f5f8fd; --kafka: #e34c00; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(227,76,0,0.1); color: var(--kafka); border: 1px solid rgba(227,76,0,0.25); display: inline-block; margin-bottom: 16px; }
+    .series-badge { font-size: 10.5px; font-weight: 700; padding: 3px 12px; border-radius: 20px; background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); display: inline-block; margin-bottom: 16px; margin-left: 8px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-highlight { color: #fde68a; font-weight: 700; }
+
+    .callout { border-radius: 10px; padding: 1.1rem 1.4rem; margin: 1.4rem 0; border-left: 4px solid; font-size: 14px; }
+    .callout-title { font-weight: 700; margin-bottom: 5px; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+    .callout-tip  { background: rgba(16,185,129,0.06); border-color: #10b981; color: #065f46; }
+    .callout-tip .callout-title { color: #059669; }
+    .callout-warn { background: rgba(245,158,11,0.07); border-color: #f59e0b; color: #78350f; }
+    .callout-warn .callout-title { color: #d97706; }
+    .callout-info { background: rgba(20,157,221,0.07); border-color: var(--primary); color: #1e3a5f; }
+    .callout-info .callout-title { color: var(--primary); }
+
+    /* ── Step timeline ── */
+    .step-timeline { margin: 1.6rem 0; }
+    .step-item { display: flex; gap: 16px; margin-bottom: 2rem; }
+    .step-num { width: 36px; height: 36px; border-radius: 50%; background: var(--kafka); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+    .step-content { flex: 1; }
+    .step-title { font-weight: 700; color: var(--secondary); font-size: 15px; margin-bottom: 8px; }
+    .step-desc  { font-size: 13.5px; color: #4a5568; }
+
+    /* ── Services table ── */
+    .svc-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; }
+    .svc-table th { background: var(--secondary); color: #fff; padding: 10px 14px; font-size: 12px; font-weight: 700; text-align: left; }
+    .svc-table th:first-child { border-radius: 8px 0 0 0; }
+    .svc-table th:last-child  { border-radius: 0 8px 0 0; }
+    .svc-table td { padding: 10px 14px; border-bottom: 1px solid #edf2f8; vertical-align: middle; font-size: 13px; }
+    .svc-table tr:last-child td { border-bottom: none; }
+    .svc-table tr:nth-child(even) td { background: var(--bg-light); }
+    .svc-table code { font-family: 'Courier New', monospace; font-size: 12px; background: var(--bg-light); color: #c0392b; padding: 1px 5px; border-radius: 4px; border: 1px solid #e4eef8; }
+
+    /* ── Verify checklist ── */
+    .verify-list { list-style: none; padding: 0; margin: 1.2rem 0; }
+    .verify-list li { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; border: 1px solid #e4eef8; background: #fff; margin-bottom: 7px; font-size: 13.5px; color: #4a5568; }
+    .verify-list li::before { content: '□'; color: #c0ccd8; font-size: 16px; flex-shrink: 0; }
+
+    /* ── Series nav ── */
+    .series-nav { background: var(--bg-light); border-radius: 12px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin: 2rem 0; }
+    .series-nav-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .series-nav-title span { background: var(--kafka); color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 10px; }
+    .series-list { list-style: none; padding: 0; margin: 0; }
+    .series-list li { padding: 7px 0; border-bottom: 1px solid #e4eef8; font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
+    .series-list li:last-child { border-bottom: none; }
+    .series-list li.current { font-weight: 700; color: var(--secondary); }
+    .series-list li.current::before { content: '▶'; color: var(--kafka); font-size: 10px; }
+    .series-list li:not(.current)::before { content: '○'; color: #c0ccd8; font-size: 10px; }
+    .series-list a { color: var(--primary); text-decoration: none; }
+    .series-list a:hover { text-decoration: underline; }
+
+    .post-footer-nav { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 2px solid var(--bg-light); gap: 12px; flex-wrap: wrap; }
+    .pfn-link { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; padding: 10px 18px; border-radius: 10px; border: 1px solid #e4eef8; background: #fff; transition: all 0.2s; }
+    .pfn-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+    @media (max-width: 768px) { .post-wrap { padding: 1.6rem 1.2rem; } .post-title { font-size: 1.5rem; } }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">Kafka #2</li>
+    </ol>
+  </nav>
+
+  <div class="post-wrap">
+    <a href="../blog.html" class="back-to-blog"><i class="bi bi-arrow-left"></i> Về trang blog</a>
+
+    <div class="post-header">
+      <div>
+        <span class="post-category-badge"><i class="bi bi-stack me-1"></i>DevOps & SRE</span>
+        <span class="series-badge">Series: Kafka từ A-Z · Bài 2/6</span>
+      </div>
+      <div class="post-title">Cài đặt Kafka với Docker<br>Từ zero đến dashboard trong 15 phút</div>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-calendar3"></i> May 2026</span>
+        <span><i class="bi bi-clock"></i> 10 phút đọc</span>
+        <span><i class="bi bi-person"></i> Lê Bình Phương</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">Kafka</span>
+        <span class="post-tag">Docker</span>
+        <span class="post-tag">KRaft</span>
+        <span class="post-tag">Kafka UI</span>
+        <span class="post-tag">Python</span>
+      </div>
+    </div>
+
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#prereq">Yêu cầu và lựa chọn setup</a></li>
+        <li><a href="#compose">docker-compose.yml — KRaft mode + Kafka UI</a></li>
+        <li><a href="#start">Khởi động và verify</a></li>
+        <li><a href="#cli">CLI operations: topic, produce, consume</a></li>
+        <li><a href="#python">Python quickstart với confluent-kafka</a></li>
+        <li><a href="#ui">Kafka UI — explore qua browser</a></li>
+        <li><a href="#common-errors">Lỗi thường gặp và cách fix</a></li>
+      </ol>
+    </div>
+
+    <div class="post-body">
+
+      <h2 id="prereq"><i class="bi bi-check2-circle"></i> Yêu cầu và lựa chọn setup</h2>
+
+      <p>Cần có: <strong>Docker Desktop</strong> (hoặc Docker Engine + Compose plugin) phiên bản 24+. Không cần Java, không cần cài gì thêm.</p>
+
+      <p>
+        <strong>KRaft mode</strong> (không cần ZooKeeper) là lựa chọn đúng đắn cho project mới. Setup gọn hơn,
+        ít service hơn, ít bug hơn. Image <code>apache/kafka</code> hỗ trợ KRaft từ Kafka 3.7+.
+      </p>
+
+      <table class="svc-table">
+        <thead><tr><th>Service</th><th>Image</th><th>Port</th><th>Mục đích</th></tr></thead>
+        <tbody>
+          <tr><td><strong>kafka</strong></td><td><code>apache/kafka:3.9.0</code></td><td>9092</td><td>Kafka broker (KRaft mode, no ZooKeeper)</td></tr>
+          <tr><td><strong>kafka-ui</strong></td><td><code>provectuslabs/kafka-ui:latest</code></td><td>8080</td><td>Web dashboard — topics, consumers, messages</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="compose"><i class="bi bi-file-code"></i> docker-compose.yml</h2>
+
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>docker-compose.yml</span></div>
+      <pre><code><span class="code-key">version</span>: <span class="code-str">'3.8'</span>
+
+<span class="code-key">services</span>:
+
+  <span class="code-key">kafka</span>:
+    <span class="code-key">image</span>: <span class="code-str">apache/kafka:3.9.0</span>
+    <span class="code-key">container_name</span>: <span class="code-str">kafka</span>
+    <span class="code-key">ports</span>:
+      - <span class="code-str">"9092:9092"</span>
+    <span class="code-key">environment</span>:
+      <span class="code-comment"># KRaft mode — không cần ZooKeeper</span>
+      <span class="code-key">KAFKA_NODE_ID</span>: <span class="code-num">1</span>
+      <span class="code-key">KAFKA_PROCESS_ROLES</span>: <span class="code-str">broker,controller</span>
+      <span class="code-key">KAFKA_LISTENERS</span>: <span class="code-str">PLAINTEXT://:9092,CONTROLLER://:9093</span>
+      <span class="code-key">KAFKA_ADVERTISED_LISTENERS</span>: <span class="code-str">PLAINTEXT://localhost:9092</span>
+      <span class="code-key">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span>: <span class="code-str">PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT</span>
+      <span class="code-key">KAFKA_CONTROLLER_LISTENER_NAMES</span>: <span class="code-str">CONTROLLER</span>
+      <span class="code-key">KAFKA_CONTROLLER_QUORUM_VOTERS</span>: <span class="code-str">1@kafka:9093</span>
+      <span class="code-comment"># Topic defaults</span>
+      <span class="code-key">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span>: <span class="code-num">1</span>
+      <span class="code-key">KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR</span>: <span class="code-num">1</span>
+      <span class="code-key">KAFKA_TRANSACTION_STATE_LOG_MIN_ISR</span>: <span class="code-num">1</span>
+      <span class="code-key">KAFKA_AUTO_CREATE_TOPICS_ENABLE</span>: <span class="code-str">'true'</span>
+    <span class="code-key">healthcheck</span>:
+      <span class="code-key">test</span>: [<span class="code-str">"CMD"</span>, <span class="code-str">"/opt/kafka/bin/kafka-topics.sh"</span>, <span class="code-str">"--bootstrap-server"</span>, <span class="code-str">"localhost:9092"</span>, <span class="code-str">"--list"</span>]
+      <span class="code-key">interval</span>: <span class="code-str">10s</span>
+      <span class="code-key">timeout</span>: <span class="code-str">5s</span>
+      <span class="code-key">retries</span>: <span class="code-num">5</span>
+
+  <span class="code-key">kafka-ui</span>:
+    <span class="code-key">image</span>: <span class="code-str">provectuslabs/kafka-ui:latest</span>
+    <span class="code-key">container_name</span>: <span class="code-str">kafka-ui</span>
+    <span class="code-key">ports</span>:
+      - <span class="code-str">"8080:8080"</span>
+    <span class="code-key">environment</span>:
+      <span class="code-key">KAFKA_CLUSTERS_0_NAME</span>: <span class="code-str">local</span>
+      <span class="code-key">KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS</span>: <span class="code-str">kafka:9092</span>
+    <span class="code-key">depends_on</span>:
+      <span class="code-key">kafka</span>:
+        <span class="code-key">condition</span>: <span class="code-str">service_healthy</span></code></pre>
+
+      <div class="callout callout-warn">
+        <div class="callout-title"><i class="bi bi-exclamation-triangle"></i> Chỉ dùng cho local dev</div>
+        Config này <code>replication_factor=1</code>, không có authentication, không có persistence volume.
+        Dữ liệu mất khi container restart. Bài 6 sẽ cover production-ready setup.
+      </div>
+
+      <h2 id="start"><i class="bi bi-play-circle"></i> Khởi động và verify</h2>
+
+      <div class="step-timeline">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Khởi động cluster</div>
+            <div class="step-desc">
+              <pre style="margin-top:8px;"><code>docker compose up -d</code></pre>
+              Lần đầu sẽ pull image (~500MB). Kafka mất khoảng 15-20 giây để ready.
+            </div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Kiểm tra status</div>
+            <div class="step-desc">
+              <pre style="margin-top:8px;"><code>docker compose ps
+<span class="code-comment"># kafka      running (healthy)
+# kafka-ui   running</span></code></pre>
+              Kafka UI có thể hiển thị "Connection refused" vài giây đầu — chờ healthcheck pass.
+            </div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Mở Kafka UI</div>
+            <div class="step-desc">Truy cập <code>http://localhost:8080</code> — bạn sẽ thấy cluster "local" với 0 topic.</div>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="cli"><i class="bi bi-terminal"></i> CLI operations: topic, produce, consume</h2>
+
+      <p>Kafka ship kèm các script CLI trong <code>/opt/kafka/bin/</code>. Exec vào container để chạy:</p>
+
+      <h3>Tạo topic</h3>
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>bash</span></div>
+      <pre><code><span class="code-comment"># Tạo topic với 3 partitions</span>
+docker exec kafka /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --create \
+  --topic order-events \
+  --partitions <span class="code-num">3</span> \
+  --replication-factor <span class="code-num">1</span>
+
+<span class="code-comment"># List tất cả topic</span>
+docker exec kafka /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --list
+
+<span class="code-comment"># Chi tiết một topic</span>
+docker exec kafka /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --describe \
+  --topic order-events</code></pre>
+
+      <h3>Produce message từ CLI</h3>
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>bash — console producer</span></div>
+      <pre><code>docker exec -it kafka /opt/kafka/bin/kafka-console-producer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic order-events \
+  --property <span class="code-str">"parse.key=true"</span> \
+  --property <span class="code-str">"key.separator=:"</span>
+
+<span class="code-comment"># Nhập message theo format key:value</span>
+<span class="code-str">&gt; order-1:{"id":1,"status":"placed","total":150000}</span>
+<span class="code-str">&gt; order-2:{"id":2,"status":"placed","total":280000}</span>
+<span class="code-str">&gt; order-1:{"id":1,"status":"paid","total":150000}</span>
+<span class="code-comment"># Ctrl+C để thoát</span></code></pre>
+
+      <h3>Consume message từ CLI</h3>
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>bash — console consumer</span></div>
+      <pre><code><span class="code-comment"># Đọc từ đầu (--from-beginning)</span>
+docker exec kafka /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic order-events \
+  --from-beginning \
+  --property <span class="code-str">"print.key=true"</span> \
+  --property <span class="code-str">"key.separator= | "</span>
+
+<span class="code-comment"># Output:</span>
+<span class="code-str"># order-1 | {"id":1,"status":"placed","total":150000}</span>
+<span class="code-str"># order-2 | {"id":2,"status":"placed","total":280000}</span>
+<span class="code-str"># order-1 | {"id":1,"status":"paid","total":150000}</span></code></pre>
+
+      <div class="callout callout-tip">
+        <div class="callout-title"><i class="bi bi-lightbulb"></i> Quan sát ordering</div>
+        Chạy <code>--describe</code> sẽ thấy order-1 và order-2 nằm ở các partition khác nhau (do khác key hash).
+        Nhưng cả hai event của <code>order-1</code> đều ở cùng partition, theo đúng thứ tự.
+      </div>
+
+      <h2 id="python"><i class="bi bi-filetype-py"></i> Python quickstart với confluent-kafka</h2>
+
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>bash — cài thư viện</span></div>
+      <pre><code>pip install confluent-kafka</code></pre>
+
+      <h3>Producer</h3>
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>producer.py</span></div>
+      <pre><code><span class="code-key">from</span> confluent_kafka <span class="code-key">import</span> Producer
+<span class="code-key">import</span> json
+
+conf = {<span class="code-str">'bootstrap.servers'</span>: <span class="code-str">'localhost:9092'</span>}
+producer = Producer(conf)
+
+<span class="code-key">def</span> <span class="code-highlight">delivery_report</span>(err, msg):
+    <span class="code-key">if</span> err:
+        print(<span class="code-str">f'Delivery failed: {err}'</span>)
+    <span class="code-key">else</span>:
+        print(<span class="code-str">f'Delivered to {msg.topic()} [{msg.partition()}] @ offset {msg.offset()}'</span>)
+
+orders = [
+    {<span class="code-str">'order_id'</span>: <span class="code-str">'ord-001'</span>, <span class="code-str">'status'</span>: <span class="code-str">'placed'</span>, <span class="code-str">'amount'</span>: <span class="code-num">150000</span>},
+    {<span class="code-str">'order_id'</span>: <span class="code-str">'ord-002'</span>, <span class="code-str">'status'</span>: <span class="code-str">'placed'</span>, <span class="code-str">'amount'</span>: <span class="code-num">280000</span>},
+    {<span class="code-str">'order_id'</span>: <span class="code-str">'ord-001'</span>, <span class="code-str">'status'</span>: <span class="code-str">'paid'</span>,   <span class="code-str">'amount'</span>: <span class="code-num">150000</span>},
+]
+
+<span class="code-key">for</span> order <span class="code-key">in</span> orders:
+    producer.produce(
+        topic=<span class="code-str">'order-events'</span>,
+        key=order[<span class="code-str">'order_id'</span>],          <span class="code-comment"># key → routing đến cùng partition</span>
+        value=json.dumps(order),
+        callback=delivery_report
+    )
+
+producer.flush()  <span class="code-comment"># đảm bảo gửi hết trước khi thoát</span></code></pre>
+
+      <h3>Consumer</h3>
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>consumer.py</span></div>
+      <pre><code><span class="code-key">from</span> confluent_kafka <span class="code-key">import</span> Consumer, KafkaError
+<span class="code-key">import</span> json
+
+conf = {
+    <span class="code-str">'bootstrap.servers'</span>: <span class="code-str">'localhost:9092'</span>,
+    <span class="code-str">'group.id'</span>: <span class="code-str">'order-processor'</span>,       <span class="code-comment"># consumer group ID</span>
+    <span class="code-str">'auto.offset.reset'</span>: <span class="code-str">'earliest'</span>,       <span class="code-comment"># đọc từ đầu nếu chưa có offset</span>
+    <span class="code-str">'enable.auto.commit'</span>: <span class="code-str">'true'</span>,           <span class="code-comment"># tự commit offset (đơn giản nhất)</span>
+}
+
+consumer = Consumer(conf)
+consumer.subscribe([<span class="code-str">'order-events'</span>])
+
+<span class="code-key">try</span>:
+    <span class="code-key">while</span> <span class="code-num">True</span>:
+        msg = consumer.poll(timeout=<span class="code-num">1.0</span>)   <span class="code-comment"># poll 1 giây</span>
+        <span class="code-key">if</span> msg <span class="code-key">is</span> <span class="code-num">None</span>:
+            <span class="code-key">continue</span>
+        <span class="code-key">if</span> msg.error():
+            <span class="code-key">if</span> msg.error().code() == KafkaError._PARTITION_EOF:
+                <span class="code-key">continue</span>
+            <span class="code-key">raise</span> Exception(msg.error())
+
+        order = json.loads(msg.value().decode(<span class="code-str">'utf-8'</span>))
+        print(<span class="code-str">f"[P{msg.partition()}|O{msg.offset()}] {order['order_id']}: {order['status']}"</span>)
+
+<span class="code-key">except</span> KeyboardInterrupt:
+    <span class="code-key">pass</span>
+<span class="code-key">finally</span>:
+    consumer.close()</code></pre>
+
+      <h2 id="ui"><i class="bi bi-grid-1x2"></i> Kafka UI — explore qua browser</h2>
+
+      <p>Kafka UI tại <code>http://localhost:8080</code> cho phép bạn:</p>
+      <ul>
+        <li><strong>Topics</strong> — xem list topic, số partition, offset, retention</li>
+        <li><strong>Messages</strong> — browse message trong partition, search theo key/value/offset</li>
+        <li><strong>Consumers</strong> — xem consumer groups, lag (số message chưa đọc)</li>
+        <li><strong>Brokers</strong> — thông tin cluster, disk usage, config</li>
+        <li><strong>Schema Registry</strong> — nếu bạn thêm Schema Registry vào compose</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <div class="callout-title"><i class="bi bi-eye"></i> Consumer Lag</div>
+        Metric quan trọng nhất khi monitor Kafka production là <strong>consumer lag</strong> —
+        số message trong topic mà consumer group chưa xử lý. Lag tăng liên tục = consumer không đủ nhanh.
+        Kafka UI hiển thị lag real-time cho từng partition.
+      </div>
+
+      <h2 id="common-errors"><i class="bi bi-bug"></i> Lỗi thường gặp và cách fix</h2>
+
+      <table class="svc-table">
+        <thead><tr><th>Lỗi</th><th>Nguyên nhân</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>Connection refused 9092</code></td>
+            <td>Kafka chưa ready hoặc healthcheck fail</td>
+            <td>Chờ 20-30 giây, check <code>docker compose logs kafka</code></td>
+          </tr>
+          <tr>
+            <td><code>LEADER_NOT_AVAILABLE</code></td>
+            <td>Topic mới tạo, leader election chưa xong</td>
+            <td>Chờ vài giây rồi retry</td>
+          </tr>
+          <tr>
+            <td>Kafka UI không kết nối được</td>
+            <td>Kafka UI dùng service name <code>kafka</code> trong Docker network, nhưng Kafka chưa ready</td>
+            <td>Restart kafka-ui: <code>docker compose restart kafka-ui</code></td>
+          </tr>
+          <tr>
+            <td>Consumer không nhận message</td>
+            <td><code>auto.offset.reset=latest</code> — consumer chỉ đọc message mới sau khi subscribe</td>
+            <td>Đổi thành <code>earliest</code> hoặc produce message mới</td>
+          </tr>
+          <tr>
+            <td>Port 8080 bị chiếm</td>
+            <td>Process khác đang dùng 8080 (thường là Tomcat, Spring Boot)</td>
+            <td>Đổi port trong compose: <code>"8090:8080"</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Checklist verify setup hoàn chỉnh</h3>
+      <ul class="verify-list">
+        <li><code>docker compose ps</code> — cả hai service đều <strong>running (healthy)</strong></li>
+        <li>Tạo topic <code>order-events</code> thành công không có lỗi</li>
+        <li><code>--list</code> hiển thị <code>order-events</code></li>
+        <li>Produce 3 message từ CLI hoặc Python</li>
+        <li>Consume hiển thị đúng 3 message theo thứ tự trong từng partition</li>
+        <li>Kafka UI tại <code>localhost:8080</code> thấy topic và consumer group</li>
+      </ul>
+
+      <!-- Series nav -->
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection"></i> Series Kafka từ A-Z <span>6 bài</span></div>
+        <ul class="series-list">
+          <li><a href="kafka-01-intro.html">Bài 1: Kafka là gì? Core concepts &amp; architecture</a></li>
+          <li class="current">Bài 2: Cài đặt với Docker — Kafka UI trong 15 phút</li>
+          <li><a href="kafka-03-producer.html">Bài 3: Producer deep dive — acks, batching, ordering</a></li>
+          <li><a href="kafka-04-consumer.html">Bài 4: Consumer &amp; Consumer Groups — offset, rebalancing</a></li>
+          <li><a href="kafka-05-partition.html">Bài 5: Partitions &amp; Replication — durability đảm bảo thế nào</a></li>
+          <li><a href="kafka-06-production.html">Bài 6: Kafka trong Production — monitoring, tuning, common issues</a></li>
+        </ul>
+      </div>
+
+      <div class="post-footer-nav">
+        <a href="kafka-01-intro.html" class="pfn-link"><i class="bi bi-arrow-left"></i> Bài 1: Kafka là gì?</a>
+        <a href="kafka-03-producer.html" class="pfn-link">Bài 3: Producer deep dive <i class="bi bi-arrow-right"></i></a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

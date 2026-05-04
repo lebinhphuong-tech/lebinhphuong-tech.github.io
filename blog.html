@@ -389,7 +389,7 @@
         <nav class="nav flex-column">
           <a class="nav-link active" href="#" data-cat="">
             <i class="bi bi-grid-fill"></i> Tất cả bài viết
-            <span class="post-count-badge">11</span>
+            <span class="post-count-badge">17</span>
           </a>
           <a class="nav-link" href="#" data-cat="devops">
             <i class="bi bi-arrow-repeat"></i> DevOps & SRE
@@ -449,7 +449,7 @@
           Chỉ là những thứ thực sự xảy ra, những gì học được, và những góc nhìn cá nhân về hệ sinh thái cloud & DevOps.
         </p>
         <div class="hero-meta">
-          <div class="hero-meta-item"><i class="bi bi-file-text"></i> 11 bài viết</div>
+          <div class="hero-meta-item"><i class="bi bi-file-text"></i> 17 bài viết</div>
           <div class="hero-meta-item"><i class="bi bi-calendar3"></i> Cập nhật April 2026</div>
           <div class="hero-meta-item"><i class="bi bi-translate"></i> Tiếng Việt</div>
         </div>
@@ -473,8 +473,164 @@
         <div class="section-divider">
           <h2>Bài viết mới nhất</h2>
           <hr>
-          <span class="post-count">11 bài</span>
+          <span class="post-count">17 bài</span>
         </div>
+
+        <!-- ── POST 17 ─────────────────────────────────────── -->
+        <div class="post-card" data-cat="devops">
+          <div class="post-card-header">
+            <span class="post-category cat-devops">DevOps & SRE</span>
+            <span style="font-size:10.5px;font-weight:700;color:var(--kafka,#e34c00);background:rgba(227,76,0,0.1);border:1px solid rgba(227,76,0,0.25);padding:3px 10px;border-radius:20px;">Series: Kafka · Bài 6/6</span>
+            <div class="post-meta">
+              <span><i class="bi bi-calendar3"></i> May 2026</span>
+              <span><i class="bi bi-clock"></i> 13 phút đọc</span>
+            </div>
+          </div>
+          <a href="blog/kafka-06-production.html" class="post-title">
+            Kafka trong Production: Monitoring, Tuning & Common Issues
+          </a>
+          <div class="post-excerpt">
+            Production checklist đầy đủ: naming conventions, consumer lag monitoring, JMX + Prometheus + Grafana dashboard, 6 common issues và cách fix, Kafka Connect (Debezium CDC, S3 Sink), Schema Registry, và khi nào nên dùng managed service (Confluent Cloud, AWS MSK, Aiven).
+          </div>
+          <div class="post-footer">
+            <div class="post-tags">
+              <span class="post-tag">Kafka</span><span class="post-tag">Production</span>
+              <span class="post-tag">Monitoring</span><span class="post-tag">Kafka Connect</span>
+            </div>
+            <a href="blog/kafka-06-production.html" class="post-readmore">Đọc tiếp <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <!-- ── /POST 17 ────────────────────────────────────── -->
+
+        <!-- ── POST 16 ─────────────────────────────────────── -->
+        <div class="post-card" data-cat="devops">
+          <div class="post-card-header">
+            <span class="post-category cat-devops">DevOps & SRE</span>
+            <span style="font-size:10.5px;font-weight:700;color:var(--kafka,#e34c00);background:rgba(227,76,0,0.1);border:1px solid rgba(227,76,0,0.25);padding:3px 10px;border-radius:20px;">Series: Kafka · Bài 5/6</span>
+            <div class="post-meta">
+              <span><i class="bi bi-calendar3"></i> May 2026</span>
+              <span><i class="bi bi-clock"></i> 11 phút đọc</span>
+            </div>
+          </div>
+          <a href="blog/kafka-05-partition.html" class="post-title">
+            Partitions & Replication: Bí mật sau Durability và Scalability của Kafka
+          </a>
+          <div class="post-excerpt">
+            Bao nhiêu partition là đủ? Leader, Follower, ISR là gì? min.insync.replicas phối hợp với acks=all thế nào? Leader election khi broker crash, log compaction vs time-based retention, và sizing guidelines thực tế cho production cluster.
+          </div>
+          <div class="post-footer">
+            <div class="post-tags">
+              <span class="post-tag">Kafka</span><span class="post-tag">Partitions</span>
+              <span class="post-tag">Replication</span><span class="post-tag">ISR</span>
+            </div>
+            <a href="blog/kafka-05-partition.html" class="post-readmore">Đọc tiếp <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <!-- ── /POST 16 ────────────────────────────────────── -->
+
+        <!-- ── POST 15 ─────────────────────────────────────── -->
+        <div class="post-card" data-cat="devops">
+          <div class="post-card-header">
+            <span class="post-category cat-devops">DevOps & SRE</span>
+            <span style="font-size:10.5px;font-weight:700;color:var(--kafka,#e34c00);background:rgba(227,76,0,0.1);border:1px solid rgba(227,76,0,0.25);padding:3px 10px;border-radius:20px;">Series: Kafka · Bài 4/6</span>
+            <div class="post-meta">
+              <span><i class="bi bi-calendar3"></i> May 2026</span>
+              <span><i class="bi bi-clock"></i> 12 phút đọc</span>
+            </div>
+          </div>
+          <a href="blog/kafka-04-consumer.html" class="post-title">
+            Kafka Consumer & Consumer Groups: Offset, Rebalancing & Delivery Semantics
+          </a>
+          <div class="post-excerpt">
+            Consumer group phân chia partition thế nào, offset auto vs manual commit, rebalance storm là gì và cách tránh, at-most-once / at-least-once / exactly-once trong thực tế, manual commit pattern, và Dead Letter Queue.
+          </div>
+          <div class="post-footer">
+            <div class="post-tags">
+              <span class="post-tag">Kafka</span><span class="post-tag">Consumer</span>
+              <span class="post-tag">Offset</span><span class="post-tag">Rebalancing</span>
+            </div>
+            <a href="blog/kafka-04-consumer.html" class="post-readmore">Đọc tiếp <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <!-- ── /POST 15 ────────────────────────────────────── -->
+
+        <!-- ── POST 14 ─────────────────────────────────────── -->
+        <div class="post-card" data-cat="devops">
+          <div class="post-card-header">
+            <span class="post-category cat-devops">DevOps & SRE</span>
+            <span style="font-size:10.5px;font-weight:700;color:var(--kafka,#e34c00);background:rgba(227,76,0,0.1);border:1px solid rgba(227,76,0,0.25);padding:3px 10px;border-radius:20px;">Series: Kafka · Bài 3/6</span>
+            <div class="post-meta">
+              <span><i class="bi bi-calendar3"></i> May 2026</span>
+              <span><i class="bi bi-clock"></i> 11 phút đọc</span>
+            </div>
+          </div>
+          <a href="blog/kafka-03-producer.html" class="post-title">
+            Kafka Producer Deep Dive: acks, batching, ordering không mất data
+          </a>
+          <div class="post-excerpt">
+            Từ lúc gọi .produce() đến khi message lên broker: serialization, record accumulator, sender thread. acks 0/1/all — trade-off tốc độ vs durability, batching với linger.ms, compression algorithms, idempotent producer để tránh duplicate khi retry.
+          </div>
+          <div class="post-footer">
+            <div class="post-tags">
+              <span class="post-tag">Kafka</span><span class="post-tag">Producer</span>
+              <span class="post-tag">acks</span><span class="post-tag">Idempotent</span>
+            </div>
+            <a href="blog/kafka-03-producer.html" class="post-readmore">Đọc tiếp <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <!-- ── /POST 14 ────────────────────────────────────── -->
+
+        <!-- ── POST 13 ─────────────────────────────────────── -->
+        <div class="post-card" data-cat="devops">
+          <div class="post-card-header">
+            <span class="post-category cat-devops">DevOps & SRE</span>
+            <span style="font-size:10.5px;font-weight:700;color:var(--kafka,#e34c00);background:rgba(227,76,0,0.1);border:1px solid rgba(227,76,0,0.25);padding:3px 10px;border-radius:20px;">Series: Kafka · Bài 2/6</span>
+            <div class="post-meta">
+              <span><i class="bi bi-calendar3"></i> May 2026</span>
+              <span><i class="bi bi-clock"></i> 10 phút đọc</span>
+            </div>
+          </div>
+          <a href="blog/kafka-02-setup.html" class="post-title">
+            Cài đặt Kafka với Docker: Từ zero đến dashboard trong 15 phút
+          </a>
+          <div class="post-excerpt">
+            Docker Compose với Kafka 3.9 KRaft mode (không cần ZooKeeper) + Kafka UI. Tạo topic, produce/consume message từ CLI và Python confluent-kafka. Fix lỗi thường gặp và checklist verify setup hoàn chỉnh.
+          </div>
+          <div class="post-footer">
+            <div class="post-tags">
+              <span class="post-tag">Kafka</span><span class="post-tag">Docker</span>
+              <span class="post-tag">KRaft</span><span class="post-tag">Python</span>
+            </div>
+            <a href="blog/kafka-02-setup.html" class="post-readmore">Đọc tiếp <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <!-- ── /POST 13 ────────────────────────────────────── -->
+
+        <!-- ── POST 12 ─────────────────────────────────────── -->
+        <div class="post-card" data-cat="devops">
+          <div class="post-card-header">
+            <span class="post-category cat-devops">DevOps & SRE</span>
+            <span style="font-size:10.5px;font-weight:700;color:var(--kafka,#e34c00);background:rgba(227,76,0,0.1);border:1px solid rgba(227,76,0,0.25);padding:3px 10px;border-radius:20px;">Series: Kafka · Bài 1/6</span>
+            <div class="post-meta">
+              <span><i class="bi bi-calendar3"></i> May 2026</span>
+              <span><i class="bi bi-clock"></i> 12 phút đọc</span>
+            </div>
+          </div>
+          <a href="blog/kafka-01-intro.html" class="post-title">
+            Kafka là gì? Tại sao mọi hệ thống lớn đều cần nó
+          </a>
+          <div class="post-excerpt">
+            Distributed commit log, event streaming, tight coupling trong microservices — Kafka giải quyết thế nào? Core concepts: Topic, Partition, Offset, Broker, Producer, Consumer Group. So sánh với RabbitMQ và Redis Pub/Sub, 6 use cases thực tế, và khi nào KHÔNG nên dùng Kafka.
+          </div>
+          <div class="post-footer">
+            <div class="post-tags">
+              <span class="post-tag">Kafka</span><span class="post-tag">Event Streaming</span>
+              <span class="post-tag">Architecture</span><span class="post-tag">Message Queue</span>
+            </div>
+            <a href="blog/kafka-01-intro.html" class="post-readmore">Đọc tiếp <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <!-- ── /POST 12 ────────────────────────────────────── -->
 
         <!-- ── POST 11 ─────────────────────────────────────── -->
         <div class="post-card">

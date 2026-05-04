@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafka Consumer & Consumer Groups: Offset, Rebalancing, At-least-once | Field Notes</title>
+  <meta name="description" content="Consumer group protocol, partition assignment, offset management (auto vs manual commit), rebalancing, at-least-once vs exactly-once. Bài 4 series Kafka từ A-Z.">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary: #149ddd; --secondary: #173b6c; --text: #272829; --bg-light: #f5f8fd; --kafka: #e34c00; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; }
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(227,76,0,0.1); color: var(--kafka); border: 1px solid rgba(227,76,0,0.25); display: inline-block; margin-bottom: 16px; }
+    .series-badge { font-size: 10.5px; font-weight: 700; padding: 3px 12px; border-radius: 20px; background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); display: inline-block; margin-bottom: 16px; margin-left: 8px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-highlight { color: #fde68a; font-weight: 700; }
+    .callout { border-radius: 10px; padding: 1.1rem 1.4rem; margin: 1.4rem 0; border-left: 4px solid; font-size: 14px; }
+    .callout-title { font-weight: 700; margin-bottom: 5px; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+    .callout-tip  { background: rgba(16,185,129,0.06); border-color: #10b981; color: #065f46; }
+    .callout-tip .callout-title { color: #059669; }
+    .callout-warn { background: rgba(245,158,11,0.07); border-color: #f59e0b; color: #78350f; }
+    .callout-warn .callout-title { color: #d97706; }
+    .callout-info { background: rgba(20,157,221,0.07); border-color: var(--primary); color: #1e3a5f; }
+    .callout-info .callout-title { color: var(--primary); }
+
+    /* ── Consumer group visual ── */
+    .cg-visual { background: #0d1b2a; border-radius: 12px; padding: 1.4rem; margin: 1.4rem 0; }
+    .cg-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; color: #8a9bb0; }
+    .cg-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .cg-consumer { background: rgba(20,157,221,0.12); border: 1px solid rgba(20,157,221,0.3); border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 700; color: #7dd3fc; flex-shrink: 0; }
+    .cg-arrow { color: #4a6480; font-size: 1rem; }
+    .cg-partition { border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 700; font-family: 'Courier New', monospace; }
+    .p0 { background: rgba(30,106,154,0.3); color: #7dd3fc; border: 1px solid rgba(30,106,154,0.4); }
+    .p1 { background: rgba(26,94,64,0.3); color: #86efac; border: 1px solid rgba(26,94,64,0.4); }
+    .p2 { background: rgba(124,58,237,0.3); color: #d8b4fe; border: 1px solid rgba(124,58,237,0.4); }
+    .cg-idle { opacity: 0.4; font-style: italic; color: #4a6480; font-size: 12px; }
+
+    /* ── Delivery semantics ── */
+    .semantic-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin: 1.4rem 0; }
+    .sem-card { border-radius: 12px; padding: 18px; border: 2px solid; }
+    .sem-amo { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.04); }
+    .sem-alo { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.04); }
+    .sem-eo  { border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.04); }
+    .sem-name { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .sem-amo .sem-name { color: #dc2626; }
+    .sem-alo .sem-name { color: #b45309; }
+    .sem-eo  .sem-name { color: #059669; }
+    .sem-desc { font-size: 12.5px; color: #4a5568; line-height: 1.55; margin-bottom: 10px; }
+    .sem-how  { font-size: 11.5px; color: #8a9bb0; font-style: italic; }
+
+    .cfg-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; }
+    .cfg-table th { background: var(--secondary); color: #fff; padding: 10px 14px; font-size: 12px; font-weight: 700; text-align: left; }
+    .cfg-table th:first-child { border-radius: 8px 0 0 0; }
+    .cfg-table th:last-child { border-radius: 0 8px 0 0; }
+    .cfg-table td { padding: 10px 14px; border-bottom: 1px solid #edf2f8; vertical-align: top; }
+    .cfg-table tr:last-child td { border-bottom: none; }
+    .cfg-table tr:nth-child(even) td { background: var(--bg-light); }
+    .cfg-table code { font-family: 'Courier New', monospace; font-size: 12px; background: var(--bg-light); color: #c0392b; padding: 1px 5px; border-radius: 4px; border: 1px solid #e4eef8; }
+
+    .series-nav { background: var(--bg-light); border-radius: 12px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin: 2rem 0; }
+    .series-nav-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .series-nav-title span { background: var(--kafka); color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 10px; }
+    .series-list { list-style: none; padding: 0; margin: 0; }
+    .series-list li { padding: 7px 0; border-bottom: 1px solid #e4eef8; font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
+    .series-list li:last-child { border-bottom: none; }
+    .series-list li.current { font-weight: 700; color: var(--secondary); }
+    .series-list li.current::before { content: '▶'; color: var(--kafka); font-size: 10px; }
+    .series-list li:not(.current)::before { content: '○'; color: #c0ccd8; font-size: 10px; }
+    .series-list a { color: var(--primary); text-decoration: none; }
+    .post-footer-nav { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 2px solid var(--bg-light); gap: 12px; flex-wrap: wrap; }
+    .pfn-link { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; padding: 10px 18px; border-radius: 10px; border: 1px solid #e4eef8; background: #fff; transition: all 0.2s; }
+    .pfn-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+    @media (max-width: 768px) { .post-wrap { padding: 1.6rem 1.2rem; } .post-title { font-size: 1.5rem; } .semantic-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a><a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a><a href="../blog.html" class="active">Field Notes</a><a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+<div class="container py-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">Kafka #4</li>
+    </ol>
+  </nav>
+  <div class="post-wrap">
+    <a href="../blog.html" class="back-to-blog"><i class="bi bi-arrow-left"></i> Về trang blog</a>
+    <div class="post-header">
+      <div>
+        <span class="post-category-badge"><i class="bi bi-stack me-1"></i>DevOps & SRE</span>
+        <span class="series-badge">Series: Kafka từ A-Z · Bài 4/6</span>
+      </div>
+      <div class="post-title">Kafka Consumer & Consumer Groups<br>Offset, Rebalancing & Delivery Semantics</div>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-calendar3"></i> May 2026</span>
+        <span><i class="bi bi-clock"></i> 12 phút đọc</span>
+        <span><i class="bi bi-person"></i> Lê Bình Phương</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">Kafka</span><span class="post-tag">Consumer</span>
+        <span class="post-tag">Offset</span><span class="post-tag">Rebalancing</span><span class="post-tag">At-least-once</span>
+      </div>
+    </div>
+
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#consumer-group">Consumer Group — phân chia partition</a></li>
+        <li><a href="#offset">Offset management — auto vs manual commit</a></li>
+        <li><a href="#rebalancing">Rebalancing — khi consumer thay đổi</a></li>
+        <li><a href="#semantics">Delivery semantics: at-most / at-least / exactly-once</a></li>
+        <li><a href="#configs">Configs quan trọng</a></li>
+        <li><a href="#manual-commit">Manual commit pattern thực chiến</a></li>
+        <li><a href="#dlq">Dead Letter Queue pattern</a></li>
+      </ol>
+    </div>
+
+    <div class="post-body">
+
+      <h2 id="consumer-group"><i class="bi bi-people"></i> Consumer Group — phân chia partition</h2>
+
+      <p>
+        Khi nhiều consumer join cùng <code>group.id</code>, Kafka tự động phân chia các partition của topic
+        cho từng consumer. Quy tắc: <strong>mỗi partition chỉ được assign cho đúng một consumer trong group</strong>.
+      </p>
+
+      <div class="cg-visual">
+        <div class="cg-title">Topic: order-events (3 partitions) — Consumer Group: order-processor</div>
+        <div style="margin-bottom:10px; font-size:11px; color:#4a6480;">3 consumer, 3 partition — phân chia đều 1:1</div>
+        <div class="cg-row">
+          <div class="cg-consumer">Consumer-1</div>
+          <div class="cg-arrow">→</div>
+          <div class="cg-partition p0">Partition 0</div>
+        </div>
+        <div class="cg-row">
+          <div class="cg-consumer">Consumer-2</div>
+          <div class="cg-arrow">→</div>
+          <div class="cg-partition p1">Partition 1</div>
+        </div>
+        <div class="cg-row">
+          <div class="cg-consumer">Consumer-3</div>
+          <div class="cg-arrow">→</div>
+          <div class="cg-partition p2">Partition 2</div>
+        </div>
+        <div style="margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.05); font-size:11px; color:#4a6480;">
+          4 consumer, 3 partition — Consumer-4 idle (không có partition để assign)
+        </div>
+        <div class="cg-row" style="margin-top:8px;">
+          <div class="cg-consumer">Consumer-1</div>
+          <div class="cg-arrow">→</div>
+          <div class="cg-partition p0">Partition 0</div>
+          <span style="margin-left:10px; font-size:11px; color:#4a6480;">Consumer-2 → P1 · Consumer-3 → P2</span>
+        </div>
+        <div class="cg-row">
+          <div class="cg-consumer" style="opacity:0.4;">Consumer-4</div>
+          <div class="cg-arrow">→</div>
+          <span class="cg-idle">idle — không có partition</span>
+        </div>
+      </div>
+
+      <p>
+        <strong>Multiple consumer groups</strong>: Hai group khác nhau (<code>order-processor</code> và <code>analytics</code>)
+        đọc cùng một topic hoàn toàn độc lập — mỗi group có offset riêng, không ảnh hưởng nhau.
+        Đây là điểm mạnh của Kafka so với traditional message queue.
+      </p>
+
+      <h2 id="offset"><i class="bi bi-bookmark"></i> Offset management</h2>
+
+      <p>
+        Offset là vị trí consumer đã đọc đến trong mỗi partition. Kafka lưu offset trong internal topic
+        <code>__consumer_offsets</code>. Consumer group commit offset để báo "đã xử lý đến đây".
+      </p>
+
+      <h3>Auto commit (enable.auto.commit=true)</h3>
+      <p>
+        Consumer tự động commit offset định kỳ (mặc định 5 giây). Đơn giản nhưng <strong>có thể gây mất message</strong>:
+        commit xảy ra trước khi xử lý xong → crash → message coi như đã xử lý.
+      </p>
+
+      <h3>Manual commit</h3>
+      <p>
+        Bạn tự gọi <code>consumer.commit()</code> sau khi xử lý thành công. An toàn hơn nhưng phức tạp hơn.
+        Có hai dạng: synchronous (<code>commit()</code>) và asynchronous (<code>commit_async()</code>).
+      </p>
+
+      <h2 id="rebalancing"><i class="bi bi-arrow-repeat"></i> Rebalancing</h2>
+
+      <p>Rebalancing xảy ra khi:</p>
+      <ul>
+        <li>Consumer mới join group</li>
+        <li>Consumer rời group (crash hoặc shutdown graceful)</li>
+        <li>Topic thêm partition mới</li>
+        <li>Consumer không gửi heartbeat kịp (<code>session.timeout.ms</code> hết)</li>
+      </ul>
+
+      <p>
+        Trong quá trình rebalance, <strong>toàn bộ consumer trong group dừng đọc</strong> (stop-the-world).
+        Kafka 2.4+ có <strong>incremental cooperative rebalancing</strong> — chỉ revoke partition thực sự
+        cần di chuyển, giảm downtime đáng kể.
+      </p>
+
+      <div class="callout callout-warn">
+        <div class="callout-title"><i class="bi bi-exclamation-triangle"></i> Rebalance storm</div>
+        Nếu consumer xử lý chậm (<code>max.poll.interval.ms</code> quá ngắn), Kafka coi là dead và trigger rebalance.
+        Sau rebalance, consumer join lại, trigger rebalance tiếp. Vòng lặp này gọi là <em>rebalance storm</em>.
+        Fix: tăng <code>max.poll.interval.ms</code> hoặc giảm lượng xử lý trong mỗi poll.
+      </div>
+
+      <h2 id="semantics"><i class="bi bi-layers"></i> Delivery Semantics</h2>
+
+      <div class="semantic-grid">
+        <div class="sem-card sem-amo">
+          <div class="sem-name">At-most-once</div>
+          <div class="sem-desc">Message có thể mất, không bao giờ duplicate. Commit offset trước khi xử lý.</div>
+          <div class="sem-how">auto.commit=true với commit trước process</div>
+        </div>
+        <div class="sem-card sem-alo">
+          <div class="sem-name">At-least-once</div>
+          <div class="sem-desc">Message không mất, nhưng có thể duplicate nếu crash sau xử lý và trước commit.</div>
+          <div class="sem-how">Manual commit sau khi xử lý thành công</div>
+        </div>
+        <div class="sem-card sem-eo">
+          <div class="sem-name">Exactly-once</div>
+          <div class="sem-desc">Không mất, không duplicate. Cần idempotent consumer hoặc transactional producer.</div>
+          <div class="sem-how">Kafka Transactions + idempotent processing</div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-title"><i class="bi bi-lightbulb"></i> Thực tế</div>
+        Hầu hết hệ thống dùng <strong>at-least-once + idempotent consumer</strong> — xử lý có thể chạy nhiều lần
+        nhưng kết quả vẫn đúng (ví dụ: upsert thay vì insert, check exists trước khi tạo).
+        Exactly-once phức tạp hơn nhiều và thường chỉ cần thiết cho financial transactions.
+      </div>
+
+      <h2 id="configs"><i class="bi bi-sliders"></i> Configs quan trọng</h2>
+
+      <table class="cfg-table">
+        <thead><tr><th>Config</th><th>Default</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>group.id</code></td><td>—</td><td>Consumer group identifier. Bắt buộc phải set.</td></tr>
+          <tr><td><code>auto.offset.reset</code></td><td><code>latest</code></td><td><code>earliest</code> = đọc từ đầu topic khi chưa có offset. <code>latest</code> = chỉ đọc message mới.</td></tr>
+          <tr><td><code>enable.auto.commit</code></td><td><code>true</code></td><td>Auto commit mỗi <code>auto.commit.interval.ms</code> (5000ms). Set false để manual commit.</td></tr>
+          <tr><td><code>max.poll.records</code></td><td>500</td><td>Số record tối đa mỗi lần poll. Giảm nếu xử lý mỗi record chậm.</td></tr>
+          <tr><td><code>max.poll.interval.ms</code></td><td>300000 (5 phút)</td><td>Thời gian tối đa giữa hai lần poll. Vượt quá → consumer bị coi là dead, trigger rebalance.</td></tr>
+          <tr><td><code>session.timeout.ms</code></td><td>45000ms</td><td>Thời gian chờ heartbeat. Hết hạn → consumer bị kick khỏi group.</td></tr>
+          <tr><td><code>heartbeat.interval.ms</code></td><td>3000ms</td><td>Tần suất gửi heartbeat. Nên = session.timeout.ms / 3.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="manual-commit"><i class="bi bi-code-slash"></i> Manual commit pattern thực chiến</h2>
+
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>python — at-least-once với manual commit</span></div>
+      <pre><code><span class="code-key">from</span> confluent_kafka <span class="code-key">import</span> Consumer, KafkaError
+<span class="code-key">import</span> json
+
+conf = {
+    <span class="code-str">'bootstrap.servers'</span>: <span class="code-str">'localhost:9092'</span>,
+    <span class="code-str">'group.id'</span>: <span class="code-str">'order-processor'</span>,
+    <span class="code-str">'auto.offset.reset'</span>: <span class="code-str">'earliest'</span>,
+    <span class="code-str">'enable.auto.commit'</span>: <span class="code-str">'false'</span>,  <span class="code-comment"># manual commit</span>
+}
+consumer = Consumer(conf)
+consumer.subscribe([<span class="code-str">'order-events'</span>])
+
+<span class="code-key">def</span> <span class="code-highlight">process_order</span>(order):
+    <span class="code-comment"># business logic — idempotent nếu có thể</span>
+    print(<span class="code-str">f"Processing {order['order_id']}: {order['status']}"</span>)
+
+<span class="code-key">try</span>:
+    <span class="code-key">while</span> <span class="code-num">True</span>:
+        msg = consumer.poll(timeout=<span class="code-num">1.0</span>)
+        <span class="code-key">if</span> msg <span class="code-key">is</span> <span class="code-num">None</span> <span class="code-key">or</span> msg.error():
+            <span class="code-key">continue</span>
+
+        <span class="code-key">try</span>:
+            order = json.loads(msg.value())
+            process_order(order)
+            consumer.commit(msg)  <span class="code-comment"># commit sau khi xử lý thành công</span>
+        <span class="code-key">except</span> Exception <span class="code-key">as</span> e:
+            print(<span class="code-str">f"Error processing: {e}"</span>)
+            <span class="code-comment"># không commit → message sẽ được đọc lại sau rebalance/restart</span>
+<span class="code-key">finally</span>:
+    consumer.close()</code></pre>
+
+      <h2 id="dlq"><i class="bi bi-envelope-x"></i> Dead Letter Queue pattern</h2>
+
+      <p>
+        Nếu message không thể xử lý được (malformed, business rule fail), đừng để consumer loop mãi.
+        Gửi message đó sang một topic khác (<code>order-events-dlq</code>) để xử lý riêng:
+      </p>
+
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>python — DLQ pattern</span></div>
+      <pre><code><span class="code-key">from</span> confluent_kafka <span class="code-key">import</span> Consumer, Producer, KafkaError
+<span class="code-key">import</span> json
+
+MAX_RETRIES = <span class="code-num">3</span>
+
+<span class="code-key">def</span> <span class="code-highlight">send_to_dlq</span>(producer, original_msg, error_reason):
+    dlq_value = {
+        <span class="code-str">'original_topic'</span>: original_msg.topic(),
+        <span class="code-str">'original_partition'</span>: original_msg.partition(),
+        <span class="code-str">'original_offset'</span>: original_msg.offset(),
+        <span class="code-str">'error'</span>: str(error_reason),
+        <span class="code-str">'payload'</span>: original_msg.value().decode(<span class="code-str">'utf-8'</span>),
+    }
+    producer.produce(
+        topic=<span class="code-str">'order-events-dlq'</span>,
+        key=original_msg.key(),
+        value=json.dumps(dlq_value)
+    )
+    producer.flush()</code></pre>
+
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection"></i> Series Kafka từ A-Z <span>6 bài</span></div>
+        <ul class="series-list">
+          <li><a href="kafka-01-intro.html">Bài 1: Kafka là gì? Core concepts &amp; architecture</a></li>
+          <li><a href="kafka-02-setup.html">Bài 2: Cài đặt với Docker — Kafka UI trong 15 phút</a></li>
+          <li><a href="kafka-03-producer.html">Bài 3: Producer deep dive — acks, batching, ordering</a></li>
+          <li class="current">Bài 4: Consumer &amp; Consumer Groups — offset, rebalancing</li>
+          <li><a href="kafka-05-partition.html">Bài 5: Partitions &amp; Replication — durability đảm bảo thế nào</a></li>
+          <li><a href="kafka-06-production.html">Bài 6: Kafka trong Production — monitoring, tuning, common issues</a></li>
+        </ul>
+      </div>
+
+      <div class="post-footer-nav">
+        <a href="kafka-03-producer.html" class="pfn-link"><i class="bi bi-arrow-left"></i> Bài 3: Producer</a>
+        <a href="kafka-05-partition.html" class="pfn-link">Bài 5: Partitions &amp; Replication <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

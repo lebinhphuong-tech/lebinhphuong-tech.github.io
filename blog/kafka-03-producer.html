@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafka Producer Deep Dive: acks, batching, ordering không mất data | Field Notes</title>
+  <meta name="description" content="Producer internals: flow từ serialization đến network, acks 0/1/all, compression, batching, idempotent producer. Bài 3 series Kafka từ A-Z.">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary: #149ddd; --secondary: #173b6c; --text: #272829; --bg-light: #f5f8fd; --kafka: #e34c00; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; }
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(227,76,0,0.1); color: var(--kafka); border: 1px solid rgba(227,76,0,0.25); display: inline-block; margin-bottom: 16px; }
+    .series-badge { font-size: 10.5px; font-weight: 700; padding: 3px 12px; border-radius: 20px; background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); display: inline-block; margin-bottom: 16px; margin-left: 8px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-highlight { color: #fde68a; font-weight: 700; }
+    .callout { border-radius: 10px; padding: 1.1rem 1.4rem; margin: 1.4rem 0; border-left: 4px solid; font-size: 14px; }
+    .callout-title { font-weight: 700; margin-bottom: 5px; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+    .callout-tip  { background: rgba(16,185,129,0.06); border-color: #10b981; color: #065f46; }
+    .callout-tip .callout-title { color: #059669; }
+    .callout-warn { background: rgba(245,158,11,0.07); border-color: #f59e0b; color: #78350f; }
+    .callout-warn .callout-title { color: #d97706; }
+    .callout-info { background: rgba(20,157,221,0.07); border-color: var(--primary); color: #1e3a5f; }
+    .callout-info .callout-title { color: var(--primary); }
+
+    /* ── Acks cards ── */
+    .acks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 1.4rem 0; }
+    .ack-card { border-radius: 12px; padding: 18px; border: 2px solid; }
+    .ack-0 { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.04); }
+    .ack-1 { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.04); }
+    .ack-a { border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.04); }
+    .ack-val { font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+    .ack-0 .ack-val { color: #dc2626; }
+    .ack-1 .ack-val { color: #b45309; }
+    .ack-a .ack-val { color: #059669; }
+    .ack-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .ack-0 .ack-name { color: #dc2626; }
+    .ack-1 .ack-name { color: #b45309; }
+    .ack-a .ack-name { color: #059669; }
+    .ack-desc { font-size: 12.5px; color: #4a5568; line-height: 1.55; margin-bottom: 10px; }
+    .ack-pill { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    .ack-0 .ack-pill { background: rgba(239,68,68,0.1); color: #dc2626; }
+    .ack-1 .ack-pill { background: rgba(245,158,11,0.1); color: #b45309; }
+    .ack-a .ack-pill { background: rgba(16,185,129,0.1); color: #059669; }
+
+    /* ── Config table ── */
+    .cfg-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; }
+    .cfg-table th { background: var(--secondary); color: #fff; padding: 10px 14px; font-size: 12px; font-weight: 700; text-align: left; }
+    .cfg-table th:first-child { border-radius: 8px 0 0 0; }
+    .cfg-table th:last-child { border-radius: 0 8px 0 0; }
+    .cfg-table td { padding: 10px 14px; border-bottom: 1px solid #edf2f8; vertical-align: top; }
+    .cfg-table tr:last-child td { border-bottom: none; }
+    .cfg-table tr:nth-child(even) td { background: var(--bg-light); }
+    .cfg-table code { font-family: 'Courier New', monospace; font-size: 12px; background: var(--bg-light); color: #c0392b; padding: 1px 5px; border-radius: 4px; border: 1px solid #e4eef8; }
+
+    /* ── Series nav ── */
+    .series-nav { background: var(--bg-light); border-radius: 12px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin: 2rem 0; }
+    .series-nav-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .series-nav-title span { background: var(--kafka); color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 10px; }
+    .series-list { list-style: none; padding: 0; margin: 0; }
+    .series-list li { padding: 7px 0; border-bottom: 1px solid #e4eef8; font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
+    .series-list li:last-child { border-bottom: none; }
+    .series-list li.current { font-weight: 700; color: var(--secondary); }
+    .series-list li.current::before { content: '▶'; color: var(--kafka); font-size: 10px; }
+    .series-list li:not(.current)::before { content: '○'; color: #c0ccd8; font-size: 10px; }
+    .series-list a { color: var(--primary); text-decoration: none; }
+    .post-footer-nav { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 2px solid var(--bg-light); gap: 12px; flex-wrap: wrap; }
+    .pfn-link { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; padding: 10px 18px; border-radius: 10px; border: 1px solid #e4eef8; background: #fff; transition: all 0.2s; }
+    .pfn-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+    @media (max-width: 768px) { .post-wrap { padding: 1.6rem 1.2rem; } .post-title { font-size: 1.5rem; } .acks-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+<div class="container py-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">Kafka #3</li>
+    </ol>
+  </nav>
+  <div class="post-wrap">
+    <a href="../blog.html" class="back-to-blog"><i class="bi bi-arrow-left"></i> Về trang blog</a>
+    <div class="post-header">
+      <div>
+        <span class="post-category-badge"><i class="bi bi-stack me-1"></i>DevOps & SRE</span>
+        <span class="series-badge">Series: Kafka từ A-Z · Bài 3/6</span>
+      </div>
+      <div class="post-title">Kafka Producer Deep Dive<br>acks, batching, ordering không mất data</div>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-calendar3"></i> May 2026</span>
+        <span><i class="bi bi-clock"></i> 11 phút đọc</span>
+        <span><i class="bi bi-person"></i> Lê Bình Phương</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">Kafka</span><span class="post-tag">Producer</span>
+        <span class="post-tag">acks</span><span class="post-tag">Idempotent</span><span class="post-tag">Durability</span>
+      </div>
+    </div>
+
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#flow">Producer flow: từ lúc gọi .produce() đến khi lên broker</a></li>
+        <li><a href="#acks">acks — durability guarantee quan trọng nhất</a></li>
+        <li><a href="#batching">Batching & linger.ms — tối ưu throughput</a></li>
+        <li><a href="#partitioner">Partitioner — message đi về partition nào?</a></li>
+        <li><a href="#compression">Compression — giảm network & disk cost</a></li>
+        <li><a href="#idempotent">Idempotent producer — tránh duplicate</a></li>
+        <li><a href="#configs">Config cheat sheet theo use case</a></li>
+      </ol>
+    </div>
+
+    <div class="post-body">
+
+      <h2 id="flow"><i class="bi bi-arrow-right-circle"></i> Producer flow: từ .produce() đến broker</h2>
+
+      <p>Khi bạn gọi <code>producer.produce(topic, key, value)</code>, Kafka client thực hiện các bước sau:</p>
+      <ol>
+        <li><strong>Serialization</strong> — key và value được serialize thành byte[]</li>
+        <li><strong>Partition assignment</strong> — quyết định message vào partition nào (dựa trên key hash hoặc round-robin)</li>
+        <li><strong>Record accumulator</strong> — message được buffer vào batch trong memory, tổ chức theo (topic, partition)</li>
+        <li><strong>Sender thread</strong> — background thread gom các batch đủ điều kiện và gửi đến broker leader</li>
+        <li><strong>Broker acknowledgment</strong> — broker trả lời theo cấu hình <code>acks</code></li>
+        <li><strong>Callback / delivery report</strong> — producer notify kết quả (success/error)</li>
+      </ol>
+
+      <div class="callout callout-info">
+        <div class="callout-title"><i class="bi bi-info-circle"></i> Async by default</div>
+        <code>produce()</code> là non-blocking — nó chỉ đẩy message vào buffer. <code>flush()</code> hoặc
+        <code>poll()</code> mới thực sự gửi. Nếu process crash trước khi flush, message trong buffer sẽ mất.
+      </div>
+
+      <h2 id="acks"><i class="bi bi-shield-check"></i> acks — durability guarantee quan trọng nhất</h2>
+
+      <p><code>acks</code> kiểm soát khi nào broker coi là "đã nhận" message. Đây là trade-off giữa tốc độ và độ an toàn:</p>
+
+      <div class="acks-grid">
+        <div class="ack-card ack-0">
+          <div class="ack-val">acks=0</div>
+          <div class="ack-name">Fire & Forget</div>
+          <div class="ack-desc">Producer không chờ bất kỳ ack nào. Gửi xong là quên. Nếu broker crash trước khi ghi — message mất hoàn toàn.</div>
+          <span class="ack-pill">Dùng cho: metrics, logs không quan trọng</span>
+        </div>
+        <div class="ack-card ack-1">
+          <div class="ack-val">acks=1</div>
+          <div class="ack-name">Leader ACK</div>
+          <div class="ack-desc">Leader broker ghi vào disk xong mới ack. Nếu leader crash trước khi replica kịp sync — message vẫn có thể mất.</div>
+          <span class="ack-pill">Dùng cho: high-throughput, chấp nhận mất ít</span>
+        </div>
+        <div class="ack-card ack-a">
+          <div class="ack-val">acks=all</div>
+          <div class="ack-name">All ISR ACK</div>
+          <div class="ack-desc">Tất cả In-Sync Replicas đều ghi xong mới ack. Mạnh nhất — message không mất ngay cả khi leader crash.</div>
+          <span class="ack-pill">Dùng cho: financial, order, critical data</span>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-title"><i class="bi bi-exclamation-triangle"></i> acks=all không đủ một mình</div>
+        <code>acks=all</code> chỉ có ý nghĩa khi kết hợp với <code>min.insync.replicas=2</code> ở topic/broker config.
+        Nếu chỉ còn 1 ISR và <code>min.insync.replicas=1</code>, thực chất ngang với acks=1.
+      </div>
+
+      <h2 id="batching"><i class="bi bi-collection"></i> Batching & linger.ms</h2>
+
+      <p>
+        Kafka producer không gửi từng message một — nó gom lại thành batch để tối ưu network.
+        Hai config kiểm soát batch:
+      </p>
+
+      <table class="cfg-table">
+        <thead><tr><th>Config</th><th>Default</th><th>Ý nghĩa</th><th>Tune khi nào</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>batch.size</code></td>
+            <td>16KB</td>
+            <td>Kích thước tối đa của một batch (bytes). Batch đầy → gửi ngay.</td>
+            <td>Tăng lên 64KB-1MB nếu throughput cao và có thể chấp nhận latency nhỏ</td>
+          </tr>
+          <tr>
+            <td><code>linger.ms</code></td>
+            <td>0ms</td>
+            <td>Thời gian chờ thêm message vào batch dù chưa đầy. 0 = gửi ngay.</td>
+            <td>Set 5-20ms để tăng batch size khi throughput không đều</td>
+          </tr>
+          <tr>
+            <td><code>buffer.memory</code></td>
+            <td>32MB</td>
+            <td>Tổng memory cho record accumulator. Đầy → <code>produce()</code> block.</td>
+            <td>Tăng nếu producer tạo message nhanh hơn tốc độ gửi</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>python — high-throughput config</span></div>
+      <pre><code>conf = {
+    <span class="code-str">'bootstrap.servers'</span>: <span class="code-str">'localhost:9092'</span>,
+    <span class="code-str">'acks'</span>: <span class="code-str">'all'</span>,
+    <span class="code-str">'retries'</span>: <span class="code-num">3</span>,
+    <span class="code-str">'linger.ms'</span>: <span class="code-num">10</span>,          <span class="code-comment"># chờ 10ms để gom batch</span>
+    <span class="code-str">'batch.size'</span>: <span class="code-num">65536</span>,       <span class="code-comment"># 64KB batch size</span>
+    <span class="code-str">'compression.type'</span>: <span class="code-str">'snappy'</span>, <span class="code-comment"># compress batch trước khi gửi</span>
+    <span class="code-str">'enable.idempotence'</span>: <span class="code-str">'true'</span>,  <span class="code-comment"># không duplicate khi retry</span>
+}</code></pre>
+
+      <h2 id="partitioner"><i class="bi bi-diagram-3"></i> Partitioner — message đi về partition nào?</h2>
+
+      <ul>
+        <li><strong>Key không null</strong> — hash(key) % numPartitions. Cùng key → cùng partition → đảm bảo ordering</li>
+        <li><strong>Key null, Kafka &lt; 2.4</strong> — round-robin giữa các partition</li>
+        <li><strong>Key null, Kafka ≥ 2.4</strong> — sticky partitioner: gom vào một partition cho đến khi batch đủ lớn, rồi đổi → throughput tốt hơn round-robin</li>
+      </ul>
+
+      <div class="callout callout-tip">
+        <div class="callout-title"><i class="bi bi-lightbulb"></i> Key quan trọng hơn bạn nghĩ</div>
+        Nếu cần order, luôn dùng key. Nếu không cần order và muốn phân phối đều, để key là null.
+        <strong>Tránh</strong> dùng key mà chỉ có vài giá trị (ví dụ: region) — sẽ gây <em>hot partition</em>
+        (một partition nhận 90% traffic trong khi các partition khác rảnh).
+      </div>
+
+      <h2 id="compression"><i class="bi bi-archive"></i> Compression</h2>
+
+      <p>
+        Kafka hỗ trợ compress batch trước khi gửi. Producer compress, broker lưu compressed, consumer decompress.
+        Broker không cần decode để route.
+      </p>
+
+      <table class="cfg-table">
+        <thead><tr><th>Algorithm</th><th>Ratio</th><th>CPU</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td><code>none</code></td><td>1x</td><td>Không</td><td>Latency cực thấp, không quan tâm bandwidth</td></tr>
+          <tr><td><code>gzip</code></td><td>Tốt nhất (~5x)</td><td>Cao</td><td>Cold storage, không nhạy cảm latency</td></tr>
+          <tr><td><code>snappy</code></td><td>Tốt (~3x)</td><td>Thấp</td><td>Balance — phù hợp cho hầu hết use case</td></tr>
+          <tr><td><code>lz4</code></td><td>Trung bình (~2x)</td><td>Rất thấp</td><td>Latency nhạy cảm, throughput cao</td></tr>
+          <tr><td><code>zstd</code></td><td>Tốt nhất (~5x)</td><td>Trung bình</td><td>Kafka 2.1+, modern default tốt nhất</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="idempotent"><i class="bi bi-fingerprint"></i> Idempotent Producer — tránh duplicate khi retry</h2>
+
+      <p>
+        Khi broker crash sau khi ghi nhưng trước khi gửi ack, producer sẽ retry. Nếu broker thực ra đã ghi thành công,
+        message sẽ bị ghi hai lần (<strong>duplicate</strong>).
+      </p>
+      <p>
+        Bật <code>enable.idempotence=true</code>: Kafka gán mỗi message một <strong>sequence number</strong> duy nhất.
+        Broker phát hiện duplicate và discard, producer retry an toàn.
+      </p>
+
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>python</span></div>
+      <pre><code>conf = {
+    <span class="code-str">'bootstrap.servers'</span>: <span class="code-str">'localhost:9092'</span>,
+    <span class="code-str">'enable.idempotence'</span>: <span class="code-str">'true'</span>,  <span class="code-comment"># tự động set acks=all, retries=MAX</span>
+    <span class="code-comment"># Khi enable.idempotence=true, các config sau được auto set:</span>
+    <span class="code-comment"># acks=all, retries=INT_MAX, max.in.flight.requests.per.connection=5</span>
+}</code></pre>
+
+      <h2 id="configs"><i class="bi bi-sliders"></i> Config cheat sheet theo use case</h2>
+
+      <table class="cfg-table">
+        <thead><tr><th>Use Case</th><th>acks</th><th>linger.ms</th><th>compression</th><th>idempotence</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Metrics / Logs</strong></td><td><code>0</code></td><td><code>0</code></td><td><code>lz4</code></td><td>false</td></tr>
+          <tr><td><strong>App events</strong></td><td><code>1</code></td><td><code>5</code></td><td><code>snappy</code></td><td>false</td></tr>
+          <tr><td><strong>Order / Payment</strong></td><td><code>all</code></td><td><code>0-5</code></td><td><code>snappy</code></td><td>true</td></tr>
+          <tr><td><strong>CDC / Audit log</strong></td><td><code>all</code></td><td><code>10</code></td><td><code>zstd</code></td><td>true</td></tr>
+          <tr><td><strong>Bulk import</strong></td><td><code>1</code></td><td><code>50</code></td><td><code>gzip</code></td><td>false</td></tr>
+        </tbody>
+      </table>
+
+      <!-- Series nav -->
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection"></i> Series Kafka từ A-Z <span>6 bài</span></div>
+        <ul class="series-list">
+          <li><a href="kafka-01-intro.html">Bài 1: Kafka là gì? Core concepts &amp; architecture</a></li>
+          <li><a href="kafka-02-setup.html">Bài 2: Cài đặt với Docker — Kafka UI trong 15 phút</a></li>
+          <li class="current">Bài 3: Producer deep dive — acks, batching, ordering</li>
+          <li><a href="kafka-04-consumer.html">Bài 4: Consumer &amp; Consumer Groups — offset, rebalancing</a></li>
+          <li><a href="kafka-05-partition.html">Bài 5: Partitions &amp; Replication — durability đảm bảo thế nào</a></li>
+          <li><a href="kafka-06-production.html">Bài 6: Kafka trong Production — monitoring, tuning, common issues</a></li>
+        </ul>
+      </div>
+
+      <div class="post-footer-nav">
+        <a href="kafka-02-setup.html" class="pfn-link"><i class="bi bi-arrow-left"></i> Bài 2: Cài đặt Docker</a>
+        <a href="kafka-04-consumer.html" class="pfn-link">Bài 4: Consumer &amp; Consumer Groups <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafka trong Production: Monitoring, Tuning & Common Issues | Field Notes</title>
+  <meta name="description" content="Production checklist: naming conventions, consumer lag monitoring, Prometheus metrics, JMX, common issues và cách fix, Kafka Connect, Schema Registry. Bài 6 series Kafka từ A-Z.">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --primary: #149ddd; --secondary: #173b6c; --text: #272829; --bg-light: #f5f8fd; --kafka: #e34c00; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; }
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(227,76,0,0.1); color: var(--kafka); border: 1px solid rgba(227,76,0,0.25); display: inline-block; margin-bottom: 16px; }
+    .series-badge { font-size: 10.5px; font-weight: 700; padding: 3px 12px; border-radius: 20px; background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); display: inline-block; margin-bottom: 16px; margin-left: 8px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-highlight { color: #fde68a; font-weight: 700; }
+    .callout { border-radius: 10px; padding: 1.1rem 1.4rem; margin: 1.4rem 0; border-left: 4px solid; font-size: 14px; }
+    .callout-title { font-weight: 700; margin-bottom: 5px; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+    .callout-tip  { background: rgba(16,185,129,0.06); border-color: #10b981; color: #065f46; }
+    .callout-tip .callout-title { color: #059669; }
+    .callout-warn { background: rgba(245,158,11,0.07); border-color: #f59e0b; color: #78350f; }
+    .callout-warn .callout-title { color: #d97706; }
+    .callout-info { background: rgba(20,157,221,0.07); border-color: var(--primary); color: #1e3a5f; }
+    .callout-info .callout-title { color: var(--primary); }
+
+    /* ── Metrics grid ── */
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 1.4rem 0; }
+    .metric-card { border-radius: 10px; padding: 16px; border: 1px solid #e4eef8; background: #fff; }
+    .mc-name { font-family: 'Courier New', monospace; font-size: 12px; color: var(--kafka); font-weight: 700; margin-bottom: 5px; }
+    .mc-desc { font-size: 12.5px; color: #4a5568; line-height: 1.5; }
+    .mc-alert { font-size: 11px; font-weight: 700; margin-top: 8px; }
+    .alert-red { color: #dc2626; }
+    .alert-yellow { color: #d97706; }
+
+    /* ── Issues table ── */
+    .issue-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; }
+    .issue-table th { background: var(--secondary); color: #fff; padding: 10px 14px; font-size: 12px; font-weight: 700; text-align: left; }
+    .issue-table th:first-child { border-radius: 8px 0 0 0; }
+    .issue-table th:last-child { border-radius: 0 8px 0 0; }
+    .issue-table td { padding: 10px 14px; border-bottom: 1px solid #edf2f8; vertical-align: top; font-size: 13px; }
+    .issue-table tr:last-child td { border-bottom: none; }
+    .issue-table tr:nth-child(even) td { background: var(--bg-light); }
+    .issue-table code { font-family: 'Courier New', monospace; font-size: 12px; background: var(--bg-light); color: #c0392b; padding: 1px 5px; border-radius: 4px; border: 1px solid #e4eef8; }
+
+    /* ── Checklist ── */
+    .checklist { list-style: none; padding: 0; margin: 1.2rem 0; }
+    .checklist li { display: flex; gap: 10px; padding: 9px 14px; border-radius: 8px; border: 1px solid #e4eef8; background: #fff; margin-bottom: 7px; font-size: 13.5px; color: #4a5568; }
+    .checklist li::before { content: '☐'; color: #c0ccd8; font-size: 15px; flex-shrink: 0; }
+
+    /* ── Tool grid ── */
+    .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 1.4rem 0; }
+    .tool-card { border-radius: 12px; padding: 16px; border: 1px solid #e4eef8; background: #fff; }
+    .tc-name { font-size: 13.5px; font-weight: 700; color: var(--secondary); margin-bottom: 5px; }
+    .tc-desc { font-size: 12.5px; color: #6c7a8d; line-height: 1.5; }
+    .tc-type { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 8px; }
+    .tt-managed { background: rgba(20,157,221,0.1); color: #0369a1; }
+    .tt-open { background: rgba(34,197,94,0.1); color: #059669; }
+
+    .series-nav { background: var(--bg-light); border-radius: 12px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin: 2rem 0; }
+    .series-nav-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .series-nav-title span { background: var(--kafka); color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 10px; }
+    .series-list { list-style: none; padding: 0; margin: 0; }
+    .series-list li { padding: 7px 0; border-bottom: 1px solid #e4eef8; font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
+    .series-list li:last-child { border-bottom: none; }
+    .series-list li.current { font-weight: 700; color: var(--secondary); }
+    .series-list li.current::before { content: '▶'; color: var(--kafka); font-size: 10px; }
+    .series-list li:not(.current)::before { content: '○'; color: #c0ccd8; font-size: 10px; }
+    .series-list a { color: var(--primary); text-decoration: none; }
+    .post-footer-nav { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 2px solid var(--bg-light); gap: 12px; flex-wrap: wrap; }
+    .pfn-link { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; padding: 10px 18px; border-radius: 10px; border: 1px solid #e4eef8; background: #fff; transition: all 0.2s; }
+    .pfn-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+    @media (max-width: 768px) { .post-wrap { padding: 1.6rem 1.2rem; } .post-title { font-size: 1.5rem; } }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a><a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a><a href="../blog.html" class="active">Field Notes</a><a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+<div class="container py-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">Kafka #6</li>
+    </ol>
+  </nav>
+  <div class="post-wrap">
+    <a href="../blog.html" class="back-to-blog"><i class="bi bi-arrow-left"></i> Về trang blog</a>
+    <div class="post-header">
+      <div>
+        <span class="post-category-badge"><i class="bi bi-stack me-1"></i>DevOps & SRE</span>
+        <span class="series-badge">Series: Kafka từ A-Z · Bài 6/6</span>
+      </div>
+      <div class="post-title">Kafka trong Production<br>Monitoring, Tuning & Common Issues</div>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-calendar3"></i> May 2026</span>
+        <span><i class="bi bi-clock"></i> 13 phút đọc</span>
+        <span><i class="bi bi-person"></i> Lê Bình Phương</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">Kafka</span><span class="post-tag">Production</span>
+        <span class="post-tag">Monitoring</span><span class="post-tag">Prometheus</span><span class="post-tag">Kafka Connect</span>
+      </div>
+    </div>
+
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#naming">Naming conventions &amp; topic design</a></li>
+        <li><a href="#metrics">Key metrics cần monitor</a></li>
+        <li><a href="#prometheus">Prometheus + JMX Exporter setup</a></li>
+        <li><a href="#issues">Common issues và cách fix</a></li>
+        <li><a href="#connect">Kafka Connect — tích hợp không cần code</a></li>
+        <li><a href="#schema">Schema Registry &amp; Avro</a></li>
+        <li><a href="#managed">Managed Kafka — khi nào nên dùng?</a></li>
+        <li><a href="#checklist">Production checklist</a></li>
+      </ol>
+    </div>
+
+    <div class="post-body">
+
+      <h2 id="naming"><i class="bi bi-tag"></i> Naming conventions & topic design</h2>
+
+      <p>Topic name không thể đổi sau khi tạo — đặt tên cẩn thận từ đầu:</p>
+
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>naming convention</span></div>
+      <pre><code><span class="code-comment"># Pattern: {domain}.{entity}.{event-type}.{version}</span>
+<span class="code-str">orders.order.placed.v1</span>
+<span class="code-str">orders.order.paid.v1</span>
+<span class="code-str">inventory.product.stock-updated.v1</span>
+<span class="code-str">users.user.registered.v1</span>
+<span class="code-str">payments.payment.failed.v2</span>
+
+<span class="code-comment"># Internal topics bắt đầu bằng _</span>
+<span class="code-str">_orders.order.placed.v1.dlq</span>       <span class="code-comment"># Dead letter queue</span>
+<span class="code-str">__consumer_offsets</span>                  <span class="code-comment"># Kafka internal (đừng động vào)</span></code></pre>
+
+      <div class="callout callout-tip">
+        <div class="callout-title"><i class="bi bi-lightbulb"></i> Best practices</div>
+        <ul style="margin-bottom:0;">
+          <li>Luôn dùng chữ thường, phân cách bằng dấu <code>.</code> hoặc <code>-</code></li>
+          <li>Không dùng <code>_</code> (khó phân biệt với Kafka internal topics)</li>
+          <li>Thêm version (<code>.v1</code>, <code>.v2</code>) để migrate schema không breaking</li>
+          <li>Đặt tên topic theo event đã xảy ra (past tense): <code>order-placed</code> không phải <code>place-order</code></li>
+        </ul>
+      </div>
+
+      <h2 id="metrics"><i class="bi bi-graph-up"></i> Key metrics cần monitor</h2>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="mc-name">consumer_lag</div>
+          <div class="mc-desc">Số message consumer chưa xử lý. Metric quan trọng nhất.</div>
+          <div class="mc-alert alert-red">⚠ Alert khi lag tăng liên tục &gt; 5 phút</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-name">MessagesInPerSec</div>
+          <div class="mc-desc">Tốc độ message vào cluster. Dùng để capacity planning.</div>
+          <div class="mc-alert alert-yellow">Theo dõi spike bất thường</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-name">BytesInPerSec / BytesOutPerSec</div>
+          <div class="mc-desc">Network throughput. Đảm bảo không saturate NIC.</div>
+          <div class="mc-alert alert-red">Alert khi &gt; 80% capacity NIC</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-name">UnderReplicatedPartitions</div>
+          <div class="mc-desc">Số partition không đủ replica. Dấu hiệu broker lag hoặc down.</div>
+          <div class="mc-alert alert-red">Alert khi &gt; 0 trong production</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-name">OfflinePartitionsCount</div>
+          <div class="mc-desc">Số partition hoàn toàn offline, không có leader. Nghiêm trọng nhất.</div>
+          <div class="mc-alert alert-red">Alert ngay lập tức khi &gt; 0</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-name">ActiveControllerCount</div>
+          <div class="mc-desc">Phải luôn bằng 1 trong cluster. 0 = mất controller, &gt;1 = split-brain.</div>
+          <div class="mc-alert alert-red">Alert khi != 1</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-name">RequestHandlerAvgIdlePercent</div>
+          <div class="mc-desc">% idle của request handler threads. Thấp = broker đang quá tải.</div>
+          <div class="mc-alert alert-yellow">Alert khi &lt; 20%</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-name">LogEndOffset</div>
+          <div class="mc-desc">Offset cuối cùng của partition. Kết hợp với committed offset để tính lag.</div>
+          <div class="mc-alert" style="color:#8a9bb0;">Dùng để trending</div>
+        </div>
+      </div>
+
+      <h2 id="prometheus"><i class="bi bi-activity"></i> Prometheus + JMX Exporter</h2>
+
+      <p>Kafka expose metrics qua <strong>JMX</strong>. Cần <strong>JMX Exporter</strong> để convert sang Prometheus format.</p>
+
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>docker-compose.yml — thêm JMX exporter</span></div>
+      <pre><code>  <span class="code-key">kafka</span>:
+    <span class="code-key">image</span>: <span class="code-str">apache/kafka:3.9.0</span>
+    <span class="code-key">environment</span>:
+      <span class="code-key">KAFKA_JMX_PORT</span>: <span class="code-num">9101</span>
+      <span class="code-key">KAFKA_JMX_HOSTNAME</span>: <span class="code-str">kafka</span>
+    <span class="code-comment">    # ... other configs</span>
+
+  <span class="code-key">kafka-jmx-exporter</span>:
+    <span class="code-key">image</span>: <span class="code-str">bitnami/jmx-exporter:latest</span>
+    <span class="code-key">ports</span>:
+      - <span class="code-str">"5556:5556"</span>
+    <span class="code-key">environment</span>:
+      <span class="code-key">JMX_HOST</span>: <span class="code-str">kafka</span>
+      <span class="code-key">JMX_PORT</span>: <span class="code-str">9101"</span>
+    <span class="code-key">volumes</span>:
+      - <span class="code-str">./kafka-jmx-config.yml:/opt/bitnami/jmx-exporter/etc/jmx_config.yml"</span></code></pre>
+
+      <div class="callout callout-info">
+        <div class="callout-title"><i class="bi bi-info-circle"></i> Grafana dashboard</div>
+        Dùng Grafana dashboard ID <strong>7589</strong> (Kafka Overview by Operato) hoặc <strong>721</strong>
+        (Kafka Metrics) — import thẳng vào Grafana từ grafana.com, không cần tự build từ đầu.
+        Kết hợp với <strong>AKHQ</strong> hoặc <strong>Kafka UI</strong> để có cả web console.
+      </div>
+
+      <h2 id="issues"><i class="bi bi-bug"></i> Common issues và cách fix</h2>
+
+      <table class="issue-table">
+        <thead><tr><th>Issue</th><th>Triệu chứng</th><th>Root cause</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Consumer lag tăng</strong></td>
+            <td>Lag metric tăng liên tục</td>
+            <td>Consumer xử lý chậm hơn producer viết</td>
+            <td>Scale horizontal consumer (thêm instance), tối ưu processing code, tăng <code>max.poll.records</code></td>
+          </tr>
+          <tr>
+            <td><strong>Rebalance storm</strong></td>
+            <td>Log liên tục "Rebalancing", lag nhảy vọt</td>
+            <td><code>max.poll.interval.ms</code> quá ngắn, xử lý chậm</td>
+            <td>Tăng <code>max.poll.interval.ms</code>, dùng async processing, batch nhỏ hơn</td>
+          </tr>
+          <tr>
+            <td><strong>Disk full</strong></td>
+            <td>Broker down, <code>LEADER_NOT_AVAILABLE</code></td>
+            <td>Retention quá cao hoặc disk nhỏ</td>
+            <td>Giảm <code>retention.ms</code> hoặc <code>retention.bytes</code>, thêm disk/broker</td>
+          </tr>
+          <tr>
+            <td><strong>Message too large</strong></td>
+            <td><code>RecordTooLargeException</code></td>
+            <td>Message vượt <code>message.max.bytes</code> (1MB default)</td>
+            <td>Tăng <code>message.max.bytes</code> (broker) và <code>max.request.size</code> (producer), hoặc split message</td>
+          </tr>
+          <tr>
+            <td><strong>Hot partition</strong></td>
+            <td>Một partition nhận 80%+ traffic</td>
+            <td>Key có cardinality thấp (region, status)</td>
+            <td>Thêm salt vào key, dùng custom partitioner, hoặc bỏ key (round-robin)</td>
+          </tr>
+          <tr>
+            <td><strong>Duplicate messages</strong></td>
+            <td>Database có record trùng</td>
+            <td>Auto-commit trước khi xử lý xong, hoặc consumer crash</td>
+            <td>Manual commit sau xử lý, implement idempotent consumer (check-before-insert)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="connect"><i class="bi bi-plug"></i> Kafka Connect</h2>
+
+      <p>
+        Kafka Connect là framework để tích hợp Kafka với external systems (database, S3, Elasticsearch...)
+        <strong>mà không cần viết code</strong>. Chỉ cần cấu hình JSON.
+      </p>
+
+      <h3>Source Connector — dữ liệu vào Kafka</h3>
+      <ul>
+        <li><strong>Debezium MySQL/Postgres</strong> — CDC, đọc binlog → stream mọi INSERT/UPDATE/DELETE</li>
+        <li><strong>JDBC Source</strong> — polling database định kỳ</li>
+        <li><strong>S3 Source</strong> — đọc file từ S3 vào Kafka</li>
+      </ul>
+
+      <h3>Sink Connector — dữ liệu ra ngoài Kafka</h3>
+      <ul>
+        <li><strong>S3 Sink</strong> — archive Kafka data vào S3 (Parquet, JSON, Avro)</li>
+        <li><strong>Elasticsearch Sink</strong> — index document để search</li>
+        <li><strong>JDBC Sink</strong> — upsert vào database</li>
+        <li><strong>BigQuery/Snowflake Sink</strong> — stream vào data warehouse</li>
+      </ul>
+
+      <div class="pre-header"><div class="pre-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span>json — Debezium MySQL source connector config</span></div>
+      <pre><code>{
+  <span class="code-key">"name"</span>: <span class="code-str">"mysql-orders-cdc"</span>,
+  <span class="code-key">"config"</span>: {
+    <span class="code-key">"connector.class"</span>: <span class="code-str">"io.debezium.connector.mysql.MySqlConnector"</span>,
+    <span class="code-key">"database.hostname"</span>: <span class="code-str">"mysql"</span>,
+    <span class="code-key">"database.port"</span>: <span class="code-str">"3306"</span>,
+    <span class="code-key">"database.user"</span>: <span class="code-str">"debezium"</span>,
+    <span class="code-key">"database.password"</span>: <span class="code-str">"dbz"</span>,
+    <span class="code-key">"database.server.id"</span>: <span class="code-str">"184054"</span>,
+    <span class="code-key">"database.include.list"</span>: <span class="code-str">"shop"</span>,
+    <span class="code-key">"table.include.list"</span>: <span class="code-str">"shop.orders"</span>,
+    <span class="code-key">"topic.prefix"</span>: <span class="code-str">"mysql"</span>
+    <span class="code-comment">// output topic: mysql.shop.orders</span>
+  }
+}</code></pre>
+
+      <h2 id="schema"><i class="bi bi-file-earmark-code"></i> Schema Registry & Avro</h2>
+
+      <p>
+        Khi nhiều producer/consumer chia sẻ cùng topic, schema drift là vấn đề thực: producer thêm field mới
+        mà consumer cũ không biết xử lý thế nào. <strong>Schema Registry</strong> giải quyết bằng cách
+        lưu trữ và validate schema tập trung.
+      </p>
+
+      <ul>
+        <li><strong>Confluent Schema Registry</strong> — phổ biến nhất, open source</li>
+        <li><strong>Avro</strong> — format binary compact, hỗ trợ schema evolution tốt nhất</li>
+        <li>Producer đăng ký schema → nhận schema ID → gửi (schema ID + binary payload)</li>
+        <li>Consumer nhận → lookup schema theo ID → deserialize</li>
+      </ul>
+
+      <h2 id="managed"><i class="bi bi-cloud"></i> Managed Kafka — khi nào nên dùng?</h2>
+
+      <div class="tool-grid">
+        <div class="tool-card">
+          <div class="tc-name">Confluent Cloud</div>
+          <div class="tc-desc">Fully managed, Schema Registry included, Kafka Connect hosted. Đắt nhất nhưng feature đầy đủ nhất.</div>
+          <span class="tc-type tt-managed">Managed</span>
+        </div>
+        <div class="tool-card">
+          <div class="tc-name">AWS MSK</div>
+          <div class="tc-desc">Managed Kafka trên AWS. Integrate tốt với IAM, S3, Lambda. Không có Confluent ecosystem.</div>
+          <span class="tc-type tt-managed">Managed</span>
+        </div>
+        <div class="tool-card">
+          <div class="tc-name">Aiven Kafka</div>
+          <div class="tc-desc">Multi-cloud (AWS/GCP/Azure). Giá cạnh tranh, hỗ trợ tốt, có Kafka Connect managed.</div>
+          <span class="tc-type tt-managed">Managed</span>
+        </div>
+        <div class="tool-card">
+          <div class="tc-name">Redpanda</div>
+          <div class="tc-desc">Kafka-compatible, viết bằng C++. Nhanh hơn Kafka, không cần JVM, tiêu thụ ít resource hơn.</div>
+          <span class="tc-type tt-open">Self-hosted</span>
+        </div>
+        <div class="tool-card">
+          <div class="tc-name">Apache Kafka (self-hosted)</div>
+          <div class="tc-desc">Full control, open source, không phụ thuộc vendor. Cần team có expertise để operate.</div>
+          <span class="tc-type tt-open">Self-hosted</span>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-title"><i class="bi bi-lightbulb"></i> Quyết định</div>
+        Nếu team &lt; 10 người, không có Kafka expert, hoặc không muốn lo infrastructure —
+        dùng managed service. Chi phí thường rẻ hơn khi tính cả nhân lực vận hành.
+        Self-host khi cần data sovereignty, compliance, hoặc đã có infra team mạnh.
+      </div>
+
+      <h2 id="checklist"><i class="bi bi-clipboard2-check"></i> Production Checklist</h2>
+
+      <ul class="checklist">
+        <li>Cluster 3+ broker, replication.factor=3, min.insync.replicas=2</li>
+        <li>KRaft mode (không dùng ZooKeeper cho cluster mới)</li>
+        <li>Naming convention thống nhất cho tất cả topic</li>
+        <li>Consumer lag monitoring + alert trong Grafana</li>
+        <li>UnderReplicatedPartitions alert khi &gt; 0</li>
+        <li>OfflinePartitionsCount alert khi &gt; 0</li>
+        <li>Retention policy phù hợp với từng topic (không để default mãi)</li>
+        <li>Producer idempotent=true cho critical data</li>
+        <li>Manual commit cho consumer xử lý critical message</li>
+        <li>Dead Letter Queue cho mọi consumer</li>
+        <li>Schema Registry nếu nhiều team chia sẻ cùng topic</li>
+        <li>Kafka Connect (không viết custom integration code nếu có sẵn connector)</li>
+        <li>Backup/restore plan — test restore ít nhất hàng quý</li>
+        <li>Security: SASL/SSL cho cluster production, ACL cho từng service</li>
+      </ul>
+
+      <!-- Series nav -->
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection"></i> Series Kafka từ A-Z <span>6 bài</span></div>
+        <ul class="series-list">
+          <li><a href="kafka-01-intro.html">Bài 1: Kafka là gì? Core concepts &amp; architecture</a></li>
+          <li><a href="kafka-02-setup.html">Bài 2: Cài đặt với Docker — Kafka UI trong 15 phút</a></li>
+          <li><a href="kafka-03-producer.html">Bài 3: Producer deep dive — acks, batching, ordering</a></li>
+          <li><a href="kafka-04-consumer.html">Bài 4: Consumer &amp; Consumer Groups — offset, rebalancing</a></li>
+          <li><a href="kafka-05-partition.html">Bài 5: Partitions &amp; Replication — durability đảm bảo thế nào</a></li>
+          <li class="current">Bài 6: Kafka trong Production — monitoring, tuning, common issues</li>
+        </ul>
+      </div>
+
+      <div class="post-footer-nav">
+        <a href="kafka-05-partition.html" class="pfn-link"><i class="bi bi-arrow-left"></i> Bài 5: Partitions &amp; Replication</a>
+        <a href="../blog.html" class="pfn-link">Về trang blog <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

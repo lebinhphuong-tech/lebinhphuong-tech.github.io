@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafka là gì? Tại sao mọi hệ thống lớn đều cần nó | Field Notes</title>
+  <meta name="description" content="Kafka là gì, tại sao cần dùng, core concepts — Event, Topic, Partition, Broker, Consumer Group — và khi nào KHÔNG nên dùng Kafka. Bài 1 của series Kafka từ A-Z.">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --primary: #149ddd; --secondary: #173b6c; --text: #272829; --bg-light: #f5f8fd; --kafka: #e34c00; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg-light); color: var(--text); line-height: 1.75; }
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.09); padding: 0.85rem 0; }
+    .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); text-decoration: none; }
+    .navbar-brand:hover { color: var(--secondary); }
+    .nav-pills-custom { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-pills-custom a { font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 20px; color: #555; text-decoration: none; border: 1px solid #e0e8f0; transition: all 0.2s; }
+    .nav-pills-custom a:hover, .nav-pills-custom a.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .breadcrumb { background: transparent; padding: 0; margin-bottom: 1.6rem; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: #8a9bb0; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+
+    .post-wrap { background: #fff; border-radius: 14px; padding: 2.8rem 3rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .back-to-blog { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 1.5rem; transition: gap 0.2s; }
+    .back-to-blog:hover { gap: 12px; }
+
+    .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-light); }
+    .post-category-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 20px; background: rgba(227,76,0,0.1); color: var(--kafka); border: 1px solid rgba(227,76,0,0.25); display: inline-block; margin-bottom: 16px; }
+    .series-badge { font-size: 10.5px; font-weight: 700; padding: 3px 12px; border-radius: 20px; background: rgba(20,157,221,0.1); color: #0369a1; border: 1px solid rgba(20,157,221,0.25); display: inline-block; margin-bottom: 16px; margin-left: 8px; }
+    .post-title { font-family: 'Raleway', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1.3; margin-bottom: 16px; }
+    .post-meta-bar { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #8a9bb0; }
+    .post-meta-bar span { display: flex; align-items: center; gap: 5px; }
+    .post-meta-bar i { font-size: 13px; color: var(--primary); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .post-tag { font-size: 10.5px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: var(--bg-light); color: #6c7a8d; border: 1px solid #e4eef8; }
+
+    .toc { background: var(--bg-light); border-radius: 10px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin-bottom: 2.2rem; }
+    .toc-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .toc ol { margin: 0 0 0 1.2rem; padding: 0; }
+    .toc li { margin-bottom: 5px; font-size: 13px; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    .post-body { font-size: 15px; line-height: 1.85; color: #3a4555; }
+    .post-body h2 { font-family: 'Raleway', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--secondary); margin: 2.4rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-light); display: flex; align-items: center; gap: 10px; }
+    .post-body h2 i { font-size: 1rem; color: var(--primary); background: rgba(20,157,221,0.1); padding: 6px; border-radius: 8px; flex-shrink: 0; }
+    .post-body h3 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+    .post-body p { margin-bottom: 1.2rem; }
+    .post-body ul, .post-body ol { margin: 0 0 1.2rem 1.5rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body strong { color: var(--secondary); font-weight: 700; }
+    .post-body a { color: var(--primary); }
+    .post-body code { font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-light); color: #c0392b; padding: 2px 7px; border-radius: 5px; border: 1px solid #e4eef8; }
+    .post-body pre { background: #0d1b2a; border-radius: 10px; margin: 1.4rem 0; overflow-x: auto; }
+    .pre-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; font-size: 11px; font-weight: 700; color: #4a6480; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pre-dots { display: flex; gap: 5px; }
+    .pre-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .pre-dots .d1 { background: #ff5f57; } .pre-dots .d2 { background: #febc2e; } .pre-dots .d3 { background: #28c840; }
+    .post-body pre code { display: block; background: transparent; border: none; color: #7dd3fc; font-size: 13px; padding: 14px 16px; line-height: 1.7; }
+    .code-comment { color: #4a6480; font-style: italic; }
+    .code-key { color: #f472b6; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fb923c; }
+    .code-highlight { color: #fde68a; font-weight: 700; }
+
+    .callout { border-radius: 10px; padding: 1.1rem 1.4rem; margin: 1.4rem 0; border-left: 4px solid; font-size: 14px; }
+    .callout-title { font-weight: 700; margin-bottom: 5px; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+    .callout-tip  { background: rgba(16,185,129,0.06); border-color: #10b981; color: #065f46; }
+    .callout-tip .callout-title { color: #059669; }
+    .callout-warn { background: rgba(245,158,11,0.07); border-color: #f59e0b; color: #78350f; }
+    .callout-warn .callout-title { color: #d97706; }
+    .callout-info { background: rgba(20,157,221,0.07); border-color: var(--primary); color: #1e3a5f; }
+    .callout-info .callout-title { color: var(--primary); }
+    .callout-dark { background: #0d1b2a; border-color: #149ddd; color: #7dd3fc; }
+    .callout-dark .callout-title { color: #7dd3fc; }
+
+    /* ── Pain cards ── */
+    .pain-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin: 1.4rem 0; }
+    .pain-card { border-radius: 10px; padding: 16px; border: 1px solid rgba(239,68,68,0.2); background: rgba(239,68,68,0.04); }
+    .pain-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .pain-label { font-size: 13px; font-weight: 700; color: #dc2626; margin-bottom: 5px; }
+    .pain-desc  { font-size: 12.5px; color: #6c7a8d; line-height: 1.5; }
+
+    /* ── Architecture flow ── */
+    .arch-flow { background: #0d1b2a; border-radius: 14px; padding: 2rem; margin: 1.6rem 0; overflow-x: auto; }
+    .arch-row { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: nowrap; min-width: 600px; }
+    .arch-box { border-radius: 10px; padding: 12px 16px; text-align: center; border: 2px solid; min-width: 100px; }
+    .ab-producer { background: rgba(34,197,94,0.12); border-color: #22c55e; }
+    .ab-kafka    { background: rgba(227,76,0,0.15); border-color: var(--kafka); }
+    .ab-consumer { background: rgba(20,157,221,0.12); border-color: var(--primary); }
+    .ab-zoo      { background: rgba(168,85,247,0.12); border-color: #a855f7; }
+    .arch-box-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .ab-producer .arch-box-title { color: #4ade80; }
+    .ab-kafka    .arch-box-title { color: #fb923c; }
+    .ab-consumer .arch-box-title { color: #7dd3fc; }
+    .ab-zoo      .arch-box-title { color: #d8b4fe; }
+    .arch-box-sub { font-size: 10.5px; color: #64748b; line-height: 1.4; }
+    .arch-arrow { font-size: 1.4rem; color: #4a6480; margin: 0 8px; flex-shrink: 0; }
+    .arch-arrow-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.6px; color: #4a6480; display: block; text-align: center; margin-top: -4px; }
+
+    /* ── Concept cards ── */
+    .concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin: 1.4rem 0; }
+    .concept-card { border-radius: 12px; padding: 18px; border: 1px solid #e4eef8; background: #fff; border-left: 4px solid var(--kafka); }
+    .cc-term { font-family: 'Courier New', monospace; font-size: 13.5px; font-weight: 700; color: var(--kafka); margin-bottom: 6px; }
+    .cc-def  { font-size: 13px; color: #4a5568; line-height: 1.6; }
+
+    /* ── Partition visual ── */
+    .partition-visual { background: #0d1b2a; border-radius: 12px; padding: 1.4rem; margin: 1.4rem 0; }
+    .pv-topic-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #fb923c; margin-bottom: 12px; }
+    .pv-partition { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+    .pv-label { font-size: 11px; color: #64748b; width: 85px; flex-shrink: 0; font-family: 'Courier New', monospace; }
+    .pv-offset { display: flex; gap: 3px; }
+    .pv-cell { width: 36px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; font-family: 'Courier New', monospace; }
+    .pc-0 { background: #1e6a9a; }
+    .pc-1 { background: #1a5e40; }
+    .pc-2 { background: #7c3aed; }
+    .pc-3 { background: rgba(255,255,255,0.08); color: #4a6480; border: 1px dashed #2a3f55; }
+    .pv-legend { display: flex; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+    .pv-leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #8a9bb0; }
+    .pv-leg-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+    /* ── Compare table ── */
+    .cmp-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 1.4rem 0; }
+    .cmp-table th { background: var(--secondary); color: #fff; padding: 10px 14px; font-size: 12px; font-weight: 700; text-align: left; }
+    .cmp-table th:first-child { border-radius: 8px 0 0 0; }
+    .cmp-table th:last-child  { border-radius: 0 8px 0 0; }
+    .cmp-table td { padding: 10px 14px; border-bottom: 1px solid #edf2f8; vertical-align: middle; }
+    .cmp-table tr:last-child td { border-bottom: none; }
+    .cmp-table tr:nth-child(even) td { background: var(--bg-light); }
+    .good  { color: #059669; font-weight: 700; }
+    .meh   { color: #d97706; font-weight: 700; }
+    .bad   { color: #dc2626; font-weight: 700; }
+
+    /* ── Usecase grid ── */
+    .usecase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin: 1.4rem 0; }
+    .usecase-card { border-radius: 12px; padding: 18px; border: 1px solid #e4eef8; background: #fff; }
+    .uc-icon { font-size: 1.6rem; margin-bottom: 10px; display: block; }
+    .uc-title { font-size: 13.5px; font-weight: 700; color: var(--secondary); margin-bottom: 5px; }
+    .uc-desc  { font-size: 12.5px; color: #6c7a8d; line-height: 1.55; }
+
+    /* ── Skip list ── */
+    .skip-list { list-style: none; padding: 0; margin: 1.2rem 0; }
+    .skip-list li { display: flex; gap: 10px; padding: 10px 14px; border-radius: 8px; background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); margin-bottom: 8px; font-size: 13.5px; color: #4a5568; }
+    .skip-list li::before { content: '✗'; color: #dc2626; font-weight: 800; flex-shrink: 0; }
+
+    /* ── Series nav ── */
+    .series-nav { background: var(--bg-light); border-radius: 12px; border: 1px solid #e4eef8; padding: 1.4rem 1.6rem; margin: 2rem 0; }
+    .series-nav-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #8a9bb0; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .series-nav-title span { background: var(--kafka); color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 10px; }
+    .series-list { list-style: none; padding: 0; margin: 0; }
+    .series-list li { padding: 7px 0; border-bottom: 1px solid #e4eef8; font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
+    .series-list li:last-child { border-bottom: none; }
+    .series-list li.current { font-weight: 700; color: var(--secondary); }
+    .series-list li.current::before { content: '▶'; color: var(--kafka); font-size: 10px; }
+    .series-list li:not(.current)::before { content: '○'; color: #c0ccd8; font-size: 10px; }
+    .series-list a { color: var(--primary); text-decoration: none; }
+    .series-list a:hover { text-decoration: underline; }
+    .series-list .upcoming { color: #8a9bb0; }
+
+    .post-footer-nav { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 2px solid var(--bg-light); gap: 12px; flex-wrap: wrap; }
+    .pfn-link { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; padding: 10px 18px; border-radius: 10px; border: 1px solid #e4eef8; background: #fff; transition: all 0.2s; }
+    .pfn-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    @media (max-width: 768px) {
+      .post-wrap { padding: 1.6rem 1.2rem; }
+      .post-title { font-size: 1.5rem; }
+      .arch-row { flex-wrap: wrap; gap: 8px; }
+      .arch-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html"><i class="bi bi-house-door me-2"></i>Lê Bình Phương</a>
+    <div class="nav-pills-custom ms-auto">
+      <a href="../index.html">Portfolio</a>
+      <a href="../docs/index.html">Documents</a>
+      <a href="../techstack.html">Tech Stack</a>
+      <a href="../blog.html" class="active">Field Notes</a>
+      <a href="../cv.html">CV</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="../blog.html">Field Notes</a></li>
+      <li class="breadcrumb-item active">Kafka #1</li>
+    </ol>
+  </nav>
+
+  <div class="post-wrap">
+    <a href="../blog.html" class="back-to-blog"><i class="bi bi-arrow-left"></i> Về trang blog</a>
+
+    <div class="post-header">
+      <div>
+        <span class="post-category-badge"><i class="bi bi-stack me-1"></i>DevOps & SRE</span>
+        <span class="series-badge">Series: Kafka từ A-Z · Bài 1/6</span>
+      </div>
+      <div class="post-title">Kafka là gì?<br>Tại sao mọi hệ thống lớn đều cần nó</div>
+      <div class="post-meta-bar">
+        <span><i class="bi bi-calendar3"></i> May 2026</span>
+        <span><i class="bi bi-clock"></i> 12 phút đọc</span>
+        <span><i class="bi bi-person"></i> Lê Bình Phương</span>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">Kafka</span>
+        <span class="post-tag">Event Streaming</span>
+        <span class="post-tag">Message Queue</span>
+        <span class="post-tag">Architecture</span>
+      </div>
+    </div>
+
+    <div class="toc">
+      <div class="toc-title"><i class="bi bi-list-ul"></i> Nội dung bài viết</div>
+      <ol>
+        <li><a href="#problem">Vấn đề mà Kafka sinh ra để giải quyết</a></li>
+        <li><a href="#what-is">Kafka là gì — định nghĩa đúng nhất</a></li>
+        <li><a href="#concepts">Core concepts: Event, Topic, Partition, Offset...</a></li>
+        <li><a href="#architecture">Architecture: Broker, Producer, Consumer Group</a></li>
+        <li><a href="#partition-deep">Partition — bí mật sau scalability</a></li>
+        <li><a href="#vs">Kafka vs RabbitMQ vs Redis Pub/Sub</a></li>
+        <li><a href="#usecases">Use cases thực tế</a></li>
+        <li><a href="#when-not">Khi nào KHÔNG nên dùng Kafka</a></li>
+      </ol>
+    </div>
+
+    <div class="post-body">
+
+      <!-- SECTION 1 -->
+      <h2 id="problem"><i class="bi bi-exclamation-triangle"></i> Vấn đề mà Kafka sinh ra để giải quyết</h2>
+
+      <p>Hãy tưởng tượng một hệ thống e-commerce. Khi user đặt hàng, cùng lúc bạn cần:</p>
+      <ul>
+        <li>Gửi email xác nhận đơn hàng</li>
+        <li>Trừ tồn kho trong warehouse service</li>
+        <li>Tạo shipment trong logistics service</li>
+        <li>Ghi nhận doanh thu trong analytics</li>
+        <li>Gửi notification đến app</li>
+      </ul>
+      <p>
+        Cách thông thường: Order Service gọi thẳng API đến từng service. Đây là <strong>synchronous coupling</strong>
+        — nếu Notification Service chậm 2 giây, cả order flow chậm 2 giây. Nếu Analytics Service down, order fail.
+      </p>
+
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="pain-icon">🔗</div>
+          <div class="pain-label">Tight Coupling</div>
+          <div class="pain-desc">Một service down là cả flow bị ảnh hưởng</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">🐢</div>
+          <div class="pain-label">Synchronous Bottleneck</div>
+          <div class="pain-desc">Phải chờ từng downstream service trả lời</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">📉</div>
+          <div class="pain-label">Lost Events</div>
+          <div class="pain-desc">Service crash = mất event, không có cách replay</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">📈</div>
+          <div class="pain-label">Scale mismatch</div>
+          <div class="pain-desc">Consumer mỗi service scale khác nhau nhưng producer không kiểm soát được</div>
+        </div>
+      </div>
+
+      <p>
+        Kafka giải quyết tất cả bằng một ý tưởng đơn giản: <strong>thay vì gọi trực tiếp, producer ghi event vào log —
+        consumer tự đọc khi ready</strong>. Decoupled hoàn toàn.
+      </p>
+
+      <!-- SECTION 2 -->
+      <h2 id="what-is"><i class="bi bi-cpu"></i> Kafka là gì — định nghĩa đúng nhất</h2>
+
+      <p>
+        Apache Kafka là một <strong>distributed event streaming platform</strong> — không phải message queue truyền thống
+        (như RabbitMQ), không phải database, không phải cache. Cách gọi chính xác nhất:
+        <strong>distributed commit log</strong>.
+      </p>
+
+      <div class="callout callout-dark">
+        <div class="callout-title"><i class="bi bi-quote"></i> Định nghĩa core</div>
+        Kafka là một <strong>append-only, immutable, ordered log</strong> được phân tán trên nhiều máy chủ.
+        Producer ghi event vào cuối log. Consumer đọc từ bất kỳ vị trí nào trong log. Event không bị xóa ngay
+        sau khi đọc — nó tồn tại theo retention policy (mặc định 7 ngày).
+      </div>
+
+      <p>
+        Điểm khác biệt lớn nhất với message queue: <strong>consumer tự quản lý vị trí đọc (offset)</strong>.
+        Kafka không biết và không quan tâm consumer đã đọc đến đâu — đó là trách nhiệm của consumer.
+        Điều này cho phép replay event, thêm consumer mới đọc lại lịch sử, hoặc nhiều consumer group
+        độc lập đọc cùng một topic.
+      </p>
+
+      <!-- SECTION 3 -->
+      <h2 id="concepts"><i class="bi bi-bookmarks"></i> Core concepts</h2>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="cc-term">Event / Record</div>
+          <div class="cc-def">Đơn vị dữ liệu cơ bản. Gồm: key, value, timestamp, và headers. Value thường là JSON/Avro/Protobuf. Ví dụ: <code>{"order_id": 123, "status": "placed"}</code></div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-term">Topic</div>
+          <div class="cc-def">Kênh logic để phân loại event. Tương tự như "table" trong database hoặc "folder" trong filesystem. Ví dụ: <code>order-events</code>, <code>user-signups</code>.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-term">Partition</div>
+          <div class="cc-def">Một topic được chia thành nhiều partition — mỗi partition là một log độc lập. Đây là đơn vị song song hóa của Kafka. Nhiều partition = nhiều consumer đọc song song.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-term">Offset</div>
+          <div class="cc-def">Vị trí của event trong một partition. Tăng dần từ 0. Consumer lưu offset để biết đã đọc đến đâu — cho phép resume sau crash hoặc replay từ đầu.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-term">Broker</div>
+          <div class="cc-def">Một Kafka server. Cluster thường có 3+ broker. Mỗi broker lưu một số partition. Broker không push data — consumer tự poll.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-term">Producer</div>
+          <div class="cc-def">Client ghi event vào topic. Producer chọn partition (theo key hash hoặc round-robin). Có thể configure durability qua <code>acks</code>.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-term">Consumer</div>
+          <div class="cc-def">Client đọc event từ topic. Poll-based (không phải push). Tự quản lý offset. Nhiều consumer cùng group sẽ chia nhau các partition.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-term">Consumer Group</div>
+          <div class="cc-def">Tập hợp consumer cùng <code>group.id</code>. Mỗi partition chỉ được đọc bởi <strong>một</strong> consumer trong group — đảm bảo không xử lý trùng.</div>
+        </div>
+      </div>
+
+      <!-- SECTION 4 -->
+      <h2 id="architecture"><i class="bi bi-diagram-2"></i> Architecture tổng quan</h2>
+
+      <p>Flow dữ liệu trong Kafka:</p>
+
+      <div class="arch-flow">
+        <div class="arch-row">
+          <div class="arch-box ab-producer">
+            <div class="arch-box-title">Producers</div>
+            <div class="arch-box-sub">App, Service<br>DB, IoT...</div>
+          </div>
+          <div style="text-align:center; margin: 0 6px;">
+            <div class="arch-arrow">→</div>
+            <div class="arch-arrow-label">write events</div>
+          </div>
+          <div class="arch-box ab-kafka" style="min-width:180px;">
+            <div class="arch-box-title">Kafka Cluster</div>
+            <div class="arch-box-sub">Broker 1 · Broker 2 · Broker 3<br>Topics &amp; Partitions<br>Replication</div>
+          </div>
+          <div style="text-align:center; margin: 0 6px;">
+            <div class="arch-arrow">→</div>
+            <div class="arch-arrow-label">poll events</div>
+          </div>
+          <div class="arch-box ab-consumer">
+            <div class="arch-box-title">Consumers</div>
+            <div class="arch-box-sub">Group A<br>Group B<br>Group C</div>
+          </div>
+        </div>
+        <div style="margin-top: 16px; display: flex; justify-content: center;">
+          <div class="arch-box ab-zoo" style="min-width:220px; padding: 8px 16px;">
+            <div class="arch-box-title">ZooKeeper / KRaft</div>
+            <div class="arch-box-sub">Cluster metadata, leader election, controller</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>ZooKeeper vs KRaft</h3>
+      <p>
+        Kafka cổ điển dùng <strong>ZooKeeper</strong> để quản lý metadata và leader election. Từ Kafka 3.3+,
+        mode <strong>KRaft</strong> (Kafka Raft) cho phép chạy không cần ZooKeeper — đơn giản hơn cho việc setup và vận hành.
+        Từ Kafka 4.0, ZooKeeper bị deprecated hoàn toàn.
+      </p>
+
+      <div class="callout callout-tip">
+        <div class="callout-title"><i class="bi bi-lightbulb"></i> Tip cho project mới</div>
+        Luôn dùng <strong>KRaft mode</strong> cho project mới. ZooKeeper legacy chỉ cần thiết nếu bạn phải tích hợp
+        với hệ thống Kafka cũ (pre-3.3). Bài 2 của series này sẽ dùng KRaft.
+      </div>
+
+      <!-- SECTION 5 -->
+      <h2 id="partition-deep"><i class="bi bi-layout-split"></i> Partition — bí mật sau scalability</h2>
+
+      <p>
+        Partition là khái niệm quan trọng nhất để hiểu Kafka. Mỗi topic <code>order-events</code> với 3 partitions
+        trông như sau:
+      </p>
+
+      <div class="partition-visual">
+        <div class="pv-topic-label">Topic: order-events (3 partitions)</div>
+        <div class="pv-partition">
+          <div class="pv-label">Partition 0</div>
+          <div class="pv-offset">
+            <div class="pv-cell pc-0">0</div>
+            <div class="pv-cell pc-0">1</div>
+            <div class="pv-cell pc-0">2</div>
+            <div class="pv-cell pc-0">3</div>
+            <div class="pv-cell pc-0">4</div>
+            <div class="pv-cell pc-3">→</div>
+          </div>
+        </div>
+        <div class="pv-partition">
+          <div class="pv-label">Partition 1</div>
+          <div class="pv-offset">
+            <div class="pv-cell pc-1">0</div>
+            <div class="pv-cell pc-1">1</div>
+            <div class="pv-cell pc-1">2</div>
+            <div class="pv-cell pc-3">→</div>
+          </div>
+        </div>
+        <div class="pv-partition">
+          <div class="pv-label">Partition 2</div>
+          <div class="pv-offset">
+            <div class="pv-cell pc-2">0</div>
+            <div class="pv-cell pc-2">1</div>
+            <div class="pv-cell pc-2">2</div>
+            <div class="pv-cell pc-2">3</div>
+            <div class="pv-cell pc-3">→</div>
+          </div>
+        </div>
+        <div class="pv-legend">
+          <div class="pv-leg-item"><div class="pv-leg-dot" style="background:#1e6a9a;"></div>Offset (P0)</div>
+          <div class="pv-leg-item"><div class="pv-leg-dot" style="background:#1a5e40;"></div>Offset (P1)</div>
+          <div class="pv-leg-item"><div class="pv-leg-dot" style="background:#7c3aed;"></div>Offset (P2)</div>
+          <div class="pv-leg-item"><div class="pv-leg-dot" style="background:rgba(255,255,255,0.08); border: 1px dashed #2a3f55;"></div>Vị trí tiếp theo</div>
+        </div>
+      </div>
+
+      <p><strong>Ordering guarantee:</strong> Thứ tự chỉ được đảm bảo <em>trong cùng một partition</em>. Nếu bạn cần tất cả event của một order theo đúng thứ tự, dùng <code>order_id</code> làm key — Kafka sẽ hash key và route tất cả event có cùng key về một partition.</p>
+
+      <p><strong>Parallelism:</strong> Consumer group với 3 consumer + topic với 3 partition = mỗi consumer đọc đúng 1 partition song song. Thêm consumer thứ 4 → consumer thứ 4 idle (số consumer không thể vượt số partition).</p>
+
+      <!-- SECTION 6 -->
+      <h2 id="vs"><i class="bi bi-bar-chart-line"></i> Kafka vs RabbitMQ vs Redis Pub/Sub</h2>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Tiêu chí</th>
+            <th>Kafka</th>
+            <th>RabbitMQ</th>
+            <th>Redis Pub/Sub</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Mô hình</strong></td>
+            <td>Distributed log (pull)</td>
+            <td>Message queue (push/pull)</td>
+            <td>Pub/Sub (push, fire-and-forget)</td>
+          </tr>
+          <tr>
+            <td><strong>Retention</strong></td>
+            <td class="good">Lâu dài (7 ngày mặc định)</td>
+            <td class="meh">Đến khi consumer ack</td>
+            <td class="bad">Không lưu — mất nếu consumer offline</td>
+          </tr>
+          <tr>
+            <td><strong>Replay</strong></td>
+            <td class="good">Có — seek đến bất kỳ offset</td>
+            <td class="bad">Không</td>
+            <td class="bad">Không</td>
+          </tr>
+          <tr>
+            <td><strong>Throughput</strong></td>
+            <td class="good">Rất cao (triệu msg/s)</td>
+            <td class="meh">Cao (100K msg/s)</td>
+            <td class="meh">Cao nhưng không bền</td>
+          </tr>
+          <tr>
+            <td><strong>Ordering</strong></td>
+            <td class="good">Trong mỗi partition</td>
+            <td class="meh">Trong queue (single consumer)</td>
+            <td class="bad">Không đảm bảo</td>
+          </tr>
+          <tr>
+            <td><strong>Multiple consumers</strong></td>
+            <td class="good">Nhiều group độc lập</td>
+            <td class="meh">Competing consumers (chia nhau)</td>
+            <td class="good">Nhiều subscriber nhận cùng msg</td>
+          </tr>
+          <tr>
+            <td><strong>Độ phức tạp</strong></td>
+            <td class="bad">Cao — cần hiểu partition, offset</td>
+            <td class="good">Thấp — AMQP đơn giản</td>
+            <td class="good">Rất thấp</td>
+          </tr>
+          <tr>
+            <td><strong>Best for</strong></td>
+            <td>Event streaming, audit log, CDC</td>
+            <td>Task queue, RPC, routing phức tạp</td>
+            <td>Realtime notification, simple fanout</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <div class="callout-title"><i class="bi bi-info-circle"></i> Kafka không thay thế RabbitMQ</div>
+        Kafka và RabbitMQ giải quyết vấn đề khác nhau. Kafka giỏi ở event streaming và log retention.
+        RabbitMQ giỏi ở routing phức tạp và task queue có priority. Nhiều hệ thống dùng cả hai.
+      </div>
+
+      <!-- SECTION 7 -->
+      <h2 id="usecases"><i class="bi bi-lightning"></i> Use cases thực tế</h2>
+
+      <div class="usecase-grid">
+        <div class="usecase-card">
+          <span class="uc-icon">🔄</span>
+          <div class="uc-title">Microservices Decoupling</div>
+          <div class="uc-desc">Services giao tiếp qua Kafka thay vì gọi API trực tiếp. Order Service không cần biết có bao nhiêu downstream consumer.</div>
+        </div>
+        <div class="usecase-card">
+          <span class="uc-icon">📊</span>
+          <div class="uc-title">Real-time Analytics Pipeline</div>
+          <div class="uc-desc">Stream clickstream / app events vào Kafka → Flink/Spark processing → dashboard realtime. LinkedIn dùng Kafka xử lý hàng nghìn tỷ event/ngày.</div>
+        </div>
+        <div class="usecase-card">
+          <span class="uc-icon">🗄️</span>
+          <div class="uc-title">Change Data Capture (CDC)</div>
+          <div class="uc-desc">Debezium đọc binlog của MySQL/Postgres và stream mọi change vào Kafka. Sync database mà không cần polling.</div>
+        </div>
+        <div class="usecase-card">
+          <span class="uc-icon">📋</span>
+          <div class="uc-title">Audit Log</div>
+          <div class="uc-desc">Mọi action của user ghi vào Kafka topic — immutable, có thể replay, không ai xóa được. Compliance-friendly.</div>
+        </div>
+        <div class="usecase-card">
+          <span class="uc-icon">🌊</span>
+          <div class="uc-title">Event Sourcing</div>
+          <div class="uc-desc">State của hệ thống = tổng hợp tất cả events trong quá khứ. Kafka làm event store. Rebuild bất kỳ trạng thái nào bằng cách replay từ đầu.</div>
+        </div>
+        <div class="usecase-card">
+          <span class="uc-icon">🔃</span>
+          <div class="uc-title">Log Aggregation</div>
+          <div class="uc-desc">Thu thập log từ hàng trăm service về một nơi. ELK stack, Splunk, Loki thường dùng Kafka làm buffer trung gian.</div>
+        </div>
+      </div>
+
+      <!-- SECTION 8 -->
+      <h2 id="when-not"><i class="bi bi-x-circle"></i> Khi nào KHÔNG nên dùng Kafka</h2>
+
+      <ul class="skip-list">
+        <li><strong>Team nhỏ, cần ship nhanh</strong> — Kafka có operational overhead cao. RabbitMQ hoặc SQS đơn giản hơn nhiều.</li>
+        <li><strong>Request-response / RPC</strong> — Kafka không phù hợp cho pattern "gửi rồi chờ response". Dùng HTTP/gRPC.</li>
+        <li><strong>Dataset nhỏ, ít message</strong> — Setup Kafka cho vài nghìn message/ngày là over-engineering. PostgreSQL LISTEN/NOTIFY hoặc Redis đủ dùng.</li>
+        <li><strong>Cần message routing phức tạp</strong> — Routing theo header, priority queue, dead-letter queue — RabbitMQ làm tốt hơn.</li>
+        <li><strong>Latency cực thấp (&lt; 1ms)</strong> — Kafka batch-oriented, latency thường 5-15ms. Nếu cần sub-ms thì cần giải pháp khác.</li>
+      </ul>
+
+      <div class="callout callout-warn">
+        <div class="callout-title"><i class="bi bi-exclamation-triangle"></i> Cạm bẫy phổ biến</div>
+        Kafka cluster cần ít nhất 3 broker để đảm bảo HA. Với 1 broker là dev/test only.
+        Chi phí vận hành Kafka production không nhỏ — hãy cân nhắc managed service
+        (Confluent Cloud, AWS MSK, Aiven) nếu không có team chuyên về Kafka.
+      </div>
+
+      <!-- Series nav -->
+      <div class="series-nav">
+        <div class="series-nav-title"><i class="bi bi-collection"></i> Series Kafka từ A-Z <span>6 bài</span></div>
+        <ul class="series-list">
+          <li class="current">Bài 1: Kafka là gì? Core concepts &amp; architecture</li>
+          <li><a href="kafka-02-setup.html">Bài 2: Cài đặt với Docker — Kafka UI trong 15 phút</a></li>
+          <li><a href="kafka-03-producer.html">Bài 3: Producer deep dive — acks, batching, ordering</a></li>
+          <li><a href="kafka-04-consumer.html">Bài 4: Consumer &amp; Consumer Groups — offset, rebalancing</a></li>
+          <li><a href="kafka-05-partition.html">Bài 5: Partitions &amp; Replication — durability đảm bảo thế nào</a></li>
+          <li><a href="kafka-06-production.html">Bài 6: Kafka trong Production — monitoring, tuning, common issues</a></li>
+        </ul>
+      </div>
+
+      <div class="post-footer-nav">
+        <a href="../blog.html" class="pfn-link"><i class="bi bi-arrow-left"></i> Về trang blog</a>
+        <a href="kafka-02-setup.html" class="pfn-link">Bài tiếp theo: Cài đặt với Docker <i class="bi bi-arrow-right"></i></a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
